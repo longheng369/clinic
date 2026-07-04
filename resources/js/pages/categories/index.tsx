@@ -65,7 +65,17 @@ const Category = () => {
         {
             header: 'Created',
             className: 'whitespace-nowrap',
-            cell: (cat) => new Date(cat.created_at).toLocaleDateString(),
+            cell: (cat) =>
+                new Date(cat.created_at).toLocaleString('en-US', {
+                    timeZone: 'Asia/Phnom_Penh',
+                    year: 'numeric',
+                    month: 'short',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false,
+                }),
         },
         {
             header: 'Actions',
