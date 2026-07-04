@@ -29,10 +29,6 @@ const Sidebar = () => {
   const { url, props } = usePage()
   const user = props.auth?.user
 
-  const initials = user?.name
-    ? user.name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)
-    : '??'
-
   const sections: SidebarSection[] = [
     {
       title: 'Menu',
@@ -64,7 +60,7 @@ const Sidebar = () => {
   }
 
   return (
-    <aside className='w-65 h-screen flex flex-col bg-sidebar-bg border-r border-slate-300'>
+    <aside className='w-75 h-screen flex flex-col bg-sidebar-bg border-r border-slate-300'>
       {/* Logo */}
       <div className='flex items-center gap-3 px-6 py-6'>
         <div className='flex items-center justify-center size-9 rounded-lg bg-primary-500'>
@@ -117,23 +113,18 @@ const Sidebar = () => {
       </nav>
 
       {/* Profile */}
-      <div className='border-t border-sidebar-border-light px-4 py-4'>
-        <div className='flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-sidebar-hover-light transition-colors'>
-          <div className='size-8 rounded-full bg-primary flex items-center justify-center text-xs font-semibold text-white'>
-            {initials}
-          </div>
-          <div className='flex-1 min-w-0'>
-            <p className='text-sm font-medium text-sidebar-text truncate'>
-              {user?.name ?? 'User'}
+      <div className='border-t border-slate-300 px-4 py-4'>
+        <button onClick={() => router.visit('/profile')} className='flex flex-col items-start gap-3 px-3 py-2 rounded-lg hover:bg-primary-50 transition-colors w-full cursor-pointer'>
+            <p className='text-sm font-medium truncate'>
+                {user?.name ?? 'User'}
             </p>
-            <p className='text-xs text-sidebar-muted-light truncate'>
-              {user?.email ?? ''}
+            <p className='text-xs truncate'>
+                {user?.email ?? ''}
             </p>
-          </div>
-        </div>
+        </button>
         <button
           onClick={handleLogout}
-          className='flex items-center gap-3 px-3 py-2 mt-1 rounded-lg text-sm text-sidebar-muted-light hover:text-danger hover:bg-danger/5 transition-colors w-full cursor-pointer'
+          className='flex items-center gap-3 px-3 py-2 mt-1 rounded-lg text-sm text-red-500 hover:text-red-600 hover:bg-danger/5 transition-colors w-full cursor-pointer'
         >
           <LogOut size={18} />
           <span>Logout</span>
