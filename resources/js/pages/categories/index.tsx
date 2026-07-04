@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { usePage, router } from '@inertiajs/react'
 import { Link, Head } from '@inertiajs/react'
 import { useModal } from '@/components/modal'
@@ -17,8 +16,8 @@ interface PaginatedData<T> {
   to: number
 }
 
-const Index = () => {
-  const { openModal, closeModal } = useModal()
+const Category = () => {
+  const { openModal, closeModal, openAlert } = useModal()
 
   const { categories, flash } = usePage<{
     categories: PaginatedData<ICategory>
@@ -29,6 +28,7 @@ const Index = () => {
     openModal({
       title: 'New Category',
       content: <CategoryForm onClose={() => closeModal()} />,
+      config: { preventClickAway: true }
     })
   }
 
@@ -36,13 +36,18 @@ const Index = () => {
     openModal({
       title: `Edit ${category.name}`,
       content: <CategoryForm category={category} onClose={() => closeModal()} />,
+      config: { preventClickAway: true }
     })
   }
 
   const handleDelete = (id: number, name: string) => {
-    if (confirm(`Delete "${name}"? This action cannot be undone.`)) {
-      router.delete(`/settings/categories/${id}`)
-    }
+    openAlert({
+        message: 'Delete this category?',
+        description: 'This action cannot be undone.',
+        variant: 'danger',
+        confirmLabel: 'Delete',
+        onConfirm: () => router.delete(`/settings/categories/${id}`)
+    })
   }
 
   return (
@@ -216,4 +221,4 @@ const Index = () => {
   )
 }
 
-export default Index
+export default Category

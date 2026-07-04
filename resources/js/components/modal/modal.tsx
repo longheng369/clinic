@@ -6,6 +6,7 @@ interface ModalProps {
   title: string
   children: ReactNode
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl'
+  preventClickAway?: boolean
   preventEscape?: boolean
 }
 
@@ -23,6 +24,7 @@ const Modal = ({
   title,
   children,
   maxWidth = 'md',
+  preventClickAway = false,
   preventEscape = false,
 }: ModalProps) => {
   const [visible, setVisible] = useState(false)
@@ -77,7 +79,7 @@ const Modal = ({
         className={`fixed inset-0 bg-black/50 transition-opacity duration-150 ${
           visible ? 'opacity-100 ease-out' : 'opacity-0 ease-in'
         }`}
-        onClick={onClose}
+        onClick={preventClickAway ? undefined : onClose}
       />
       <div
         ref={panelRef}

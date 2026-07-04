@@ -7,6 +7,7 @@ import {
   type ReactNode,
 } from 'react'
 import Modal from '@/components/modal/modal'
+import Alert, { type AlertProps } from '@/components/modal/alert'
 
 interface ModalConfig {
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl'
@@ -16,14 +17,17 @@ interface ModalConfig {
 
 interface DialogConfig {
   id: string
+  type: 'modal' | 'alert'
   title: string
   content: ReactNode
   open: boolean
   config?: ModalConfig
+  alertProps?: Omit<AlertProps, 'onClose'>
 }
 
 interface ModalContextType {
-  openModal: (dialog: Omit<DialogConfig, 'id' | 'open'>) => string
+  openModal: (dialog: Omit<DialogConfig, 'id' | 'open' | 'type'>) => string
+  openAlert: (alert: Omit<AlertProps, 'onClose'>) => string
   closeModal: () => void
 }
 
@@ -35,23 +39,34 @@ export const useModal = () => {
   return ctx
 }
 
-const maxWidthClasses: Record<string, string> = {
-  sm: 'max-w-sm',
-  md: 'max-w-md',
-  lg: 'max-w-lg',
-  xl: 'max-w-xl',
-  '2xl': 'max-w-2xl',
-}
 
 export const ModalProvider = ({ children }: { children: ReactNode }) => {
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const dialogIdRef = useRef(0)
   const [dialogs, setDialogs] = useState<DialogConfig[]>([])
 
-  const openModal = useCallback((dialog: Omit<DialogConfig, 'id' | 'open'>) => {
+  const openModal = useCallback((dialog: Omit<DialogConfig, 'id' | 'open' | 'type'>) => {
     dialogIdRef.current += 1
     const id = `modal-${dialogIdRef.current}`
-    setDialogs((prev) => [...prev, { id, ...dialog, open: true }])
+    setDialogs((prev) => [...prev, { ...dialog, id, type: 'modal', open: true }])
+    return id
+  }, [])
+
+  const openAlert = useCallback((alertProps: Omit<AlertProps, 'onClose'>) => {
+    dialogIdRef.current += 1
+    const id = `alert-${dialogIdRef.current}`
+    setDialogs((prev) => [
+      ...prev,
+      {
+        id,
+        type: 'alert',
+        title: '',
+        content: null,
+        alertProps,
+        open: true,
+        config: { maxWidth: 'sm' },
+      } as DialogConfig,
+    ])
     return id
   }, [])
 
@@ -84,25 +99,27 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
   }, [])
 
   return (
-    <ModalContext.Provider value={{ openModal, closeModal }}>
+    <ModalContext.Provider value={{ openModal, openAlert, closeModal }}>
       {children}
       {dialogs.map((dialog) => {
-        const maxW = dialog.config?.maxWidth || 'md'
-        const handleBackdropClick = () => {
-          if (!dialog.config?.preventClickAway) closeModal()
-        }
+          const content = dialog.type === 'alert' && dialog.alertProps
+            ? <Alert {...dialog.alertProps} onClose={closeModal} />
+            : dialog.content
 
-        return (
-          <Modal
-            key={dialog.id}
-            open={dialog.open}
-            onClose={closeModal}
-            title={dialog.title}
-          >
-            {dialog.content}
-          </Modal>
-        )
-      })}
+          return (
+            <Modal
+              key={dialog.id}
+              open={dialog.open}
+              onClose={closeModal}
+              title={dialog.title}
+              maxWidth={dialog.config?.maxWidth || 'md'}
+              preventClickAway={dialog.config?.preventClickAway}
+              preventEscape={dialog.config?.preventEscape}
+            >
+              {content}
+            </Modal>
+          )
+        })}
     </ModalContext.Provider>
   )
 }
