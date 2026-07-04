@@ -1,7 +1,15 @@
-import { usePage, router, useForm } from '@inertiajs/react'
-import { Link } from '@inertiajs/react'
+import { useState } from 'react'
+import { usePage, router } from '@inertiajs/react'
+import { Link, Head } from '@inertiajs/react'
 import { useModal } from '@/components/modal'
-import { Head } from '@inertiajs/react'
+import { Pencil, Trash2, FolderOpen, ChevronLeft, ChevronRight } from 'lucide-react'
+import CategoryForm from './partials/form'
+
+interface CategoryFormData {
+  name: string
+  slug: string
+  description: string
+}
 
 interface Category {
   id: number
@@ -22,94 +30,60 @@ interface PaginatedData<T> {
 }
 
 const CreateCategoryForm = ({ onClose }: { onClose: () => void }) => {
-  const { data, setData, post, processing, errors, reset } = useForm({
-    name: '',
-    slug: '',
-    description: '',
-  })
+    const [processing, setProcessing] = useState(false)
+    const [errors, setErrors] = useState<Record<string, string>>({})
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    post('/categories', {
-      onSuccess: () => {
-        reset()
-        onClose()
-      },
-    })
-  }
+    const handleSubmit = (data: CategoryFormData) => {
+        setProcessing(true)
+        router.post('/settings/categories', { ...data }, {
+            onSuccess: () => onClose(),
+            onError: (err) => setErrors(err as Record<string, string>),
+            onFinish: () => setProcessing(false),
+        })
+    }
 
-  const handleCancel = () => {
-    reset()
-    onClose()
-  }
+    const handleCancel = () => onClose()
+
+    return (
+        <CategoryForm
+            defaultValues={{ name: '', slug: '', description: '' }}
+            errors={errors}
+            processing={processing}
+            onSubmit={handleSubmit}
+            onCancel={handleCancel}
+            submitLabel="Save"
+        />
+    )
+}
+
+const EditCategoryForm = ({ category, onClose }: { category: Category; onClose: () => void }) => {
+    const [processing, setProcessing] = useState(false)
+    const [errors, setErrors] = useState<Record<string, string>>({})
+
+    const handleSubmit = (data: CategoryFormData) => {
+        setProcessing(true)
+        router.put(`/settings/categories/${category.id}`, { ...data }, {
+        onSuccess: () => onClose(),
+        onError: (err) => setErrors(err as Record<string, string>),
+        onFinish: () => setProcessing(false),
+        })
+    }
+
+  const handleCancel = () => onClose()
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <label htmlFor="name" className="mb-1 block text-sm font-medium">
-          Name
-        </label>
-        <input
-          id="name"
-          type="text"
-          value={data.name}
-          onChange={(e) => setData('name', e.target.value)}
-          className="w-full rounded border px-3 py-2"
-        />
-        {errors["name"] && (
-          <p className="mt-1 text-sm text-red-600">{errors.name}</p>
-        )}
-      </div>
-
-      <div>
-        <label htmlFor="slug" className="mb-1 block text-sm font-medium">
-          Slug
-        </label>
-        <input
-          id="slug"
-          type="text"
-          value={data.slug}
-          onChange={(e) => setData('slug', e.target.value)}
-          className="w-full rounded border px-3 py-2"
-        />
-        {errors.slug && (
-          <p className="mt-1 text-sm text-red-600">{errors.slug}</p>
-        )}
-      </div>
-
-      <div>
-        <label htmlFor="description" className="mb-1 block text-sm font-medium">
-          Description
-        </label>
-        <textarea
-          id="description"
-          rows={3}
-          value={data.description}
-          onChange={(e) => setData('description', e.target.value)}
-          className="w-full rounded border px-3 py-2"
-        />
-        {errors.description && (
-          <p className="mt-1 text-sm text-red-600">{errors.description}</p>
-        )}
-      </div>
-
-      <div className="flex justify-end gap-2">
-        <button
-          type="button"
-          onClick={handleCancel}
-          className="rounded border px-4 py-2 text-gray-600 hover:bg-gray-50"
-        >
-          Cancel
-        </button>
-        <button
-          type="submit"
-          disabled={processing}
-          className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
-        >
-          {processing ? 'Saving...' : 'Save'}
-        </button>
-      </div>
-    </form>
+    <CategoryForm
+      defaultValues={{
+        name: category.name,
+        slug: category.slug,
+        description: category.description ?? '',
+      }}
+      errors={errors}
+      processing={processing}
+      onSubmit={handleSubmit}
+      onCancel={handleCancel}
+      submitLabel="Update Category"
+    />
   )
 }
 
@@ -128,117 +102,194 @@ const Index = () => {
     })
   }
 
+  const handleEdit = (category: Category) => {
+    openModal({
+      title: `Edit ${category.name}`,
+      content: <EditCategoryForm category={category} onClose={() => closeModal()} />,
+    })
+  }
+
   const handleDelete = (id: number, name: string) => {
-    if (confirm(`Delete "${name}"?`)) {
-      router.delete(`/categories/${id}`)
+    if (confirm(`Delete "${name}"? This action cannot be undone.`)) {
+      router.delete(`/settings/categories/${id}`)
     }
   }
 
   return (
     <>
-        <Head title="Categories" />
-        <div className="p-8">
-        <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-bold">Categories</h1>
-            <button
+      <Head title="Categories" />
+      <div className="p-8">
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Categories</h1>
+            <p className="mt-1 text-sm text-gray-500">
+              Manage your clinic categories
+            </p>
+          </div>
+          <button
             onClick={handleCreate}
-            className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-            >
-            New Category
-            </button>
+            className="rounded-lg bg-primary-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-primary-700 transition-colors shadow-sm"
+          >
+            + New Category
+          </button>
         </div>
 
         {flash?.success && (
-            <div className="mb-4 rounded border border-green-300 bg-green-50 p-4 text-green-800">
+          <div className="mb-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
             {flash.success}
-            </div>
+          </div>
         )}
 
-        <div className="overflow-x-auto rounded border">
-            <table className="w-full text-left">
-            <thead className="bg-gray-50">
-                <tr>
-                <th className="px-4 py-3 text-sm font-medium text-gray-600">
-                    Name
+        <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+          {categories.total > 0 && (
+            <div className="border-b border-gray-200 bg-gray-50/50 px-6 py-3">
+              <p className="text-sm text-gray-600">
+                Showing{' '}
+                <span className="font-medium text-gray-900">{categories.from}</span>{' '}
+                to{' '}
+                <span className="font-medium text-gray-900">{categories.to}</span>{' '}
+                of{' '}
+                <span className="font-medium text-gray-900">{categories.total}</span>{' '}
+                results
+              </p>
+            </div>
+          )}
+
+          <table className="w-full text-left">
+            <thead>
+              <tr className="border-b border-gray-200 bg-gray-50/80">
+                <th className="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                  Name
                 </th>
-                <th className="px-4 py-3 text-sm font-medium text-gray-600">
-                    Slug
+                <th className="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                  Slug
                 </th>
-                <th className="px-4 py-3 text-sm font-medium text-gray-600">
-                    Description
+                <th className="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                  Description
                 </th>
-                <th className="px-4 py-3 text-sm font-medium text-gray-600">
-                    Created
+                <th className="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                  Created
                 </th>
-                <th className="px-4 py-3 text-sm font-medium text-gray-600">
-                    Actions
+                <th className="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                  Actions
                 </th>
-                </tr>
+              </tr>
             </thead>
-            <tbody className="divide-y">
-                {categories.data.length === 0 ? (
+            <tbody className="divide-y divide-gray-100">
+              {categories.data.length === 0 ? (
                 <tr>
-                    <td
-                    colSpan={5}
-                    className="px-4 py-12 text-center text-gray-500"
-                    >
-                    No categories found.
-                    </td>
+                  <td colSpan={5} className="px-6 py-16">
+                    <div className="flex flex-col items-center gap-3 text-gray-400">
+                      <FolderOpen size={40} strokeWidth={1.5} />
+                      <p className="text-sm font-medium text-gray-500">
+                        No categories found
+                      </p>
+                      <p className="text-xs text-gray-400">
+                        Get started by creating a new category.
+                      </p>
+                    </div>
+                  </td>
                 </tr>
-                ) : (
+              ) : (
                 categories.data.map((cat) => (
-                    <tr key={cat.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3">{cat.name}</td>
-                    <td className="px-4 py-3 text-gray-500">{cat.slug}</td>
-                    <td className="px-4 py-3 text-gray-500">
-                        {cat.description ?? '—'}
+                  <tr
+                    key={cat.id}
+                    className="even:bg-gray-50/40 hover:bg-primary-50/30 transition-colors"
+                  >
+                    <td className="px-6 py-3.5 text-sm font-medium text-gray-900">
+                      {cat.name}
                     </td>
-                    <td className="px-4 py-3 text-gray-500">
-                        {new Date(cat.created_at).toLocaleDateString()}
+                    <td className="px-6 py-3.5 text-sm text-gray-500">
+                      <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">
+                        {cat.slug}
+                      </code>
                     </td>
-                    <td className="px-4 py-3 space-x-2">
-                        <Link
-                        href={`/categories/${cat.id}/edit`}
-                        className="text-blue-600 hover:underline"
-                        >
-                        Edit
-                        </Link>
+                    <td className="px-6 py-3.5 text-sm text-gray-500 max-w-xs truncate">
+                      {cat.description ?? (
+                        <span className="text-gray-300">—</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-3.5 text-sm text-gray-500 whitespace-nowrap">
+                      {new Date(cat.created_at).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-3.5">
+                      <div className="flex items-center gap-1">
                         <button
-                        onClick={() => handleDelete(cat.id, cat.name)}
-                        className="text-red-600 hover:underline"
+                          onClick={() => handleEdit(cat)}
+                          className="inline-flex items-center justify-center rounded-lg p-2 text-gray-400 hover:bg-primary-50 hover:text-primary-600 transition-colors cursor-pointer"
+                          aria-label={`Edit ${cat.name}`}
                         >
-                        Delete
+                          <Pencil size={16} />
                         </button>
+                        <button
+                          onClick={() => handleDelete(cat.id, cat.name)}
+                          className="inline-flex items-center justify-center rounded-lg p-2 text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors cursor-pointer"
+                          aria-label={`Delete ${cat.name}`}
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
                     </td>
-                    </tr>
+                  </tr>
                 ))
-                )}
+              )}
             </tbody>
-            </table>
+          </table>
         </div>
 
         {categories.last_page > 1 && (
-            <div className="mt-4 flex justify-center gap-2">
-            {Array.from(
-                { length: categories.last_page },
-                (_, i) => i + 1,
-            ).map((page) => (
-                <Link
-                key={page}
-                href={`/categories?page=${page}`}
-                className={`rounded px-3 py-1 text-sm ${
-                    page === categories.current_page
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 hover:bg-gray-200'
+          <div className="mt-6 flex items-center justify-between">
+            <p className="text-sm text-gray-500">
+              Page {categories.current_page} of {categories.last_page}
+            </p>
+            <div className="flex items-center gap-1">
+              <Link
+                href={`/settings/categories?page=${categories.current_page - 1}`}
+                className={`inline-flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                  categories.current_page === 1
+                    ? 'pointer-events-none text-gray-300'
+                    : 'text-gray-600 hover:bg-gray-100'
                 }`}
                 preserveScroll
+                aria-disabled={categories.current_page === 1}
+              >
+                <ChevronLeft size={16} />
+                Previous
+              </Link>
+              {Array.from(
+                { length: categories.last_page },
+                (_, i) => i + 1,
+              ).map((page) => (
+                <Link
+                  key={page}
+                  href={`/settings/categories?page=${page}`}
+                  className={`inline-flex items-center justify-center rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                    page === categories.current_page
+                      ? 'bg-primary-600 text-white shadow-sm'
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                  preserveScroll
                 >
-                {page}
+                  {page}
                 </Link>
-            ))}
+              ))}
+              <Link
+                href={`/settings/categories?page=${categories.current_page + 1}`}
+                className={`inline-flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                  categories.current_page === categories.last_page
+                    ? 'pointer-events-none text-gray-300'
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+                preserveScroll
+                aria-disabled={categories.current_page === categories.last_page}
+              >
+                Next
+                <ChevronRight size={16} />
+              </Link>
             </div>
+          </div>
         )}
-        </div>
+      </div>
     </>
   )
 }
