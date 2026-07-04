@@ -77,7 +77,7 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
           }
           return current
         })
-      }, 200)
+      }, 250)
 
       return updated
     })

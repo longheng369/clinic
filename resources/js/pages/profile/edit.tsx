@@ -1,5 +1,4 @@
 import { Head } from '@inertiajs/react'
-import DeleteUserForm from './partials/deleteUserForm'
 import UpdatePasswordForm from './partials/updatePasswordForm'
 import UpdateProfileInformationForm from './partials/updateProfileInformationForm'
 

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link, usePage, router } from '@inertiajs/react'
 import {
   LayoutDashboard,
@@ -10,14 +10,18 @@ import {
   Settings,
   HelpCircle,
   LogOut,
+  ChevronDown,
+  ChevronRight,
+  Tags,
   type LucideIcon,
 } from 'lucide-react'
 
 interface SidebarOption {
   label: string
-  icon: LucideIcon
-  path: string
+  icon?: LucideIcon
+  path?: string
   badge?: number
+  children?: SidebarOption[]
 }
 
 interface SidebarSection {
@@ -28,6 +32,13 @@ interface SidebarSection {
 const Sidebar = () => {
   const { url, props } = usePage()
   const user = props.auth?.user
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
+    Settings: true,
+  })
+
+  const toggleSection = (label: string) => {
+    setExpandedSections((prev) => ({ ...prev, [label]: !prev[label] }))
+  }
 
   const sections: SidebarSection[] = [
     {
@@ -49,7 +60,13 @@ const Sidebar = () => {
     {
       title: 'Other',
       items: [
-        { label: 'Settings', icon: Settings, path: '/settings' },
+        {
+          label: 'Settings',
+          icon: Settings,
+          children: [
+            { label: 'Category', icon: Tags, path: '/settings/categories' },
+          ],
+        },
         { label: 'Help', icon: HelpCircle, path: '/help' },
       ],
     },
@@ -79,18 +96,67 @@ const Sidebar = () => {
             <ul className='space-y-0.5'>
               {section.items.map((item) => {
                 const Icon = item.icon
+                const isExpanded = expandedSections[item.label]
+
+                if (item.children) {
+                  return (
+                    <li key={item.label}>
+                      <button
+                        onClick={() => toggleSection(item.label)}
+                        className='flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium w-full text-sidebar-muted-light hover:text-sidebar-text hover:bg-sidebar-hover-light transition-colors duration-150 cursor-pointer'
+                      >
+                        {Icon && <Icon size={18} />}
+                        <span className='flex-1 text-left'>{item.label}</span>
+                        {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                      </button>
+                      {isExpanded && (
+                        <ul className='ml-6 mt-0.5 space-y-0.5'>
+                          {item.children.map((child) => {
+                            const isChildActive = child.path === url
+                            return (
+                              <li key={child.path}>
+                                <Link
+                                  href={child.path!}
+                                  className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-150
+                                    ${isChildActive
+                                      ? 'bg-primary-100 text-primary-700'
+                                      : 'text-sidebar-muted-light hover:text-sidebar-text hover:bg-sidebar-hover-light'
+                                    }`}
+                                >
+                                  <span className='flex-1'>{child.label}</span>
+                                  {child.badge && (
+                                    <span
+                                      className={`flex items-center justify-center size-5 rounded-full text-[11px] font-semibold
+                                        ${isChildActive
+                                          ? 'bg-primary text-primary-foreground'
+                                          : 'bg-primary-100 text-primary-700'
+                                        }`}
+                                    >
+                                      {child.badge}
+                                    </span>
+                                  )}
+                                </Link>
+                              </li>
+                            )
+                          })}
+                        </ul>
+                      )}
+                    </li>
+                  )
+                }
+
                 const isActive = item.path === url
                 return (
                   <li key={item.path}>
                     <Link
-                      href={item.path}
+                      href={item.path!}
                       className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150
                         ${isActive
                           ? 'bg-primary-100 text-primary-700'
                           : 'text-sidebar-muted-light hover:text-sidebar-text hover:bg-sidebar-hover-light'
                         }`}
                     >
-                      <Icon size={18} />
+                      {Icon && <Icon size={18} />}
                       <span className='flex-1'>{item.label}</span>
                       {item.badge && (
                         <span

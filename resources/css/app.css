@@ -47,4 +47,11 @@
     --color-accent-800: #9a3412;
     --color-accent-900: #7c2d12;
     --color-accent-950: #431407;
+
+    /* Sidebar */
+    --color-sidebar-bg: #ffffff;
+    --color-sidebar-text: #1e293b;
+    --color-sidebar-hover-light: #f1f5f9;
+    --color-sidebar-muted-light: #64748b;
+    --color-sidebar-border-light: #cbd5e1;
 }

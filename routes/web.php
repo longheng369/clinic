@@ -15,7 +15,7 @@ Route::middleware(['auth'])->group(function () {
         return Inertia::render('dashboard/index');
     })->name('dashboard');
 
-    Route::resource('categories', CategoryController::class)
+    Route::resource('settings/categories', CategoryController::class)
         ->only(['index', 'store', 'edit', 'update', 'destroy']);
 
     Route::resource('patients', PatientController::class)

@@ -1,4 +1,4 @@
-import { useState, useEffect, type ReactNode } from 'react'
+import { useState, useEffect, useRef, type ReactNode } from 'react'
 
 interface ModalProps {
   open: boolean
@@ -27,17 +27,38 @@ const Modal = ({
 }: ModalProps) => {
   const [visible, setVisible] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const panelRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (open) {
       setMounted(true)
-      requestAnimationFrame(() => setVisible(true))
+      document.body.style.overflow = 'hidden'
+      const raf = requestAnimationFrame(() => {
+        requestAnimationFrame(() => setVisible(true))
+      })
+      return () => cancelAnimationFrame(raf)
     } else {
+      document.body.style.overflow = ''
       setVisible(false)
-      const timer = setTimeout(() => setMounted(false), 200)
-      return () => clearTimeout(timer)
+      const panel = panelRef.current
+      if (panel) {
+        const handleTransitionEnd = (e: TransitionEvent) => {
+          if (e.target === panel && e.propertyName === 'opacity') {
+            panel.removeEventListener('transitionend', handleTransitionEnd)
+            setMounted(false)
+          }
+        }
+        panel.addEventListener('transitionend', handleTransitionEnd)
+        return () => panel.removeEventListener('transitionend', handleTransitionEnd)
+      }
     }
   }, [open])
+
+  useEffect(() => {
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [])
 
   useEffect(() => {
     if (preventEscape) return
@@ -53,14 +74,17 @@ const Modal = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div
-        className={`fixed inset-0 bg-black/50 transition-opacity duration-200 ${
-          visible ? 'opacity-100' : 'opacity-0'
+        className={`fixed inset-0 bg-black/50 transition-opacity duration-150 ${
+          visible ? 'opacity-100 ease-out' : 'opacity-0 ease-in'
         }`}
         onClick={onClose}
       />
       <div
+        ref={panelRef}
         className={`relative z-10 w-full ${maxWidthClasses[maxWidth]} rounded-lg bg-white p-6 shadow-xl transition-all duration-200 ${
-          visible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
+          visible
+            ? 'scale-100 opacity-100 ease-out'
+            : 'scale-95 opacity-0 ease-in'
         }`}
       >
         <div className="flex items-center justify-between mb-4">
