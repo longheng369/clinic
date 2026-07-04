@@ -3,6 +3,7 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UnitController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -16,6 +17,9 @@ Route::middleware(['auth'])->group(function () {
     })->name('dashboard');
 
     Route::resource('settings/categories', CategoryController::class)
+        ->only(['index', 'store', 'edit', 'update', 'destroy']);
+
+    Route::resource('settings/units', UnitController::class)
         ->only(['index', 'store', 'edit', 'update', 'destroy']);
 
     Route::resource('patients', PatientController::class)

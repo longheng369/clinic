@@ -19,7 +19,7 @@ type Ripple = { id: number; x: number; y: number; diameter: number }
 const cn = (...classes: (string | false | undefined | null)[]) => classes.filter(Boolean).join(' ')
 
 const base =
-    'relative overflow-hidden inline-flex items-center justify-center rounded-md font-semibold transition duration-150 ease-in-out disabled:opacity-25 disabled:pointer-events-none'
+    'relative overflow-hidden inline-flex items-center justify-center rounded-md font-semibold transition duration-150 ease-in-out disabled:opacity-25 disabled:pointer-events-none cursor-pointer'
 
 const sizeMap: Record<ButtonSize, string> = {
     small: 'px-3 py-1.5 text-xs',

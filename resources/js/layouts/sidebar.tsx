@@ -65,6 +65,7 @@ const Sidebar = () => {
           icon: Settings,
           children: [
             { label: 'Category', icon: Tags, path: '/settings/categories' },
+            { label: 'Units', icon: Tags, path: '/settings/units' },
           ],
         },
         { label: 'Help', icon: HelpCircle, path: '/help' },

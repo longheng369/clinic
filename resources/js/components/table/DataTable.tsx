@@ -87,7 +87,7 @@ export default function DataTable<T>({
                             data.map((row) => (
                                 <tr
                                     key={keyExtractor(row)}
-                                    className={`even:bg-gray-50/40 hover:bg-primary-50/30 transition-colors ${onRowClick ? 'cursor-pointer' : ''}`}
+                                    className={`even:bg-slate-100/60 hover:bg-primary-100 transition-colors ${onRowClick ? 'cursor-pointer' : ''}`}
                                     onClick={onRowClick ? () => onRowClick(row) : undefined}
                                 >
                                     {columns.map((col, i) => (
