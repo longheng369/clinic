@@ -23,10 +23,12 @@ const CategoryForm = ({ category, onClose }: CategoryFormProps) => {
         setIsProcessing(true);
         if (category) {
             router.put(`/settings/categories/${category.id}`, { ...data }, {
-                onSuccess: () => onClose(),
+                onSuccess: () => {
+                    onClose();
+                    toast('Category updated successfully!', { variant: 'success', description: 'The category has been updated.' });
+                },
                 onFinish: () => {
                     setIsProcessing(false);
-                    toast('Category updated successfully!', { variant: 'success', description: 'The category has been updated.' });
                 },
             });
 
@@ -34,10 +36,20 @@ const CategoryForm = ({ category, onClose }: CategoryFormProps) => {
         }
 
         router.post('/settings/categories', { ...data }, {
-            onSuccess: () => onClose(),
+            onSuccess: () => {
+                onClose();
+                toast('Category created successfully!', { variant: 'success', description: 'The category has been updated.' })
+            },
+            onError: (errors) => {
+                if (errors.name) {
+                    toast('Unable to create category', {
+                        variant: 'error',
+                        description: errors.name,
+                    });
+                }
+            },
             onFinish: () => {
                 setIsProcessing(false);
-                toast('Category created successfully!', { variant: 'success', description: 'The category has been updated.' })
             },
         })
     })
