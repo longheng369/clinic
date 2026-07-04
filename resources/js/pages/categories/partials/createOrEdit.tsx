@@ -35,22 +35,24 @@ const CategoryForm = ({ category, onClose }: CategoryFormProps) => {
     })
 
     return (
-        <form onSubmit={onSubmit} className="space-y-4" noValidate>
-            <Input
-                label="Name"
-                control={control}
-                placeholder='Enter name'
-                name='name'
-                rules={{ required: 'This field is required' }}
-            />
+        <form onSubmit={onSubmit} className="border-t border-slate-300" noValidate>
+            <div className="space-y-4 p-6">
+                <Input
+                    label="Name"
+                    control={control}
+                    placeholder='Enter name'
+                    name='name'
+                    rules={{ required: 'This field is required' }}
+                />
 
-            <Textarea
-                label="Description"
-                control={control}
-                name='description'
-            />
+                <Textarea
+                    label="Description"
+                    control={control}
+                    name='description'
+                />
+            </div>
 
-            <div className="flex justify-end gap-2 pt-2">
+            <div className="flex justify-end gap-2 p-2 border-t border-slate-300">
                 <Button
                     type="button"
                     onClick={onClose}

@@ -81,13 +81,13 @@ const Modal = ({
       />
       <div
         ref={panelRef}
-        className={`relative z-10 w-full ${maxWidthClasses[maxWidth]} rounded-lg bg-white p-6 shadow-xl transition-all duration-200 ${
+        className={`relative z-10 w-full ${maxWidthClasses[maxWidth]} rounded-lg bg-white shadow-xl transition-all duration-200 ${
           visible
             ? 'scale-100 opacity-100 ease-out'
             : 'scale-95 opacity-0 ease-in'
         }`}
       >
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between p-4">
           <h2 className="text-lg font-bold">{title}</h2>
           <button
             onClick={onClose}
