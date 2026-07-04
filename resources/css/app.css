@@ -8,6 +8,7 @@
 
 @theme {
     --font-sans: 'Poppins', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji';
+    --animate-ripple: ripple 900ms ease-out both;
 
     /* Primary - Trustworthy blue */
     --color-primary-50: #eff6ff;
@@ -54,4 +55,15 @@
     --color-sidebar-hover-light: #f1f5f9;
     --color-sidebar-muted-light: #64748b;
     --color-sidebar-border-light: #cbd5e1;
+}
+
+@keyframes ripple {
+    from {
+        transform: scale(0);
+        opacity: 1;
+    }
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
 }

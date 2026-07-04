@@ -2,22 +2,10 @@ import { useState } from 'react'
 import { usePage, router } from '@inertiajs/react'
 import { Link, Head } from '@inertiajs/react'
 import { useModal } from '@/components/modal'
-import { Pencil, Trash2, FolderOpen, ChevronLeft, ChevronRight } from 'lucide-react'
-import CategoryForm from './partials/form'
-
-interface CategoryFormData {
-  name: string
-  slug: string
-  description: string
-}
-
-interface Category {
-  id: number
-  name: string
-  slug: string
-  description: string | null
-  created_at: string
-}
+import { Pencil, Trash2, FolderOpen, ChevronLeft, ChevronRight, Plus } from 'lucide-react'
+import CategoryForm from './partials/createOrEdit'
+import { ICategory } from '@/interfaces/ICategory'
+import Button from '@/components/button'
 
 interface PaginatedData<T> {
   data: T[]
@@ -29,83 +17,25 @@ interface PaginatedData<T> {
   to: number
 }
 
-const CreateCategoryForm = ({ onClose }: { onClose: () => void }) => {
-    const [processing, setProcessing] = useState(false)
-    const [errors, setErrors] = useState<Record<string, string>>({})
-
-    const handleSubmit = (data: CategoryFormData) => {
-        setProcessing(true)
-        router.post('/settings/categories', { ...data }, {
-            onSuccess: () => onClose(),
-            onError: (err) => setErrors(err as Record<string, string>),
-            onFinish: () => setProcessing(false),
-        })
-    }
-
-    const handleCancel = () => onClose()
-
-    return (
-        <CategoryForm
-            defaultValues={{ name: '', slug: '', description: '' }}
-            errors={errors}
-            processing={processing}
-            onSubmit={handleSubmit}
-            onCancel={handleCancel}
-            submitLabel="Save"
-        />
-    )
-}
-
-const EditCategoryForm = ({ category, onClose }: { category: Category; onClose: () => void }) => {
-    const [processing, setProcessing] = useState(false)
-    const [errors, setErrors] = useState<Record<string, string>>({})
-
-    const handleSubmit = (data: CategoryFormData) => {
-        setProcessing(true)
-        router.put(`/settings/categories/${category.id}`, { ...data }, {
-        onSuccess: () => onClose(),
-        onError: (err) => setErrors(err as Record<string, string>),
-        onFinish: () => setProcessing(false),
-        })
-    }
-
-  const handleCancel = () => onClose()
-
-  return (
-    <CategoryForm
-      defaultValues={{
-        name: category.name,
-        slug: category.slug,
-        description: category.description ?? '',
-      }}
-      errors={errors}
-      processing={processing}
-      onSubmit={handleSubmit}
-      onCancel={handleCancel}
-      submitLabel="Update Category"
-    />
-  )
-}
-
 const Index = () => {
   const { openModal, closeModal } = useModal()
 
   const { categories, flash } = usePage<{
-    categories: PaginatedData<Category>
+    categories: PaginatedData<ICategory>
     flash: { success?: string }
   }>().props
 
   const handleCreate = () => {
     openModal({
       title: 'New Category',
-      content: <CreateCategoryForm onClose={() => closeModal()} />,
+      content: <CategoryForm onClose={() => closeModal()} />,
     })
   }
 
-  const handleEdit = (category: Category) => {
+  const handleEdit = (category: ICategory) => {
     openModal({
       title: `Edit ${category.name}`,
-      content: <EditCategoryForm category={category} onClose={() => closeModal()} />,
+      content: <CategoryForm category={category} onClose={() => closeModal()} />,
     })
   }
 
@@ -126,12 +56,12 @@ const Index = () => {
               Manage your clinic categories
             </p>
           </div>
-          <button
+          <Button
             onClick={handleCreate}
-            className="rounded-lg bg-primary-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-primary-700 transition-colors shadow-sm"
+            startIcon={<Plus size={20} />}
           >
-            + New Category
-          </button>
+            New Category
+          </Button>
         </div>
 
         {flash?.success && (
@@ -160,9 +90,6 @@ const Index = () => {
               <tr className="border-b border-gray-200 bg-gray-50/80">
                 <th className="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-500">
                   Name
-                </th>
-                <th className="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-500">
-                  Slug
                 </th>
                 <th className="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-500">
                   Description
@@ -198,11 +125,6 @@ const Index = () => {
                   >
                     <td className="px-6 py-3.5 text-sm font-medium text-gray-900">
                       {cat.name}
-                    </td>
-                    <td className="px-6 py-3.5 text-sm text-gray-500">
-                      <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">
-                        {cat.slug}
-                      </code>
                     </td>
                     <td className="px-6 py-3.5 text-sm text-gray-500 max-w-xs truncate">
                       {cat.description ?? (
