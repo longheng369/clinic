@@ -3,8 +3,9 @@ import Input from '@/components/form/input'
 import Textarea from '@/components/form/textarea'
 import { ICategory, ICategoryFormData } from '@/interfaces/ICategory';
 import { useState } from 'react';
-import { router } from '@inertiajs/react'
-import Button from '@/components/button';
+import { router } from '@inertiajs/react';
+import Button from '@/components/button/button';
+import { useToast } from '@/components/toast'
 
 interface CategoryFormProps {
     category?: ICategory;
@@ -12,7 +13,8 @@ interface CategoryFormProps {
 }
 
 const CategoryForm = ({ category, onClose }: CategoryFormProps) => {
-    const [isProcessing, setIsProcessing] = useState(false)
+    const [isProcessing, setIsProcessing] = useState(false);
+    const { toast } = useToast()
     const { control, handleSubmit } = useForm<ICategoryFormData>({
         defaultValues: category
     });
@@ -22,7 +24,10 @@ const CategoryForm = ({ category, onClose }: CategoryFormProps) => {
         if (category) {
             router.put(`/settings/categories/${category.id}`, { ...data }, {
                 onSuccess: () => onClose(),
-                onFinish: () => setIsProcessing(false),
+                onFinish: () => {
+                    setIsProcessing(false);
+                    toast('Category updated successfully!', { variant: 'success', description: 'The category has been updated.' });
+                },
             });
 
             return;
@@ -30,7 +35,10 @@ const CategoryForm = ({ category, onClose }: CategoryFormProps) => {
 
         router.post('/settings/categories', { ...data }, {
             onSuccess: () => onClose(),
-            onFinish: () => setIsProcessing(false),
+            onFinish: () => {
+                setIsProcessing(false);
+                toast('Category created successfully!', { variant: 'success', description: 'The category has been updated.' })
+            },
         })
     })
 
@@ -57,6 +65,7 @@ const CategoryForm = ({ category, onClose }: CategoryFormProps) => {
                     type="button"
                     onClick={onClose}
                     color='secondary'
+                    variant='outlined'
                 >
                     Cancel
                 </Button>

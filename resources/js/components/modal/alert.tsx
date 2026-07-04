@@ -1,4 +1,4 @@
-import Button from '@/components/button'
+import Button from '@/components/button/button'
 import { AlertTriangle, AlertCircle } from 'lucide-react'
 
 type AlertVariant = 'danger' | 'warning' | 'info'
@@ -62,7 +62,7 @@ const Alert = ({
   return (
     <div className="px-4 pb-6">
       <div className="flex items-start gap-3">
-        <div className={`flex-shrink-0 rounded-full p-2 ${style.iconBg} ${style.iconColor}`}>
+        <div className={`shrink-0 rounded-full p-2 ${style.iconBg} ${style.iconColor}`}>
           {style.icon}
         </div>
         <div className="min-w-0">
