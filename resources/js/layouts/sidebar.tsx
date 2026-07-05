@@ -53,7 +53,7 @@ const Sidebar = () => {
       title: 'Clinic',
       items: [
         { label: 'Doctors', icon: Stethoscope, path: '/doctors' },
-        { label: 'Pharmacy', icon: Pill, path: '/pharmacy' },
+        { label: 'Medicines', icon: Pill, path: '/medicines' },
         { label: 'Records', icon: ClipboardList, path: '/records' },
       ],
     },

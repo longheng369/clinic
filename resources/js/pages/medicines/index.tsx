@@ -2,8 +2,9 @@ import { usePage, router } from '@inertiajs/react'
 import { Head } from '@inertiajs/react'
 import { useModal } from '@/components/modal'
 import { Pencil, Trash2, Plus, Search, X } from 'lucide-react'
-import CategoryForm from './partials/createOrEdit'
-import { ICategory } from '@/interfaces/ICategory'
+import MedicineForm from './partials/createOrEdit'
+import { IMedicine } from '@/interfaces/IMedicine'
+import { IUnit } from '@/interfaces/IUnit';
 import Button from '@/components/button/button'
 import IconButton from '@/components/button/iconButton'
 import DataTable, { type Column } from '@/components/table/DataTable'
@@ -20,11 +21,12 @@ interface PaginatedData<T> {
     to: number
 }
 
-const Category = () => {
+const Medicine = () => {
     const { openModal, closeModal, openAlert } = useModal()
 
-    const { categories, search: searchProp } = usePage<{
-        categories: PaginatedData<ICategory>
+    const { medicines, units, search: searchProp } = usePage<{
+        medicines: PaginatedData<IMedicine>
+        units: IUnit[]
         search: string | null
     }>().props
 
@@ -34,9 +36,9 @@ const Category = () => {
         const timeout = setTimeout(() => {
             if (searchTerm === searchProp) return
             if (searchTerm) {
-                router.get('/settings/categories', { search: searchTerm }, { preserveState: true, replace: true })
+                router.get('/medicines', { search: searchTerm }, { preserveState: true, replace: true })
             } else {
-                router.get('/settings/categories', {}, { preserveState: true, replace: true })
+                router.get('/medicines', {}, { preserveState: true, replace: true })
             }
         }, 300)
 
@@ -48,51 +50,66 @@ const Category = () => {
     }
 
     const baseUrl = searchProp
-        ? `/settings/categories?search=${encodeURIComponent(searchProp)}`
-        : '/settings/categories'
+        ? `/medicines?search=${encodeURIComponent(searchProp)}`
+        : '/medicines'
 
     const handleCreate = () => {
         openModal({
-            title: 'New Category',
-            content: <CategoryForm onClose={() => closeModal()} />,
-            config: { preventClickAway: true }
+            title: 'New Medicine',
+            content: <MedicineForm units={units} onClose={() => closeModal()} />,
+            config: { preventClickAway: true, maxWidth: '2xl' },
         })
     }
 
-    const handleEdit = (category: ICategory) => {
+    const handleEdit = (medicine: IMedicine) => {
         openModal({
-            title: `Edit ${category.name}`,
-            content: <CategoryForm category={category} onClose={() => closeModal()} />,
-            config: { preventClickAway: true }
+            title: `Edit ${medicine.name}`,
+            content: <MedicineForm medicine={medicine} units={units} onClose={() => closeModal()} />,
+            config: { preventClickAway: true, maxWidth: '2xl' }
         })
     }
 
-    const handleDelete = (cat: ICategory) => {
+    const handleDelete = (medicine: IMedicine) => {
         openAlert({
-            message: 'Delete this category?',
+            message: 'Delete this medicine?',
             description: 'This action cannot be undone.',
             variant: 'danger',
             confirmLabel: 'Delete',
-            onConfirm: () => router.delete(`/settings/categories/${cat.id}`)
+            onConfirm: () => router.delete(`/medicines/${medicine.id}`)
         })
     }
 
-    const columns: Column<ICategory>[] = [
+    const columns: Column<IMedicine>[] = [
         {
             header: 'Name',
             className: 'font-medium text-gray-900',
-            cell: (cat) => cat.name,
+            cell: (med) => med.name,
         },
         {
-            header: 'Description',
-            className: 'max-w-xs truncate',
-            cell: (cat) => cat.description ?? <span className="text-gray-300">&mdash;</span>,
+            header: 'Type',
+            cell: (med) => med.type,
+        },
+        {
+            header: 'Category',
+            cell: (med) => med.category?.name ?? <span className="text-gray-300">&mdash;</span>,
+        },
+        {
+            header: 'Unit',
+            cell: (med) => med.unit?.name ?? <span className="text-gray-300">&mdash;</span>,
+        },
+        {
+            header: 'Dosage',
+            cell: (med) => med.dosage ?? <span className="text-gray-300">&mdash;</span>,
+        },
+        {
+            header: 'Unit Price',
+            cell: (med) => med.unit_price != null ? `$${Number(med.unit_price).toFixed(2)}` : <span className="text-gray-300">&mdash;</span>,
         },
         {
             header: 'Created',
             className: 'whitespace-nowrap',
-            cell: (cat) =>
-                new Date(cat.created_at).toLocaleString('en-US', {
+            cell: (med) =>
+                new Date(med.created_at).toLocaleString('en-US', {
                     timeZone: 'Asia/Phnom_Penh',
                     year: 'numeric',
                     month: 'short',
@@ -106,12 +123,12 @@ const Category = () => {
         {
             header: 'Actions',
             className: 'text-end',
-            cell: (cat) => (
+            cell: (med) => (
                 <div className="flex items-center justify-end">
-                    <IconButton onClick={() => handleEdit(cat)} aria-label={`Edit ${cat.name}`}>
+                    <IconButton onClick={() => handleEdit(med)} aria-label={`Edit ${med.name}`}>
                         <Pencil size={16} />
                     </IconButton>
-                    <IconButton color="error" onClick={() => handleDelete(cat)} aria-label={`Delete ${cat.name}`}>
+                    <IconButton color="error" onClick={() => handleDelete(med)} aria-label={`Delete ${med.name}`}>
                         <Trash2 size={16} />
                     </IconButton>
                 </div>
@@ -119,17 +136,17 @@ const Category = () => {
         },
     ]
 
-    const { data, ...pagination } = categories
+    const { data, ...pagination } = medicines
 
     return (
         <>
-            <Head title="Categories" />
+            <Head title="Medicines" />
             <div className="p-8">
                 <div className="mb-6 flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Categories</h1>
+                        <h1 className="text-2xl font-bold text-gray-900">Medicines</h1>
                         <p className="mt-1 text-sm text-gray-500">
-                            Manage your clinic categories
+                            Manage your clinic medicines
                         </p>
                     </div>
                     <div className="flex items-center gap-3">
@@ -137,7 +154,7 @@ const Category = () => {
                             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                             <TextInput
                                 type="text"
-                                placeholder="Search categories..."
+                                placeholder="Search medicines..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="pl-9 pr-8 w-64 py-2!"
@@ -156,17 +173,17 @@ const Category = () => {
                             onClick={handleCreate}
                             startIcon={<Plus size={20} />}
                         >
-                            New Category
+                            New Medicine
                         </Button>
                     </div>
                 </div>
 
                 <DataTable
                     data={data}
-                    keyExtractor={(cat) => cat.id}
+                    keyExtractor={(med) => med.id}
                     columns={columns}
-                    emptyMessage="No categories found"
-                    emptyDescription="Get started by creating a new category."
+                    emptyMessage="No medicines found"
+                    emptyDescription="Get started by creating a new medicine."
                     pagination={pagination}
                     baseUrl={baseUrl}
                 />
@@ -175,4 +192,4 @@ const Category = () => {
     )
 }
 
-export default Category
+export default Medicine

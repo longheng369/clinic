@@ -53,4 +53,14 @@ class CategoryController extends Controller
         return redirect()->route('categories.index')
             ->with('success', 'Category deleted.');
     }
+
+    public function search(Request $request)
+    {
+        $query = $request->query('q', '');
+
+        return Category::where('name', 'like', "%{$query}%")
+            ->orderBy('name')
+            ->limit(25)
+            ->get(['id', 'name']);
+    }
 }
