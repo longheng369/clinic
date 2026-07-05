@@ -1,12 +1,14 @@
 import { usePage, router } from '@inertiajs/react'
 import { Head } from '@inertiajs/react'
 import { useModal } from '@/components/modal'
-import { Pencil, Trash2, Plus } from 'lucide-react'
+import { Pencil, Trash2, Plus, Search, X } from 'lucide-react'
 import CategoryForm from './partials/createOrEdit'
 import { ICategory } from '@/interfaces/ICategory'
 import Button from '@/components/button/button'
 import IconButton from '@/components/button/iconButton'
 import DataTable, { type Column } from '@/components/table/DataTable'
+import TextInput from '@/components/textInput'
+import { useState, useEffect } from 'react'
 
 interface PaginatedData<T> {
     data: T[]
@@ -21,9 +23,33 @@ interface PaginatedData<T> {
 const Category = () => {
     const { openModal, closeModal, openAlert } = useModal()
 
-    const { categories } = usePage<{
+    const { categories, search: searchProp } = usePage<{
         categories: PaginatedData<ICategory>
+        search: string | null
     }>().props
+
+    const [searchTerm, setSearchTerm] = useState(searchProp ?? '')
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            if (searchTerm === searchProp) return
+            if (searchTerm) {
+                router.get('/settings/categories', { search: searchTerm }, { preserveState: true, replace: true })
+            } else {
+                router.get('/settings/categories', {}, { preserveState: true, replace: true })
+            }
+        }, 300)
+
+        return () => clearTimeout(timeout)
+    }, [searchTerm])
+
+    const handleClear = () => {
+        setSearchTerm('')
+    }
+
+    const baseUrl = searchProp
+        ? `/settings/categories?search=${encodeURIComponent(searchProp)}`
+        : '/settings/categories'
 
     const handleCreate = () => {
         openModal({
@@ -106,12 +132,33 @@ const Category = () => {
                             Manage your clinic categories
                         </p>
                     </div>
-                    <Button
-                        onClick={handleCreate}
-                        startIcon={<Plus size={20} />}
-                    >
-                        New Category
-                    </Button>
+                    <div className="flex items-center gap-3">
+                        <div className="relative">
+                            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                            <TextInput
+                                type="text"
+                                placeholder="Search categories..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="pl-9 pr-8 w-64"
+                            />
+                            {searchTerm && (
+                                <button
+                                    type="button"
+                                    onClick={handleClear}
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                >
+                                    <X size={14} />
+                                </button>
+                            )}
+                        </div>
+                        <Button
+                            onClick={handleCreate}
+                            startIcon={<Plus size={20} />}
+                        >
+                            New Category
+                        </Button>
+                    </div>
                 </div>
 
                 <DataTable
@@ -121,7 +168,7 @@ const Category = () => {
                     emptyMessage="No categories found"
                     emptyDescription="Get started by creating a new category."
                     pagination={pagination}
-                    baseUrl="/settings/categories"
+                    baseUrl={baseUrl}
                 />
             </div>
         </>

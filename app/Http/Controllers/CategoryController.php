@@ -5,14 +5,21 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class CategoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $search = $request->query('search');
+
         return Inertia::render('categories/index', [
-            'categories' => Category::latest()->paginate(10),
+            'categories' => Category::latest()
+                ->when($search, fn ($query) => $query->where('name', 'like', "%{$search}%"))
+                ->paginate(10)
+                ->withQueryString(),
+            'search' => $search,
         ]);
     }
 
