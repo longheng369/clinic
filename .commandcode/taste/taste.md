@@ -23,4 +23,5 @@
 
 # react
 - Use react-hook-form for form validation instead of custom touched/blur state management. Confidence: 0.65
+- Persist tab/UI state via URL query parameters (?tab=) rather than localStorage. Confidence: 0.65
 

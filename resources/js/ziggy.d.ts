@@ -28,6 +28,12 @@ declare module 'ziggy-js' {
     ],
     "patients.index": [],
     "patients.store": [],
+    "patients.show": [
+        {
+            "name": "patient",
+            "required": true
+        }
+    ],
     "patients.edit": [
         {
             "name": "patient",
@@ -43,6 +49,22 @@ declare module 'ziggy-js' {
     "patients.destroy": [
         {
             "name": "patient",
+            "required": true
+        }
+    ],
+    "patients.attachments.upload": [
+        {
+            "name": "patient",
+            "required": true
+        }
+    ],
+    "patients.attachments.destroy": [
+        {
+            "name": "patient",
+            "required": true
+        },
+        {
+            "name": "attachment",
             "required": true
         }
     ],

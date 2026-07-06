@@ -34,4 +34,9 @@ class Patient extends Model
     {
         return $this->belongsTo(User::class, 'last_modifier');
     }
+
+    public function attachments(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(PatientAttachment::class);
+    }
 }

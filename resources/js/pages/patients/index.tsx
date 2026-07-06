@@ -1,7 +1,7 @@
 import { usePage, router } from '@inertiajs/react'
 import { Head } from '@inertiajs/react'
 import { useModal } from '@/components/modal'
-import { Pencil, Trash2, Plus, Search, X } from 'lucide-react'
+import { Pencil, Trash2, Plus, Search, X, Eye } from 'lucide-react'
 import PatientForm from './partials/createOrEdit'
 import { IPatient } from '@/interfaces/IPatient'
 import Button from '@/components/button/button'
@@ -119,6 +119,9 @@ const Patient = () => {
             className: 'text-end',
             cell: (p) => (
                 <div className="flex items-center justify-end">
+                    <IconButton onClick={() => router.visit(`/patients/${p.id}`)} aria-label={`View ${p.khmer_first_name}`}>
+                        <Eye size={16} />
+                    </IconButton>
                     <IconButton onClick={() => handleEdit(p)} aria-label={`Edit ${p.khmer_first_name}`}>
                         <Pencil size={16} />
                     </IconButton>

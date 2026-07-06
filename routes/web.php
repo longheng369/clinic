@@ -29,6 +29,11 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('patients', PatientController::class)
         ->only(['index', 'store', 'edit', 'update', 'destroy']);
 
+    Route::get('patients/{patient}', [PatientController::class, 'show'])->name('patients.show');
+    Route::post('patients/{patient}/attachments', [PatientController::class, 'uploadAttachment'])->name('patients.attachments.upload');
+    Route::delete('patients/{patient}/attachments/{attachment}', [PatientController::class, 'deleteAttachment'])->name('patients.attachments.destroy');
+    Route::get('patients/attachments/{attachment}/view', [PatientController::class, 'viewAttachment'])->name('patients.attachments.view');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
