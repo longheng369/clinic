@@ -33,8 +33,7 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/api/categories/search', [CategoryController::class, 'search'])
-        ->name('api.categories.search');
+    Route::get('categories/search', [CategoryController::class, 'search'])->name('api.categories.search');
 });
 
 require __DIR__.'/auth.php';

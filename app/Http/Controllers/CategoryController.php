@@ -58,7 +58,8 @@ class CategoryController extends Controller
     {
         $query = $request->query('q', '');
 
-        return Category::where('name', 'like', "%{$query}%")
+        return Category::query()
+            ->where('name', 'like', "%{$query}%")
             ->orderBy('name')
             ->limit(25)
             ->get(['id', 'name']);

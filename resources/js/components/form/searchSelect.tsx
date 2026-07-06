@@ -54,11 +54,9 @@ const SearchSelect = <T extends FieldValues = FieldValues>({
   useEffect(() => {
     if (!apiUrl) return
 
+    if (!query) return
+
     debounceRef.current = setTimeout(() => {
-      if (!query) {
-        setApiOptions([])
-        return
-      }
       setIsLoading(true)
       fetch(`${apiUrl}?q=${encodeURIComponent(query)}`)
         .then((res) => res.json())
@@ -100,7 +98,6 @@ const SearchSelect = <T extends FieldValues = FieldValues>({
         }}
         onClose={() => {
           setQuery('')
-          setApiOptions([])
         }}
       >
         <div className="relative">

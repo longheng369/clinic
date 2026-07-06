@@ -10,7 +10,7 @@ import Modal from '@/components/modal/modal'
 import Alert, { type AlertProps } from '@/components/modal/alert'
 
 interface ModalConfig {
-  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl'
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl'
   preventClickAway?: boolean
   preventEscape?: boolean
 }

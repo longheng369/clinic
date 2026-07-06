@@ -13,6 +13,7 @@
 # laravel
 - Use Laravel Breeze for authentication scaffolding. Confidence: 0.50
 - Use `constrained()` instead of `foreign()->references()->on()` in migrations. Confidence: 0.65
+- Use `#[Fillable]` attribute syntax (Laravel 13) instead of `protected $fillable` property. Confidence: 0.65
 
 # architecture
 - For CRUD modals, store shared form templates in a partials folder within the page directory and reuse the same template for both create and edit operations. Confidence: 0.70

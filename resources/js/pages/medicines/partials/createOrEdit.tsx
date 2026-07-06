@@ -90,7 +90,7 @@ const MedicineForm = ({ medicine, units, onClose }: MedicineFormProps) => {
                         label="Category"
                         control={control}
                         name='category_id'
-                        apiUrl="/api/categories/search"
+                        apiUrl="/categories/search"
                         initialOption={medicine?.category ? { value: medicine.category.id, label: medicine.category.name } : undefined}
                     />
 

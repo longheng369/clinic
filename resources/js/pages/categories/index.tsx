@@ -32,7 +32,7 @@ const Category = () => {
 
     useEffect(() => {
         const timeout = setTimeout(() => {
-            if (searchTerm === searchProp) return
+            if ((searchTerm || '') === (searchProp || '')) return
             if (searchTerm) {
                 router.get('/settings/categories', { search: searchTerm }, { preserveState: true, replace: true })
             } else {
