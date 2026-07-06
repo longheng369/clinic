@@ -45,16 +45,14 @@ const Sidebar = () => {
       title: 'Menu',
       items: [
         { label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
-        { label: 'Appointments', icon: CalendarDays, path: '/appointments', badge: 5 },
         { label: 'Patients', icon: Users, path: '/patients' },
       ],
     },
     {
       title: 'Clinic',
       items: [
-        { label: 'Doctors', icon: Stethoscope, path: '/doctors' },
         { label: 'Medicines', icon: Pill, path: '/medicines' },
-        { label: 'Records', icon: ClipboardList, path: '/records' },
+        { label: 'Paraclinic', icon: ClipboardList, path: '/paraclinic-requests' },
       ],
     },
     {

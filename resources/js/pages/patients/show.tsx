@@ -4,6 +4,7 @@ import { ArrowLeft, User } from 'lucide-react'
 import { useState } from 'react'
 import AttachmentsTab from './partials/tab/attachment'
 import SurveillanceTab from './partials/tab/surveillance'
+import ParaclinicByPatientTab from '../paraclinic-requests/partials/tab/byPatient'
 
 type Tab = 'consultation' | 'medication' | 'admission' | 'paraclinic' | 'attachment' | 'surveillance'
 
@@ -123,7 +124,7 @@ const TabContent = ({ tab, patientId }: { tab: Tab; patientId: number }) => {
         case 'admission':
             return <Placeholder title="Admission" description="Admission records will appear here." patientId={patientId} />
         case 'paraclinic':
-            return <Placeholder title="Paraclinic" description="Paraclinic test results will appear here." patientId={patientId} />
+            return <ParaclinicByPatientTab patientId={patientId} />
         case 'attachment':
             return <AttachmentsTab patientId={patientId} />
         case 'surveillance':

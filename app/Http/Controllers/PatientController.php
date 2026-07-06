@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ParaclinicRequest;
 use App\Models\Patient;
 use App\Models\PatientAttachment;
 use App\Http\Requests\StorePatientRequest;
@@ -52,6 +53,22 @@ class PatientController extends Controller
     {
         $surveillances = $patient->surveillances()->with('recordedBy')->latest()->paginate(10)->withQueryString();
 
+        $paraclinicRequests = $patient->paraclinicRequests()
+            ->with(['doctor', 'tests'])
+            ->latest()
+            ->paginate(10)
+            ->withQueryString()
+            ->through(fn ($r) => [
+                'id' => $r->id,
+                'request_number' => $r->request_number,
+                'doctor' => $r->doctor ? ['id' => $r->doctor->id, 'name' => $r->doctor->name] : null,
+                'external_facility_name' => $r->external_facility_name,
+                'request_date' => $r->request_date,
+                'status' => $r->status,
+                'payment_status' => $r->payment_status,
+                'total_amount' => (float) $r->total_amount,
+            ]);
+
         return Inertia::render('patients/show', [
             'patient' => $patient,
             'attachments' => $patient->attachments()->with('uploadedBy')->latest()->get(),
@@ -67,6 +84,7 @@ class PatientController extends Controller
                 'recorded_by' => $s->recordedBy?->name,
                 'created_at' => $s->created_at,
             ]),
+            'paraclinicRequests' => $paraclinicRequests,
         ]);
     }
 
