@@ -39,4 +39,9 @@ class Patient extends Model
     {
         return $this->hasMany(PatientAttachment::class);
     }
+
+    public function surveillances(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(PatientSurveillance::class);
+    }
 }

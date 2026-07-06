@@ -3,6 +3,7 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\PatientController;
+use App\Http\Controllers\PatientSurveillanceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UnitController;
 use Illuminate\Support\Facades\Route;
@@ -33,6 +34,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('patients/{patient}/attachments', [PatientController::class, 'uploadAttachment'])->name('patients.attachments.upload');
     Route::delete('patients/{patient}/attachments/{attachment}', [PatientController::class, 'deleteAttachment'])->name('patients.attachments.destroy');
     Route::get('patients/attachments/{attachment}/view', [PatientController::class, 'viewAttachment'])->name('patients.attachments.view');
+
+    Route::get('patients/{patient}/surveillances', [PatientSurveillanceController::class, 'index'])->name('patients.surveillances.index');
+    Route::post('patients/{patient}/surveillances', [PatientSurveillanceController::class, 'store'])->name('patients.surveillances.store');
+    Route::put('patients/{patient}/surveillances/{surveillance}', [PatientSurveillanceController::class, 'update'])->name('patients.surveillances.update');
+    Route::delete('patients/{patient}/surveillances/{surveillance}', [PatientSurveillanceController::class, 'destroy'])->name('patients.surveillances.destroy');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

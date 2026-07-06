@@ -3,6 +3,7 @@ import { IPatient } from '@/interfaces/IPatient'
 import { ArrowLeft, User } from 'lucide-react'
 import { useState } from 'react'
 import AttachmentsTab from './partials/tab/attachment'
+import SurveillanceTab from './partials/tab/surveillance'
 
 type Tab = 'consultation' | 'medication' | 'admission' | 'paraclinic' | 'attachment' | 'surveillance'
 
@@ -126,7 +127,7 @@ const TabContent = ({ tab, patientId }: { tab: Tab; patientId: number }) => {
         case 'attachment':
             return <AttachmentsTab patientId={patientId} />
         case 'surveillance':
-            return <Placeholder title="Surveillance" description="Surveillance data will appear here." patientId={patientId} />
+            return <SurveillanceTab patientId={patientId} />
     }
 }
 

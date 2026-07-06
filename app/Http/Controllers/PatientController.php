@@ -50,9 +50,23 @@ class PatientController extends Controller
 
     public function show(Patient $patient)
     {
+        $surveillances = $patient->surveillances()->with('recordedBy')->latest()->paginate(10)->withQueryString();
+
         return Inertia::render('patients/show', [
             'patient' => $patient,
             'attachments' => $patient->attachments()->with('uploadedBy')->latest()->get(),
+            'surveillances' => $surveillances->through(fn ($s) => [
+                'id' => $s->id,
+                'systolic' => $s->systolic,
+                'diastolic' => $s->diastolic,
+                'pulse' => $s->pulse,
+                'temperature' => (float) $s->temperature,
+                'rr' => $s->rr,
+                'spo2' => $s->spo2,
+                'o2_supply' => $s->o2_supply,
+                'recorded_by' => $s->recordedBy?->name,
+                'created_at' => $s->created_at,
+            ]),
         ]);
     }
 

@@ -1,0 +1,23 @@
+export interface ISurveillance {
+    id: number;
+    patient_id: number;
+    systolic: number;
+    diastolic: number;
+    pulse: number;
+    temperature: number;
+    rr: number;
+    spo2: number;
+    o2_supply: string;
+    recorded_by?: string;
+    created_at: string;
+}
+
+export interface ISurveillanceFormData {
+    systolic: number | null;
+    diastolic: number | null;
+    pulse: number | null;
+    temperature: number | null;
+    rr: number | null;
+    spo2: number | null;
+    o2_supply: string;
+}
