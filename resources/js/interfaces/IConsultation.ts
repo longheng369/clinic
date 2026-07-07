@@ -1,0 +1,67 @@
+export interface IConsultation {
+    id: number;
+    patient_id: number;
+    weight: number | null;
+    chief_complaint: string;
+    respiratory_system_symptoms: string[];
+    respiratory_system_others_note: string | null;
+    cardiovascular_symptoms: string[];
+    cardiovascular_others_note: string | null;
+    neurological_symptoms: string[];
+    neurological_others_note: string | null;
+    musculoskeletal_symptoms: string[];
+    musculoskeletal_others_note: string | null;
+    digestive_symptoms: string[];
+    digestive_others_note: string | null;
+    renal_reproductive_symptoms: string[];
+    renal_reproductive_others_note: string | null;
+    skin_symptoms: string[];
+    skin_others_note: string | null;
+    eye_symptoms: string[];
+    eye_others_note: string | null;
+    ear_symptoms: string[];
+    ear_others_note: string | null;
+    nose_symptoms: string[];
+    nose_others_note: string | null;
+    throat_symptoms: string[];
+    throat_others_note: string | null;
+    psycology_symptoms: string[];
+    psycology_others_note: string | null;
+    diagnosis: string | null;
+    note: string | null;
+    fee: number | null;
+    recorded_by: string | null;
+    created_at: string;
+}
+
+export interface IConsultationFormData {
+    weight: number | null;
+    chief_complaint: string;
+    respiratory_system_symptoms: string[];
+    respiratory_system_others_note: string;
+    cardiovascular_symptoms: string[];
+    cardiovascular_others_note: string;
+    neurological_symptoms: string[];
+    neurological_others_note: string;
+    musculoskeletal_symptoms: string[];
+    musculoskeletal_others_note: string;
+    digestive_symptoms: string[];
+    digestive_others_note: string;
+    renal_reproductive_symptoms: string[];
+    renal_reproductive_others_note: string;
+    skin_symptoms: string[];
+    skin_others_note: string;
+    eye_symptoms: string[];
+    eye_others_note: string;
+    ear_symptoms: string[];
+    ear_others_note: string;
+    nose_symptoms: string[];
+    nose_others_note: string;
+    throat_symptoms: string[];
+    throat_others_note: string;
+    psycology_symptoms: string[];
+    psycology_others_note: string;
+    diagnosis: string;
+    note: string;
+    fee: number | null;
+}

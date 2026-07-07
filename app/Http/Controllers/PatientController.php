@@ -51,6 +51,8 @@ class PatientController extends Controller
 
     public function show(Patient $patient)
     {
+        $consultations = $patient->consultations()->with('recordedBy')->latest()->paginate(10)->withQueryString();
+
         $surveillances = $patient->surveillances()->with('recordedBy')->latest()->paginate(10)->withQueryString();
 
         $paraclinicRequests = $patient->paraclinicRequests()
@@ -71,6 +73,15 @@ class PatientController extends Controller
 
         return Inertia::render('patients/show', [
             'patient' => $patient,
+            'consultations' => $consultations->through(fn ($c) => [
+                'id' => $c->id,
+                'weight' => $c->weight ? (float) $c->weight : null,
+                'chief_complaint' => $c->chief_complaint,
+                'diagnosis' => $c->diagnosis,
+                'fee' => $c->fee ? (float) $c->fee : null,
+                'recorded_by' => $c->recordedBy?->name,
+                'created_at' => $c->created_at,
+            ]),
             'attachments' => $patient->attachments()->with('uploadedBy')->latest()->get(),
             'surveillances' => $surveillances->through(fn ($s) => [
                 'id' => $s->id,

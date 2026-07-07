@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ConsultationController;
 use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\ParaclinicRequestController;
 use App\Http\Controllers\PatientController;
@@ -41,6 +42,13 @@ Route::middleware(['auth'])->group(function () {
     Route::post('patients/{patient}/surveillances', [PatientSurveillanceController::class, 'store'])->name('patients.surveillances.store');
     Route::put('patients/{patient}/surveillances/{surveillance}', [PatientSurveillanceController::class, 'update'])->name('patients.surveillances.update');
     Route::delete('patients/{patient}/surveillances/{surveillance}', [PatientSurveillanceController::class, 'destroy'])->name('patients.surveillances.destroy');
+
+    Route::get('patients/{patient}/consultations/create', [ConsultationController::class, 'create'])->name('patients.consultations.create');
+    Route::get('patients/{patient}/consultations/{consultation}', [ConsultationController::class, 'show'])->name('patients.consultations.show');
+    Route::get('patients/{patient}/consultations/{consultation}/edit', [ConsultationController::class, 'edit'])->name('patients.consultations.edit');
+    Route::post('patients/{patient}/consultations', [ConsultationController::class, 'store'])->name('patients.consultations.store');
+    Route::put('patients/{patient}/consultations/{consultation}', [ConsultationController::class, 'update'])->name('patients.consultations.update');
+    Route::delete('patients/{patient}/consultations/{consultation}', [ConsultationController::class, 'destroy'])->name('patients.consultations.destroy');
 
     Route::resource('paraclinic-requests', ParaclinicRequestController::class)
         ->only(['index', 'store', 'update', 'destroy']);

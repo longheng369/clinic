@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { router } from '@inertiajs/react'
 import { useToast } from '@/components/toast'
 import { useModal } from '@/components/modal'
-import Button from '@/components/button/button'
+import Modal from '@/components/modal/modal'
 import { Upload, Trash2, FileText, Image, File } from 'lucide-react'
 import { usePage } from '@inertiajs/react'
 
@@ -30,6 +30,7 @@ const formatSize = (bytes: number) => {
 
 const AttachmentsTab = ({ patientId }: { patientId: number }) => {
     const [isUploading, setIsUploading] = useState(false)
+    const [preview, setPreview] = useState<Attachment | null>(null)
     const { toast } = useToast()
     const { openAlert } = useModal()
     const { attachments } = usePage<{ attachments: Attachment[] }>().props
@@ -100,14 +101,12 @@ const AttachmentsTab = ({ patientId }: { patientId: number }) => {
                                 </p>
                             </div>
                             <div className="flex items-center gap-1">
-                                <a
-                                    href={`/patients/attachments/${a.id}/view`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
+                                <button
+                                    onClick={() => setPreview(a)}
                                     className="text-sm text-primary-600 hover:text-primary-700 px-2 py-1 rounded hover:bg-primary-50"
                                 >
                                     View
-                                </a>
+                                </button>
                                 <button
                                     onClick={() => handleDelete(a)}
                                     className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
@@ -118,6 +117,37 @@ const AttachmentsTab = ({ patientId }: { patientId: number }) => {
                         </div>
                     ))}
                 </div>
+            )}
+            {preview && (
+                <Modal open={!!preview} onClose={() => setPreview(null)} title={preview.file_name} maxWidth="4xl">
+                    {preview.file_type.startsWith('image/') ? (
+                        <div className="p-4">
+                            <img
+                                src={`/patients/attachments/${preview.id}/view`}
+                                alt={preview.file_name}
+                                className="max-w-full max-h-[80vh] mx-auto rounded"
+                            />
+                        </div>
+                    ) : preview.file_type.includes('pdf') ? (
+                        <iframe
+                            src={`/patients/attachments/${preview.id}/view`}
+                            className="w-full h-[80vh] rounded-b-lg"
+                        />
+                    ) : (
+                        <div className="p-8 text-center text-gray-400">
+                            <File size={48} className="mx-auto mb-3" />
+                            <p className="text-sm">Preview not available for this file type.</p>
+                            <a
+                                href={`/patients/attachments/${preview.id}/view`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-block mt-3 text-sm text-primary-600 underline"
+                            >
+                                Download instead
+                            </a>
+                        </div>
+                    )}
+                </Modal>
             )}
         </div>
     )

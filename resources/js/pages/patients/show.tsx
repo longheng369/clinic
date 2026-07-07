@@ -2,6 +2,7 @@ import { Head, Link } from '@inertiajs/react'
 import { IPatient } from '@/interfaces/IPatient'
 import { ArrowLeft, User } from 'lucide-react'
 import { useState } from 'react'
+import ConsultationTab from './partials/tab/consultation'
 import AttachmentsTab from './partials/tab/attachment'
 import SurveillanceTab from './partials/tab/surveillance'
 import ParaclinicByPatientTab from '../paraclinic-requests/partials/tab/byPatient'
@@ -118,7 +119,7 @@ const InfoItem = ({ label, value, className }: { label: string; value: React.Rea
 const TabContent = ({ tab, patientId }: { tab: Tab; patientId: number }) => {
     switch (tab) {
         case 'consultation':
-            return <Placeholder title="Consultation" description="Patient consultation records will appear here." patientId={patientId} />
+            return <ConsultationTab patientId={patientId} />
         case 'medication':
             return <Placeholder title="Medication" description="Medication history and prescriptions will appear here." patientId={patientId} />
         case 'admission':
