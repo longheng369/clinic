@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Medicine;
 use App\Models\ParaclinicRequest;
 use App\Models\Patient;
 use App\Models\PatientAttachment;
+use App\Models\Visit;
 use App\Http\Requests\StorePatientRequest;
 use App\Http\Requests\UpdatePatientRequest;
 use Illuminate\Http\Request;
@@ -96,6 +98,51 @@ class PatientController extends Controller
                 'created_at' => $s->created_at,
             ]),
             'paraclinicRequests' => $paraclinicRequests,
+            'medicationAdministrations' => Visit::where('patient_id', $patient->id)
+                ->where('status', 'active')
+                ->latest()
+->first()
+                ?->medicationAdministrations()
+                ->with(['medicine', 'recordedBy'])
+                ->latest()
+                ->paginate(10)
+                ->through(fn ($m) => [
+                    'id' => $m->id,
+                    'medicine' => $m->medicine ? ['id' => $m->medicine->id, 'name' => $m->medicine->name] : null,
+                    'route' => $m->route,
+                    'dosage' => (float) $m->dosage,
+                    'unit' => $m->unit,
+                    'interval' => $m->interval,
+                    'status' => $m->status,
+                    'notes' => $m->notes,
+                    'recorded_by' => $m->recordedBy?->name,
+                    'created_at' => $m->created_at,
+                ])
+                ?? ['data' => [], 'current_page' => 1, 'last_page' => 1, 'per_page' => 10, 'total' => 0, 'from' => null, 'to' => null],
+            'medicines' => Medicine::orderBy('name')->get(['id', 'name']),
+            'activeVisits' => Visit::where('patient_id', $patient->id)
+                ->where('status', 'active')
+                ->with('recordedBy')
+                ->latest()
+                ->get()
+                ->map(fn ($v) => [
+                    'id' => $v->id,
+                    'type' => $v->type,
+                    'visit_date' => $v->visit_date,
+                    'recorded_by' => $v->recordedBy?->name,
+                ]),
+            'visitHistory' => Visit::where('patient_id', $patient->id)
+                ->where('status', 'closed')
+                ->with('recordedBy')
+                ->latest()
+                ->paginate(5)
+                ->through(fn ($v) => [
+                    'id' => $v->id,
+                    'type' => $v->type,
+                    'visit_date' => $v->visit_date,
+                    'recorded_by' => $v->recordedBy?->name,
+                    'closed_at' => $v->updated_at,
+                ]),
         ]);
     }
 

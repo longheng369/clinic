@@ -2,12 +2,14 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ConsultationController;
+use App\Http\Controllers\MedicationAdministrationController;
 use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\ParaclinicRequestController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PatientSurveillanceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UnitController;
+use App\Http\Controllers\VisitController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -61,6 +63,15 @@ Route::middleware(['auth'])->group(function () {
     Route::post('paraclinic-requests/{paraclinic_request}/results', [ParaclinicRequestController::class, 'storeResult'])->name('paraclinic-requests.results.store');
 
     Route::get('doctors/search', [ParaclinicRequestController::class, 'searchDoctors'])->name('api.doctors.search');
+
+    Route::post('patients/{patient}/medications', [MedicationAdministrationController::class, 'store'])->name('patients.medications.store');
+    Route::post('visits/{visit}/medications/{medicationAdministration}/provide', [MedicationAdministrationController::class, 'provide'])->name('visits.medications.provide');
+    Route::post('visits/{visit}/medications/{medicationAdministration}/continue', [MedicationAdministrationController::class, 'continue'])->name('visits.medications.continue');
+    Route::post('visits/{visit}/medications/{medicationAdministration}/stop', [MedicationAdministrationController::class, 'stop'])->name('visits.medications.stop');
+
+    Route::get('visits/{visit}', [VisitController::class, 'show'])->name('visits.show');
+    Route::patch('visits/{visit}/admit', [VisitController::class, 'admit'])->name('visits.admit');
+    Route::patch('visits/{visit}/close', [VisitController::class, 'close'])->name('visits.close');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

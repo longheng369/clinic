@@ -30,16 +30,28 @@ class ConsultationController extends Controller
 
     public function create(Patient $patient)
     {
+        $activeVisits = $patient->visits()->where('status', 'active')->latest()->get();
+
         return Inertia::render('consultations/create', [
             'patient' => $patient,
+            'activeVisits' => $activeVisits->map(fn ($v) => [
+                'id' => $v->id,
+                'type' => $v->type,
+                'visit_date' => $v->visit_date,
+            ]),
         ]);
     }
 
     public function store(StoreConsultationRequest $request, Patient $patient)
     {
+        $visit = $patient->visits()->create([
+            'type' => 'OPD',
+            'recorded_by' => auth()->id(),
+        ]);
+
         $patient->consultations()->create(array_merge(
             $request->validated(),
-            ['recorded_by' => auth()->id()]
+            ['visit_id' => $visit->id, 'recorded_by' => auth()->id()]
         ));
 
         return redirect()->route('patients.show', $patient->id)

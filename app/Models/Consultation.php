@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable([
     'patient_id',
+    'visit_id',
     'weight',
     'chief_complaint',
     'respiratory_system_symptoms',
@@ -64,6 +65,11 @@ class Consultation extends Model
     public function patient(): BelongsTo
     {
         return $this->belongsTo(Patient::class);
+    }
+
+    public function visit(): BelongsTo
+    {
+        return $this->belongsTo(Visit::class);
     }
 
     public function recordedBy(): BelongsTo
