@@ -129,7 +129,7 @@ const Index = () => {
         },
         {
             header: 'Patient',
-            cell: (r) => r.patient ? `${r.patient.khmer_last_name} ${r.patient.khmer_first_name}` : <span className="text-gray-300">&mdash;</span>,
+            cell: (r) => r.patient ? <span className='font-khmer text-[16px]'>{r.patient.khmer_last_name} {r.patient.khmer_first_name}</span> : <span className="text-gray-300">&mdash;</span>,
         },
         {
             header: 'Doctor',
