@@ -8,13 +8,15 @@ import AttachmentsTab from './partials/tab/attachment'
 import SurveillanceTab from './partials/tab/surveillance'
 import MedicationTab from './partials/tab/medication'
 import ParaclinicByPatientTab from '../paraclinic-requests/partials/tab/byPatient'
+import VaccinationTab from './partials/tab/vaccination'
 
-type Tab = 'consultation' | 'medication' | 'admission' | 'paraclinic' | 'attachment' | 'surveillance'
+type Tab = 'consultation' | 'medication' | 'admission' | 'paraclinic' | 'vaccination' | 'attachment' | 'surveillance'
 
 const TABS: { key: Tab; label: string }[] = [
     { key: 'consultation', label: 'Consultation' },
     { key: 'medication', label: 'Medication' },
     { key: 'paraclinic', label: 'Paraclinic' },
+    { key: 'vaccination', label: 'Vaccination' },
     { key: 'attachment', label: 'Attachment' },
     { key: 'surveillance', label: 'Surveillance' },
 ]
@@ -211,7 +213,7 @@ const PatientShow = ({ patient }: { patient: IPatient }) => {
                         </nav>
                     </div>
                     <div className="p-6">
-                        <TabContent tab={activeTab} patientId={patient.id} />
+                        <TabContent tab={activeTab} patientId={patient.id} patient={patient} />
                     </div>
                 </div>
             </div>
@@ -226,7 +228,7 @@ const InfoItem = ({ label, value, className }: { label: string; value: React.Rea
     </div>
 )
 
-const TabContent = ({ tab, patientId }: { tab: Tab; patientId: number }) => {
+const TabContent = ({ tab, patientId, patient }: { tab: Tab; patientId: number; patient: IPatient }) => {
     switch (tab) {
         case 'consultation':
             return <ConsultationTab patientId={patientId} />
@@ -236,6 +238,8 @@ const TabContent = ({ tab, patientId }: { tab: Tab; patientId: number }) => {
             return <ParaclinicByPatientTab patientId={patientId} />
         case 'attachment':
             return <AttachmentsTab patientId={patientId} />
+        case 'vaccination':
+            return <VaccinationTab patient={patient} />
         case 'surveillance':
             return <SurveillanceTab patientId={patientId} />
     }

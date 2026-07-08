@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use App\Models\Vaccine;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Fillable([
@@ -24,6 +27,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Patient extends Model
 {
     use SoftDeletes;
+
+    protected function casts(): array
+    {
+        return [
+            'date_of_birth' => 'date',
+        ];
+    }
 
     public function registerBy(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
@@ -58,5 +68,91 @@ class Patient extends Model
     public function visits(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Visit::class);
+    }
+
+    public function vaccinations(): HasMany
+    {
+        return $this->hasMany(PatientVaccination::class);
+    }
+
+    public function getAgeInMonthsAttribute(): int
+    {
+        return (int) $this->date_of_birth->diffInMonths(now());
+    }
+
+    public function nextDoseForVaccine(Vaccine $vaccine): array
+    {
+        $ageMonths = $this->age_in_months;
+
+        $rules = $vaccine->rules ?? [];
+        $rule = null;
+        foreach ($rules as $r) {
+            if ($ageMonths >= $r['min_age_months'] && ($r['max_age_months'] === null || $ageMonths <= $r['max_age_months'])) {
+                $rule = $r;
+                break;
+            }
+        }
+
+        if (! $rule) {
+            return [
+                'eligible' => false,
+                'doses_completed' => 0,
+                'total_doses' => 0,
+                'next_dose_number' => null,
+                'next_dose_due_date' => null,
+            ];
+        }
+
+        $totalDoses = count($rule['doses']);
+        $lastVaccination = $this->vaccinations()
+            ->where('vaccine_id', $vaccine->id)
+            ->latest('dose_number')
+            ->first();
+
+        $dosesCompleted = $lastVaccination?->dose_number ?? 0;
+
+        if ($dosesCompleted >= $totalDoses) {
+            return [
+                'eligible' => true,
+                'doses_completed' => $totalDoses,
+                'total_doses' => $totalDoses,
+                'next_dose_number' => null,
+                'next_dose_due_date' => null,
+            ];
+        }
+
+        $nextDoseNumber = $dosesCompleted + 1;
+        $nextDoseDef = null;
+        foreach ($rule['doses'] as $d) {
+            if ($d['dose_number'] === $nextDoseNumber) {
+                $nextDoseDef = $d;
+                break;
+            }
+        }
+
+        if (! $nextDoseDef) {
+            return [
+                'eligible' => true,
+                'doses_completed' => $dosesCompleted,
+                'total_doses' => $totalDoses,
+                'next_dose_number' => null,
+                'next_dose_due_date' => null,
+            ];
+        }
+
+        if ($dosesCompleted === 0) {
+            $dueDate = now();
+        } else {
+            $dueDate = Carbon::parse($lastVaccination->administered_date)
+                ->addDays($nextDoseDef['interval_days']);
+        }
+
+        return [
+            'eligible' => true,
+            'doses_completed' => $dosesCompleted,
+            'total_doses' => $totalDoses,
+            'next_dose_number' => $nextDoseNumber,
+            'next_dose_due_date' => $dueDate->toDateString(),
+        ];
     }
 }

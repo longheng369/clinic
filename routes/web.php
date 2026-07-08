@@ -2,25 +2,25 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ConsultationController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MedicationAdministrationController;
 use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\ParaclinicRequestController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PatientSurveillanceController;
+use App\Http\Controllers\PatientVaccinationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UnitController;
+use App\Http\Controllers\VaccineController;
 use App\Http\Controllers\VisitController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 Route::get('/', function () {
     return redirect('/login');
 });
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', function () {
-        return Inertia::render('dashboard/index');
-    })->name('dashboard');
+    Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
     Route::resource('settings/categories', CategoryController::class)
         ->only(['index', 'store', 'edit', 'update', 'destroy']);
@@ -29,6 +29,9 @@ Route::middleware(['auth'])->group(function () {
         ->only(['index', 'store', 'edit', 'update', 'destroy']);
 
     Route::resource('medicines', MedicineController::class)
+        ->only(['index', 'store', 'edit', 'update', 'destroy']);
+
+    Route::resource('vaccines', VaccineController::class)
         ->only(['index', 'store', 'edit', 'update', 'destroy']);
 
     Route::resource('patients', PatientController::class)
@@ -44,6 +47,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('patients/{patient}/surveillances', [PatientSurveillanceController::class, 'store'])->name('patients.surveillances.store');
     Route::put('patients/{patient}/surveillances/{surveillance}', [PatientSurveillanceController::class, 'update'])->name('patients.surveillances.update');
     Route::delete('patients/{patient}/surveillances/{surveillance}', [PatientSurveillanceController::class, 'destroy'])->name('patients.surveillances.destroy');
+
+    Route::get('patients/{patient}/vaccinations', [PatientVaccinationController::class, 'index'])->name('patients.vaccinations.index');
+    Route::post('patients/{patient}/vaccinations', [PatientVaccinationController::class, 'store'])->name('patients.vaccinations.store');
+    Route::delete('patients/{patient}/vaccinations/{vaccination}', [PatientVaccinationController::class, 'destroy'])->name('patients.vaccinations.destroy');
 
     Route::get('patients/{patient}/consultations/create', [ConsultationController::class, 'create'])->name('patients.consultations.create');
     Route::get('patients/{patient}/consultations/{consultation}', [ConsultationController::class, 'show'])->name('patients.consultations.show');

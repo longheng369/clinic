@@ -6,7 +6,9 @@ use App\Models\Medicine;
 use App\Models\ParaclinicRequest;
 use App\Models\Patient;
 use App\Models\PatientAttachment;
+use App\Models\Vaccine;
 use App\Models\Visit;
+use Carbon\Carbon;
 use App\Http\Requests\StorePatientRequest;
 use App\Http\Requests\UpdatePatientRequest;
 use Illuminate\Http\Request;
@@ -119,6 +121,28 @@ class PatientController extends Controller
                     'created_at' => $m->created_at,
                 ])
                 ?? ['data' => [], 'current_page' => 1, 'last_page' => 1, 'per_page' => 10, 'total' => 0, 'from' => null, 'to' => null],
+            'vaccinations' => $patient->vaccinations()
+                ->with(['vaccine', 'administeredBy'])
+                ->latest()
+                ->paginate(10)
+                ->through(fn ($v) => [
+                    'id' => $v->id,
+                    'vaccine' => $v->vaccine ? ['id' => $v->vaccine->id, 'name' => $v->vaccine->name] : null,
+                    'dose_number' => $v->dose_number,
+                    'administered_date' => $v->administered_date,
+                    'notes' => $v->notes,
+                    'administered_by' => $v->administeredBy?->name,
+                    'created_at' => $v->created_at,
+                ]),
+            'vaccines' => Vaccine::orderBy('name')->get(['id', 'name']),
+            'vaccineCard' => Vaccine::orderBy('name')->get(['id', 'name', 'rules'])->map(fn ($v) => array_merge(
+                ['vaccine' => ['id' => $v->id, 'name' => $v->name]],
+                $patient->nextDoseForVaccine($v),
+            )),
+            'vaccinationAlerts' => Vaccine::orderBy('name')->get(['id', 'name', 'rules'])->map(fn ($v) => array_merge(
+                ['vaccine' => ['id' => $v->id, 'name' => $v->name]],
+                $patient->nextDoseForVaccine($v),
+            ))->filter(fn ($item) => $item['next_dose_due_date'] !== null && Carbon::parse($item['next_dose_due_date'])->lte(Carbon::now()->addDays(7)))->values(),
             'medicines' => Medicine::orderBy('name')->get(['id', 'name']),
             'activeVisits' => Visit::where('patient_id', $patient->id)
                 ->where('status', 'active')

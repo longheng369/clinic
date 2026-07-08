@@ -6,6 +6,7 @@ import {
   Users,
   Stethoscope,
   Pill,
+  Syringe,
   ClipboardList,
   Settings,
   HelpCircle,
@@ -52,6 +53,7 @@ const Sidebar = () => {
       title: 'Clinic',
       items: [
         { label: 'Medicines', icon: Pill, path: '/medicines' },
+        { label: 'Vaccines', icon: Syringe, path: '/vaccines' },
         { label: 'Paraclinic', icon: ClipboardList, path: '/paraclinic-requests' },
       ],
     },
