@@ -9,6 +9,7 @@ import IconButton from '@/components/button/iconButton'
 import DataTable, { type Column } from '@/components/table/DataTable'
 import TextInput from '@/components/textInput'
 import { useState, useEffect } from 'react'
+import { formatDob } from '@/utils/date'
 
 interface PaginatedData<T> {
     data: T[]
@@ -107,7 +108,7 @@ const Patient = () => {
         {
             header: 'DOB',
             className: 'whitespace-nowrap',
-            cell: (p) => p.date_of_birth,
+            cell: (p) => formatDob(p.date_of_birth),
         },
         {
             header: 'Blood',

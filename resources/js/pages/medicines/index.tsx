@@ -10,6 +10,7 @@ import IconButton from '@/components/button/iconButton'
 import DataTable, { type Column } from '@/components/table/DataTable'
 import TextInput from '@/components/textInput'
 import { useState, useEffect } from 'react'
+import { formatCreatedDateTime } from '@/utils/date'
 
 interface PaginatedData<T> {
     data: T[]
@@ -108,17 +109,7 @@ const Medicine = () => {
         {
             header: 'Created',
             className: 'whitespace-nowrap',
-            cell: (med) =>
-                new Date(med.created_at).toLocaleString('en-US', {
-                    timeZone: 'Asia/Phnom_Penh',
-                    year: 'numeric',
-                    month: 'short',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: false,
-                }),
+            cell: (med) => formatCreatedDateTime(med.created_at)
         },
         {
             header: 'Actions',

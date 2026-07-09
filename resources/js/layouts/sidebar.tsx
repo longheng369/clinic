@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { Link, usePage, router } from '@inertiajs/react'
 import {
   LayoutDashboard,
-  CalendarDays,
   Users,
   Stethoscope,
   Pill,
@@ -14,6 +13,7 @@ import {
   ChevronDown,
   ChevronRight,
   Tags,
+  Calendar,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -47,6 +47,7 @@ const Sidebar = () => {
       items: [
         { label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
         { label: 'Patients', icon: Users, path: '/patients' },
+        { label: 'Appointments', icon: Calendar, path: '/appointments' },
       ],
     },
     {

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ConsultationController;
 use App\Http\Controllers\DashboardController;
@@ -21,6 +22,12 @@ Route::get('/', function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
+
+    Route::resource('appointments', AppointmentController::class)
+        ->only(['index', 'store', 'edit', 'update', 'destroy']);
+
+    Route::get('appointments/patients/search', [AppointmentController::class, 'searchPatients'])->name('api.appointments.patients.search');
+    Route::get('appointments/patients/{patient}/vaccine-alerts', [AppointmentController::class, 'patientVaccineAlerts'])->name('api.appointments.patients.vaccine-alerts');
 
     Route::resource('settings/categories', CategoryController::class)
         ->only(['index', 'store', 'edit', 'update', 'destroy']);
