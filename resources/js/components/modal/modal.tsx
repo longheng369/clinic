@@ -6,6 +6,7 @@ interface ModalProps {
   title: string
   children: ReactNode
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl'
+  fullScreen?: boolean
   preventClickAway?: boolean
   preventEscape?: boolean
 }
@@ -26,6 +27,7 @@ const Modal = ({
   title,
   children,
   maxWidth = 'md',
+  fullScreen = false,
   preventClickAway = false,
   preventEscape = false,
 }: ModalProps) => {
@@ -85,14 +87,18 @@ const Modal = ({
       />
       <div
         ref={panelRef}
-        className={`relative z-10 w-full ${maxWidthClasses[maxWidth]} rounded-lg bg-white shadow-xl transition-all duration-200 ${
+        className={`relative z-10 w-full rounded-lg bg-white shadow-xl transition-all duration-200 ${
           visible
             ? 'scale-100 opacity-100 ease-out'
             : 'scale-95 opacity-0 ease-in'
+        } ${
+          fullScreen
+            ? 'mx-4 max-h-[90vh] min-h-[80vh] flex flex-col max-w-6xl'
+            : maxWidthClasses[maxWidth]
         }`}
       >
         <div className="flex items-center justify-between p-4">
-          <h2 className="text-lg font-bold">{title}</h2>
+          <h2 className="text-lg font-bold truncate">{title}</h2>
           <button
             onClick={onClose}
             className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"

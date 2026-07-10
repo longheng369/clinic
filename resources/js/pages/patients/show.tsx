@@ -9,6 +9,7 @@ import SurveillanceTab from './partials/tab/surveillance'
 import MedicationTab from './partials/tab/medication'
 import ParaclinicByPatientTab from '../paraclinic-requests/partials/tab/byPatient'
 import VaccinationTab from './partials/tab/vaccination'
+import { formatDob } from '@/utils/date'
 
 type Tab = 'consultation' | 'medication' | 'admission' | 'paraclinic' | 'vaccination' | 'attachment' | 'surveillance'
 
@@ -101,7 +102,7 @@ const PatientShow = ({ patient }: { patient: IPatient }) => {
                         <div className="grid grid-cols-3 gap-6">
                             <InfoItem label="Khmer Name" value={`${patient.khmer_last_name} ${patient.khmer_first_name}`} className="font-khmer text-[16px]" />
                             <InfoItem label="English Name" value={patient.first_name ? `${patient.last_name ?? ''} ${patient.first_name}`.trim() : null} />
-                            <InfoItem label="Date of Birth" value={patient.date_of_birth} />
+                            <InfoItem label="Date of Birth" value={formatDob(patient.date_of_birth)} />
                             <InfoItem label="Phone Number" value={patient.phone_number} />
                             <InfoItem label="Gender" value={<span className="capitalize">{patient.gender}</span>} />
                             <InfoItem label="Blood Group" value={patient.blood_group} />

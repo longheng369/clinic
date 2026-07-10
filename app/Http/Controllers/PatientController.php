@@ -221,9 +221,9 @@ class PatientController extends Controller
     {
         abort_if(!Storage::exists($attachment->file_path), 404);
 
-        return response()->streamDownload(function () use ($attachment) {
+        return response()->stream(function () use ($attachment) {
             echo Storage::get($attachment->file_path);
-        }, $attachment->file_name, [
+        }, 200, [
             'Content-Type' => $attachment->file_type,
             'Content-Disposition' => 'inline; filename="'.$attachment->file_name.'"',
         ]);
