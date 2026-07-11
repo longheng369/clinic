@@ -6,6 +6,7 @@ import {
   type Path,
   type RegisterOptions,
 } from "react-hook-form";
+import Select from '../selection/select';
 
 type SelectOption = {
     value: string | number;
@@ -23,7 +24,7 @@ type SelectProps<T extends FieldValues = FieldValues> = {
     options: SelectOption[];
 } & Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'className'>
 
-const Select = <T extends FieldValues = FieldValues>({
+const RHFSelect = <T extends FieldValues = FieldValues>({
     control,
     name,
     rules,
@@ -55,29 +56,8 @@ const Select = <T extends FieldValues = FieldValues>({
     const errorStyle = "border-red-500 focus:border-red-500 focus:ring-red-500/20";
 
     return (
-        <div className='flex flex-col'>
-            <label htmlFor={name} className={`block text-sm font-medium text-gray-700 mb-1 ${error && 'text-red-500'}`}>
-                {label} {rules?.required && <span className="text-red-500">*</span>}
-            </label>
-            <select
-                id={name}
-                value={field.value ?? ''}
-                onChange={handleChange}
-                onBlur={field.onBlur}
-                ref={field.ref}
-                {...rest}
-                className={cn(base, error ? errorStyle : defaultStyle)}
-            >
-                <option value="">Select...</option>
-                {options.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                    </option>
-                ))}
-            </select>
-            {error && <span className="mt-1 text-sm text-red-500">{error.message}</span>}
-        </div>
+        <Select {...field} options={options}/>
     )
 }
 
-export default Select
+export default RHFSelect

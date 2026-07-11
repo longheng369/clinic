@@ -4,7 +4,7 @@ import { useModal } from '@/components/modal'
 import { Pencil, Trash2, Plus, Search, X, Eye } from 'lucide-react'
 import PatientForm from './partials/createOrEdit'
 import { IPatient } from '@/interfaces/IPatient'
-import Button from '@/components/button/button'
+import { Button } from '@/components/ui/button'
 import IconButton from '@/components/button/iconButton'
 import DataTable, { type Column } from '@/components/table/DataTable'
 import TextInput from '@/components/textInput'
@@ -167,11 +167,8 @@ const Patient = () => {
                                 </button>
                             )}
                         </div>
-                        <Button
-                            onClick={handleCreate}
-                            startIcon={<Plus size={20} />}
-                        >
-                            New Patient
+                        <Button onClick={handleCreate}>
+                            <Plus size={20} /> New Patient
                         </Button>
                     </div>
                 </div>

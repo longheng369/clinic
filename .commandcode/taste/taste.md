@@ -9,6 +9,7 @@
 # styling
 - Keep form inputs at adequately visible dimensions; do not reduce sizing below Tailwind defaults. Confidence: 0.65
 - Use primary-500 color for input focus outlines/rings. Confidence: 0.70
+- Prefer blue-based accent colors (primary-50 range) over default orange/warm accent tones. Confidence: 0.70
 
 # laravel
 - Use Laravel Breeze for authentication scaffolding. Confidence: 0.50

@@ -101,7 +101,7 @@ export default function Button({
             const diameter = Math.max(rect.width, rect.height)
             const id = nextRippleId++
             setRipples((prev) => [...prev, { id, x: e.clientX - rect.left - diameter / 2, y: e.clientY - rect.top - diameter / 2, diameter }])
-            setTimeout(() => setRipples((prev) => prev.filter((r) => r.id !== id)), 900)
+            setTimeout(() => setRipples((prev) => prev.filter((r) => r.id !== id)), 700)
         },
         [onClick, disableRipple],
     )
