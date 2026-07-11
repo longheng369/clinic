@@ -15,6 +15,7 @@ use App\Http\Controllers\UnitController;
 use App\Http\Controllers\VaccineController;
 use App\Http\Controllers\VisitController;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 Route::get('/', function () {
     return redirect('/login');
@@ -92,6 +93,10 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('categories/search', [CategoryController::class, 'search'])->name('api.categories.search');
+
+    Route::get('components', function () {
+        return Inertia::render('components/index');
+    });
 });
 
 require __DIR__.'/auth.php';

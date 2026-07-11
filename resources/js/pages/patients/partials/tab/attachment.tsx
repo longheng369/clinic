@@ -66,7 +66,7 @@ const AttachmentsTab = ({ patientId }: { patientId: number }) => {
     }
 
     return (
-        <div className='bg-background'>
+        <div>
             {/* Upload */}
             <div className="mb-6 flex justify-end items-center gap-2">
                 <p className="text-xs text-gray-400 mt-1">Max file size: 20 MB</p>
@@ -90,7 +90,7 @@ const AttachmentsTab = ({ patientId }: { patientId: number }) => {
                     {attachments.map((a) => (
                         <div
                             key={a.id}
-                            className="flex items-center gap-3 px-4 py-3 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors"
+                            className="flex items-center gap-3 px-4 py-3 rounded-lg border border-gray-200 hover:border-gray-300 bg-white transition-colors"
                         >
                             {fileIcon(a.file_type)}
                             <div className="flex-1 min-w-0">

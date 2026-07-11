@@ -5,6 +5,7 @@ import { IConsultation } from '@/interfaces/IConsultation'
 import Button from '@/components/button/button'
 import IconButton from '@/components/button/iconButton'
 import DataTable, { type Column } from '@/components/table/DataTable'
+import { formatCreatedDateTime } from '@/utils/date'
 
 interface PaginatedData<T> {
     data: T[]
@@ -34,16 +35,7 @@ const ConsultationTab = ({ patientId }: { patientId: number }) => {
         {
             header: 'Date',
             className: 'whitespace-nowrap',
-            cell: (c) =>
-                new Date(c.created_at).toLocaleString('en-US', {
-                    timeZone: 'Asia/Phnom_Penh',
-                    year: 'numeric',
-                    month: 'short',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: false,
-                }),
+            cell: (c) => formatCreatedDateTime(c.created_at),
         },
         {
             header: 'Chief Complaint',
