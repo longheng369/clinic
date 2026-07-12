@@ -8,7 +8,7 @@
 
 # styling
 - Keep form inputs at adequately visible dimensions; do not reduce sizing below Tailwind defaults. Confidence: 0.65
-- Use primary-500 color for input focus outlines/rings. Confidence: 0.70
+- Use primary-500 color for input focus outlines/rings. Confidence: 0.75
 - Prefer blue-based accent colors (primary-50 range) over default orange/warm accent tones. Confidence: 0.70
 
 # laravel
@@ -22,6 +22,7 @@
 
 # components
 - Keep the reusable form input component scoped to `<input>` elements only — do not add textarea support. Confidence: 0.60
+- Use `@base-ui/react` Select component instead of native HTML `<select>` for form select inputs. Confidence: 0.75
 
 # react
 - Use react-hook-form for form validation instead of custom touched/blur state management. Confidence: 0.65

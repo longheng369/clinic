@@ -2,18 +2,25 @@ import { useState } from 'react'
 import Select from '@/components/selection/select'
 import Autocomplete from '@/components/selection/autocomplete'
 import { Head } from '@inertiajs/react';
-import {
-  Combobox,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxList,
-} from "@/components/ui/combobox"
+import { CheckIcon } from 'lucide-react';
+import { useForm, useWatch } from 'react-hook-form';
+import RHFAutocomplete from '@/components/form/autocomplete';
+import RHFSelect from '@/components/form/select';
 
 const ComponentPages = () => {
     const [value, setValue] = useState('');
     const [autoValue, setAutoValue] = useState('');
+    const { control } = useForm({
+        defaultValues: {
+            auto_complete: 'option1',
+            select: ''
+        }
+    });
+
+    const AutocompleteValue = useWatch({
+        control,
+        name: 'auto_complete'
+    })
 
     const options = [
         { value: 'option1', label: 'Appointment' },
@@ -40,20 +47,8 @@ const ComponentPages = () => {
                     onChange={setAutoValue}
                     placeholder="Pick a module"
                 />
-
-                <Combobox items={options}>
-                    <ComboboxInput placeholder="Select a framework" className='bg-transparent border border-gray-300 focus-within:ring-primary-500/20 focus-within:border-primary-500 rounded-md py-5' />
-                    <ComboboxContent className='rounded-md'>
-                        <ComboboxEmpty>No items found.</ComboboxEmpty>
-                        <ComboboxList>
-                        {(item) => (
-                            <ComboboxItem key={item.value} value={item.value} className='rounded-md data-highlighted:text-primary data-highlighted:bg-primary-50'>
-                                {item.label}
-                            </ComboboxItem>
-                        )}
-                        </ComboboxList>
-                    </ComboboxContent>
-                </Combobox>
+                <RHFAutocomplete control={control} label='Autocomplete' options={options} name='auto_complete' rules={{ required: "This field is required" }} />
+                <RHFSelect control={control} name='select' label='Select' options={options} />
             </div>
         </>
     )
