@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { Printer, Syringe, CheckCircle, Clock, AlertTriangle } from 'lucide-react'
 import { IPatient } from '@/interfaces/IPatient'
+import { formatDob } from '@/utils/date'
 import { IVaccineCardItem } from '@/interfaces/IPatientVaccination'
 import Button from '@/components/button/button'
 
@@ -63,7 +64,7 @@ const VaccineCard = ({ patient, cardData }: VaccineCardProps) => {
                         </div>
                         <div>
                             <span className="text-gray-500">DOB:</span>
-                            <span className="ml-2 text-gray-900">{patient.date_of_birth}</span>
+                            <span className="ml-2 text-gray-900">{formatDob(patient.date_of_birth)}</span>
                         </div>
                         <div>
                             <span className="text-gray-500">Age:</span>
