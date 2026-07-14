@@ -35,3 +35,6 @@
 # architecture
 - Scope medication and surveillance tabs to only show for IPD (inpatient) visits, not OPD visits. Confidence: 0.55
 
+# workflow
+- For UX/UI related tasks, use the premium-eco-design-system agent at `.commandcode/agents/premium-eco-design-system.md`. Confidence: 0.75
+

@@ -106,7 +106,7 @@ class Patient extends Model
         $totalDoses = count($rule['doses']);
         $lastVaccination = $this->vaccinations()
             ->where('vaccine_id', $vaccine->id)
-            ->latest('dose_number')
+            ->latest('id')
             ->first();
 
         $dosesCompleted = $lastVaccination?->dose_number ?? 0;

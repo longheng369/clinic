@@ -7,9 +7,9 @@ import { IAppointment } from '@/interfaces/IAppointment'
 import Button from '@/components/button/button'
 import IconButton from '@/components/button/iconButton'
 import DataTable, { type Column } from '@/components/table/DataTable'
+import { formatDob } from '@/utils/date'
 import TextInput from '@/components/textInput'
 import { useState, useEffect } from 'react'
-import { formatCreatedDateTime } from '@/utils/date'
 
 interface PaginatedData<T> {
     data: T[]
@@ -99,7 +99,7 @@ const Appointment = () => {
         {
             header: 'Date',
             className: 'whitespace-nowrap',
-            cell: (a) => formatCreatedDateTime(a.created_at),
+            cell: (a) => formatDob(a.created_at),
         },
         {
             header: 'Patient',
@@ -125,9 +125,13 @@ const Appointment = () => {
             ),
         },
         {
+            header: 'Appointment Date',
+            className: 'whitespace-nowrap',
+            cell: (a) => formatDob(a.appointment_date),
+        },
+        {
             header: 'Notes',
-            className: 'max-w-xs truncate text-gray-500',
-            cell: (a) => a.notes ?? <span className="text-gray-300">&mdash;</span>,
+            cell: (a) => a.notes?? <span className="text-gray-300">&mdash;</span>,
         },
         {
             header: 'Vaccine Alert',
