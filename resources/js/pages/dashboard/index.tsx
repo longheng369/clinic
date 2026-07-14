@@ -16,14 +16,14 @@ const Dashboard = () => {
             <div className="p-8">
                 <div className="mb-6">
                     <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-                    <p className="mt-1 text-sm text-gray-500">
+                    <p className="mt-1 text-sm text-primary-600">
                         Overview of your clinic
                     </p>
                 </div>
 
                 {/* Vaccination Alerts section */}
-                <div className="rounded-xl border border-gray-200 bg-white">
-                    <div className="flex items-center gap-2 border-b border-gray-200 px-6 py-4">
+                <div className="rounded-2xl border border-primary-100/50 bg-white shadow-md shadow-primary-500/5">
+                    <div className="flex items-center gap-2 border-b border-primary-100/50 px-6 py-4">
                         <Syringe size={20} className="text-primary-500" />
                         <h2 className="text-base font-semibold text-gray-900">Vaccination Due Alerts</h2>
                         {vaccinationDueAlerts.length > 0 && (
@@ -35,12 +35,12 @@ const Dashboard = () => {
 
                     {vaccinationDueAlerts.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-16 text-center">
-                            <CheckCircle2 size={40} className="text-green-300 mb-3" />
+                            <CheckCircle2 size={40} className="text-primary-300 mb-3" />
                             <h3 className="text-lg font-semibold text-gray-900 mb-1">All caught up!</h3>
                             <p className="text-sm text-gray-500">No vaccinations due within the next 7 days.</p>
                         </div>
                     ) : (
-                        <div className="divide-y divide-gray-100">
+                        <div className="divide-y divide-primary-50/80">
                             {overdue.length > 0 && (
                                 <div className="px-6 py-4">
                                     <h3 className="text-xs font-semibold uppercase tracking-wider text-red-600 mb-3 flex items-center gap-1.5">
@@ -85,7 +85,7 @@ const AlertItem = ({ alert }: { alert: IDashboardVaccinationAlert }) => {
     return (
         <Link
             href={`/patients/${alert.patient.id}?tab=vaccination`}
-            className="flex items-center justify-between rounded-lg border border-gray-100 bg-gray-50 px-4 py-3 hover:bg-gray-100 transition-colors"
+            className="flex items-center justify-between rounded-xl border border-primary-50/80 bg-primary-50/20 px-4 py-3 hover:bg-primary-50/40 hover:border-primary-200/50 transition-all duration-200"
         >
             <div className="flex items-center gap-3 min-w-0">
                 <div className="shrink-0">

@@ -143,7 +143,7 @@ const Patient = () => {
                 <div className="mb-6 flex items-center justify-between">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">Patients</h1>
-                        <p className="mt-1 text-sm text-gray-500">
+                        <p className="mt-1 text-sm text-primary-600">
                             Manage your clinic patients
                         </p>
                     </div>

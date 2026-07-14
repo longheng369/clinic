@@ -14,6 +14,8 @@ import {
   ChevronRight,
   Tags,
   Calendar,
+  PanelLeft,
+  PanelRight,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -36,6 +38,7 @@ const Sidebar = () => {
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     Settings: true,
   })
+  const [collapsed, setCollapsed] = useState(false)
 
   const toggleSection = (label: string) => {
     setExpandedSections((prev) => ({ ...prev, [label]: !prev[label] }))
@@ -79,33 +82,72 @@ const Sidebar = () => {
   }
 
   return (
-    <aside className='w-75 h-screen flex flex-col bg-sidebar-bg border-r border-slate-300'>
+    <aside
+      className={`h-screen flex flex-col bg-white/80 backdrop-blur-lg border-r border-white/20 shadow-sm z-30 transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+        collapsed ? 'w-16' : 'w-75'
+      }`}
+    >
       {/* Logo */}
-      <div className='flex items-center gap-3 px-6 py-6'>
-        <div className='flex items-center justify-center size-9 rounded-lg bg-primary-500'>
+      <div className={`flex items-center gap-3 ${collapsed ? 'justify-center px-0 py-6' : 'px-6 py-6'}`}>
+        <div className='flex items-center justify-center size-9 rounded-lg bg-gradient-to-br from-primary-500 to-primary-700 shadow-md shadow-primary-500/20 shrink-0'>
           <Stethoscope size={20} className='text-white' />
         </div>
-        <span className='text-lg font-semibold tracking-tight text-sidebar-text'>Clinic</span>
+        {!collapsed && (
+          <>
+            <span className='text-lg font-semibold tracking-tight text-sidebar-text'>Clinic</span>
+            <button
+              onClick={() => setCollapsed(true)}
+              className='ml-auto p-1.5 rounded-lg hover:bg-primary-50 text-sidebar-muted-light hover:text-primary-600 transition-colors duration-150 cursor-pointer'
+              aria-label='Collapse sidebar'
+            >
+              <PanelLeft size={18} />
+            </button>
+          </>
+        )}
+        {collapsed && (
+          <button
+            onClick={() => setCollapsed(false)}
+            className='absolute -right-3 top-6 p-1 rounded-full bg-white border border-primary-100 shadow-md text-primary-600 hover:text-primary-700 hover:bg-primary-50 transition-all duration-150 cursor-pointer'
+            aria-label='Expand sidebar'
+          >
+            <PanelRight size={14} />
+          </button>
+        )}
       </div>
 
       {/* Navigation */}
       <nav className='flex-1 overflow-y-auto px-4 py-5 space-y-6'>
         {sections.map((section) => (
           <div key={section.title}>
-            <h3 className='text-xs font-semibold uppercase tracking-wider text-sidebar-muted-light mb-2 px-3'>
-              {section.title}
-            </h3>
+            {!collapsed && (
+              <h3 className='text-xs font-semibold uppercase tracking-wider text-sidebar-muted-light mb-2 px-3'>
+                {section.title}
+              </h3>
+            )}
             <ul className='space-y-0.5'>
               {section.items.map((item) => {
                 const Icon = item.icon
                 const isExpanded = expandedSections[item.label]
 
                 if (item.children) {
+                  if (collapsed) {
+                    return (
+                      <li key={item.label} className='flex justify-center'>
+                        <button
+                          onClick={() => { setCollapsed(false); toggleSection(item.label) }}
+                          className='flex items-center justify-center size-10 rounded-xl text-sidebar-muted-light hover:text-primary-600 hover:bg-primary-50/50 transition-all duration-150 cursor-pointer'
+                          aria-label={item.label}
+                        >
+                          {Icon && <Icon size={20} />}
+                        </button>
+                      </li>
+                    )
+                  }
                   return (
                     <li key={item.label}>
                       <button
                         onClick={() => toggleSection(item.label)}
-                        className='flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium w-full text-sidebar-muted-light hover:text-sidebar-text hover:bg-sidebar-hover-light transition-colors duration-150 cursor-pointer'
+                        className='flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium w-full text-sidebar-muted-light hover:text-primary-600 hover:bg-primary-50/50 transition-all duration-150 cursor-pointer'
                       >
                         {Icon && <Icon size={18} />}
                         <span className='flex-1 text-left'>{item.label}</span>
@@ -119,10 +161,10 @@ const Sidebar = () => {
                               <li key={child.path}>
                                 <Link
                                   href={child.path!}
-                                  className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-150
+                                  className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150
                                     ${isChildActive
-                                      ? 'bg-primary-100 text-primary-700'
-                                      : 'text-sidebar-muted-light hover:text-sidebar-text hover:bg-sidebar-hover-light'
+                                      ? 'bg-primary-50 text-primary-700 shadow-sm border-r-2 border-primary-500'
+                                      : 'text-sidebar-muted-light hover:text-primary-600 hover:bg-primary-50/50'
                                     }`}
                                 >
                                   <span className='flex-1'>{child.label}</span>
@@ -148,14 +190,32 @@ const Sidebar = () => {
                 }
 
                 const isActive = item.path === url
+                if (collapsed) {
+                  return (
+                    <li key={item.path} className='flex justify-center'>
+                      <Link
+                        href={item.path!}
+                        className={`flex items-center justify-center size-10 rounded-xl transition-all duration-150 relative
+                          ${isActive
+                            ? 'bg-primary-50 text-primary-700 shadow-sm after:absolute after:left-0 after:top-1/2 after:-translate-y-1/2 after:h-5 after:w-0.5 after:rounded-full after:bg-primary-500'
+                            : 'text-sidebar-muted-light hover:text-primary-600 hover:bg-primary-50/50'
+                          }`}
+                        aria-label={item.label}
+                      >
+                        {Icon && <Icon size={20} />}
+                      </Link>
+                    </li>
+                  )
+                }
+
                 return (
                   <li key={item.path}>
                     <Link
                       href={item.path!}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150
                         ${isActive
-                          ? 'bg-primary-100 text-primary-700'
-                          : 'text-sidebar-muted-light hover:text-sidebar-text hover:bg-sidebar-hover-light'
+                          ? 'bg-primary-50 text-primary-700 shadow-sm border-r-2 border-primary-500'
+                          : 'text-sidebar-muted-light hover:text-primary-600 hover:bg-primary-50/50'
                         }`}
                     >
                       {Icon && <Icon size={18} />}
@@ -181,22 +241,50 @@ const Sidebar = () => {
       </nav>
 
       {/* Profile */}
-      <div className='border-t border-slate-300 px-4 py-4'>
-        <button onClick={() => router.visit('/profile')} className='flex flex-col items-start gap-3 px-3 py-2 rounded-lg hover:bg-primary-50 transition-colors w-full cursor-pointer'>
-            <p className='text-sm font-medium truncate'>
-                {user?.name ?? 'User'}
-            </p>
-            <p className='text-xs truncate'>
-                {user?.email ?? ''}
-            </p>
-        </button>
-        <button
-          onClick={handleLogout}
-          className='flex items-center gap-3 px-3 py-2 mt-1 rounded-lg text-sm text-red-500 hover:text-red-600 hover:bg-danger/5 transition-colors w-full cursor-pointer'
-        >
-          <LogOut size={18} />
-          <span>Logout</span>
-        </button>
+      <div className='border-t border-primary-100/50 px-4 py-4'>
+        {collapsed ? (
+          <div className='flex flex-col items-center gap-2'>
+            <button
+              onClick={() => router.visit('/profile')}
+              className='flex items-center justify-center size-10 rounded-xl text-sidebar-muted-light hover:text-primary-600 hover:bg-primary-50/50 transition-all duration-150 cursor-pointer'
+              aria-label='Profile'
+            >
+              <div className='size-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xs font-semibold'>
+                {(user?.name ?? 'U').charAt(0).toUpperCase()}
+              </div>
+            </button>
+            <button
+              onClick={handleLogout}
+              className='flex items-center justify-center size-10 rounded-xl text-red-400 hover:text-red-600 hover:bg-red-50 transition-all duration-150 cursor-pointer'
+              aria-label='Logout'
+            >
+              <LogOut size={18} />
+            </button>
+          </div>
+        ) : (
+          <>
+            <button onClick={() => router.visit('/profile')} className='flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-primary-50/50 transition-all duration-150 w-full cursor-pointer'>
+              <div className='size-9 shrink-0 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xs font-semibold'>
+                {(user?.name ?? 'U').charAt(0).toUpperCase()}
+              </div>
+              <div className='flex flex-col min-w-0 text-left'>
+                <p className='text-sm font-medium text-sidebar-text truncate'>
+                  {user?.name ?? 'User'}
+                </p>
+                <p className='text-xs text-sidebar-muted-light truncate'>
+                  {user?.email ?? ''}
+                </p>
+              </div>
+            </button>
+            <button
+              onClick={handleLogout}
+              className='flex items-center gap-3 px-3 py-2 mt-1 rounded-xl text-sm text-red-400 hover:text-red-600 hover:bg-red-50 transition-all duration-150 w-full cursor-pointer'
+            >
+              <LogOut size={18} />
+              <span>Logout</span>
+            </button>
+          </>
+        )}
       </div>
     </aside>
   )

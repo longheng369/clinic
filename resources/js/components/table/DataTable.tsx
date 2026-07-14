@@ -40,40 +40,26 @@ export default function DataTable<T>({
 }: DataTableProps<T>) {
     return (
         <>
-            <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
-                {pagination && pagination.total > 0 && (
-                    <div className="border-b border-gray-200 bg-gray-50/50 px-6 py-3">
-                        <p className="text-sm text-gray-600">
-                            Showing{' '}
-                            <span className="font-medium text-gray-900">{pagination.from}</span>{' '}
-                            to{' '}
-                            <span className="font-medium text-gray-900">{pagination.to}</span>{' '}
-                            of{' '}
-                            <span className="font-medium text-gray-900">{pagination.total}</span>{' '}
-                            results
-                        </p>
-                    </div>
-                )}
-
+            <div className="w-full border border-gray-300 rounded-xl overflow-hidden">
                 <table className="w-full text-left">
-                    <thead>
-                        <tr className="border-b border-gray-200 bg-gray-50/80">
+                    <thead className='bg-white'>
+                        <tr className="border-b border-gray-300">
                             {columns.map((col, i) => (
                                 <th
                                     key={i}
-                                    className={`px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-500 ${col.className ?? ''}`}
+                                    className={`px-6 py-4 text-xs font-semibold uppercase tracking-wider text-gray-400 ${col.className ?? ''}`}
                                 >
                                     {col.header}
                                 </th>
                             ))}
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-100">
+                    <tbody className="divide-y divide-gray-300">
                         {data.length === 0 ? (
                             <tr>
-                                <td colSpan={columns.length} className="px-6 py-16">
+                                <td colSpan={columns.length} className="px-6 py-20">
                                     <div className="flex flex-col items-center gap-3 text-gray-400">
-                                        <FolderOpen size={40} strokeWidth={1.5} />
+                                        <FolderOpen size={44} strokeWidth={1.5} className="text-gray-300" />
                                         <p className="text-sm font-medium text-gray-500">
                                             {emptyMessage}
                                         </p>
@@ -84,16 +70,22 @@ export default function DataTable<T>({
                                 </td>
                             </tr>
                         ) : (
-                            data.map((row) => (
+                            data.map((row, rowIndex) => (
                                 <tr
                                     key={keyExtractor(row)}
-                                    className={`hover:bg-primary-50/50 hover:shadow-sm transition-all duration-150 ${onRowClick ? 'cursor-pointer' : ''}`}
+                                    className={`transition-all duration-150 ${
+                                        rowIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50/40'
+                                    } ${
+                                        onRowClick
+                                            ? 'cursor-pointer hover:bg-primary-50/60 hover:[&>td]:text-gray-900'
+                                            : ''
+                                    }`}
                                     onClick={onRowClick ? () => onRowClick(row) : undefined}
                                 >
                                     {columns.map((col, i) => (
                                         <td
                                             key={i}
-                                            className={`px-6 py-3.5 text-sm text-gray-500 ${col.className ?? ''}`}
+                                            className={`px-6 py-4 text-sm text-gray-600 transition-colors duration-150 ${col.className ?? ''}`}
                                         >
                                             {col.cell(row)}
                                         </td>
@@ -104,6 +96,7 @@ export default function DataTable<T>({
                     </tbody>
                 </table>
             </div>
+
 
             {pagination && pagination.last_page > 1 && (
                 <Pagination meta={pagination} baseUrl={baseUrl} />
@@ -116,14 +109,14 @@ function Pagination({ meta, baseUrl }: { meta: PaginationMeta; baseUrl: string }
     const separator = baseUrl.includes('?') ? '&' : '?'
 
     return (
-        <div className="mt-6 flex items-center justify-between">
+        <div className="mt-3 flex items-center justify-between">
             <p className="text-sm text-gray-500">
                 Page {meta.current_page} of {meta.last_page}
             </p>
             <div className="flex items-center gap-1">
                 <Link
                     href={`${baseUrl}${separator}page=${meta.current_page - 1}`}
-                    className={`inline-flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                    className={`inline-flex items-center gap-1 rounded-xl px-3 py-2 text-sm font-medium transition-all duration-150 ${
                         meta.current_page === 1
                             ? 'pointer-events-none text-gray-300'
                             : 'text-gray-600 hover:bg-gray-100'
@@ -141,9 +134,9 @@ function Pagination({ meta, baseUrl }: { meta: PaginationMeta; baseUrl: string }
                     <Link
                         key={page}
                         href={`${baseUrl}${separator}page=${page}`}
-                        className={`inline-flex items-center justify-center rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                        className={`inline-flex items-center justify-center rounded-xl px-3 py-2 text-sm font-medium transition-all duration-150 ${
                             page === meta.current_page
-                                ? 'bg-primary-600 text-white shadow-sm'
+                                ? 'bg-primary-500 text-white shadow-sm shadow-primary-500/20'
                                 : 'text-gray-600 hover:bg-gray-100'
                         }`}
                         preserveScroll
@@ -153,7 +146,7 @@ function Pagination({ meta, baseUrl }: { meta: PaginationMeta; baseUrl: string }
                 ))}
                 <Link
                     href={`${baseUrl}${separator}page=${meta.current_page + 1}`}
-                    className={`inline-flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                    className={`inline-flex items-center gap-1 rounded-xl px-3 py-2 text-sm font-medium transition-all duration-150 ${
                         meta.current_page === meta.last_page
                             ? 'pointer-events-none text-gray-300'
                             : 'text-gray-600 hover:bg-gray-100'

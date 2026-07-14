@@ -35,9 +35,9 @@ const variantStyles: Record<ToastVariant, { bg: string; border: string; iconBg: 
     iconBg: 'text-amber-500',
   },
   info: {
-    bg: 'bg-blue-50',
-    border: 'border-blue-200',
-    iconBg: 'text-blue-500',
+    bg: 'bg-primary-50',
+    border: 'border-primary-200',
+    iconBg: 'text-primary-500',
   },
 }
 
@@ -61,7 +61,7 @@ export default function Toast({ id, message, description, variant, duration, onC
   return (
     <div
       className={cn(
-        'pointer-events-auto flex w-full max-w-sm rounded-lg border p-4 shadow-lg',
+        'pointer-events-auto flex w-full max-w-sm rounded-2xl border p-4 shadow-xl shadow-primary-500/5 backdrop-blur-sm',
         styles.bg,
         styles.border,
         'animate-toast-slide-in',

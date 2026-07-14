@@ -1,4 +1,4 @@
-import Button from '@/components/button/button'
+import { Button } from '@/components/ui/button'
 import { AlertTriangle, AlertCircle } from 'lucide-react'
 
 type AlertVariant = 'danger' | 'warning' | 'info'
@@ -18,18 +18,18 @@ export type { AlertProps }
 const variantStyles: Record<AlertVariant, { icon: React.ReactNode; iconBg: string; iconColor: string }> = {
   danger: {
     icon: <AlertTriangle size={24} />,
-    iconBg: 'bg-red-100',
+    iconBg: 'bg-red-50',
     iconColor: 'text-red-600',
   },
   warning: {
     icon: <AlertTriangle size={24} />,
-    iconBg: 'bg-amber-100',
+    iconBg: 'bg-amber-50',
     iconColor: 'text-amber-600',
   },
   info: {
     icon: <AlertCircle size={24} />,
-    iconBg: 'bg-blue-100',
-    iconColor: 'text-blue-600',
+    iconBg: 'bg-primary-50',
+    iconColor: 'text-primary-600',
   },
 }
 
@@ -73,10 +73,10 @@ const Alert = ({
         </div>
       </div>
       <div className="mt-6 flex justify-end gap-3">
-        <Button variant="outlined" color="secondary" onClick={handleCancel}>
+        <Button onClick={handleCancel}>
           {cancelLabel}
         </Button>
-        <Button color={buttonColor[variant]} onClick={handleConfirm}>
+        <Button onClick={handleConfirm}>
           {confirmLabel}
         </Button>
       </div>

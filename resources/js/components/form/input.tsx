@@ -32,7 +32,7 @@ const Input = <T extends FieldValues = FieldValues>({
 
     const cn = (...classes: (string | false | undefined | null)[]) => classes.filter(Boolean).join(' ');
 
-    const inputBase = "w-full rounded-lg border px-3 py-2.5 outline-none text-sm focus:ring-2";
+    const inputBase = "w-full rounded-xl border px-3 py-2.5 outline-none text-sm focus:ring-2 shadow-sm transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)]";
     const inputDefault = "border-gray-300 focus:ring-primary-500/20 focus:border-primary-500";
     const inputError = "border-red-500 focus:border-red-500 focus:ring-red-500/20";
 

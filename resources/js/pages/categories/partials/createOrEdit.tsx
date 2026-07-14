@@ -4,7 +4,7 @@ import Textarea from '@/components/form/textarea'
 import { ICategory, ICategoryFormData } from '@/interfaces/ICategory';
 import { useState } from 'react';
 import { router } from '@inertiajs/react';
-import Button from '@/components/button/button';
+import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/toast'
 
 interface CategoryFormProps {
@@ -76,8 +76,7 @@ const CategoryForm = ({ category, onClose }: CategoryFormProps) => {
                 <Button
                     type="button"
                     onClick={onClose}
-                    color='secondary'
-                    variant='outlined'
+                    variant="outline"
                 >
                     Cancel
                 </Button>

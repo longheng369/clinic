@@ -12,7 +12,7 @@ type IconButtonProps = {
 
 const cn = (...classes: (string | false | undefined | null)[]) => classes.filter(Boolean).join(' ')
 
-const base = 'cursor-pointer inline-flex items-center justify-center rounded-md transition duration-150 ease-in-out disabled:opacity-25 disabled:pointer-events-none'
+const base = 'cursor-pointer inline-flex items-center justify-center rounded-xl transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] disabled:opacity-25 disabled:pointer-events-none'
 
 const sizeMap: Record<IconButtonSize, string> = {
     small: 'p-1.5',

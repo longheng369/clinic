@@ -1,10 +1,9 @@
-import Checkbox from '@/components/checkbox'
 import InputError from '@/components/inputError'
 import InputLabel from '@/components/inputLabel'
-import PrimaryButton from '@/components/primaryButton'
+import { Button } from '@/components/ui/button'
 import TextInput from '@/components/textInput'
 import { Head, Link, useForm } from '@inertiajs/react'
-import { LogIn, Mail, Lock } from 'lucide-react'
+import { LogIn, Mail, Lock, Stethoscope } from 'lucide-react'
 
 export default function Login({ status, canResetPassword }: { status?: string; canResetPassword: boolean }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -24,18 +23,21 @@ export default function Login({ status, canResetPassword }: { status?: string; c
         <>
             <Head title="Log in" />
 
-            <div className="mb-6 text-center">
+            <div className="text-center">
+                <div className="mx-auto mb-4 flex items-center justify-center size-14 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-700 shadow-lg shadow-primary-500/20">
+                    <Stethoscope className="h-7 w-7 text-white" />
+                </div>
                 <h1 className="text-2xl font-bold text-gray-900">Welcome back</h1>
                 <p className="mt-1 text-sm text-gray-500">Sign in to your clinic account</p>
             </div>
 
             {status && (
-                <div className="mb-4 rounded-md bg-green-50 px-4 py-3 text-sm font-medium text-green-700">
+                <div className="mt-4 rounded-xl bg-primary-50 px-4 py-3 text-sm font-medium text-primary-700 border border-primary-200">
                     {status}
                 </div>
             )}
 
-            <form onSubmit={submit} className="space-y-5">
+            <form onSubmit={submit} className="mt-6 space-y-5">
                 <div>
                     <InputLabel htmlFor="email" value="Email" />
                     <div className="relative mt-1">
@@ -78,26 +80,28 @@ export default function Login({ status, canResetPassword }: { status?: string; c
                 </div>
 
                 <div className="flex items-center justify-between">
-                    <label className="flex cursor-pointer items-center">
-                        <Checkbox
+                    <label className="flex cursor-pointer items-center gap-2">
+                        <input
+                            type="checkbox"
                             name="remember"
                             checked={data.remember}
                             onChange={(e) => setData('remember', e.target.checked)}
+                            className="rounded-lg border-primary-300 text-primary-600 focus:ring-primary-500 accent-primary-600"
                         />
-                        <span className="ms-2 text-sm text-gray-600">Remember me</span>
+                        <span className="text-sm text-gray-600">Remember me</span>
                     </label>
 
                     {canResetPassword && (
                         <Link
                             href={route('password.request')}
-                            className="text-sm text-primary-600 hover:text-primary-700"
+                            className="text-sm text-primary-600 hover:text-primary-700 font-medium"
                         >
                             Forgot password?
                         </Link>
                     )}
                 </div>
 
-                <PrimaryButton className="w-full justify-center py-3 text-sm" disabled={processing}>
+                <Button className="w-full justify-center py-2.5" disabled={processing}>
                     {processing ? (
                         <span className="flex items-center gap-2">
                             <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
@@ -112,7 +116,7 @@ export default function Login({ status, canResetPassword }: { status?: string; c
                             Sign in
                         </span>
                     )}
-                </PrimaryButton>
+                </Button>
             </form>
         </>
     )

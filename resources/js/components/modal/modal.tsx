@@ -81,24 +81,24 @@ const Modal = ({
     return (
       <div className="fixed inset-0 z-50">
         <div
-          className={`fixed inset-0 bg-black/50 transition-opacity duration-150 ${
+          className={`fixed inset-0 bg-black/40 backdrop-blur-sm transition-all duration-200 ${
             visible ? 'opacity-100 ease-out' : 'opacity-0 ease-in'
           }`}
           onClick={preventClickAway ? undefined : onClose}
         />
         <div
           ref={panelRef}
-          className={`relative z-10 flex flex-col h-screen w-screen rounded-none bg-white shadow-xl transition-all duration-200 ${
+          className={`relative z-10 flex flex-col h-screen w-screen rounded-none bg-white/98 backdrop-blur-sm shadow-xl transition-all duration-200 ${
             visible
-              ? 'scale-100 opacity-100 ease-out'
+              ? 'animate-modal-scale-in'
               : 'scale-95 opacity-0 ease-in'
           }`}
         >
-          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 shrink-0">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-primary-100/50 shrink-0">
             <h2 className="text-lg font-bold truncate">{title}</h2>
             <button
               onClick={onClose}
-              className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+              className="rounded p-1 text-gray-400 hover:bg-primary-50 hover:text-primary-600 transition-all duration-150"
               aria-label="Close"
             >
               <svg
@@ -121,24 +121,24 @@ const Modal = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div
-        className={`fixed inset-0 bg-black/50 transition-opacity duration-150 ${
+        className={`fixed inset-0 bg-black/40 backdrop-blur-sm transition-all duration-200 ${
           visible ? 'opacity-100 ease-out' : 'opacity-0 ease-in'
         }`}
         onClick={preventClickAway ? undefined : onClose}
       />
       <div
         ref={panelRef}
-        className={`relative z-10 w-full rounded-lg bg-white shadow-xl transition-all duration-200 ${
+        className={`relative z-10 w-full rounded-3xl bg-white shadow-2xl shadow-primary-500/5 transition-all duration-200 ${
           visible
-            ? 'scale-100 opacity-100 ease-out'
+            ? 'animate-modal-scale-in'
             : 'scale-95 opacity-0 ease-in'
         } ${maxWidthClasses[maxWidth]}`}
       >
-        <div className="flex items-center justify-between p-4">
+        <div className="flex items-center justify-between p-4 border-b border-primary-100/50">
           <h2 className="text-lg font-bold truncate">{title}</h2>
           <button
             onClick={onClose}
-            className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+            className="rounded p-1 text-gray-400 hover:bg-primary-50 hover:text-primary-600 transition-all duration-150"
             aria-label="Close"
           >
             <svg

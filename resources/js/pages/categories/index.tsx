@@ -1,14 +1,15 @@
 import { usePage, router } from '@inertiajs/react'
 import { Head } from '@inertiajs/react'
 import { useModal } from '@/components/modal'
-import { Pencil, Trash2, Plus, Search, X } from 'lucide-react'
+import { Pencil, Trash2, Plus } from 'lucide-react'
 import CategoryForm from './partials/createOrEdit'
 import { ICategory } from '@/interfaces/ICategory'
-import Button from '@/components/button/button'
+import { Button } from '@/components/ui/button'
 import IconButton from '@/components/button/iconButton'
 import DataTable, { type Column } from '@/components/table/DataTable'
-import TextInput from '@/components/textInput'
 import { useState, useEffect } from 'react'
+import SearchBar from '@/components/searchBar'
+import { formatCreatedDateTime } from '@/utils/date'
 
 interface PaginatedData<T> {
     data: T[]
@@ -42,10 +43,6 @@ const Category = () => {
 
         return () => clearTimeout(timeout)
     }, [searchTerm])
-
-    const handleClear = () => {
-        setSearchTerm('')
-    }
 
     const baseUrl = searchProp
         ? `/settings/categories?search=${encodeURIComponent(searchProp)}`
@@ -91,17 +88,7 @@ const Category = () => {
         {
             header: 'Created',
             className: 'whitespace-nowrap',
-            cell: (cat) =>
-                new Date(cat.created_at).toLocaleString('en-US', {
-                    timeZone: 'Asia/Phnom_Penh',
-                    year: 'numeric',
-                    month: 'short',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: false,
-                }),
+            cell: (cat) => formatCreatedDateTime(cat.created_at),
         },
         {
             header: 'Actions',
@@ -133,30 +120,12 @@ const Category = () => {
                         </p>
                     </div>
                     <div className="flex items-center gap-3">
-                        <div className="relative">
-                            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                            <TextInput
-                                type="text"
-                                placeholder="Search categories..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="pl-9 pr-8 w-64 py-2!"
-                            />
-                            {searchTerm && (
-                                <button
-                                    type="button"
-                                    onClick={handleClear}
-                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                                >
-                                    <X size={14} />
-                                </button>
-                            )}
-                        </div>
+                        <SearchBar value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder='Search category'/>
                         <Button
                             onClick={handleCreate}
-                            startIcon={<Plus size={20} />}
+                            size="lg"
                         >
-                            New Category
+                            <Plus size={20} /> New Category
                         </Button>
                     </div>
                 </div>
