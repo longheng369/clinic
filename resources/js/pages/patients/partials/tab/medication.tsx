@@ -3,7 +3,7 @@ import { useModal } from '@/components/modal'
 import { Check, RotateCcw, Square, Plus } from 'lucide-react'
 import MedicationForm from './medicationForm'
 import { IMedicationAdministration } from '@/interfaces/IMedicationAdministration'
-import Button from '@/components/button/button'
+import { Button } from '@/components/ui/button'
 import IconButton from '@/components/button/iconButton'
 import DataTable, { type Column } from '@/components/table/DataTable'
 
@@ -146,8 +146,8 @@ const MedicationTab = ({ patientId }: { patientId: number }) => {
         <div>
             <div className="mb-4 flex items-center justify-between">
                 <p className="text-sm text-gray-500">Medication administration records</p>
-                <Button onClick={handleCreate} startIcon={<Plus size={18} />}>
-                    New Prescription
+                <Button onClick={handleCreate}>
+                    <Plus size={18} /> New Prescription
                 </Button>
             </div>
 

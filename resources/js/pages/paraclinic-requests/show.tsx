@@ -2,7 +2,7 @@ import { Head, Link, router } from '@inertiajs/react'
 import { IParaclinicRequest } from '@/interfaces/IParaclinicRequest'
 import { ArrowLeft, FileText, Image, File, Upload, Trash2, Calendar } from 'lucide-react'
 import { useState } from 'react'
-import Button from '@/components/button/button'
+import { Button } from '@/components/ui/button'
 import { useModal } from '@/components/modal'
 import { useToast } from '@/components/toast'
 import { usePage } from '@inertiajs/react'
@@ -153,7 +153,7 @@ const Show = ({ request }: { request: IParaclinicRequest }) => {
                             </>
                         )}
                         <Link href={`/paraclinic-requests/${request.id}`} className="no-underline">
-                            <Button variant="outlined" color="secondary">Print</Button>
+                            <Button variant="outline">Print</Button>
                         </Link>
                     </div>
                 </div>

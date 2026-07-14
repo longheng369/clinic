@@ -1,16 +1,14 @@
 import { usePage, router } from '@inertiajs/react'
 import { Head } from '@inertiajs/react'
 import { useModal } from '@/components/modal'
-import { Pencil, Trash2, Plus, Search, X, Eye, ArrowUpDown } from 'lucide-react'
+import { Pencil, Trash2, Plus, Eye } from 'lucide-react'
 import ParaclinicForm from './partials/createOrEdit'
 import { IParaclinicRequest } from '@/interfaces/IParaclinicRequest'
-import Button from '@/components/button/button'
+import { Button } from '@/components/ui/button'
 import IconButton from '@/components/button/iconButton'
 import DataTable, { type Column } from '@/components/table/DataTable'
-import TextInput from '@/components/textInput'
-import Select from '@/components/form/select'
 import { useState, useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import SearchBar from '@/components/searchBar'
 
 interface PaginatedData<T> {
     data: T[]
@@ -66,9 +64,8 @@ const Index = () => {
     }>().props
 
     const [searchTerm, setSearchTerm] = useState(searchProp ?? '')
-    const { control, watch } = useForm({ defaultValues: { status: filters.status ?? '', payment_status: filters.payment_status ?? '' } })
-    const filterStatus = watch('status')
-    const filterPayment = watch('payment_status')
+    const [filterStatus, setFilterStatus] = useState(filters.status ?? '')
+    const [filterPayment, setFilterPayment] = useState(filters.payment_status ?? '')
 
     useEffect(() => {
         const timeout = setTimeout(() => {
@@ -81,15 +78,6 @@ const Index = () => {
         }, 300)
         return () => clearTimeout(timeout)
     }, [searchTerm])
-
-    useEffect(() => {
-        const params: Record<string, string> = {}
-        if (filterStatus) params.status = filterStatus
-        if (filterPayment) params.payment_status = filterPayment
-        router.get('/paraclinic-requests', params, { preserveState: true, replace: true })
-    }, [filterStatus, filterPayment])
-
-    const handleClear = () => setSearchTerm('')
 
     const baseUrl = searchProp
         ? `/paraclinic-requests?search=${encodeURIComponent(searchProp)}`
@@ -195,31 +183,20 @@ const Index = () => {
                         <h1 className="text-2xl font-bold text-gray-900">Paraclinic Requests</h1>
                         <p className="mt-1 text-sm text-gray-500">Manage diagnostic test requests for patients</p>
                     </div>
-                    <Button onClick={handleCreate} startIcon={<Plus size={20} />}>
-                        New Request
+                    <Button onClick={handleCreate} size="lg">
+                        <Plus size={20} /> New Request
                     </Button>
                 </div>
 
                 <div className="mb-4 flex items-center gap-3">
-                    <div className="relative flex-1 max-w-md">
-                        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                        <TextInput
-                            type="text"
-                            placeholder="Search by request number or patient..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="pl-9 pr-8 w-full py-2!"
-                        />
-                        {searchTerm && (
-                            <button type="button" onClick={handleClear} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-                                <X size={14} />
-                            </button>
-                        )}
+                    <div className="flex-1 max-w-md">
+                        <SearchBar value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder='Search by request number or patient...'/>
                     </div>
                     <div className="w-44">
                         <select
                             value={filterStatus}
                             onChange={(e) => {
+                                setFilterStatus(e.target.value)
                                 router.get('/paraclinic-requests', { status: e.target.value || null }, { preserveState: true, replace: true })
                             }}
                             className="w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
@@ -233,6 +210,7 @@ const Index = () => {
                         <select
                             value={filterPayment}
                             onChange={(e) => {
+                                setFilterPayment(e.target.value)
                                 router.get('/paraclinic-requests', { payment_status: e.target.value || null }, { preserveState: true, replace: true })
                             }}
                             className="w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"

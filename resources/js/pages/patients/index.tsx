@@ -1,14 +1,14 @@
 import { usePage, router } from '@inertiajs/react'
 import { Head } from '@inertiajs/react'
 import { useModal } from '@/components/modal'
-import { Pencil, Trash2, Plus, Search, X, Eye } from 'lucide-react'
+import { Pencil, Trash2, Plus, Eye } from 'lucide-react'
 import PatientForm from './partials/createOrEdit'
 import { IPatient } from '@/interfaces/IPatient'
 import { Button } from '@/components/ui/button'
 import IconButton from '@/components/button/iconButton'
 import DataTable, { type Column } from '@/components/table/DataTable'
-import TextInput from '@/components/textInput'
 import { useState, useEffect } from 'react'
+import SearchBar from '@/components/searchBar'
 import { formatDob } from '@/utils/date'
 
 interface PaginatedData<T> {
@@ -43,10 +43,6 @@ const Patient = () => {
 
         return () => clearTimeout(timeout)
     }, [searchTerm])
-
-    const handleClear = () => {
-        setSearchTerm('')
-    }
 
     const baseUrl = searchProp
         ? `/patients?search=${encodeURIComponent(searchProp)}`
@@ -148,26 +144,8 @@ const Patient = () => {
                         </p>
                     </div>
                     <div className="flex items-center gap-3">
-                        <div className="relative">
-                            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                            <TextInput
-                                type="text"
-                                placeholder="Search patients..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="pl-9 pr-8 w-64 py-2!"
-                            />
-                            {searchTerm && (
-                                <button
-                                    type="button"
-                                    onClick={handleClear}
-                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                                >
-                                    <X size={14} />
-                                </button>
-                            )}
-                        </div>
-                        <Button onClick={handleCreate}>
+                        <SearchBar value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder='Search patient'/>
+                        <Button onClick={handleCreate} size="lg">
                             <Plus size={20} /> New Patient
                         </Button>
                     </div>

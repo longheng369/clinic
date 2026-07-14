@@ -5,7 +5,7 @@ import Textarea from '@/components/form/textarea'
 import { IPatient, IPatientFormData } from '@/interfaces/IPatient';
 import { useState } from 'react';
 import { router } from '@inertiajs/react';
-import Button from '@/components/button/button';
+import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/toast'
 
 interface PatientFormProps {
@@ -144,7 +144,6 @@ const PatientForm = ({ patient, onClose }: PatientFormProps) => {
                         label="Address"
                         control={control}
                         placeholder="Enter address"
-                        type="number"
                         name="address"
                     />
                 </div>
@@ -161,8 +160,7 @@ const PatientForm = ({ patient, onClose }: PatientFormProps) => {
                 <Button
                     type="button"
                     onClick={onClose}
-                    color='secondary'
-                    variant='outlined'
+                    variant="outline"
                 >
                     Cancel
                 </Button>

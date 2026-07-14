@@ -3,7 +3,7 @@ import { ArrowLeft, Stethoscope } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { useState } from 'react'
 import ConsultationForm from './partials/ConsultationForm'
-import Button from '@/components/button/button'
+import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/toast'
 import { IConsultationFormData } from '@/interfaces/IConsultation'
 import type { IPatient } from '@/interfaces/IPatient'
@@ -88,7 +88,7 @@ const CreateConsultation = ({ patient }: { patient: IPatient }) => {
                             <ConsultationForm control={control} />
                             <div className="mt-6 flex justify-end gap-2 pt-4 border-t border-gray-200">
                                 <Link href={`/patients/${patient.id}?tab=consultation`}>
-                                    <Button type="button" color="secondary" variant="outlined">Cancel</Button>
+                                    <Button type="button" variant="outline">Cancel</Button>
                                 </Link>
                                 <Button type="submit" disabled={isProcessing}>Create Consultation</Button>
                             </div>

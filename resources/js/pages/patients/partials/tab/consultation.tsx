@@ -2,7 +2,7 @@ import { Link, router, usePage } from '@inertiajs/react'
 import { useModal } from '@/components/modal'
 import { Pencil, Trash2, Plus, Eye } from 'lucide-react'
 import { IConsultation } from '@/interfaces/IConsultation'
-import Button from '@/components/button/button'
+import { Button } from '@/components/ui/button'
 import IconButton from '@/components/button/iconButton'
 import DataTable, { type Column } from '@/components/table/DataTable'
 import { formatCreatedDateTime } from '@/utils/date'
@@ -86,7 +86,7 @@ const ConsultationTab = ({ patientId }: { patientId: number }) => {
             <div className="mb-4 flex items-center justify-between">
                 <p className="text-sm text-gray-500">Consultation records for this patient</p>
                 <Link href={`/patients/${patientId}/consultations/create`}>
-                    <Button startIcon={<Plus size={18} />}>New Consultation</Button>
+                    <Button><Plus size={18} /> New Consultation</Button>
                 </Link>
             </div>
 

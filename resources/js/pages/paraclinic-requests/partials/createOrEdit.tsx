@@ -6,7 +6,7 @@ import Textarea from '@/components/form/textarea'
 import { IParaclinicRequest, IParaclinicRequestFormData, IParaclinicRequestTest } from '@/interfaces/IParaclinicRequest'
 import { useState, useEffect } from 'react'
 import { router } from '@inertiajs/react'
-import Button from '@/components/button/button'
+import { Button } from '@/components/ui/button'
 import IconButton from '@/components/button/iconButton'
 import { useToast } from '@/components/toast'
 import { Plus, X } from 'lucide-react'
@@ -235,11 +235,10 @@ const ParaclinicForm = ({ request, authUser, onClose }: ParaclinicFormProps) => 
                         <h3 className="text-sm font-semibold text-gray-900">Diagnostic Tests</h3>
                         <Button
                             type="button"
-                            size="small"
+                            size="sm"
                             onClick={() => append({ test_category: 'Laboratory', test_name: 'CBC', priority: 'Routine', instruction: null })}
-                            startIcon={<Plus size={16} />}
                         >
-                            Add Test
+                            <Plus size={16} /> Add Test
                         </Button>
                     </div>
                     <div className="space-y-3">
@@ -325,9 +324,9 @@ const ParaclinicForm = ({ request, authUser, onClose }: ParaclinicFormProps) => 
             </div>
 
             <div className="flex justify-end gap-2 p-2 border-t border-slate-300">
-                <Button type="button" onClick={onClose} color="secondary" variant="outlined">Cancel</Button>
+                <Button type="button" onClick={onClose} variant="outline">Cancel</Button>
                 {!request && (
-                    <Button type="button" variant="outlined" onClick={handleSubmitRequest} disabled={isProcessing}>
+                    <Button type="button" variant="outline" onClick={handleSubmitRequest} disabled={isProcessing}>
                         Submit Request
                     </Button>
                 )}

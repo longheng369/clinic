@@ -6,7 +6,7 @@ import SearchSelect from '@/components/form/searchSelect'
 import { IAppointment, IAppointmentFormData, IAppointmentAlert } from '@/interfaces/IAppointment'
 import { useState, useEffect } from 'react'
 import { router } from '@inertiajs/react'
-import Button from '@/components/button/button'
+import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/toast'
 import { AlertTriangle, Clock } from 'lucide-react'
 
@@ -175,7 +175,7 @@ const AppointmentForm = ({ appointment, onClose }: AppointmentFormProps) => {
             )}
 
             <div className="flex justify-end gap-2 p-2 border-t border-slate-300">
-                <Button type="button" onClick={onClose} color="secondary" variant="outlined">
+                <Button type="button" onClick={onClose} variant="outline">
                     Cancel
                 </Button>
                 <Button type="submit" disabled={isProcessing}>

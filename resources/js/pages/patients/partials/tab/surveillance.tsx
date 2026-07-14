@@ -3,7 +3,7 @@ import { useModal } from '@/components/modal'
 import { Pencil, Trash2, Plus } from 'lucide-react'
 import SurveillanceForm from './surveillanceForm'
 import { ISurveillance } from '@/interfaces/ISurveillance'
-import Button from '@/components/button/button'
+import { Button } from '@/components/ui/button'
 import IconButton from '@/components/button/iconButton'
 import DataTable, { type Column } from '@/components/table/DataTable'
 import { formatCreatedDateTime } from '@/utils/date'
@@ -117,8 +117,8 @@ const SurveillanceTab = ({ patientId }: { patientId: number }) => {
         <div>
             <div className="mb-4 flex items-center justify-between">
                 <p className="text-sm text-gray-500">Vital signs and surveillance records</p>
-                <Button onClick={handleCreate} startIcon={<Plus size={18} />}>
-                    New Record
+                <Button onClick={handleCreate}>
+                    <Plus size={18} /> New Record
                 </Button>
             </div>
 

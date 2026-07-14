@@ -1,7 +1,7 @@
 import { Link, router, usePage } from '@inertiajs/react'
 import { IParaclinicRequest } from '@/interfaces/IParaclinicRequest'
 import DataTable, { type Column } from '@/components/table/DataTable'
-import Button from '@/components/button/button'
+import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
 
 interface PaginatedData<T> {
@@ -73,7 +73,7 @@ const ParaclinicByPatientTab = ({ patientId }: { patientId: number }) => {
             <div className="mb-4 flex items-center justify-between">
                 <p className="text-sm text-gray-500">Paraclinic test requests for this patient</p>
                 <Link href={`/paraclinic-requests?patient_id=${patientId}`}>
-                    <Button startIcon={<Plus size={18} />}>New Request</Button>
+                    <Button><Plus size={18} /> New Request</Button>
                 </Link>
             </div>
 

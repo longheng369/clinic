@@ -3,7 +3,7 @@ import { Printer, Syringe, CheckCircle, Clock, AlertTriangle } from 'lucide-reac
 import { IPatient } from '@/interfaces/IPatient'
 import { formatDob } from '@/utils/date'
 import { IVaccineCardItem } from '@/interfaces/IPatientVaccination'
-import Button from '@/components/button/button'
+import { Button } from '@/components/ui/button'
 
 interface VaccineCardProps {
     patient: IPatient
@@ -37,8 +37,8 @@ const VaccineCard = ({ patient, cardData }: VaccineCardProps) => {
                     <Syringe size={16} className="text-primary-500" />
                     Vaccination Card
                 </h3>
-                <Button onClick={handlePrint} variant="outlined" color="secondary" startIcon={<Printer size={16} />}>
-                    Print Vaccine Card
+                <Button onClick={handlePrint} variant="outline">
+                    <Printer size={16} /> Print Vaccine Card
                 </Button>
             </div>
 

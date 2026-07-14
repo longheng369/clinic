@@ -5,7 +5,7 @@ import Select from '@/components/form/select'
 import { IPatientVaccinationFormData } from '@/interfaces/IPatientVaccination'
 import { router } from '@inertiajs/react'
 import { useState } from 'react'
-import Button from '@/components/button/button'
+import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/toast'
 
 interface VaccinationFormProps {
@@ -82,7 +82,7 @@ const VaccinationForm = ({ patientId, vaccines, onClose }: VaccinationFormProps)
             </div>
 
             <div className="flex justify-end gap-2 p-2 border-t border-slate-300">
-                <Button type="button" onClick={onClose} color="secondary" variant="outlined">
+                <Button type="button" onClick={onClose} variant="outline">
                     Cancel
                 </Button>
                 <Button type="submit" disabled={isProcessing}>

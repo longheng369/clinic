@@ -1,15 +1,15 @@
 import { usePage, router } from '@inertiajs/react'
 import { Head } from '@inertiajs/react'
 import { useModal } from '@/components/modal'
-import { Pencil, Trash2, Plus, Search, X } from 'lucide-react'
+import { Pencil, Trash2, Plus } from 'lucide-react'
 import MedicineForm from './partials/createOrEdit'
 import { IMedicine } from '@/interfaces/IMedicine'
 import { IUnit } from '@/interfaces/IUnit';
-import Button from '@/components/button/button'
+import { Button } from '@/components/ui/button'
 import IconButton from '@/components/button/iconButton'
 import DataTable, { type Column } from '@/components/table/DataTable'
-import TextInput from '@/components/textInput'
 import { useState, useEffect } from 'react'
+import SearchBar from '@/components/searchBar'
 import { formatCreatedDateTime } from '@/utils/date'
 
 interface PaginatedData<T> {
@@ -45,10 +45,6 @@ const Medicine = () => {
 
         return () => clearTimeout(timeout)
     }, [searchTerm])
-
-    const handleClear = () => {
-        setSearchTerm('')
-    }
 
     const baseUrl = searchProp
         ? `/medicines?search=${encodeURIComponent(searchProp)}`
@@ -141,30 +137,12 @@ const Medicine = () => {
                         </p>
                     </div>
                     <div className="flex items-center gap-3">
-                        <div className="relative">
-                            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                            <TextInput
-                                type="text"
-                                placeholder="Search medicines..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="pl-9 pr-8 w-64 py-2!"
-                            />
-                            {searchTerm && (
-                                <button
-                                    type="button"
-                                    onClick={handleClear}
-                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                                >
-                                    <X size={14} />
-                                </button>
-                            )}
-                        </div>
+                        <SearchBar value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder='Search medicine'/>
                         <Button
                             onClick={handleCreate}
-                            startIcon={<Plus size={20} />}
+                            size="lg"
                         >
-                            New Medicine
+                            <Plus size={20} /> New Medicine
                         </Button>
                     </div>
                 </div>

@@ -4,7 +4,7 @@ import Textarea from '@/components/form/textarea'
 import { IUnit, IUnitFormData } from '@/interfaces/IUnit';
 import { useState } from 'react';
 import { router } from '@inertiajs/react';
-import Button from '@/components/button/button';
+import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/toast'
 
 interface UnitFormProps {
@@ -76,8 +76,7 @@ const UnitForm = ({ unit, onClose }: UnitFormProps) => {
                 <Button
                     type="button"
                     onClick={onClose}
-                    color='secondary'
-                    variant='outlined'
+                    variant="outline"
                 >
                     Cancel
                 </Button>

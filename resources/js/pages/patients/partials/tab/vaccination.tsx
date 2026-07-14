@@ -6,7 +6,7 @@ import VaccineCard from './VaccineCard'
 import VaccinationAlertBanner from './VaccinationAlertBanner'
 import { IPatient } from '@/interfaces/IPatient'
 import { IPatientVaccination, IVaccineCardItem, IVaccinationAlert } from '@/interfaces/IPatientVaccination'
-import Button from '@/components/button/button'
+import { Button } from '@/components/ui/button'
 import IconButton from '@/components/button/iconButton'
 import DataTable, { type Column } from '@/components/table/DataTable'
 
@@ -106,8 +106,8 @@ const VaccinationTab = ({ patient }: VaccinationTabProps) => {
             <div>
                 <div className="mb-4 flex items-center justify-between">
                     <p className="text-sm text-gray-500">Vaccination records for this patient</p>
-                    <Button onClick={handleCreate} startIcon={<Plus size={18} />}>
-                        Record Vaccination
+                    <Button onClick={handleCreate}>
+                        <Plus size={18} /> Record Vaccination
                     </Button>
                 </div>
 

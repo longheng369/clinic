@@ -40,7 +40,7 @@ export default function DataTable<T>({
 }: DataTableProps<T>) {
     return (
         <>
-            <div className="w-full border border-gray-300 rounded-xl overflow-hidden">
+            <div className="w-full border border-gray-300 rounded-xl overflow-hidden shadow-sm">
                 <table className="w-full text-left">
                     <thead className='bg-white'>
                         <tr className="border-b border-gray-300">
@@ -70,12 +70,10 @@ export default function DataTable<T>({
                                 </td>
                             </tr>
                         ) : (
-                            data.map((row, rowIndex) => (
+                            data.map((row) => (
                                 <tr
                                     key={keyExtractor(row)}
-                                    className={`transition-all duration-150 ${
-                                        rowIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50/40'
-                                    } ${
+                                    className={`transition-all duration-150 bg-white hover:bg-primary-50 ${
                                         onRowClick
                                             ? 'cursor-pointer hover:bg-primary-50/60 hover:[&>td]:text-gray-900'
                                             : ''
@@ -85,7 +83,7 @@ export default function DataTable<T>({
                                     {columns.map((col, i) => (
                                         <td
                                             key={i}
-                                            className={`px-6 py-4 text-sm text-gray-600 transition-colors duration-150 ${col.className ?? ''}`}
+                                            className={`px-6 py-3 text-sm text-gray-600 transition-colors duration-150 ${col.className ?? ''}`}
                                         >
                                             {col.cell(row)}
                                         </td>

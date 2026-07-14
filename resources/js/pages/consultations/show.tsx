@@ -3,7 +3,7 @@ import { ArrowLeft, Pencil } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { useEffect } from 'react'
 import ConsultationForm from './partials/ConsultationForm'
-import Button from '@/components/button/button'
+import { Button } from '@/components/ui/button'
 import type { IConsultation, IConsultationFormData } from '@/interfaces/IConsultation'
 import type { IPatient } from '@/interfaces/IPatient'
 

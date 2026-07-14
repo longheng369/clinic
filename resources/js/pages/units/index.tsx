@@ -4,9 +4,12 @@ import { useModal } from '@/components/modal'
 import { Pencil, Trash2, Plus } from 'lucide-react'
 import UnitForm from './partials/createOrEdit'
 import { IUnit } from '@/interfaces/IUnit'
-import Button from '@/components/button/button'
+import { Button } from '@/components/ui/button'
 import IconButton from '@/components/button/iconButton'
 import DataTable, { type Column } from '@/components/table/DataTable'
+import { useState, useEffect } from 'react'
+import SearchBar from '@/components/searchBar'
+import { formatCreatedDateTime } from '@/utils/date'
 
 interface PaginatedData<T> {
     data: T[]
@@ -21,9 +24,29 @@ interface PaginatedData<T> {
 const Unit = () => {
     const { openModal, closeModal, openAlert } = useModal()
 
-    const { units } = usePage<{
+    const { units, search: searchProp } = usePage<{
         units: PaginatedData<IUnit>
+        search: string | null
     }>().props
+
+    const [searchTerm, setSearchTerm] = useState(searchProp ?? '')
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            if ((searchTerm || '') === (searchProp || '')) return
+            if (searchTerm) {
+                router.get('/settings/units', { search: searchTerm }, { preserveState: true, replace: true })
+            } else {
+                router.get('/settings/units', {}, { preserveState: true, replace: true })
+            }
+        }, 300)
+
+        return () => clearTimeout(timeout)
+    }, [searchTerm])
+
+    const baseUrl = searchProp
+        ? `/settings/units?search=${encodeURIComponent(searchProp)}`
+        : '/settings/units'
 
     const handleCreate = () => {
         openModal({
@@ -65,17 +88,7 @@ const Unit = () => {
         {
             header: 'Created',
             className: 'whitespace-nowrap',
-            cell: (unit) =>
-                new Date(unit.created_at).toLocaleString('en-US', {
-                    timeZone: 'Asia/Phnom_Penh',
-                    year: 'numeric',
-                    month: 'short',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: false,
-                }),
+            cell: (unit) => formatCreatedDateTime(unit.created_at),
         },
         {
             header: 'Actions',
@@ -106,12 +119,15 @@ const Unit = () => {
                             Manage your clinic units
                         </p>
                     </div>
-                    <Button
-                        onClick={handleCreate}
-                        startIcon={<Plus size={20} />}
-                    >
-                        New Unit
-                    </Button>
+                    <div className="flex items-center gap-3">
+                        <SearchBar value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder='Search unit'/>
+                        <Button
+                            onClick={handleCreate}
+                            size="lg"
+                        >
+                            <Plus size={20} /> New Unit
+                        </Button>
+                    </div>
                 </div>
 
                 <DataTable
@@ -121,7 +137,7 @@ const Unit = () => {
                     emptyMessage="No units found"
                     emptyDescription="Get started by creating a new unit."
                     pagination={pagination}
-                    baseUrl="/settings/units"
+                    baseUrl={baseUrl}
                 />
             </div>
         </>

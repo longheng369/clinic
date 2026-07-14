@@ -4,9 +4,9 @@ import Textarea from '@/components/form/textarea'
 import { IVaccine, IVaccineFormData, IVaccineRule, IVaccineDose } from '@/interfaces/IVaccine'
 import { useState } from 'react'
 import { router } from '@inertiajs/react'
-import Button from '@/components/button/button'
 import { useToast } from '@/components/toast'
 import { Plus, Trash2 } from 'lucide-react'
+import { Button } from '@/components/ui/button';
 
 interface VaccineFormProps {
     vaccine?: IVaccine
@@ -93,12 +93,11 @@ const VaccineForm = ({ vaccine, onClose }: VaccineFormProps) => {
                         <h3 className="text-sm font-semibold text-gray-700">Age Rules &amp; Dose Schedule</h3>
                         <Button
                             type="button"
-                            variant="outlined"
-                            color="secondary"
-                            startIcon={<Plus size={16} />}
+                            variant="outline"
+                            size="sm"
                             onClick={() => appendRule(defaultRule)}
                         >
-                            Add Age Rule
+                            <Plus size={16} /> Add Age Rule
                         </Button>
                     </div>
 
@@ -118,7 +117,7 @@ const VaccineForm = ({ vaccine, onClose }: VaccineFormProps) => {
             </div>
 
             <div className="flex justify-end gap-2 p-2 border-t border-slate-300">
-                <Button type="button" onClick={onClose} color="secondary" variant="outlined">
+                <Button type="button" onClick={onClose} variant="outline">
                     Cancel
                 </Button>
                 <Button type="submit" disabled={isProcessing}>

@@ -5,7 +5,7 @@ import Textarea from '@/components/form/textarea'
 import { IMedicationFormData } from '@/interfaces/IMedicationAdministration'
 import { useState } from 'react'
 import { router } from '@inertiajs/react'
-import Button from '@/components/button/button'
+import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/toast'
 
 const ROUTE_OPTIONS = [
@@ -138,7 +138,7 @@ const MedicationForm = ({ patientId, activeVisits, medicines, onClose }: Medicat
             </div>
 
             <div className="flex justify-end gap-2 p-2 border-t border-slate-300">
-                <Button type="button" onClick={onClose} color="secondary" variant="outlined">Cancel</Button>
+                <Button type="button" onClick={onClose} variant="outline">Cancel</Button>
                 <Button type="submit" disabled={isProcessing}>Prescribe</Button>
             </div>
         </form>

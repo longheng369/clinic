@@ -7,7 +7,7 @@ import { IMedicine, IMedicineFormData } from '@/interfaces/IMedicine';
 import { IUnit } from '@/interfaces/IUnit';
 import { useState } from 'react';
 import { router } from '@inertiajs/react';
-import Button from '@/components/button/button';
+import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/toast'
 
 interface MedicineFormProps {
@@ -132,8 +132,7 @@ const MedicineForm = ({ medicine, units, onClose }: MedicineFormProps) => {
                 <Button
                     type="button"
                     onClick={onClose}
-                    color='secondary'
-                    variant='outlined'
+                    variant="outline"
                 >
                     Cancel
                 </Button>

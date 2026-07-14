@@ -1,15 +1,15 @@
 import { usePage, router } from '@inertiajs/react'
 import { Head } from '@inertiajs/react'
 import { useModal } from '@/components/modal'
-import { Pencil, Trash2, Plus, Search, X, Calendar } from 'lucide-react'
+import { Pencil, Trash2, Plus } from 'lucide-react'
 import AppointmentForm from './partials/createOrEdit'
 import { IAppointment } from '@/interfaces/IAppointment'
-import Button from '@/components/button/button'
+import { Button } from '@/components/ui/button'
 import IconButton from '@/components/button/iconButton'
 import DataTable, { type Column } from '@/components/table/DataTable'
 import { formatDob } from '@/utils/date'
-import TextInput from '@/components/textInput'
 import { useState, useEffect } from 'react'
+import SearchBar from '@/components/searchBar'
 
 interface PaginatedData<T> {
     data: T[]
@@ -60,12 +60,6 @@ const Appointment = () => {
         }, 300)
         return () => clearTimeout(timeout)
     }, [searchTerm, date, status])
-
-    const handleClear = () => {
-        setSearchTerm('')
-        setDate('')
-        setStatus('')
-    }
 
     const baseUrl = '/appointments'
 
@@ -169,25 +163,7 @@ const Appointment = () => {
                         </p>
                     </div>
                     <div className="flex items-center gap-3">
-                        <div className="relative">
-                            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                            <TextInput
-                                type="text"
-                                placeholder="Search by patient name..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="pl-9 pr-8 w-56 py-2!"
-                            />
-                            {(searchTerm || date || status) && (
-                                <button
-                                    type="button"
-                                    onClick={handleClear}
-                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                                >
-                                    <X size={14} />
-                                </button>
-                            )}
-                        </div>
+                        <SearchBar value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder='Search patient name'/>
                         <TextInput
                             type="date"
                             value={date}
@@ -205,8 +181,8 @@ const Appointment = () => {
                             <option value="cancelled">Cancelled</option>
                             <option value="no_show">No Show</option>
                         </select>
-                        <Button onClick={handleCreate} startIcon={<Plus size={20} />}>
-                            New Appointment
+                        <Button onClick={handleCreate} size="lg">
+                            <Plus size={20} /> New Appointment
                         </Button>
                     </div>
                 </div>

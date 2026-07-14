@@ -4,7 +4,7 @@ import Select from '@/components/form/select'
 import { ISurveillance, ISurveillanceFormData } from '@/interfaces/ISurveillance'
 import { useState } from 'react'
 import { router } from '@inertiajs/react'
-import Button from '@/components/button/button'
+import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/toast'
 
 const O2_OPTIONS = [
@@ -142,7 +142,7 @@ const SurveillanceForm = ({ patientId, surveillance, onClose }: SurveillanceForm
             </div>
 
             <div className="flex justify-end gap-2 p-2 border-t border-slate-300">
-                <Button type="button" onClick={onClose} color="secondary" variant="outlined">Cancel</Button>
+                <Button type="button" onClick={onClose} variant="outline">Cancel</Button>
                 <Button type="submit" disabled={isProcessing}>Submit</Button>
             </div>
         </form>
