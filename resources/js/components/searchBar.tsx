@@ -25,7 +25,7 @@ const SearchBar: FC<Props> = ({
                 <button
                     type="button"
                     onClick={() => onChange({ target: { value: '' } } as React.ChangeEvent<HTMLInputElement>)}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
                     <X size={14} />
                 </button>

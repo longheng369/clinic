@@ -10,6 +10,7 @@ interface AlertProps {
   confirmLabel?: string
   cancelLabel?: string
   onConfirm: () => void
+  onCancel?: () => void
   onClose: () => void
 }
 
@@ -46,6 +47,7 @@ const Alert = ({
   confirmLabel = 'Confirm',
   cancelLabel = 'Cancel',
   onConfirm,
+  onCancel,
   onClose,
 }: AlertProps) => {
   const handleConfirm = () => {
@@ -54,6 +56,7 @@ const Alert = ({
   }
 
   const handleCancel = () => {
+    onCancel?.()
     onClose()
   }
 

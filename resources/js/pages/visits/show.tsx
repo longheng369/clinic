@@ -67,6 +67,7 @@ interface ParaclinicRow {
 
 const STATUS_BADGE: Record<string, { label: string; className: string }> = {
     prescribed: { label: 'Prescribed', className: 'bg-blue-100 text-blue-700' },
+    active: { label: 'Active', className: 'bg-green-100 text-green-700' },
     provided: { label: 'Provided', className: 'bg-green-100 text-green-700' },
     continued: { label: 'Continued', className: 'bg-amber-100 text-amber-700' },
     stopped: { label: 'Stopped', className: 'bg-gray-100 text-gray-500' },

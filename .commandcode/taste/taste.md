@@ -37,4 +37,9 @@
 
 # workflow
 - For UX/UI related tasks, use the premium-eco-design-system agent at `.commandcode/agents/premium-eco-design-system.md`. Confidence: 0.75
+- When medication dose progress reaches 100% (all doses taken), automatically set the medication status to "Discontinued". Confidence: 0.70
+
+# components
+- Use the SearchBar component for search inputs instead of TextInput or native inputs. Confidence: 0.65
+- For medication/medicine name fields, use a dropdown/select populated from the medicines list rather than a free-text input. Confidence: 0.65
 

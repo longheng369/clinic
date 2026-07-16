@@ -1,14 +1,18 @@
+import type { IMedicationDose } from './IMedicationDose'
+
 export interface IMedicationAdministration {
     id: number;
-    medicine: { id: number; name: string } | null;
+    medicine: { id: number; name: string; unit_price: number | null } | null;
     route: string;
     dosage: number;
     unit: string;
     interval: string;
-    status: 'prescribed' | 'provided' | 'continued' | 'stopped';
+    status: 'prescribed' | 'active' | 'stopped';
+    starts_at: string | null;
     notes: string | null;
     recorded_by?: string | null;
     created_at: string;
+    doses: IMedicationDose[];
 }
 
 export interface IMedicationFormData {
@@ -18,5 +22,6 @@ export interface IMedicationFormData {
     dosage: number | null;
     unit: string;
     interval: string;
+    starts_at: string;
     notes: string;
 }

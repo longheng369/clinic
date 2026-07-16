@@ -101,7 +101,7 @@ export default function Login({ status, canResetPassword }: { status?: string; c
                     )}
                 </div>
 
-                <Button className="w-full justify-center py-2.5" disabled={processing}>
+                <Button type="submit" className="w-full justify-center py-2.5" disabled={processing}>
                     {processing ? (
                         <span className="flex items-center gap-2">
                             <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">

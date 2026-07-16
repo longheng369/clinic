@@ -105,20 +105,30 @@ class PatientController extends Controller
                 ->latest()
 ->first()
                 ?->medicationAdministrations()
-                ->with(['medicine', 'recordedBy'])
+                ->with(['medicine', 'recordedBy', 'doses' => fn ($q) => $q->orderBy('scheduled_at')])
                 ->latest()
                 ->paginate(10)
                 ->through(fn ($m) => [
                     'id' => $m->id,
-                    'medicine' => $m->medicine ? ['id' => $m->medicine->id, 'name' => $m->medicine->name] : null,
+                    'medicine' => $m->medicine ? ['id' => $m->medicine->id, 'name' => $m->medicine->name, 'unit_price' => $m->medicine->unit_price ? (float) $m->medicine->unit_price : null] : null,
                     'route' => $m->route,
                     'dosage' => (float) $m->dosage,
                     'unit' => $m->unit,
                     'interval' => $m->interval,
                     'status' => $m->status,
+                    'starts_at' => $m->starts_at?->toISOString(),
                     'notes' => $m->notes,
                     'recorded_by' => $m->recordedBy?->name,
                     'created_at' => $m->created_at,
+                    'doses' => $m->doses->map(fn ($d) => [
+                        'id' => $d->id,
+                        'scheduled_at' => $d->scheduled_at->toISOString(),
+                        'administered_at' => $d->administered_at?->toISOString(),
+                        'status' => $d->status,
+                        'administered_by' => $d->administeredBy?->name,
+                        'unit_price' => $d->unit_price ? (float) $d->unit_price : null,
+                        'skip_reason' => $d->skip_reason,
+                    ])->values(),
                 ])
                 ?? ['data' => [], 'current_page' => 1, 'last_page' => 1, 'per_page' => 10, 'total' => 0, 'from' => null, 'to' => null],
             'vaccinations' => $patient->vaccinations()

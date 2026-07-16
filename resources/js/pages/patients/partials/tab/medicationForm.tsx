@@ -40,6 +40,11 @@ interface MedicationFormProps {
 const MedicationForm = ({ patientId, activeVisits, medicines, onClose }: MedicationFormProps) => {
     const [isProcessing, setIsProcessing] = useState(false)
     const { toast } = useToast()
+
+    const now = new Date()
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset())
+    const defaultStartsAt = now.toISOString().slice(0, 16)
+
     const { control, handleSubmit } = useForm<IMedicationFormData>({
         defaultValues: {
             visit_id: activeVisits[0]?.id ?? 0,
@@ -48,6 +53,7 @@ const MedicationForm = ({ patientId, activeVisits, medicines, onClose }: Medicat
             dosage: null,
             unit: '',
             interval: '',
+            starts_at: defaultStartsAt,
             notes: '',
         },
     })
@@ -64,7 +70,7 @@ const MedicationForm = ({ patientId, activeVisits, medicines, onClose }: Medicat
         router.post(`/patients/${patientId}/medications`, { ...data }, {
             onSuccess: () => {
                 onClose()
-                toast('Medication prescribed!', { variant: 'success' })
+                toast('Added to drug chart!', { variant: 'success' })
             },
             onFinish: () => setIsProcessing(false),
         })
@@ -129,6 +135,14 @@ const MedicationForm = ({ patientId, activeVisits, medicines, onClose }: Medicat
                     />
                 </div>
 
+                <Input
+                    label="Start Date & Time"
+                    control={control}
+                    type="datetime-local"
+                    name="starts_at"
+                    rules={{ required: 'Required' }}
+                />
+
                 <Textarea
                     label="Notes"
                     control={control}
@@ -139,7 +153,7 @@ const MedicationForm = ({ patientId, activeVisits, medicines, onClose }: Medicat
 
             <div className="flex justify-end gap-2 p-2 border-t border-slate-300">
                 <Button type="button" onClick={onClose} variant="outline">Cancel</Button>
-                <Button type="submit" disabled={isProcessing}>Prescribe</Button>
+                <Button type="submit" disabled={isProcessing}>Add to Drug Chart</Button>
             </div>
         </form>
     )

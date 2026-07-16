@@ -164,11 +164,11 @@ const Appointment = () => {
                     </div>
                     <div className="flex items-center gap-3">
                         <SearchBar value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder='Search patient name'/>
-                        <TextInput
+                        <input
                             type="date"
                             value={date}
                             onChange={(e) => setDate(e.target.value)}
-                            className="w-40 py-2!"
+                            className="w-40 rounded-xl border border-gray-300 px-3 py-2.5 text-sm outline-hidden focus:outline-2 focus:outline-primary-500 focus:border-primary-500 transition-all duration-200"
                         />
                         <select
                             value={status}

@@ -6,6 +6,7 @@ use App\Http\Controllers\ConsultationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HelpController;
 use App\Http\Controllers\MedicationAdministrationController;
+use App\Http\Controllers\MedicationDoseController;
 use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\ParaclinicRequestController;
 use App\Http\Controllers\PatientController;
@@ -82,9 +83,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('doctors/search', [ParaclinicRequestController::class, 'searchDoctors'])->name('api.doctors.search');
 
     Route::post('patients/{patient}/medications', [MedicationAdministrationController::class, 'store'])->name('patients.medications.store');
-    Route::post('visits/{visit}/medications/{medicationAdministration}/provide', [MedicationAdministrationController::class, 'provide'])->name('visits.medications.provide');
-    Route::post('visits/{visit}/medications/{medicationAdministration}/continue', [MedicationAdministrationController::class, 'continue'])->name('visits.medications.continue');
     Route::post('visits/{visit}/medications/{medicationAdministration}/stop', [MedicationAdministrationController::class, 'stop'])->name('visits.medications.stop');
+    Route::post('visits/{visit}/doses/{dose}/administer', [MedicationDoseController::class, 'administer'])->name('visits.doses.administer');
+    Route::post('visits/{visit}/doses/{dose}/skip', [MedicationDoseController::class, 'skip'])->name('visits.doses.skip');
 
     Route::get('visits/{visit}', [VisitController::class, 'show'])->name('visits.show');
     Route::patch('visits/{visit}/admit', [VisitController::class, 'admit'])->name('visits.admit');

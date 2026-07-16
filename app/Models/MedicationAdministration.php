@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable([
     'visit_id',
@@ -15,6 +16,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'interval',
     'status',
     'notes',
+    'starts_at',
+    'stopped_at',
     'created_by',
 ])]
 class MedicationAdministration extends Model
@@ -23,6 +26,8 @@ class MedicationAdministration extends Model
     {
         return [
             'dosage' => 'decimal:2',
+            'starts_at' => 'datetime',
+            'stopped_at' => 'datetime',
         ];
     }
 
@@ -39,5 +44,10 @@ class MedicationAdministration extends Model
     public function recordedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function doses(): HasMany
+    {
+        return $this->hasMany(MedicationDose::class);
     }
 }

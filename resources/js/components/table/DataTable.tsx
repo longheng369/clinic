@@ -2,7 +2,7 @@ import { Link } from '@inertiajs/react'
 import { FolderOpen, ChevronLeft, ChevronRight } from 'lucide-react'
 import { type ReactNode } from 'react'
 
-interface PaginationMeta {
+export interface PaginationMeta {
     current_page: number
     last_page: number
     per_page: number
@@ -103,7 +103,7 @@ export default function DataTable<T>({
     )
 }
 
-function Pagination({ meta, baseUrl }: { meta: PaginationMeta; baseUrl: string }) {
+export function Pagination({ meta, baseUrl }: { meta: PaginationMeta; baseUrl: string }) {
     const separator = baseUrl.includes('?') ? '&' : '?'
 
     return (

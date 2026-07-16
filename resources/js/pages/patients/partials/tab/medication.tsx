@@ -1,11 +1,12 @@
-import { usePage, router } from '@inertiajs/react'
+import { usePage } from '@inertiajs/react'
 import { useModal } from '@/components/modal'
-import { Check, RotateCcw, Square, Plus } from 'lucide-react'
+import { Plus, Search } from 'lucide-react'
 import MedicationForm from './medicationForm'
+import PrescriptionCard from './PrescriptionCard'
 import { IMedicationAdministration } from '@/interfaces/IMedicationAdministration'
 import { Button } from '@/components/ui/button'
-import IconButton from '@/components/button/iconButton'
-import DataTable, { type Column } from '@/components/table/DataTable'
+import { Pagination } from '@/components/table/DataTable'
+import { useState, useMemo } from 'react'
 
 interface PaginatedData<T> {
     data: T[]
@@ -17,22 +18,25 @@ interface PaginatedData<T> {
     to: number
 }
 
-const STATUS_BADGE: Record<string, { label: string; className: string }> = {
-    prescribed: { label: 'Prescribed', className: 'bg-blue-100 text-blue-700' },
-    provided: { label: 'Provided', className: 'bg-green-100 text-green-700' },
-    continued: { label: 'Continued', className: 'bg-amber-100 text-amber-700' },
-    stopped: { label: 'Stopped', className: 'bg-gray-100 text-gray-500' },
-}
-
 const MedicationTab = ({ patientId }: { patientId: number }) => {
-    const { openModal, closeModal, openAlert } = useModal()
+    const { openModal, closeModal } = useModal()
     const { medicationAdministrations, activeVisits, medicines } = usePage<{
         medicationAdministrations: PaginatedData<IMedicationAdministration>
         activeVisits: { id: number; type: string; visit_date: string; recorded_by?: string }[]
         medicines: { id: number; name: string }[]
     }>().props
 
+    const [searchTerm, setSearchTerm] = useState('')
+
     const activeIpdVisit = activeVisits.find((v) => v.type === 'IPD')
+
+    const filteredData = useMemo(() => {
+        if (!searchTerm.trim()) return medicationAdministrations.data
+        const q = searchTerm.toLowerCase()
+        return medicationAdministrations.data.filter(
+            (m) => m.medicine?.name.toLowerCase().includes(q) ?? false
+        )
+    }, [medicationAdministrations.data, searchTerm])
 
     if (!activeIpdVisit) {
         return (
@@ -45,7 +49,7 @@ const MedicationTab = ({ patientId }: { patientId: number }) => {
 
     const handleCreate = () => {
         openModal({
-            title: 'New Prescription',
+            title: 'Add to Drug Chart',
             content: (
                 <MedicationForm
                     patientId={patientId}
@@ -58,107 +62,60 @@ const MedicationTab = ({ patientId }: { patientId: number }) => {
         })
     }
 
-    const handleProvide = (m: IMedicationAdministration) => {
-        router.post(`/visits/${activeIpdVisit.id}/medications/${m.id}/provide`, {}, {
-            onSuccess: () => closeModal(),
-        })
-    }
-
-    const handleContinue = (m: IMedicationAdministration) => {
-        router.post(`/visits/${activeIpdVisit.id}/medications/${m.id}/continue`, {}, {
-            onSuccess: () => closeModal(),
-        })
-    }
-
-    const handleStop = (m: IMedicationAdministration) => {
-        openAlert({
-            message: 'Stop this medication?',
-            description: 'Once stopped, no further doses can be administered.',
-            variant: 'danger',
-            confirmLabel: 'Stop',
-            onConfirm: () =>
-                router.post(`/visits/${activeIpdVisit.id}/medications/${m.id}/stop`, {}),
-        })
-    }
-
-    const columns: Column<IMedicationAdministration>[] = [
-        {
-            header: 'Medicine',
-            cell: (m) => m.medicine?.name ?? <span className="text-gray-300">&mdash;</span>,
-        },
-        {
-            header: 'Route',
-            cell: (m) => m.route,
-        },
-        {
-            header: 'Dosage',
-            cell: (m) => `${m.dosage} ${m.unit}`,
-        },
-        {
-            header: 'Interval',
-            cell: (m) => m.interval,
-        },
-        {
-            header: 'Status',
-            cell: (m) => {
-                const badge = STATUS_BADGE[m.status]
-                return (
-                    <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${badge.className}`}>
-                        {badge.label}
-                    </span>
-                )
-            },
-        },
-        {
-            header: 'Recorded By',
-            cell: (m) => m.recorded_by ?? <span className="text-gray-300">&mdash;</span>,
-        },
-        {
-            header: 'Actions',
-            className: 'text-end',
-            cell: (m) => {
-                if (m.status === 'stopped') return null
-
-                return (
-                    <div className="flex items-center justify-end gap-1">
-                        {(m.status === 'prescribed' || m.status === 'continued') && (
-                            <IconButton onClick={() => handleProvide(m)} aria-label="Provide dose" title="Provide">
-                                <Check size={16} />
-                            </IconButton>
-                        )}
-                        {m.status === 'provided' && (
-                            <IconButton onClick={() => handleContinue(m)} aria-label="Continue" title="Continue">
-                                <RotateCcw size={16} />
-                            </IconButton>
-                        )}
-                        <IconButton color="error" onClick={() => handleStop(m)} aria-label="Stop medication" title="Stop">
-                            <Square size={16} />
-                        </IconButton>
-                    </div>
-                )
-            },
-        },
-    ]
-
     const { data, ...pagination } = medicationAdministrations
 
     return (
         <div>
-            <div className="mb-4 flex items-center justify-between">
-                <p className="text-sm text-gray-500">Medication administration records</p>
+            <div className="mb-4 flex items-center justify-between gap-3">
+                <div className="relative flex-1 max-w-xs">
+                    <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <input
+                        type="text"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        placeholder="Filter prescriptions..."
+                        className="w-full rounded-lg border border-gray-300 py-2 pl-9 pr-3 text-sm outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    />
+                </div>
                 <Button onClick={handleCreate}>
-                    <Plus size={18} /> New Prescription
+                    <Plus size={18} /> Add to Drug Chart
                 </Button>
             </div>
 
-            <DataTable
-                data={data}
-                keyExtractor={(m) => m.id}
-                columns={columns}
-                emptyMessage="No medication records"
-                emptyDescription="Prescribe medication for this patient."
-                pagination={pagination}
-            />
+            {filteredData.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-16 text-center">
+                    <p className="text-sm font-medium text-gray-900">No prescriptions found</p>
+                    <p className="mt-1 text-sm text-gray-500">
+                        {searchTerm ? 'Try a different search term.' : 'Add medication to the drug chart for this patient.'}
+                    </p>
+                </div>
+            ) : (
+                <div className="space-y-3">
+                    {filteredData.map((prescription) => (
+                        <PrescriptionCard
+                            key={prescription.id}
+                            prescription={prescription}
+                            visitId={activeIpdVisit.id}
+                        />
+                    ))}
+                </div>
+            )}
+
+            {!searchTerm.trim() && data.length > 0 && (
+                <div className="mt-4">
+                    <Pagination
+                        meta={{
+                            current_page: pagination.current_page,
+                            last_page: pagination.last_page,
+                            per_page: pagination.per_page,
+                            total: pagination.total,
+                            from: pagination.from,
+                            to: pagination.to,
+                        }}
+                        baseUrl={window.location.pathname + window.location.search}
+                    />
+                </div>
+            )}
         </div>
     )
 }
