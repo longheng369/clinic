@@ -15,6 +15,8 @@ class VisitController extends Controller
             'consultations.recordedBy',
             'medicationAdministrations.medicine',
             'medicationAdministrations.recordedBy',
+            'prescriptions.items.medicine',
+            'prescriptions.createdBy',
             'surveillances.recordedBy',
             'paraclinicRequests' => fn ($q) => $q->with(['doctor', 'tests']),
         ]);
@@ -57,6 +59,23 @@ class VisitController extends Controller
                 'status' => $m->status,
                 'recorded_by' => $m->recordedBy?->name,
                 'created_at' => $m->created_at,
+            ]),
+            'prescriptions' => $visit->prescriptions->map(fn ($p) => [
+                'id' => $p->id,
+                'notes' => $p->notes,
+                'recorded_by' => $p->createdBy?->name,
+                'created_at' => $p->created_at,
+                'items' => $p->items->map(fn ($i) => [
+                    'id' => $i->id,
+                    'medicine' => $i->medicine?->name,
+                    'route' => $i->route,
+                    'dosage' => (float) $i->dosage,
+                    'unit' => $i->unit,
+                    'frequency' => $i->frequency,
+                    'duration_days' => $i->duration_days,
+                    'quantity' => $i->quantity ? (float) $i->quantity : null,
+                    'notes' => $i->notes,
+                ])->values(),
             ]),
             'surveillances' => $visit->surveillances->map(fn ($s) => [
                 'id' => $s->id,

@@ -20,9 +20,10 @@ type SelectProps<T extends FieldValues = FieldValues> = {
     RegisterOptions<T, Path<T>>,
     'valueAsDate' | 'setValueAs' | 'disabled'
   >
-  label: string
+  label?: string
   options: SelectOption[]
   placeholder?: string
+  compact?: boolean
 }
 
 const cn = (...classes: (string | false | undefined | null)[]) =>
@@ -35,6 +36,7 @@ const RHFSelect = <T extends FieldValues = FieldValues>({
   label,
   options,
   placeholder = 'Select an option...',
+  compact,
 }: SelectProps<T>) => {
   const {
     field,
@@ -45,8 +47,9 @@ const RHFSelect = <T extends FieldValues = FieldValues>({
     rules,
   })
 
-  const triggerBase =
-    'w-full rounded-xl border px-3 py-2.5 outline-none text-sm focus:ring-2 flex items-center justify-between gap-2 shadow-sm transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)]'
+  const triggerBase = compact
+    ? 'w-full rounded-lg border px-2.5 py-1.5 outline-none text-xs focus:ring-1 flex items-center justify-between gap-2 transition-colors'
+    : 'w-full rounded-xl border px-3 py-2.5 outline-none text-sm focus:ring-2 flex items-center justify-between gap-2 transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)]'
   const defaultStyle =
     'border-gray-300 focus:ring-primary-500/20 focus:border-primary-500'
   const errorStyle =
@@ -54,6 +57,7 @@ const RHFSelect = <T extends FieldValues = FieldValues>({
 
   return (
     <div className="flex flex-col">
+      {label && (
       <label
         className={cn(
           'block text-sm font-medium text-gray-700 mb-1',
@@ -63,6 +67,7 @@ const RHFSelect = <T extends FieldValues = FieldValues>({
         {label}{' '}
         {rules?.required && <span className="text-red-500">*</span>}
       </label>
+      )}
       <Select.Root
         items={options}
         value={field.value ?? null}

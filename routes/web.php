@@ -9,6 +9,7 @@ use App\Http\Controllers\MedicationAdministrationController;
 use App\Http\Controllers\MedicationDoseController;
 use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\ParaclinicRequestController;
+use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PatientSurveillanceController;
 use App\Http\Controllers\PatientVaccinationController;
@@ -84,6 +85,11 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('patients/{patient}/medications', [MedicationAdministrationController::class, 'store'])->name('patients.medications.store');
     Route::put('patients/{patient}/medications/{medicationAdministration}', [MedicationAdministrationController::class, 'update'])->name('patients.medications.update');
+
+    Route::post('patients/{patient}/prescriptions', [PrescriptionController::class, 'store'])->name('patients.prescriptions.store');
+    Route::put('patients/{patient}/prescriptions/{prescription}', [PrescriptionController::class, 'update'])->name('patients.prescriptions.update');
+    Route::delete('patients/{patient}/prescriptions/{prescription}', [PrescriptionController::class, 'destroy'])->name('patients.prescriptions.destroy');
+
     Route::post('visits/{visit}/medications/{medicationAdministration}/stop', [MedicationAdministrationController::class, 'stop'])->name('visits.medications.stop');
     Route::post('visits/{visit}/doses/{dose}/administer', [MedicationDoseController::class, 'administer'])->name('visits.doses.administer');
     Route::post('visits/{visit}/doses/{dose}/skip', [MedicationDoseController::class, 'skip'])->name('visits.doses.skip');

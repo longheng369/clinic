@@ -10,9 +10,10 @@ import Modal from '@/components/modal/modal'
 import Alert, { type AlertProps } from '@/components/modal/alert'
 
 interface ModalConfig {
-  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl'
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl'
   preventClickAway?: boolean
   preventEscape?: boolean
+  scrollable?: boolean
 }
 
 interface DialogConfig {
@@ -115,6 +116,7 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
               maxWidth={dialog.config?.maxWidth || 'md'}
               preventClickAway={dialog.config?.preventClickAway}
               preventEscape={dialog.config?.preventEscape}
+              scrollable={dialog.config?.scrollable}
             >
               {content}
             </Modal>

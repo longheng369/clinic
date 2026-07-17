@@ -76,7 +76,7 @@ const Alert = ({
         </div>
       </div>
       <div className="mt-6 flex justify-end gap-3">
-        <Button onClick={handleCancel}>
+        <Button variant="outline" onClick={handleCancel}>
           {cancelLabel}
         </Button>
         <Button onClick={handleConfirm}>

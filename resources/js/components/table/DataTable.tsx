@@ -40,7 +40,7 @@ export default function DataTable<T>({
 }: DataTableProps<T>) {
     return (
         <>
-            <div className="w-full border border-gray-300 rounded-xl overflow-hidden shadow-sm">
+            <div className="w-full border border-gray-300 rounded-xl overflow-hidden">
                 <table className="w-full text-left">
                     <thead className='bg-white'>
                         <tr className="border-b border-gray-300">

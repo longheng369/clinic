@@ -43,6 +43,26 @@ interface MedicationRow {
     created_at: string
 }
 
+interface PrescriptionRow {
+    id: number
+    notes?: string
+    recorded_by?: string
+    created_at: string
+    items: PrescriptionItemRow[]
+}
+
+interface PrescriptionItemRow {
+    id: number
+    medicine?: string
+    route: string
+    dosage: number
+    unit: string
+    frequency: string
+    duration_days?: number
+    quantity?: number
+    notes?: string
+}
+
 interface SurveillanceRow {
     id: number
     systolic: number
@@ -73,11 +93,12 @@ const STATUS_BADGE: Record<string, { label: string; className: string }> = {
     stopped: { label: 'Stopped', className: 'bg-gray-100 text-gray-500' },
 }
 
-const VisitShow = ({ visit, patient, consultations, medicationAdministrations, surveillances, paraclinicRequests }: {
+const VisitShow = ({ visit, patient, consultations, medicationAdministrations, prescriptions, surveillances, paraclinicRequests }: {
     visit: VisitData
     patient: PatientData
     consultations: ConsultationRow[]
     medicationAdministrations: MedicationRow[]
+    prescriptions: PrescriptionRow[]
     surveillances: SurveillanceRow[]
     paraclinicRequests: ParaclinicRow[]
 }) => {
@@ -166,6 +187,47 @@ const VisitShow = ({ visit, patient, consultations, medicationAdministrations, s
                     </Section>
                 )}
 
+                {/* Prescriptions */}
+                {prescriptions.length > 0 && (
+                    <Section title="Prescriptions" count={prescriptions.length}>
+                        {prescriptions.map((p) => (
+                            <div key={p.id} className="divide-y divide-gray-50">
+                                <div className="flex items-center justify-between px-5 py-3 bg-gray-50/50">
+                                    <div className="flex items-center gap-2 text-sm font-semibold text-gray-900">
+                                        Prescription #{p.id}
+                                        <span className="text-xs font-normal text-gray-400">
+                                            {p.items.length} medicine{p.items.length !== 1 ? 's' : ''}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center gap-3 text-xs text-gray-400 shrink-0">
+                                        <span>{new Date(p.created_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}</span>
+                                        {p.recorded_by && <span>by {p.recorded_by}</span>}
+                                    </div>
+                                </div>
+                                {p.items.map((item) => (
+                                    <Row key={item.id}>
+                                        <div className="flex items-center gap-3 min-w-0 flex-1">
+                                            <span className="text-sm font-medium text-gray-900 truncate">{item.medicine ?? '—'}</span>
+                                            <span className="text-xs text-gray-500">{item.route}</span>
+                                            <span className="text-xs text-gray-500">{item.dosage} {item.unit} &middot; {item.frequency}</span>
+                                            {item.duration_days && <span className="text-xs text-gray-400">{item.duration_days}d</span>}
+                                            {item.quantity && <span className="text-xs text-gray-400">Qty: {item.quantity}</span>}
+                                        </div>
+                                        <div className="text-xs text-gray-400 shrink-0">
+                                            {item.notes && <span className="truncate max-w-[120px]">{item.notes}</span>}
+                                        </div>
+                                    </Row>
+                                ))}
+                                {p.notes && (
+                                    <div className="px-5 py-2 bg-gray-50/30 text-xs text-gray-400">
+                                        Note: {p.notes}
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </Section>
+                )}
+
                 {/* Surveillances */}
                 {surveillances.length > 0 && (
                     <Section title="Vital Signs" count={surveillances.length}>
@@ -207,7 +269,7 @@ const VisitShow = ({ visit, patient, consultations, medicationAdministrations, s
                     </Section>
                 )}
 
-                {consultations.length === 0 && medicationAdministrations.length === 0 && surveillances.length === 0 && paraclinicRequests.length === 0 && (
+                {consultations.length === 0 && medicationAdministrations.length === 0 && prescriptions.length === 0 && surveillances.length === 0 && paraclinicRequests.length === 0 && (
                     <div className="flex flex-col items-center justify-center py-16 text-center">
                         <Calendar size={40} className="text-gray-300 mb-3" />
                         <h3 className="text-lg font-semibold text-gray-900 mb-1">No records</h3>

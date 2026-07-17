@@ -130,7 +130,41 @@ class PatientController extends Controller
                         'skip_reason' => $d->skip_reason,
                     ])->values(),
                 ])
-                ?? ['data' => [], 'current_page' => 1, 'last_page' => 1, 'per_page' => 10, 'total' => 0, 'from' => null, 'to' => null],
+                ?? ['data' => [], 'current_page' => 1, 'last_page' => 1, 'per_page' => 10, 'total' => 0, 'from' => 0, 'to' => 0],
+            'prescriptions' => (function () use ($patient) {
+                $activeVisit = Visit::where('patient_id', $patient->id)
+                    ->where('status', 'active')
+                    ->latest()
+                    ->first();
+
+                if (! $activeVisit) {
+                    return ['data' => [], 'current_page' => 1, 'last_page' => 1, 'per_page' => 10, 'total' => 0, 'from' => 0, 'to' => 0];
+                }
+
+                return $activeVisit->prescriptions()
+                    ->with(['items.medicine', 'createdBy'])
+                    ->latest()
+                    ->paginate(10)
+                    ->through(fn ($p) => [
+                        'id' => $p->id,
+                        'visit_id' => $p->visit_id,
+                        'visit_type' => $activeVisit->type,
+                        'notes' => $p->notes,
+                        'recorded_by' => $p->createdBy?->name,
+                        'created_at' => $p->created_at,
+                        'items' => $p->items->map(fn ($i) => [
+                            'id' => $i->id,
+                            'medicine' => $i->medicine ? ['id' => $i->medicine->id, 'name' => $i->medicine->name] : null,
+                            'route' => $i->route,
+                            'dosage' => (float) $i->dosage,
+                            'unit' => $i->unit,
+                            'frequency' => $i->frequency,
+                            'duration_days' => $i->duration_days,
+                            'quantity' => $i->quantity ? (float) $i->quantity : null,
+                            'notes' => $i->notes,
+                        ])->values(),
+                    ]);
+            })(),
             'vaccinations' => $patient->vaccinations()
                 ->with(['vaccine', 'administeredBy'])
                 ->latest()

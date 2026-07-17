@@ -62,33 +62,48 @@ const PatientForm = ({ patient, onClose }: PatientFormProps) => {
 
     return (
         <form onSubmit={onSubmit} className="border-t border-slate-300 overflow-y-auto" noValidate>
-            <div className="space-y-4 p-6 max-h-[70vh]">
-                <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-12 gap-5 p-6 max-h-[70vh]">
+                <div className="col-span-6">
                     <Input
                         label="Khmer First Name"
                         control={control}
                         placeholder="Enter Khmer first name"
                         name="khmer_first_name"
-                        rules={{ required: 'This field is required' }}
-                        style={{ fontFamily: "'Seireab', 'Serey', 'Khmer OS', 'Noto Sans Khmer', sans-serif" }}
+                        rules={{
+                            required: 'This field is required',
+                            pattern: {
+                                value: /^[\u1780-\u17FF\s]+$/,
+                                message: "Only Khmer characters are allowed",
+                            },
+                        }}
+                        style={{ fontFamily: "'Battambang', 'Serey', 'Khmer OS', 'Noto Sans Khmer', sans-serif" }}
                     />
+                </div>
+                <div className="col-span-6">
                     <Input
                         label="Khmer Last Name"
                         control={control}
                         placeholder="Enter Khmer last name"
                         name="khmer_last_name"
-                        rules={{ required: 'This field is required' }}
-                        style={{ fontFamily: "'Seireab', 'Serey', 'Khmer OS', 'Noto Sans Khmer', sans-serif" }}
+                        rules={{
+                            required: 'This field is required',
+                            pattern: {
+                                value: /^[\u1780-\u17FF\s]+$/,
+                                message: "Only Khmer characters are allowed",
+                            },
+                        }}
+                        style={{ fontFamily: "'Battambang', 'Serey', 'Khmer OS', 'Noto Sans Khmer', sans-serif" }}
                     />
                 </div>
-
-                <div className="grid grid-cols-2 gap-4">
+                <div className="col-span-6">
                     <Input
                         label="First Name (English)"
                         control={control}
                         placeholder="Enter first name"
                         name="first_name"
                     />
+                </div>
+                <div className="col-span-6">
                     <Input
                         label="Last Name (English)"
                         control={control}
@@ -96,8 +111,7 @@ const PatientForm = ({ patient, onClose }: PatientFormProps) => {
                         name="last_name"
                     />
                 </div>
-
-                <div className="grid grid-cols-2 gap-4">
+                <div className="col-span-6">
                     <Input
                         label="Date of Birth"
                         control={control}
@@ -105,6 +119,8 @@ const PatientForm = ({ patient, onClose }: PatientFormProps) => {
                         name="date_of_birth"
                         rules={{ required: 'This field is required' }}
                     />
+                </div>
+                <div className="col-span-6">
                     <Input
                         label="Phone Number"
                         control={control}
@@ -113,8 +129,7 @@ const PatientForm = ({ patient, onClose }: PatientFormProps) => {
                         rules={{ required: 'This field is required' }}
                     />
                 </div>
-
-                <div className="grid grid-cols-2 gap-4">
+                <div className="col-span-6">
                     <Select
                         label="Gender"
                         control={control}
@@ -125,6 +140,8 @@ const PatientForm = ({ patient, onClose }: PatientFormProps) => {
                             { value: 'female', label: 'Female' },
                         ]}
                     />
+                </div>
+                <div className="col-span-6">
                     <Select
                         label="Blood Group"
                         control={control}
@@ -132,14 +149,15 @@ const PatientForm = ({ patient, onClose }: PatientFormProps) => {
                         options={BLOOD_GROUPS}
                     />
                 </div>
-
-                <div className="grid grid-cols-2 gap-4">
+                <div className="col-span-6">
                     <Input
                         label="National ID"
                         control={control}
                         placeholder="Enter national ID"
                         name="national_id"
                     />
+                </div>
+                <div className="col-span-6">
                     <Input
                         label="Address"
                         control={control}
@@ -147,13 +165,14 @@ const PatientForm = ({ patient, onClose }: PatientFormProps) => {
                         name="address"
                     />
                 </div>
-
-                <Textarea
-                    label="Allergy"
-                    control={control}
-                    name="allergy"
-                    placeholder="Enter allergy information"
-                />
+                <div className="col-span-12">
+                    <Textarea
+                        label="Allergy"
+                        control={control}
+                        name="allergy"
+                        placeholder="Enter allergy information"
+                    />
+                </div>
             </div>
 
             <div className="flex justify-end gap-2 p-2 border-t border-slate-300">

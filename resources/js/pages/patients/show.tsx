@@ -7,15 +7,17 @@ import ConsultationTab from './partials/tab/consultation'
 import AttachmentsTab from './partials/tab/attachment'
 import SurveillanceTab from './partials/tab/surveillance'
 import MedicationTab from './partials/tab/medication'
+import PrescriptionTab from './partials/tab/prescription'
 import ParaclinicByPatientTab from '../paraclinic-requests/partials/tab/byPatient'
 import VaccinationTab from './partials/tab/vaccination'
 import { formatDob } from '@/utils/date'
 
-type Tab = 'consultation' | 'medication' | 'admission' | 'paraclinic' | 'vaccination' | 'attachment' | 'surveillance'
+type Tab = 'consultation' | 'medication' | 'prescription' | 'admission' | 'paraclinic' | 'vaccination' | 'attachment' | 'surveillance'
 
 const TABS: { key: Tab; label: string }[] = [
     { key: 'consultation', label: 'Consultation' },
     { key: 'medication', label: 'Medication' },
+    { key: 'prescription', label: 'Prescription' },
     { key: 'paraclinic', label: 'Paraclinic' },
     { key: 'vaccination', label: 'Vaccination' },
     { key: 'attachment', label: 'Attachment' },
@@ -235,6 +237,8 @@ const TabContent = ({ tab, patientId, patient }: { tab: Tab; patientId: number; 
             return <ConsultationTab patientId={patientId} />
         case 'medication':
             return <MedicationTab patientId={patientId} />
+        case 'prescription':
+            return <PrescriptionTab patientId={patientId} />
         case 'paraclinic':
             return <ParaclinicByPatientTab patientId={patientId} />
         case 'attachment':

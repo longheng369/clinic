@@ -5,10 +5,11 @@ interface ModalProps {
   onClose: () => void
   title: string
   children: ReactNode
-  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl'
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl'
   fullScreen?: boolean
   preventClickAway?: boolean
   preventEscape?: boolean
+  scrollable?: boolean
 }
 
 const maxWidthClasses: Record<string, string> = {
@@ -18,7 +19,8 @@ const maxWidthClasses: Record<string, string> = {
   xl: 'max-w-xl',
   '2xl': 'max-w-2xl',
   '3xl': 'max-w-3xl',
-  '4xl': 'max-w-4xl'
+  '4xl': 'max-w-4xl',
+  '5xl': 'max-w-5xl'
 }
 
 const Modal = ({
@@ -30,6 +32,7 @@ const Modal = ({
   fullScreen = false,
   preventClickAway = false,
   preventEscape = false,
+  scrollable = false,
 }: ModalProps) => {
   const [visible, setVisible] = useState(false)
   const [mounted, setMounted] = useState(false)
@@ -152,7 +155,13 @@ const Modal = ({
             </svg>
           </button>
         </div>
-        {children}
+        {scrollable ? (
+          <div className="overflow-y-auto max-h-[calc(100vh-16rem)]">
+            {children}
+          </div>
+        ) : (
+          children
+        )}
       </div>
     </div>
   )

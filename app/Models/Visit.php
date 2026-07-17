@@ -50,4 +50,9 @@ class Visit extends Model
     {
         return $this->hasMany(MedicationAdministration::class);
     }
+
+    public function prescriptions(): HasMany
+    {
+        return $this->hasMany(Prescription::class);
+    }
 }

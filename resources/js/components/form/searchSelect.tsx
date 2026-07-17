@@ -117,7 +117,7 @@ const SearchSelect = <T extends FieldValues = FieldValues>({
         </div>
         <ComboboxOptions
           anchor="bottom"
-          className="z-50 mt-1 max-h-60 w-[var(--input-width)] overflow-auto rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 empty:invisible"
+          className="z-50 mt-1 max-h-60 w-[var(--input-width)] overflow-auto rounded-md bg-white py-1 ring-1 ring-black ring-opacity-5 empty:invisible"
         >
           {displayOptions.length === 0 && query !== '' ? (
             <div className="px-3 py-2 text-sm text-gray-500">

@@ -59,7 +59,7 @@ const Patient = () => {
     const handleEdit = (patient: IPatient) => {
         openModal({
             title: `Edit ${patient.khmer_first_name} ${patient.khmer_last_name}`,
-            content: <PatientForm patient={patient} onClose={() => closeModal()} />,
+            content: <PatientForm patient={{...patient, date_of_birth: formatDob(patient.date_of_birth)}} onClose={() => closeModal()} />,
             config: { preventClickAway: true, maxWidth: '4xl' }
         })
     }
@@ -139,7 +139,7 @@ const Patient = () => {
                 <div className="mb-6 flex items-center justify-between">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">Patients</h1>
-                        <p className="mt-1 text-sm text-primary-600">
+                        <p className="mt-1 text-sm text-zinc-500">
                             Manage your clinic patients
                         </p>
                     </div>
