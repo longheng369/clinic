@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { router } from '@inertiajs/react'
 import { useModal } from '@/components/modal'
-import { ChevronDown, Square } from 'lucide-react'
+import { ChevronDown, Pencil, Square } from 'lucide-react'
 import type { IMedicationAdministration } from '@/interfaces/IMedicationAdministration'
 import DoseRow from './DoseRow'
 import { cn } from '@/utils/cn'
 import { Button } from '@/components/ui/button'
+import IconButton from '@/components/button/iconButton'
 
 const PRES_STATUS: Record<string, { label: string; className: string }> = {
     prescribed: { label: 'Prescribed', className: 'bg-blue-100 text-blue-700' },
@@ -16,9 +17,10 @@ const PRES_STATUS: Record<string, { label: string; className: string }> = {
 interface PrescriptionCardProps {
     prescription: IMedicationAdministration
     visitId: number
+    onEdit: (prescription: IMedicationAdministration) => void
 }
 
-const PrescriptionCard = ({ prescription, visitId }: PrescriptionCardProps) => {
+const PrescriptionCard = ({ prescription, visitId, onEdit }: PrescriptionCardProps) => {
     const { openAlert } = useModal()
     const [expanded, setExpanded] = useState(() => {
         if (prescription.status === 'stopped') return false
@@ -74,6 +76,11 @@ const PrescriptionCard = ({ prescription, visitId }: PrescriptionCardProps) => {
                     </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
+                    {prescription.status !== 'stopped' && (
+                        <IconButton onClick={(e) => { e.stopPropagation(); onEdit(prescription) }} aria-label="Edit prescription" title="Edit">
+                            <Pencil size={14} />
+                        </IconButton>
+                    )}
                     {hasPendingDoses && (
                         <span className="text-[11px] text-amber-600 font-medium">
                             {prescription.doses.filter((d) => d.status === 'pending').length} pending

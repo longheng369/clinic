@@ -62,6 +62,22 @@ const MedicationTab = ({ patientId }: { patientId: number }) => {
         })
     }
 
+    const handleEdit = (prescription: IMedicationAdministration) => {
+        openModal({
+            title: 'Edit Prescription',
+            content: (
+                <MedicationForm
+                    patientId={patientId}
+                    activeVisits={activeVisits}
+                    medicines={medicines}
+                    medication={prescription}
+                    onClose={() => closeModal()}
+                />
+            ),
+            config: { preventClickAway: true, maxWidth: '2xl' },
+        })
+    }
+
     const { data, ...pagination } = medicationAdministrations
 
     return (
@@ -96,6 +112,7 @@ const MedicationTab = ({ patientId }: { patientId: number }) => {
                             key={prescription.id}
                             prescription={prescription}
                             visitId={activeIpdVisit.id}
+                            onEdit={handleEdit}
                         />
                     ))}
                 </div>

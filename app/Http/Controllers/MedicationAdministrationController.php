@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MedicationAdministration;
 use App\Models\MedicationDose;
+use App\Models\Patient;
 use App\Models\Visit;
 use App\Http\Requests\StoreMedicationAdministrationRequest;
 use Carbon\Carbon;
@@ -30,6 +31,33 @@ class MedicationAdministrationController extends Controller
         }
 
         return back()->with('success', 'Added to drug chart.');
+    }
+
+    public function update(StoreMedicationAdministrationRequest $request, Patient $patient, MedicationAdministration $medicationAdministration)
+    {
+        abort_if($medicationAdministration->status === 'stopped', 403, 'Cannot edit a stopped medication.');
+
+        $oldInterval = $medicationAdministration->interval;
+        $oldStartsAt = $medicationAdministration->starts_at;
+
+        $startsAt = $request->starts_at ? Carbon::parse($request->starts_at) : $medicationAdministration->starts_at;
+
+        $medicationAdministration->update(array_merge(
+            $request->validated(),
+            ['starts_at' => $startsAt]
+        ));
+
+        if ($request->interval !== $oldInterval || ! $startsAt->equalTo($oldStartsAt)) {
+            $medicationAdministration->doses()
+                ->where('status', 'pending')
+                ->delete();
+
+            if ($request->interval !== 'PRN') {
+                $this->generateDoses($medicationAdministration, $startsAt);
+            }
+        }
+
+        return back()->with('success', 'Medication updated.');
     }
 
     public function stop(Visit $visit, MedicationAdministration $medicationAdministration)

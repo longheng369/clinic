@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form'
 import Input from '@/components/form/input'
 import Select from '@/components/form/select'
 import Textarea from '@/components/form/textarea'
-import { IMedicationFormData } from '@/interfaces/IMedicationAdministration'
+import { IMedicationAdministration, IMedicationFormData } from '@/interfaces/IMedicationAdministration'
 import { useState } from 'react'
 import { router } from '@inertiajs/react'
 import { Button } from '@/components/ui/button'
@@ -34,10 +34,11 @@ interface MedicationFormProps {
     patientId: number
     activeVisits: { id: number; type: string; visit_date: string; recorded_by?: string }[]
     medicines: { id: number; name: string }[]
+    medication?: IMedicationAdministration
     onClose: () => void
 }
 
-const MedicationForm = ({ patientId, activeVisits, medicines, onClose }: MedicationFormProps) => {
+const MedicationForm = ({ patientId, activeVisits, medicines, medication, onClose }: MedicationFormProps) => {
     const [isProcessing, setIsProcessing] = useState(false)
     const { toast } = useToast()
 
@@ -45,17 +46,37 @@ const MedicationForm = ({ patientId, activeVisits, medicines, onClose }: Medicat
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset())
     const defaultStartsAt = now.toISOString().slice(0, 16)
 
+    const getStartsAtValue = () => {
+        if (medication?.starts_at) {
+            const d = new Date(medication.starts_at)
+            d.setMinutes(d.getMinutes() - d.getTimezoneOffset())
+            return d.toISOString().slice(0, 16)
+        }
+        return defaultStartsAt
+    }
+
     const { control, handleSubmit } = useForm<IMedicationFormData>({
-        defaultValues: {
-            visit_id: activeVisits[0]?.id ?? 0,
-            medicine_id: null,
-            route: '',
-            dosage: null,
-            unit: '',
-            interval: '',
-            starts_at: defaultStartsAt,
-            notes: '',
-        },
+        defaultValues: medication
+            ? {
+                  visit_id: activeVisits[0]?.id ?? 0,
+                  medicine_id: medication.medicine?.id ?? null,
+                  route: medication.route,
+                  dosage: medication.dosage,
+                  unit: medication.unit,
+                  interval: medication.interval,
+                  starts_at: getStartsAtValue(),
+                  notes: medication.notes ?? '',
+              }
+            : {
+                  visit_id: activeVisits[0]?.id ?? 0,
+                  medicine_id: null,
+                  route: '',
+                  dosage: null,
+                  unit: '',
+                  interval: '',
+                  starts_at: defaultStartsAt,
+                  notes: '',
+              },
     })
 
     const medicineOptions = medicines.map((m) => ({ value: m.id, label: m.name }))
@@ -67,13 +88,24 @@ const MedicationForm = ({ patientId, activeVisits, medicines, onClose }: Medicat
 
     const onSubmit = handleSubmit((data) => {
         setIsProcessing(true)
-        router.post(`/patients/${patientId}/medications`, { ...data }, {
-            onSuccess: () => {
-                onClose()
-                toast('Added to drug chart!', { variant: 'success' })
-            },
-            onFinish: () => setIsProcessing(false),
-        })
+
+        if (medication) {
+            router.put(`/patients/${patientId}/medications/${medication.id}`, { ...data }, {
+                onSuccess: () => {
+                    onClose()
+                    toast('Medication updated!', { variant: 'success' })
+                },
+                onFinish: () => setIsProcessing(false),
+            })
+        } else {
+            router.post(`/patients/${patientId}/medications`, { ...data }, {
+                onSuccess: () => {
+                    onClose()
+                    toast('Added to drug chart!', { variant: 'success' })
+                },
+                onFinish: () => setIsProcessing(false),
+            })
+        }
     })
 
     return (
@@ -153,7 +185,9 @@ const MedicationForm = ({ patientId, activeVisits, medicines, onClose }: Medicat
 
             <div className="flex justify-end gap-2 p-2 border-t border-slate-300">
                 <Button type="button" onClick={onClose} variant="outline">Cancel</Button>
-                <Button type="submit" disabled={isProcessing}>Add to Drug Chart</Button>
+                <Button type="submit" disabled={isProcessing}>
+                    {medication ? 'Update' : 'Add to Drug Chart'}
+                </Button>
             </div>
         </form>
     )

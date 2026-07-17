@@ -83,6 +83,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('doctors/search', [ParaclinicRequestController::class, 'searchDoctors'])->name('api.doctors.search');
 
     Route::post('patients/{patient}/medications', [MedicationAdministrationController::class, 'store'])->name('patients.medications.store');
+    Route::put('patients/{patient}/medications/{medicationAdministration}', [MedicationAdministrationController::class, 'update'])->name('patients.medications.update');
     Route::post('visits/{visit}/medications/{medicationAdministration}/stop', [MedicationAdministrationController::class, 'stop'])->name('visits.medications.stop');
     Route::post('visits/{visit}/doses/{dose}/administer', [MedicationDoseController::class, 'administer'])->name('visits.doses.administer');
     Route::post('visits/{visit}/doses/{dose}/skip', [MedicationDoseController::class, 'skip'])->name('visits.doses.skip');
