@@ -83,7 +83,7 @@ const Sidebar = () => {
 
   return (
     <aside
-      className={`h-screen flex flex-col bg-white backdrop-blur-lg border-r border-gray-300 shadow-sm z-30 transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+      className={`h-screen flex flex-col bg-white backdrop-blur-lg border-r border-gray-300 z-30 transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] ${
         collapsed ? 'w-16' : 'w-75'
       }`}
     >

@@ -21,7 +21,7 @@ const cn = (...classes: (string | false | undefined | null)[]) =>
 const variantStyles: Record<ToastVariant, { bg: string; border: string; iconBg: string }> = {
   success: {
     bg: 'bg-green-50',
-    border: 'border-green-200',
+    border: 'border-green-600',
     iconBg: 'text-green-500',
   },
   error: {
