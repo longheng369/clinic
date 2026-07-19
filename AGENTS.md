@@ -3,6 +3,19 @@
 ## Project Overview
 See @README.md for project overview and @package.json for available npm/pnpm commands for this project.
 
+## Context Scoping (Before Implementing Features)
+When implementing a new feature, limit context reading to these directories/files:
+
+1. `app/` — Application logic (models, controllers, services, etc.)
+2. `database/` — Migrations, seeders, factories
+3. `resources/` — Views, JS/TS components, CSS, frontend assets
+4. `routes/` — Route definitions
+5. `composer.json` — PHP dependencies and project metadata
+6. `package.json` — JS/TS dependencies and scripts
+7. `config/` — Configuration files
+8. `storage/` — **Only read when the task involves images, files, or uploaded assets**
+9. `public/` — **Only read when the task involves images, files, or publicly served assets**
+
 ## Code Style Guidelines
 - Use descriptive variable names
 - Follow existing patterns in the codebase

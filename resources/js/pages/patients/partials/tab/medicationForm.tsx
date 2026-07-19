@@ -64,6 +64,7 @@ const MedicationForm = ({ patientId, activeVisits, medicines, medication, onClos
                   dosage: medication.dosage,
                   unit: medication.unit,
                   interval: medication.interval,
+                  duration: medication.duration,
                   starts_at: getStartsAtValue(),
                   notes: medication.notes ?? '',
               }
@@ -74,6 +75,7 @@ const MedicationForm = ({ patientId, activeVisits, medicines, medication, onClos
                   dosage: null,
                   unit: '',
                   interval: '',
+                  duration: null,
                   starts_at: defaultStartsAt,
                   notes: '',
               },
@@ -167,13 +169,25 @@ const MedicationForm = ({ patientId, activeVisits, medicines, medication, onClos
                     />
                 </div>
 
-                <Input
-                    label="Start Date & Time"
-                    control={control}
-                    type="datetime-local"
-                    name="starts_at"
-                    rules={{ required: 'Required' }}
-                />
+                <div className="grid grid-cols-2 gap-4">
+                    <Input
+                        label="Duration (total doses)"
+                        control={control}
+                        type="number"
+                        min={1}
+                        max={365}
+                        placeholder="e.g. 3"
+                        name="duration"
+                        rules={{ required: 'Required', min: { value: 1, message: 'Min 1' } }}
+                    />
+                    <Input
+                        label="Start Date & Time"
+                        control={control}
+                        type="datetime-local"
+                        name="starts_at"
+                        rules={{ required: 'Required' }}
+                    />
+                </div>
 
                 <Textarea
                     label="Notes"

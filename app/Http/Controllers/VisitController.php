@@ -56,6 +56,8 @@ class VisitController extends Controller
                 'dosage' => (float) $m->dosage,
                 'unit' => $m->unit,
                 'interval' => $m->interval,
+                'duration' => $m->duration,
+                'cycle_no' => $m->cycle_no,
                 'status' => $m->status,
                 'recorded_by' => $m->recordedBy?->name,
                 'created_at' => $m->created_at,

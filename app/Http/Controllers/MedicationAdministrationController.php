@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\MedicationAdministration;
-use App\Models\MedicationDose;
+use App\Models\MedicationAudit;
 use App\Models\Patient;
 use App\Models\Visit;
 use App\Http\Requests\StoreMedicationAdministrationRequest;
@@ -21,24 +21,28 @@ class MedicationAdministrationController extends Controller
             $request->validated(),
             [
                 'status' => 'active',
+                'cycle_no' => 1,
                 'starts_at' => $startsAt,
                 'created_by' => auth()->id(),
             ]
         ));
 
+        MedicationAudit::log(auth()->user(), 'created', $medication, null, $medication->toArray());
+
         if ($request->interval !== 'PRN') {
-            $this->generateDoses($medication, $startsAt);
+            $medication->generateNextDose();
         }
 
-        return back()->with('success', 'Added to drug chart.');
+        return back()->with('success', 'Medication order created.');
     }
 
     public function update(StoreMedicationAdministrationRequest $request, Patient $patient, MedicationAdministration $medicationAdministration)
     {
         abort_if($medicationAdministration->status === 'stopped', 403, 'Cannot edit a stopped medication.');
+        abort_if($medicationAdministration->hasAdministrationActivity(), 403,
+            'Cannot edit an order with administration history. Stop and create a new order instead.');
 
-        $oldInterval = $medicationAdministration->interval;
-        $oldStartsAt = $medicationAdministration->starts_at;
+        $oldValues = $medicationAdministration->toArray();
 
         $startsAt = $request->starts_at ? Carbon::parse($request->starts_at) : $medicationAdministration->starts_at;
 
@@ -47,17 +51,41 @@ class MedicationAdministrationController extends Controller
             ['starts_at' => $startsAt]
         ));
 
-        if ($request->interval !== $oldInterval || ! $startsAt->equalTo($oldStartsAt)) {
-            $medicationAdministration->doses()
-                ->where('status', 'pending')
-                ->delete();
+        MedicationAudit::log(auth()->user(), 'updated', $medicationAdministration, $oldValues, $medicationAdministration->fresh()->toArray());
 
-            if ($request->interval !== 'PRN') {
-                $this->generateDoses($medicationAdministration, $startsAt);
-            }
+        $medicationAdministration->doses()
+            ->where('status', 'pending')
+            ->delete();
+
+        if ($request->interval !== 'PRN') {
+            $medicationAdministration->generateNextDose();
         }
 
-        return back()->with('success', 'Medication updated.');
+        return back()->with('success', 'Medication order updated.');
+    }
+
+    public function continue(Visit $visit, MedicationAdministration $medicationAdministration)
+    {
+        abort_if($medicationAdministration->status !== 'completed', 403, 'Only completed orders can be continued.');
+
+        $newCycleNo = $medicationAdministration->cycle_no + 1;
+
+        $medicationAdministration->update([
+            'status' => 'active',
+            'cycle_no' => $newCycleNo,
+            'stopped_at' => null,
+        ]);
+
+        MedicationAudit::log(auth()->user(), 'continued', $medicationAdministration, null, [
+            'cycle_no' => $newCycleNo,
+            'status' => 'active',
+        ]);
+
+        if ($medicationAdministration->interval !== 'PRN') {
+            $medicationAdministration->generateNextDose();
+        }
+
+        return back()->with('success', 'Medication order continued.');
     }
 
     public function stop(Visit $visit, MedicationAdministration $medicationAdministration)
@@ -69,53 +97,36 @@ class MedicationAdministrationController extends Controller
             'stopped_at' => now(),
         ]);
 
+        MedicationAudit::log(auth()->user(), 'stopped', $medicationAdministration);
+
         $medicationAdministration->doses()
             ->where('status', 'pending')
-            ->where('scheduled_at', '>', now())
             ->update([
-                'status' => 'skipped',
-                'skip_reason' => 'Prescription stopped',
+                'status' => 'cancelled',
             ]);
 
-        return back()->with('success', 'Medication stopped.');
+        return back()->with('success', 'Medication order stopped.');
     }
 
-    private function generateDoses(MedicationAdministration $medication, Carbon $startsAt): void
+    public function hold(Visit $visit, MedicationAdministration $medicationAdministration)
     {
-        $times = match ($medication->interval) {
-            'QD' => ['08:00'],
-            'BID' => ['08:00', '20:00'],
-            'TID' => ['08:00', '14:00', '20:00'],
-            'QID' => ['08:00', '12:00', '18:00', '22:00'],
-            'QHS' => ['22:00'],
-            default => ['08:00'],
-        };
+        abort_if($medicationAdministration->status !== 'active', 403, 'Only active orders can be placed on hold.');
 
-        $start = $startsAt->copy()->startOfDay();
-        $horizon = 7;
+        $medicationAdministration->update(['status' => 'on_hold']);
 
-        $doses = [];
+        MedicationAudit::log(auth()->user(), 'held', $medicationAdministration);
 
-        for ($day = 0; $day < $horizon; $day++) {
-            foreach ($times as $time) {
-                $scheduledAt = $start->copy()->addDays($day)->setTimeFromTimeString($time);
+        return back()->with('success', 'Medication order placed on hold.');
+    }
 
-                if ($scheduledAt->lte(now())) {
-                    continue;
-                }
+    public function resume(Visit $visit, MedicationAdministration $medicationAdministration)
+    {
+        abort_if($medicationAdministration->status !== 'on_hold', 403, 'Only on-hold orders can be resumed.');
 
-                $doses[] = [
-                    'medication_administration_id' => $medication->id,
-                    'scheduled_at' => $scheduledAt,
-                    'status' => 'pending',
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
-            }
-        }
+        $medicationAdministration->update(['status' => 'active']);
 
-        if (! empty($doses)) {
-            MedicationDose::insert($doses);
-        }
+        MedicationAudit::log(auth()->user(), 'resumed', $medicationAdministration);
+
+        return back()->with('success', 'Medication order resumed.');
     }
 }

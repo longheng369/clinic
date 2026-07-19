@@ -8,18 +8,25 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable([
     'medication_administration_id',
+    'cycle_no',
+    'administration_no',
+    'total_administrations',
     'scheduled_at',
     'administered_at',
     'status',
     'administered_by',
     'unit_price',
-    'skip_reason',
+    'reason',
+    'note',
 ])]
 class MedicationDose extends Model
 {
     protected function casts(): array
     {
         return [
+            'cycle_no' => 'integer',
+            'administration_no' => 'integer',
+            'total_administrations' => 'integer',
             'scheduled_at' => 'datetime',
             'administered_at' => 'datetime',
             'unit_price' => 'decimal:2',

@@ -2,7 +2,7 @@ import { usePage } from '@inertiajs/react'
 import { useModal } from '@/components/modal'
 import { Plus, Search } from 'lucide-react'
 import MedicationForm from './medicationForm'
-import PrescriptionCard from './PrescriptionCard'
+import MedicationOrderGroup from './MedicationOrderGroup'
 import { IMedicationAdministration } from '@/interfaces/IMedicationAdministration'
 import { Button } from '@/components/ui/button'
 import { Pagination } from '@/components/table/DataTable'
@@ -106,9 +106,9 @@ const MedicationTab = ({ patientId }: { patientId: number }) => {
                     </p>
                 </div>
             ) : (
-                <div className="space-y-3">
+                <div className="space-y-6">
                     {filteredData.map((prescription) => (
-                        <PrescriptionCard
+                        <MedicationOrderGroup
                             key={prescription.id}
                             prescription={prescription}
                             visitId={activeIpdVisit.id}

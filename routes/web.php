@@ -91,8 +91,12 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('patients/{patient}/prescriptions/{prescription}', [PrescriptionController::class, 'destroy'])->name('patients.prescriptions.destroy');
 
     Route::post('visits/{visit}/medications/{medicationAdministration}/stop', [MedicationAdministrationController::class, 'stop'])->name('visits.medications.stop');
+    Route::post('visits/{visit}/medications/{medicationAdministration}/continue', [MedicationAdministrationController::class, 'continue'])->name('visits.medications.continue');
+    Route::post('visits/{visit}/medications/{medicationAdministration}/hold', [MedicationAdministrationController::class, 'hold'])->name('visits.medications.hold');
+    Route::post('visits/{visit}/medications/{medicationAdministration}/resume', [MedicationAdministrationController::class, 'resume'])->name('visits.medications.resume');
     Route::post('visits/{visit}/doses/{dose}/administer', [MedicationDoseController::class, 'administer'])->name('visits.doses.administer');
-    Route::post('visits/{visit}/doses/{dose}/skip', [MedicationDoseController::class, 'skip'])->name('visits.doses.skip');
+    Route::post('visits/{visit}/doses/{dose}/missed', [MedicationDoseController::class, 'missed'])->name('visits.doses.missed');
+    Route::post('visits/{visit}/doses/{dose}/refused', [MedicationDoseController::class, 'refused'])->name('visits.doses.refused');
 
     Route::get('visits/{visit}', [VisitController::class, 'show'])->name('visits.show');
     Route::patch('visits/{visit}/admit', [VisitController::class, 'admit'])->name('visits.admit');

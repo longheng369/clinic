@@ -45,43 +45,40 @@ const ShowConsultation = ({ patient, consultation }: { patient: IPatient; consul
     }, [consultation])
 
     return (
-        <>
+        <section className='h-screen flex flex-col'>
             <Head title="Consultation Details" />
-            <div className="p-8">
-                <div className="mb-6 flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <Link
-                            href={`/patients/${patient.id}?tab=consultation`}
-                            className="flex items-center justify-center size-9 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
-                        >
-                            <ArrowLeft size={20} />
-                        </Link>
-                        <div>
-                            <h1 className="text-2xl font-bold text-gray-900">Consultation Details</h1>
-                            <p className="text-sm text-gray-500">
-                                Patient: <span className="font-medium">{patient.khmer_last_name} {patient.khmer_first_name}</span>
-                                &middot; {new Date(consultation.created_at).toLocaleString('en-US', {
-                                    timeZone: 'Asia/Phnom_Penh',
-                                    year: 'numeric',
-                                    month: 'short',
-                                    day: '2-digit',
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                    hour12: false,
-                                })}
-                            </p>
-                        </div>
-                    </div>
-                    <Link href={`/patients/${patient.id}/consultations/${consultation.id}/edit`}>
-                        <Button startIcon={<Pencil size={18} />}>Edit</Button>
+            <div className="flex items-center justify-between sticky top-0 bg-background p-4 z-1 shadow-sm">
+                <div className="flex items-center gap-4">
+                    <Link
+                        href={`/patients/${patient.id}?tab=consultation`}
+                        className="flex items-center justify-center size-9 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+                    >
+                        <ArrowLeft size={20} />
                     </Link>
+                    <div>
+                        <h1 className="text-2xl font-bold text-gray-900">Consultation Details</h1>
+                        <p className="text-sm text-gray-500">
+                            Patient: <span className="font-medium">{patient.khmer_last_name} {patient.khmer_first_name}</span>
+                            &middot; {new Date(consultation.created_at).toLocaleString('en-US', {
+                                timeZone: 'Asia/Phnom_Penh',
+                                year: 'numeric',
+                                month: 'short',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: false,
+                            })}
+                        </p>
+                    </div>
                 </div>
-
-                <div className="rounded-xl border border-gray-200 bg-white p-6">
-                    <ConsultationForm control={control} viewOnly />
-                </div>
+                <Link href={`/patients/${patient.id}/consultations/${consultation.id}/edit`}>
+                    <Button>Edit</Button>
+                </Link>
             </div>
-        </>
+            <div className="overflow-y-auto flex-1 bg-background p-6">
+                <ConsultationForm control={control} viewOnly />
+            </div>
+        </section>
     )
 }
 

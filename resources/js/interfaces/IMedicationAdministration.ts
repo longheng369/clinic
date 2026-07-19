@@ -7,7 +7,9 @@ export interface IMedicationAdministration {
     dosage: number;
     unit: string;
     interval: string;
-    status: 'prescribed' | 'active' | 'stopped';
+    duration: number | null;
+    cycle_no: number;
+    status: 'active' | 'on_hold' | 'stopped' | 'completed';
     starts_at: string | null;
     notes: string | null;
     recorded_by?: string | null;
@@ -22,6 +24,7 @@ export interface IMedicationFormData {
     dosage: number | null;
     unit: string;
     interval: string;
+    duration: number | null;
     starts_at: string;
     notes: string;
 }

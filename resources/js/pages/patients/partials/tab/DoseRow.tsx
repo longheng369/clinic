@@ -1,7 +1,7 @@
 import { router } from '@inertiajs/react'
 import { useModal } from '@/components/modal'
 import IconButton from '@/components/button/iconButton'
-import { Check, X } from 'lucide-react'
+import { Check, X, AlertTriangle } from 'lucide-react'
 import type { IMedicationDose } from '@/interfaces/IMedicationDose'
 import DoseStatusBadge, { getEffectiveStatus } from './DoseStatusBadge'
 import { formatCreatedDateTime } from '@/utils/date'
@@ -9,36 +9,49 @@ import { formatCreatedDateTime } from '@/utils/date'
 interface DoseRowProps {
     dose: IMedicationDose
     visitId: number
+    orderStatus: string
 }
 
-const DoseRow = ({ dose, visitId }: DoseRowProps) => {
+const DoseRow = ({ dose, visitId, orderStatus }: DoseRowProps) => {
     const { openAlert } = useModal()
     const effective = getEffectiveStatus(dose)
-    const actionEnabled = effective === 'pending' || effective === 'overdue'
+    const actionEnabled = orderStatus === 'active' && (effective === 'pending' || effective === 'overdue')
 
-    const handleAdminister = () => {
+    const handleProvide = () => {
         router.post(`/visits/${visitId}/doses/${dose.id}/administer`, {})
     }
 
-    const handleSkip = () => {
+    const handleMissed = () => {
         openAlert({
-            message: 'Skip this dose?',
-            description: 'This dose will be marked as skipped.',
+            message: 'Record as missed?',
+            description: 'Select a reason for the missed dose.',
             variant: 'warning',
-            confirmLabel: 'Skip',
-            onConfirm: () =>
-                router.post(`/visits/${visitId}/doses/${dose.id}/skip`, { reason: 'Skipped by nurse' }),
+            confirmLabel: 'Patient absent',
+            onConfirm: () => router.post(`/visits/${visitId}/doses/${dose.id}/missed`, { reason: 'Patient absent' }),
+        })
+    }
+
+    const handleRefused = () => {
+        openAlert({
+            message: 'Record as refused?',
+            description: 'Select a reason the patient refused.',
+            variant: 'warning',
+            confirmLabel: 'Patient declined',
+            onConfirm: () => router.post(`/visits/${visitId}/doses/${dose.id}/refused`, { reason: 'Patient declined' }),
         })
     }
 
     return (
-        <div className="flex items-center justify-between rounded-lg border border-gray-100 px-4 py-3">
+        <div className="flex items-center justify-between rounded-lg border border-gray-100 bg-white px-4 py-2.5">
             <div className="flex items-center gap-3">
+                <span className="text-xs text-gray-400 min-w-[20px]">
+                    {dose.administration_no != null ? `#${dose.administration_no}` : ''}
+                </span>
                 <span className="text-sm font-medium text-gray-700 min-w-[70px]">
                     {formatCreatedDateTime(dose.scheduled_at)}
                 </span>
                 <DoseStatusBadge dose={dose} />
-                {dose.status === 'administered' && dose.administered_by && (
+                {dose.status === 'provided' && dose.administered_by && (
                     <span className="text-xs text-gray-400">
                         by {dose.administered_by}
                         {dose.unit_price != null && (
@@ -48,16 +61,22 @@ const DoseRow = ({ dose, visitId }: DoseRowProps) => {
                         )}
                     </span>
                 )}
-                {dose.status === 'skipped' && dose.skip_reason && (
-                    <span className="text-xs text-gray-400">&mdash; {dose.skip_reason}</span>
+                {(dose.status === 'missed' || dose.status === 'refused' || dose.status === 'cancelled') && dose.reason && (
+                    <span className="text-xs text-gray-400">&mdash; {dose.reason}</span>
+                )}
+                {dose.note && (
+                    <span className="text-xs text-gray-400 italic">{dose.note}</span>
                 )}
             </div>
             {actionEnabled && (
                 <div className="flex items-center gap-1">
-                    <IconButton onClick={handleAdminister} aria-label="Administer dose" title="Administer">
+                    <IconButton onClick={handleProvide} aria-label="Provide dose" title="Provide">
                         <Check size={16} />
                     </IconButton>
-                    <IconButton color="error" onClick={handleSkip} aria-label="Skip dose" title="Skip">
+                    <IconButton onClick={handleMissed} aria-label="Missed dose" title="Missed">
+                        <AlertTriangle size={16} />
+                    </IconButton>
+                    <IconButton color="error" onClick={handleRefused} aria-label="Refused dose" title="Refused">
                         <X size={16} />
                     </IconButton>
                 </div>
