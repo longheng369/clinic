@@ -59,10 +59,10 @@ const EditConsultation = ({ patient, consultation }: { patient: IPatient; consul
     })
 
     return (
-        <>
+        <section className='h-screen flex flex-col'>
             <Head title="Edit Consultation" />
-            <div className="p-8">
-                <div className="mb-6 flex items-center gap-4">
+            <div className="flex items-center justify-between sticky top-0 bg-background p-4 z-1 shadow-sm">
+                <div className="flex items-center gap-4">
                     <Link
                         href={`/patients/${patient.id}?tab=consultation`}
                         className="flex items-center justify-center size-9 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
@@ -76,20 +76,19 @@ const EditConsultation = ({ patient, consultation }: { patient: IPatient; consul
                         </p>
                     </div>
                 </div>
-
-                <div className="rounded-xl border border-gray-200 bg-white p-6">
-                    <form onSubmit={onSubmit} noValidate>
-                        <ConsultationForm control={control} />
-                        <div className="mt-6 flex justify-end gap-2 pt-4 border-t border-gray-200">
-                            <Link href={`/patients/${patient.id}?tab=consultation`}>
-                                <Button type="button" variant="outline">Cancel</Button>
-                            </Link>
-                            <Button type="submit" disabled={isProcessing}>Update Consultation</Button>
-                        </div>
-                    </form>
-                </div>
             </div>
-        </>
+            <div className="overflow-y-auto flex-1 bg-background p-6">
+                <form onSubmit={onSubmit} noValidate>
+                    <ConsultationForm control={control} />
+                    <div className="mt-6 flex justify-end gap-2 pt-4 border-t border-gray-200">
+                        <Link href={`/patients/${patient.id}?tab=consultation`}>
+                            <Button type="button" variant="outline">Cancel</Button>
+                        </Link>
+                        <Button type="submit" disabled={isProcessing}>Update Consultation</Button>
+                    </div>
+                </form>
+            </div>
+        </section>
     )
 }
 
