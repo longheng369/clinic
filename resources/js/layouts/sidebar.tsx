@@ -83,13 +83,13 @@ const Sidebar = () => {
 
   return (
     <aside
-      className={`h-screen flex flex-col bg-white backdrop-blur-lg border-r border-gray-300 z-30 transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+      className={`h-screen flex flex-col bg-white backdrop-blur-lg border-r border-gray-300 z-30 ${
         collapsed ? 'w-16' : 'w-75'
       }`}
     >
       {/* Logo */}
       <div className={`flex items-center gap-3 ${collapsed ? 'justify-center px-0 py-6' : 'px-6 py-6'}`}>
-        <div className='flex items-center justify-center size-9 rounded-lg bg-gradient-to-br from-primary-500 to-primary-700 shadow-md shadow-primary-500/20 shrink-0'>
+        <div className='flex items-center justify-center size-9 rounded-lg bg-linear-to-br from-primary-500 to-primary-700 shadow-md shadow-primary-500/20 shrink-0'>
           <Stethoscope size={20} className='text-white' />
         </div>
         {!collapsed && (
@@ -107,7 +107,7 @@ const Sidebar = () => {
         {collapsed && (
           <button
             onClick={() => setCollapsed(false)}
-            className='absolute -right-3 top-6 p-1 rounded-full bg-white border border-primary-100 shadow-md text-primary-600 hover:text-primary-700 hover:bg-primary-50 transition-all duration-150 cursor-pointer'
+            className='absolute -right-3 top-6 p-1 rounded-full bg-white border border-primary-100 shadow-md text-primary-600 hover:text-primary-700 hover:bg-primary-50 cursor-pointer'
             aria-label='Expand sidebar'
           >
             <PanelRight size={14} />
@@ -135,7 +135,7 @@ const Sidebar = () => {
                       <li key={item.label} className='flex justify-center'>
                         <button
                           onClick={() => { setCollapsed(false); toggleSection(item.label) }}
-                          className='flex items-center justify-center size-10 rounded-xl text-sidebar-muted-light hover:text-primary-600 hover:bg-primary-50/50 transition-all duration-150 cursor-pointer'
+                          className='flex items-center justify-center size-10 rounded-xl text-sidebar-muted-light hover:text-primary-600 hover:bg-primary-50/50 cursor-pointer'
                           aria-label={item.label}
                         >
                           {Icon && <Icon size={20} />}
@@ -147,7 +147,7 @@ const Sidebar = () => {
                     <li key={item.label}>
                       <button
                         onClick={() => toggleSection(item.label)}
-                        className='flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium w-full text-sidebar-muted-light hover:text-primary-600 hover:bg-primary-50/50 transition-all duration-150 cursor-pointer'
+                        className='flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium w-full text-sidebar-muted-light hover:text-primary-600 hover:bg-primary-50/50  cursor-pointer'
                       >
                         {Icon && <Icon size={18} />}
                         <span className='flex-1 text-left'>{item.label}</span>
@@ -161,9 +161,9 @@ const Sidebar = () => {
                               <li key={child.path}>
                                 <Link
                                   href={child.path!}
-                                  className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150
+                                  className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium
                                     ${isChildActive
-                                      ? 'bg-primary-50 text-primary-700 shadow-sm border-r-2 border-primary-500'
+                                      ? 'bg-linear-to-br from-primary-500 to-primary-700 text-white shadow-md shadow-primary-500/20 border-r-2 border-primary-600'
                                       : 'text-sidebar-muted-light hover:text-primary-600 hover:bg-primary-50/50'
                                     }`}
                                 >
@@ -195,9 +195,9 @@ const Sidebar = () => {
                     <li key={item.path} className='flex justify-center'>
                       <Link
                         href={item.path!}
-                        className={`flex items-center justify-center size-10 rounded-xl transition-all duration-150 relative
+                        className={`flex items-center justify-center size-10 rounded-xl  relative
                           ${isActive
-                            ? 'bg-primary-50 text-primary-700 shadow-sm after:absolute after:left-0 after:top-1/2 after:-translate-y-1/2 after:h-5 after:w-0.5 after:rounded-full after:bg-primary-500'
+                            ? 'bg-gradient-to-br from-primary-500 to-primary-700 text-white shadow-md shadow-primary-500/20 after:absolute after:left-0 after:top-1/2 after:-translate-y-1/2 after:h-5 after:w-0.5 after:rounded-full after:bg-white'
                             : 'text-sidebar-muted-light hover:text-primary-600 hover:bg-primary-50/50'
                           }`}
                         aria-label={item.label}
@@ -212,9 +212,9 @@ const Sidebar = () => {
                   <li key={item.path}>
                     <Link
                       href={item.path!}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium
                         ${isActive
-                          ? 'bg-primary-50 text-primary-700 shadow-sm border-r-2 border-primary-500'
+                          ? 'bg-gradient-to-br from-primary-500 to-primary-700 text-white shadow-md shadow-primary-500/20 border-r-2 border-primary-600'
                           : 'text-sidebar-muted-light hover:text-primary-600 hover:bg-primary-50/50'
                         }`}
                     >
@@ -246,7 +246,7 @@ const Sidebar = () => {
           <div className='flex flex-col items-center gap-2'>
             <button
               onClick={() => router.visit('/profile')}
-              className='flex items-center justify-center size-10 rounded-xl text-sidebar-muted-light hover:text-primary-600 hover:bg-primary-50/50 transition-all duration-150 cursor-pointer'
+              className='flex items-center justify-center size-10 rounded-xl text-sidebar-muted-light hover:text-primary-600 hover:bg-primary-50/50 cursor-pointer'
               aria-label='Profile'
             >
               <div className='size-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xs font-semibold'>
@@ -255,7 +255,7 @@ const Sidebar = () => {
             </button>
             <button
               onClick={handleLogout}
-              className='flex items-center justify-center size-10 rounded-xl text-red-400 hover:text-red-600 hover:bg-red-50 transition-all duration-150 cursor-pointer'
+              className='flex items-center justify-center size-10 rounded-xl text-red-400 hover:text-red-600 hover:bg-red-50  cursor-pointer'
               aria-label='Logout'
             >
               <LogOut size={18} />
@@ -263,7 +263,7 @@ const Sidebar = () => {
           </div>
         ) : (
           <>
-            <button onClick={() => router.visit('/profile')} className='flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-primary-50/50 transition-all duration-150 w-full cursor-pointer'>
+            <button onClick={() => router.visit('/profile')} className='flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-primary-50/50  w-full cursor-pointer'>
               <div className='size-9 shrink-0 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xs font-semibold'>
                 {(user?.name ?? 'U').charAt(0).toUpperCase()}
               </div>
@@ -278,7 +278,7 @@ const Sidebar = () => {
             </button>
             <button
               onClick={handleLogout}
-              className='flex items-center gap-3 px-3 py-2 mt-1 rounded-xl text-sm text-red-400 hover:text-red-600 hover:bg-red-50 transition-all duration-150 w-full cursor-pointer'
+              className='flex items-center gap-3 px-3 py-2 mt-1 rounded-xl text-sm text-red-400 hover:text-red-600 hover:bg-red-50 w-full cursor-pointer'
             >
               <LogOut size={18} />
               <span>Logout</span>
