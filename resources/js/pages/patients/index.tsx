@@ -119,7 +119,7 @@ const Patient = () => {
                     <IconButton onClick={() => router.visit(`/patients/${p.id}`)} aria-label={`View ${p.khmer_first_name}`}>
                         <Eye size={16} />
                     </IconButton>
-                    <IconButton onClick={() => handleEdit(p)} aria-label={`Edit ${p.khmer_first_name}`}>
+                    <IconButton color='info' onClick={() => handleEdit(p)} aria-label={`Edit ${p.khmer_first_name}`}>
                         <Pencil size={16} />
                     </IconButton>
                     <IconButton color="error" onClick={() => handleDelete(p)} aria-label={`Delete ${p.khmer_first_name}`}>
