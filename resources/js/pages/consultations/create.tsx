@@ -60,7 +60,7 @@ const CreateConsultation = ({ patient }: { patient: IPatient }) => {
         <>
             <Head title="New Consultation" />
             <div className="h-full overflow-y-auto">
-                <div className="sticky top-0 z-10 border-b border-gray-200 bg-white px-8 py-4">
+                <div className="sticky top-0 z-10 border-b border-gray-300 bg-white px-8 py-4">
                     <div className="flex items-center gap-4">
                         <Link
                             href={`/patients/${patient.id}?tab=consultation`}
@@ -68,16 +68,11 @@ const CreateConsultation = ({ patient }: { patient: IPatient }) => {
                         >
                             <ArrowLeft size={20} />
                         </Link>
-                        <div className="flex items-center gap-3">
-                            <div className="flex items-center justify-center size-10 rounded-full bg-primary-100 text-primary-600">
-                                <Stethoscope size={20} />
-                            </div>
-                            <div>
-                                <h1 className="text-xl font-bold text-gray-900">New Consultation</h1>
-                                <p className="text-sm text-gray-500">
-                                    {patient.khmer_last_name} {patient.khmer_first_name}
-                                </p>
-                            </div>
+                        <div>
+                            <h1 className="text-xl font-bold text-gray-900">New Consultation</h1>
+                            <p className="text-md text-gray-600 font-khmer">
+                                {patient.khmer_last_name} {patient.khmer_first_name}
+                            </p>
                         </div>
                     </div>
                 </div>

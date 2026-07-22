@@ -68,8 +68,7 @@ const PatientShow = ({ patient }: { patient: IPatient }) => {
         <>
             <Head title={`Patient - ${patient.khmer_last_name} ${patient.khmer_first_name}`} />
 
-            {/* Top bar */}
-            <div className="border-b border-gray-200 bg-white px-8 py-4">
+            <div className="border-b border-gray-300 bg-white px-8 py-4">
                 <div className="flex items-center gap-4">
                     <Link
                         href="/patients"
@@ -77,29 +76,22 @@ const PatientShow = ({ patient }: { patient: IPatient }) => {
                     >
                         <ArrowLeft size={20} />
                     </Link>
-                    <div className="flex items-center gap-3">
-                        <div className="flex items-center justify-center size-10 rounded-full bg-primary-100 text-primary-600">
-                            <User size={20} />
-                        </div>
-                        <div>
-                            <h1 className="text-xl font-bold text-gray-900">
-                                <span className="font-khmer text-[18px]">{patient.khmer_last_name} {patient.khmer_first_name}</span>
-                            </h1>
-                            {patient.first_name && (
-                                <p className="text-sm text-gray-500">
-                                    {patient.last_name ? `${patient.last_name} ` : ''}{patient.first_name}
-                                </p>
-                            )}
-                        </div>
+                    <div>
+                        <h1 className="text-xl font-bold text-gray-900">
+                            <span className="font-khmer text-[18px]">{patient.khmer_last_name} {patient.khmer_first_name}</span>
+                        </h1>
+                        {patient.first_name && (
+                            <p className="text-md text-gray-500">
+                                {patient.last_name ? `${patient.last_name} ` : ''}{patient.first_name}
+                            </p>
+                        )}
                     </div>
                 </div>
             </div>
 
             <div className="p-8">
-                {/* Top row: Basic Info + Visits side by side */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-                    {/* Basic Info Card */}
-                    <div className="lg:col-span-2 rounded-xl border border-gray-200 bg-white p-6">
+                    <div className="lg:col-span-2 rounded-xl border border-gray-300 bg-white p-6">
                         <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-500 mb-4">Basic Information</h2>
                         <div className="grid grid-cols-3 gap-6">
                             <InfoItem label="Khmer Name" value={`${patient.khmer_last_name} ${patient.khmer_first_name}`} className="font-khmer text-[16px]" />
@@ -114,10 +106,9 @@ const PatientShow = ({ patient }: { patient: IPatient }) => {
                         </div>
                     </div>
 
-                    {/* Right column: Active Visits + Visit History */}
                     <div className="space-y-4">
                         {activeVisits.length > 0 && (
-                            <div className="rounded-xl border border-gray-200 bg-white p-5">
+                            <div className="rounded-xl border border-gray-300 bg-white p-5">
                                 <div className="flex items-center gap-2 mb-3">
                                     <Activity size={16} className="text-primary-500" />
                                     <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-500">Active Visits</h2>
@@ -196,9 +187,8 @@ const PatientShow = ({ patient }: { patient: IPatient }) => {
                     </div>
                 </div>
 
-                {/* Tabs */}
-                <div className="rounded-xl border border-gray-200 bg-white">
-                    <div className="border-b border-gray-200">
+                <div className="rounded-xl border border-gray-300 bg-white">
+                    <div className="border-b border-gray-300">
                         <nav className="flex overflow-x-auto px-6">
                             {TABS.map((tab) => (
                                 <button

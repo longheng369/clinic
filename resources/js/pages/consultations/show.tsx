@@ -47,7 +47,7 @@ const ShowConsultation = ({ patient, consultation }: { patient: IPatient; consul
     return (
         <section className='h-screen flex flex-col'>
             <Head title="Consultation Details" />
-            <div className="flex items-center justify-between sticky top-0 bg-background p-4 z-1 shadow-sm">
+            <div className="flex items-center justify-between sticky top-0 bg-background p-4 z-1 border-b border-gray-300">
                 <div className="flex items-center gap-4">
                     <Link
                         href={`/patients/${patient.id}?tab=consultation`}
@@ -57,8 +57,8 @@ const ShowConsultation = ({ patient, consultation }: { patient: IPatient; consul
                     </Link>
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">Consultation Details</h1>
-                        <p className="text-sm text-gray-500">
-                            Patient: <span className="font-medium">{patient.khmer_last_name} {patient.khmer_first_name}</span>
+                        <p className="text-md text-gray-500">
+                            Patient: <span className="font-medium font-khmer">{patient.khmer_last_name} {patient.khmer_first_name}</span>
                             &middot; {new Date(consultation.created_at).toLocaleString('en-US', {
                                 timeZone: 'Asia/Phnom_Penh',
                                 year: 'numeric',
