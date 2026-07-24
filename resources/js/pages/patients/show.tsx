@@ -226,7 +226,7 @@ const TabContent = ({ tab, patientId, patient }: { tab: Tab; patientId: number; 
         case 'consultation':
             return <ConsultationTab patientId={patientId} />
         case 'medication':
-            return <MedicationTab patientId={patientId} />
+            return <MedicationTab patientId={patientId} patient={patient} />
         case 'prescription':
             return <PrescriptionTab patientId={patientId} />
         case 'paraclinic':

@@ -31,6 +31,7 @@
 - Prefer DataTable component with pagination over card-based layouts for displaying tabular record data. Confidence: 0.65
 
 # workflow
+- Use Composer scripts (`composer.json` "scripts" section) as the task runner for project utility commands like db:dump / db:restore. Confidence: 0.55
 - In medication administration tracking, each "Provide" action marks a single individual dose as administered (do not batch multiple doses under one click based on interval like TID). Confidence: 0.70
 - For the MAR (medication administration record) tab, display medication orders as separate table rows rather than inside accordion/collapsible cards. Confidence: 0.70
 

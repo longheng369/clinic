@@ -52,6 +52,8 @@
             "@php artisan config:clear --ansi @no_additional_args",
             "@php artisan test"
         ],
+        "db:dump": "sqlite3 database/database.sqlite .dump > database/backup.sql",
+        "db:restore": "sqlite3 database/database.sqlite < database/backup.sql",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"
