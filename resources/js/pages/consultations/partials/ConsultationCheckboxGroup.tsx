@@ -1,6 +1,11 @@
 import { useController, type Control, type FieldValues, type Path, type RegisterOptions } from 'react-hook-form'
 import Checkbox from '@/components/form/checkbox'
+import { cn } from '@/utils/cn'
 import { type OptionType } from '../consultationTemplate'
+
+const KHMER_REGEX = /[\u1780-\u17FF\u19E0-\u19FF]/
+
+const hasKhmer = (text?: string): boolean => KHMER_REGEX.test(text ?? '')
 
 type CheckboxGroupProps<T extends FieldValues = FieldValues> = {
     control: Control<T>
@@ -48,7 +53,7 @@ const ConsultationCheckboxGroup = <T extends FieldValues = FieldValues>({
                     if (option.text || !option.value) {
                         return (
                             <div key={idx} style={{ gridColumn: `span ${option.colSpan ?? 12}` }} className="flex items-center">
-                                <span className="text-sm font-semibold text-gray-800">{option.text}</span>
+                                <span className={cn('text-base font-semibold text-gray-800', hasKhmer(option.text) && 'font-khmer')}>{option.text}</span>
                             </div>
                         )
                     }
@@ -61,7 +66,7 @@ const ConsultationCheckboxGroup = <T extends FieldValues = FieldValues>({
                                     disabled={checkDisabled}
                                     onChange={() => handleChange(option)}
                                 />
-                                <span className="text-sm">{option.label}</span>
+                                <span className={cn('text-base', hasKhmer(option.label) && 'font-khmer')}>{option.label}</span>
                             </label>
                         </div>
                     )

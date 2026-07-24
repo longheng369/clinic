@@ -59,7 +59,7 @@ const CreateConsultation = ({ patient }: { patient: IPatient }) => {
     return (
         <>
             <Head title="New Consultation" />
-            <div className="h-full overflow-y-auto">
+            <div className="h-full flex flex-col">
                 <div className="sticky top-0 z-10 border-b border-gray-300 bg-white px-8 py-4">
                     <div className="flex items-center gap-4">
                         <Link
@@ -77,7 +77,7 @@ const CreateConsultation = ({ patient }: { patient: IPatient }) => {
                     </div>
                 </div>
 
-                <div className="p-8">
+                <div className="p-8 flex-1 overflow-y-auto">
                     <div className="rounded-xl border border-gray-200 bg-white p-6">
                         <form onSubmit={onSubmit} noValidate>
                             <ConsultationForm control={control} />

@@ -2,8 +2,9 @@ import { usePage } from '@inertiajs/react'
 import { useModal } from '@/components/modal'
 import { Plus, Search } from 'lucide-react'
 import MedicationForm from './medicationForm'
-import MedicationOrderGroup from './MedicationOrderGroup'
+import MarGrid from './MarGrid'
 import { IMedicationAdministration } from '@/interfaces/IMedicationAdministration'
+import { IPatient } from '@/interfaces/IPatient'
 import { Button } from '@/components/ui/button'
 import { Pagination } from '@/components/table/DataTable'
 import { useState, useMemo } from 'react'
@@ -18,7 +19,7 @@ interface PaginatedData<T> {
     to: number
 }
 
-const MedicationTab = ({ patientId }: { patientId: number }) => {
+const MedicationTab = ({ patientId, patient }: { patientId: number; patient: IPatient }) => {
     const { openModal, closeModal } = useModal()
     const { medicationAdministrations, activeVisits, medicines } = usePage<{
         medicationAdministrations: PaginatedData<IMedicationAdministration>
@@ -106,16 +107,12 @@ const MedicationTab = ({ patientId }: { patientId: number }) => {
                     </p>
                 </div>
             ) : (
-                <div className="space-y-6">
-                    {filteredData.map((prescription) => (
-                        <MedicationOrderGroup
-                            key={prescription.id}
-                            prescription={prescription}
-                            visitId={activeIpdVisit.id}
-                            onEdit={handleEdit}
-                        />
-                    ))}
-                </div>
+                <MarGrid
+                    patient={patient}
+                    medications={filteredData}
+                    visitId={activeIpdVisit.id}
+                    onEdit={handleEdit}
+                />
             )}
 
             {!searchTerm.trim() && data.length > 0 && (

@@ -1,5 +1,5 @@
 import { Head, Link } from '@inertiajs/react'
-import { ArrowLeft, Pencil } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { useEffect } from 'react'
 import ConsultationForm from './partials/ConsultationForm'
@@ -45,9 +45,9 @@ const ShowConsultation = ({ patient, consultation }: { patient: IPatient; consul
     }, [consultation])
 
     return (
-        <section className='h-screen flex flex-col'>
+        <section className='h-full flex flex-col'>
             <Head title="Consultation Details" />
-            <div className="flex items-center justify-between sticky top-0 bg-background p-4 z-1 border-b border-gray-300">
+            <div className="flex items-center justify-between sticky top-0 bg-background py-4 px-6 z-1 border-b border-gray-300">
                 <div className="flex items-center gap-4">
                     <Link
                         href={`/patients/${patient.id}?tab=consultation`}
@@ -59,15 +59,6 @@ const ShowConsultation = ({ patient, consultation }: { patient: IPatient; consul
                         <h1 className="text-2xl font-bold text-gray-900">Consultation Details</h1>
                         <p className="text-md text-gray-500">
                             Patient: <span className="font-medium font-khmer">{patient.khmer_last_name} {patient.khmer_first_name}</span>
-                            &middot; {new Date(consultation.created_at).toLocaleString('en-US', {
-                                timeZone: 'Asia/Phnom_Penh',
-                                year: 'numeric',
-                                month: 'short',
-                                day: '2-digit',
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                hour12: false,
-                            })}
                         </p>
                     </div>
                 </div>
@@ -75,8 +66,10 @@ const ShowConsultation = ({ patient, consultation }: { patient: IPatient; consul
                     <Button>Edit</Button>
                 </Link>
             </div>
-            <div className="overflow-y-auto flex-1 bg-background p-6">
-                <ConsultationForm control={control} viewOnly />
+            <div className="p-8 flex-1 overflow-y-auto">
+                <div className="rounded-xl border border-gray-200 bg-white p-6">
+                    <ConsultationForm control={control} viewOnly />
+                </div>
             </div>
         </section>
     )
