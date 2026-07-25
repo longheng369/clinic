@@ -8,3 +8,5 @@
 - Prefer blue-based accent colors (primary-50 range) over default orange/warm accent tones. Confidence: 0.70
 - Avoid Tailwind CSS transition classes (transition-all, duration-*) on UI components — prefer instant state changes. Confidence: 0.60
 - Never use `max-w` Tailwind utility classes for new designs. Confidence: 0.80
+- For data display sections (patient info, record details), prefer a consistent label-above-value stacked layout where each field has a small gray label above a bolder value, rather than mixing inline `label: value` and stacked formats across fields in the same section. Confidence: 0.65
+- For data display sections, prefer a visually distinct "box" appearance with padding (e.g., `px-6 py-4`) so sections feel separated rather than blending into surrounding content. Confidence: 0.60

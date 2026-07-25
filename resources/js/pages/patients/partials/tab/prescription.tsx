@@ -1,12 +1,14 @@
 import { router } from '@inertiajs/react'
 import { useModal } from '@/components/modal'
-import { Plus, Pencil, Trash2 } from 'lucide-react'
+import { Plus, Pencil, Trash2, Stethoscope } from 'lucide-react'
 import { IPrescription, IPrescriptionItemFormData } from '@/interfaces/IPrescription'
+import { IPatient } from '@/interfaces/IPatient'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/toast'
 import { useRef } from 'react'
 import MedicineItemForm from '../../../prescriptions/partials/MedicineItemForm'
 import { cn } from '@/utils/cn'
+import { formatDob } from '@/utils/date'
 
 interface SelectedVisit {
     id: number
@@ -17,11 +19,13 @@ interface SelectedVisit {
 }
 
 const PrescriptionTab = ({
+    patient,
     patientId,
     selectedVisit,
     prescription,
     medicines,
 }: {
+    patient: IPatient
     patientId: number
     selectedVisit: SelectedVisit | null
     prescription: IPrescription | null
@@ -161,37 +165,65 @@ const PrescriptionTab = ({
     }
 
     return (
-        <div className="border border-gray-300 bg-white print:border-none">
-            {/* Clinic Header */}
-            <div className="border-b-2 border-gray-200 px-6 pt-6 pb-4">
-                <h2 className="text-lg font-bold text-primary-700 tracking-tight">Santhomok Clinic</h2>
-                <p className="text-[11px] text-gray-500 mt-0.5 leading-relaxed">
-                    មន្ទីរពេទ្យសន្ធមោក្ខ | ពិគ្រោះជំងឺទូទៅ
-                </p>
+        <div className="border border-gray-300 bg-white print:border-none p-8 relative">
+            <h1 className='font-khmer-moul text-lg text-blue-800 text-center tracking-wide'>ព្រះរាជាណាចក្រកម្ពុជា</h1>
+            <h1 className='font-khmer-moul text-lg text-blue-800 text-center tracking-wide mt-1'>ជាតិ សាសនា ព្រះមហាក្សត្រ</h1>
+
+            <div className='flex items-center justify-center size-20 rounded-full bg-linear-to-br from-primary-500 to-primary-700 shrink-0 absolute top-8 left-8'>
+                <Stethoscope size={30} className='text-white' />
             </div>
 
-            {/* Doctor & Date Row */}
-            <div className="border-b border-gray-200 px-6 py-3">
-                <div className="grid grid-cols-3 gap-4 text-xs">
+            <div className='grid grid-cols-2 w-1/4 mt-10'>
+                <div>
+                    <span className='font-khmer'>កាលបរិច្ឆេទ</span> / <span className='font-sans'>Date</span>
+                </div>
+                <span>: {formatDob(prescription.created_at)}</span>
+
+                <div>
+                    <span className='font-khmer'>វេជ្ជបណ្ឌិត</span> / <span className='font-sans'>Doctor</span>
+                </div>
+                <span>: {prescription.recorded_by ?? '—'}</span>
+            </div>
+
+            {/* Patient Info */}
+            <div className="border border-gray-300 p-4 mt-4">
+                <div className="grid grid-cols-4">
                     <div>
-                        <span className="text-gray-500">វេជ្ជបណ្ឌិត / Doctor: </span>
-                        <span className="font-medium text-gray-800">{prescription.recorded_by ?? '—'}</span>
+                        <div className='text-gray-500 text-sm mb-0.5'>
+                            <span className='font-khmer'>ឈ្មោះ</span> / Name
+                        </div>
+                        <p className="font-khmer">
+                            {patient.khmer_last_name} {patient.khmer_first_name}
+                            {patient.first_name && (
+                                <span className="font-sans text-gray-500 text-xs ml-1.5">
+                                    ({patient.last_name ? `${patient.last_name} ` : ''}{patient.first_name})
+                                </span>
+                            )}
+                        </p>
                     </div>
                     <div>
-                        <span className="text-gray-500">កាលបរិច្ឆេទ / Date: </span>
-                        <span className="font-medium text-gray-800">
-                            {new Date(prescription.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
-                        </span>
+                        <div className='text-gray-500 text-sm mb-0.5'>
+                            <span className='font-khmer text-[15px]'>អាយុ</span> / Age
+                        </div>
+                        <p className="text-sm">{formatDob(patient.date_of_birth)}</p>
                     </div>
-                    <div className="text-right">
-                        <span className="text-gray-500">Rx #</span>{' '}
-                        <span className="font-medium text-gray-800">{prescription.id}</span>
+                    <div>
+                        <div className='text-gray-500 text-sm mb-0.5'>
+                            <span className='font-khmer text-[15px]'>ភេទ</span> / Gender
+                        </div>
+                        <p className="text-sm capitalize">{patient.gender}</p>
+                    </div>
+                    <div>
+                        <div className='text-gray-500 text-sm mb-0.5'>
+                            <span className='font-khmer text-[15px]'>ទូរស័ព្ទ</span> / Phone
+                        </div>
+                        <p className="text-sm">{patient.phone_number}</p>
                     </div>
                 </div>
             </div>
 
             {/* Medicine Table */}
-            <div className="px-6 py-4">
+            <div className="px-6 py-4 border border-gray-300 mt-4">
                 {prescription.items.length === 0 ? (
                     <div className="py-10 text-center text-sm text-gray-400">
                         No medicines in this prescription.
@@ -200,17 +232,17 @@ const PrescriptionTab = ({
                     <table className="w-full text-sm">
                         <thead>
                             <tr className="border-b border-gray-300">
-                                <th className="py-2 pr-2 text-center text-[11px] font-semibold uppercase tracking-wider text-gray-500 w-8">No</th>
-                                <th className="py-2 pr-2 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+                                <th className="py-2 w-8 text-center text-[11px] font-semibold uppercase tracking-wider text-gray-500">No</th>
+                                <th className="py-2 px-2 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500 w-[35%]">
                                     <span className="font-khmer text-[12px]">ឈ្មោះថ្នាំ</span>
                                     <span className="block text-gray-400 font-normal normal-case tracking-normal">Medicine</span>
                                 </th>
-                                <th className="py-2 px-2 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500 w-16">Route</th>
-                                <th className="py-2 px-2 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500 w-24">Doses</th>
-                                <th className="py-2 px-2 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500 w-24">Frequency</th>
-                                <th className="py-2 px-2 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500 w-24">Duration</th>
-                                <th className="py-2 pl-2 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500 min-w-[120px]">Note</th>
-                                <th className="py-2 w-16"></th>
+                                <th className="py-2 px-2 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500 w-[10%]">Route</th>
+                                <th className="py-2 px-2 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500 w-[12%]">Doses</th>
+                                <th className="py-2 px-2 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500 w-[10%]">Freq</th>
+                                <th className="py-2 px-2 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500 w-[10%]">Duration</th>
+                                <th className="py-2 px-2 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">Note</th>
+                                <th className="py-2 w-14"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -222,17 +254,15 @@ const PrescriptionTab = ({
                                         index % 2 === 0 ? 'bg-gray-50/50' : 'bg-white',
                                     )}
                                 >
-                                    <td className="py-3 pr-2 text-center text-xs text-gray-400 font-medium">{index + 1}</td>
-                                    <td className="py-3 pr-2 text-sm font-medium text-gray-900">{item.medicine?.name ?? <span className="text-gray-300">—</span>}</td>
+                                    <td className="py-3 text-center text-xs text-gray-400 font-medium">{index + 1}</td>
+                                    <td className="py-3 px-2 text-sm font-medium text-gray-900 truncate">{item.medicine?.name ?? <span className="text-gray-300">—</span>}</td>
                                     <td className="py-3 px-2 text-xs text-gray-600">{item.route}</td>
-                                    <td className="py-3 px-2 text-xs text-gray-600">
-                                        {item.dosage} {item.unit}
-                                    </td>
+                                    <td className="py-3 px-2 text-xs text-gray-600">{item.dosage} {item.unit}</td>
                                     <td className="py-3 px-2 text-xs text-gray-600">{item.frequency}</td>
                                     <td className="py-3 px-2 text-xs text-gray-600">
                                         {item.duration_days ? `${item.duration_days} days` : <span className="text-gray-300">—</span>}
                                     </td>
-                                    <td className="py-3 pl-2 text-xs text-gray-500">{item.notes ?? ''}</td>
+                                    <td className="py-3 px-2 text-xs text-gray-500 truncate">{item.notes ?? ''}</td>
                                     <td className="py-3 text-center">
                                         <div className="flex items-center justify-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                                             <button
@@ -256,36 +286,6 @@ const PrescriptionTab = ({
                         </tbody>
                     </table>
                 )}
-            </div>
-
-            {/* Signature */}
-            <div className="border-t-2 border-gray-200 px-6 py-5">
-                <div className="flex items-end justify-between">
-                    <div>
-                        <p className="text-[11px] text-gray-500 font-khmer">មន្ទីរពេទ្យសន្ធមោក្ខ</p>
-                        <p className="text-[10px] text-gray-400">Santhomok Clinic</p>
-                    </div>
-                    <div className="text-right">
-                        <p className="text-[11px] text-gray-400 mb-4">ហត្ថលេខាវេជ្ជបណ្ឌិត</p>
-                        <div className="w-32 border-b border-gray-300" />
-                        <p className="text-[10px] text-gray-400 mt-1">Doctor Signature</p>
-                    </div>
-                </div>
-            </div>
-
-            {/* Actions */}
-            <div className="border-t border-gray-200 bg-gray-50 px-6 py-3 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                    <Button variant="outline" size="xs" onClick={openAddModal}>
-                        <Plus size={13} /> Add Medicine
-                    </Button>
-                    <Button variant="destructive" size="xs" onClick={handleDeletePrescription}>
-                        <Trash2 size={13} /> Delete Rx
-                    </Button>
-                </div>
-                <span className="text-[10px] text-gray-400">
-                    Created {new Date(prescription.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
-                </span>
             </div>
         </div>
     )

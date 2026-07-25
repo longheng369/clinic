@@ -101,7 +101,7 @@ const PatientShow = ({ patient }: { patient: IPatient }) => {
     }
 
     return (
-        <>
+        <div className='h-full flex flex-col'>
             <Head title={`Patient - ${patient.khmer_last_name} ${patient.khmer_first_name}`} />
 
             <div className="border-b border-gray-300 bg-white px-8 py-4">
@@ -125,7 +125,7 @@ const PatientShow = ({ patient }: { patient: IPatient }) => {
                 </div>
             </div>
 
-            <div className="p-8">
+            <div className="p-8 flex-1 overflow-y-auto">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
                     <div className="lg:col-span-2 rounded-xl border border-gray-300 bg-white p-6">
                         <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-500 mb-4">Basic Information</h2>
@@ -271,7 +271,7 @@ const PatientShow = ({ patient }: { patient: IPatient }) => {
                     </div>
                 </div>
             </div>
-        </>
+        </div>
     )
 }
 
@@ -289,7 +289,7 @@ const TabContent = ({ tab, patientId, patient, selectedVisit, prescription, medi
         case 'medication':
             return <MedicationTab patientId={patientId} patient={patient} selectedVisit={selectedVisit} />
         case 'prescription':
-            return <PrescriptionTab patientId={patientId} selectedVisit={selectedVisit} prescription={prescription} medicines={medicines} />
+            return <PrescriptionTab patient={patient} patientId={patientId} selectedVisit={selectedVisit} prescription={prescription} medicines={medicines} />
         case 'paraclinic':
             return <ParaclinicByPatientTab patientId={patientId} />
         case 'attachment':

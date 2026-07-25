@@ -26,6 +26,7 @@ See [architecture/taste.md](architecture/taste.md)
 - Prefer DataTable component with pagination over card-based layouts for displaying tabular record data. Confidence: 0.65
 
 # workflow
+- Run `npx tsc --noEmit` after TypeScript/TSX changes to verify no type errors before declaring completion. Confidence: 0.55
 - For feature changes or significant refactors, write a detailed plan and get explicit approval before writing implementation code. Confidence: 0.60
 - Use Composer scripts (`composer.json` "scripts" section) as the task runner for project utility commands like db:dump / db:restore. Confidence: 0.55
 - In medication administration tracking, each "Provide" action marks a single individual dose as administered (do not batch multiple doses under one click based on interval like TID). Confidence: 0.70
