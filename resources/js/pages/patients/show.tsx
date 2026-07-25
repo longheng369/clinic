@@ -1,5 +1,6 @@
 import { Head, Link, usePage, router } from '@inertiajs/react'
 import { IPatient } from '@/interfaces/IPatient'
+import { IPrescription } from '@/interfaces/IPrescription'
 import { ArrowLeft, User, Activity, Hospital, LogOut, Circle } from 'lucide-react'
 import { useState } from 'react'
 import { useModal } from '@/components/modal'
@@ -45,9 +46,11 @@ interface SelectedVisit {
 const PatientShow = ({ patient }: { patient: IPatient }) => {
     const params = new URLSearchParams(window.location.search)
     const tabFromUrl = params.get('tab')
-    const { selectedVisit, allVisits } = usePage<{
+    const { selectedVisit, allVisits, prescription, medicines } = usePage<{
         selectedVisit: SelectedVisit | null
         allVisits: VisitSummary[]
+        prescription: IPrescription | null
+        medicines: { id: number; name: string }[]
     }>().props
 
     const visibleTabs = selectedVisit?.type === 'IPD'
@@ -264,7 +267,7 @@ const PatientShow = ({ patient }: { patient: IPatient }) => {
                         </nav>
                     </div>
                     <div className="p-6">
-                        <TabContent tab={activeTab} patientId={patient.id} patient={patient} selectedVisit={selectedVisit} />
+                        <TabContent tab={activeTab} patientId={patient.id} patient={patient} selectedVisit={selectedVisit} prescription={prescription} medicines={medicines} />
                     </div>
                 </div>
             </div>
@@ -279,14 +282,14 @@ const InfoItem = ({ label, value, className }: { label: string; value: React.Rea
     </div>
 )
 
-const TabContent = ({ tab, patientId, patient, selectedVisit }: { tab: Tab; patientId: number; patient: IPatient; selectedVisit: SelectedVisit | null }) => {
+const TabContent = ({ tab, patientId, patient, selectedVisit, prescription, medicines }: { tab: Tab; patientId: number; patient: IPatient; selectedVisit: SelectedVisit | null; prescription: IPrescription | null; medicines: { id: number; name: string }[] }) => {
     switch (tab) {
         case 'consultation':
             return <ConsultationTab patientId={patientId} />
         case 'medication':
             return <MedicationTab patientId={patientId} patient={patient} selectedVisit={selectedVisit} />
         case 'prescription':
-            return <PrescriptionTab patientId={patientId} selectedVisit={selectedVisit} />
+            return <PrescriptionTab patientId={patientId} selectedVisit={selectedVisit} prescription={prescription} medicines={medicines} />
         case 'paraclinic':
             return <ParaclinicByPatientTab patientId={patientId} />
         case 'attachment':

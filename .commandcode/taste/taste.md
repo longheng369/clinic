@@ -7,11 +7,7 @@
 - Use `import { Link } from '@inertiajs/react'` for navigation instead of `<a>` tags. Confidence: 0.65
 
 # styling
-- Keep form inputs at adequately visible dimensions; do not reduce sizing below Tailwind defaults. Confidence: 0.65
-- Use primary-500 color for input focus outlines/rings. Confidence: 0.75
-- Prefer blue-based accent colors (primary-50 range) over default orange/warm accent tones. Confidence: 0.70
-- Avoid Tailwind CSS transition classes (transition-all, duration-*) on UI components — prefer instant state changes. Confidence: 0.60
-
+See [styling/taste.md](styling/taste.md)
 # laravel
 - Use Laravel Breeze for authentication scaffolding. Confidence: 0.50
 - Use `constrained()` instead of `foreign()->references()->on()` in migrations. Confidence: 0.65
@@ -19,9 +15,7 @@
 - Use `created_by` instead of `recorded_by` for tracking who created a record. Confidence: 0.65
 
 # architecture
-- For CRUD modals, store shared form templates in a partials folder within the page directory and reuse the same template for both create and edit operations. Confidence: 0.70
-- Patient sub-entities (attachments, medications, prescriptions, surveillances, consultations, paraclinic requests) should be scoped to a specific visit, not just owned by the patient. Confidence: 0.80
-
+See [architecture/taste.md](architecture/taste.md)
 # components
 - Keep the reusable form input component scoped to `<input>` elements only — do not add textarea support. Confidence: 0.60
 - Use `@base-ui/react` Select component instead of native HTML `<select>` for form select inputs. Confidence: 0.75

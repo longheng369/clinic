@@ -1,0 +1,9 @@
+# architecture
+- Derive contextual associations automatically from the navigation flow rather than presenting manual selectors — when a user is already in a specific visit/patient context, auto-associate new records (prescriptions, medications, etc.) with that context instead of asking them to pick it. Confidence: 0.70
+- For CRUD modals, store shared form templates in a partials folder within the page directory and reuse the same template for both create and edit operations. Confidence: 0.70
+- For complex forms with multi-line item tables (e.g., prescriptions with medicine rows), prefer dedicated full pages over modals. Confidence: 0.55
+- Within multi-item form pages, prefer accordion-style cards (collapsible, one card per item with header summary and expandable 2-column grid body) over dense horizontal-scrolling item tables. Confidence: 0.50
+- For multi-item forms (e.g., prescriptions with medicine rows), prefer a read-only summary table with modal dialogs for individual item add/edit — table for scannable overview, pop-up form for focused detail entry. Confidence: 0.75
+- Patient sub-entities (attachments, medications, prescriptions, surveillances, consultations, paraclinic requests) should be scoped to a specific visit, not just owned by the patient. Confidence: 0.80
+- Prescriptions have a one-to-one relationship with visits: each visit has exactly one prescription (use `firstOrCreate` on `visit_id`, not `HasMany`). Confidence: 0.85
+- For managing visit-scoped sub-entities (like prescriptions), prefer inline tab-based management UI (table + modal for add/edit within the tab) over dedicated create/edit pages. Confidence: 0.75

@@ -3,7 +3,9 @@
     "allow": [
       "Shell(git:*)",
       "Shell(npx tsc --noEmit --pretty 2 >& 1)",
-      "Shell(npx tsc --noEmit 2 >& 1)"
+      "Shell(npx tsc --noEmit 2 >& 1)",
+      "Shell(php -l app/Http/Controllers/PrescriptionController.php)",
+      "Shell(php -l app/Http/Controllers/PatientController.php)"
     ],
     "deny": [],
     "defaultMode": "default"

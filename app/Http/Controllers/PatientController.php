@@ -132,31 +132,12 @@ class PatientController extends Controller
                 ])
             : ['data' => [], 'current_page' => 1, 'last_page' => 1, 'per_page' => 10, 'total' => 0, 'from' => 0, 'to' => 0];
 
-        $prescriptions = $selectedVisit
+        $prescription = $selectedVisit
             ? $selectedVisit->prescriptions()
                 ->with(['items.medicine', 'createdBy'])
                 ->latest()
-                ->paginate(10)
-                ->through(fn ($p) => [
-                    'id' => $p->id,
-                    'visit_id' => $p->visit_id,
-                    'visit_type' => $selectedVisit->type,
-                    'notes' => $p->notes,
-                    'recorded_by' => $p->createdBy?->name,
-                    'created_at' => $p->created_at,
-                    'items' => $p->items->map(fn ($i) => [
-                        'id' => $i->id,
-                        'medicine' => $i->medicine ? ['id' => $i->medicine->id, 'name' => $i->medicine->name] : null,
-                        'route' => $i->route,
-                        'dosage' => (float) $i->dosage,
-                        'unit' => $i->unit,
-                        'frequency' => $i->frequency,
-                        'duration_days' => $i->duration_days,
-                        'quantity' => $i->quantity ? (float) $i->quantity : null,
-                        'notes' => $i->notes,
-                    ])->values(),
-                ])
-            : ['data' => [], 'current_page' => 1, 'last_page' => 1, 'per_page' => 10, 'total' => 0, 'from' => 0, 'to' => 0];
+                ->first()
+            : null;
 
         return Inertia::render('patients/show', [
             'patient' => $patient,
@@ -191,7 +172,24 @@ class PatientController extends Controller
             ]),
             'paraclinicRequests' => $paraclinicRequests,
             'medicationAdministrations' => $medicationAdministrations,
-            'prescriptions' => $prescriptions,
+            'prescription' => $prescription ? [
+                'id' => $prescription->id,
+                'visit_id' => $prescription->visit_id,
+                'notes' => $prescription->notes,
+                'recorded_by' => $prescription->createdBy?->name,
+                'created_at' => $prescription->created_at,
+                'items' => $prescription->items->map(fn ($i) => [
+                    'id' => $i->id,
+                    'medicine' => $i->medicine ? ['id' => $i->medicine->id, 'name' => $i->medicine->name] : null,
+                    'route' => $i->route,
+                    'dosage' => (float) $i->dosage,
+                    'unit' => $i->unit,
+                    'frequency' => $i->frequency,
+                    'duration_days' => $i->duration_days,
+                    'quantity' => $i->quantity ? (float) $i->quantity : null,
+                    'notes' => $i->notes,
+                ])->values(),
+            ] : null,
             'vaccinations' => $patient->vaccinations()
                 ->with(['vaccine', 'administeredBy'])
                 ->latest()

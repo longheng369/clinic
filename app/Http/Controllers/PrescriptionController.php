@@ -15,13 +15,15 @@ class PrescriptionController extends Controller
         $items = $data['items'];
         unset($data['items']);
 
-        $prescription = Prescription::create(array_merge($data, [
-            'created_by' => auth()->id(),
-        ]));
+        $prescription = Prescription::firstOrCreate(
+            ['visit_id' => $data['visit_id']],
+            ['created_by' => auth()->id()]
+        );
 
+        $prescription->items()->delete();
         $prescription->items()->createMany($items);
 
-        return back()->with('success', 'Prescription created.');
+        return back()->with('success', 'Prescription saved.');
     }
 
     public function update(UpdatePrescriptionRequest $request, Patient $patient, Prescription $prescription)
@@ -31,8 +33,6 @@ class PrescriptionController extends Controller
         unset($data['items']);
 
         $prescription->update($data);
-
-        // Delete existing items and recreate
         $prescription->items()->delete();
         $prescription->items()->createMany($items);
 

@@ -145,7 +145,7 @@ const Patient = () => {
                     </div>
                     <div className="flex items-center gap-3">
                         <SearchBar value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder='Search patient'/>
-                        <Button onClick={handleCreate} size="lg">
+                        <Button onClick={handleCreate} size="lg" variant="gradient">
                             <Plus size={20} /> New Patient
                         </Button>
                     </div>
