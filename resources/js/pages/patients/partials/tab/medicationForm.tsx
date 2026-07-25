@@ -35,10 +35,11 @@ interface MedicationFormProps {
     activeVisits: { id: number; type: string; visit_date: string; recorded_by?: string }[]
     medicines: { id: number; name: string }[]
     medication?: IMedicationAdministration
+    selectedVisitId?: number
     onClose: () => void
 }
 
-const MedicationForm = ({ patientId, activeVisits, medicines, medication, onClose }: MedicationFormProps) => {
+const MedicationForm = ({ patientId, activeVisits, medicines, medication, selectedVisitId, onClose }: MedicationFormProps) => {
     const [isProcessing, setIsProcessing] = useState(false)
     const { toast } = useToast()
 
@@ -58,7 +59,7 @@ const MedicationForm = ({ patientId, activeVisits, medicines, medication, onClos
     const { control, handleSubmit } = useForm<IMedicationFormData>({
         defaultValues: medication
             ? {
-                  visit_id: activeVisits[0]?.id ?? 0,
+                  visit_id: selectedVisitId ?? activeVisits[0]?.id ?? 0,
                   medicine_id: medication.medicine?.id ?? null,
                   route: medication.route,
                   dosage: medication.dosage,
@@ -69,7 +70,7 @@ const MedicationForm = ({ patientId, activeVisits, medicines, medication, onClos
                   notes: medication.notes ?? '',
               }
             : {
-                  visit_id: activeVisits[0]?.id ?? 0,
+                  visit_id: selectedVisitId ?? activeVisits[0]?.id ?? 0,
                   medicine_id: null,
                   route: '',
                   dosage: null,

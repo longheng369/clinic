@@ -143,6 +143,7 @@ const Vaccine = () => {
                         <Button
                             onClick={handleCreate}
                             size="lg"
+                            variant="gradient"
                         >
                             <Plus size={20} /> New Vaccine
                         </Button>

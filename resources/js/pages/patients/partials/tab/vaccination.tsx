@@ -1,6 +1,6 @@
 import { usePage, router } from '@inertiajs/react'
 import { useModal } from '@/components/modal'
-import { Trash2, Plus } from 'lucide-react'
+import { Trash2, Plus, IdCard } from 'lucide-react'
 import VaccinationForm from './vaccinationForm'
 import VaccineCard from './VaccineCard'
 import VaccinationAlertBanner from './VaccinationAlertBanner'
@@ -38,6 +38,14 @@ const VaccinationTab = ({ patient }: VaccinationTabProps) => {
             title: 'Record Vaccination',
             content: <VaccinationForm patientId={patient.id} vaccines={vaccines} onClose={() => closeModal()} />,
             config: { preventClickAway: true },
+        })
+    }
+
+    const handleShowCard = () => {
+        openModal({
+            title: 'Vaccination Card',
+            content: <VaccineCard patient={patient} cardData={vaccineCard} />,
+            config: { maxWidth: '3xl' },
         })
     }
 
@@ -86,6 +94,9 @@ const VaccinationTab = ({ patient }: VaccinationTabProps) => {
             className: 'text-end',
             cell: (v) => (
                 <div className="flex items-center justify-end">
+                    <IconButton onClick={handleShowCard} aria-label="Show vaccination card">
+                        <IdCard size={16} />
+                    </IconButton>
                     <IconButton color="error" onClick={() => handleDelete(v)} aria-label="Delete vaccination">
                         <Trash2 size={16} />
                     </IconButton>
@@ -101,14 +112,17 @@ const VaccinationTab = ({ patient }: VaccinationTabProps) => {
         <div className="space-y-6">
             <VaccinationAlertBanner alerts={vaccinationAlerts} />
 
-            <VaccineCard patient={patient} cardData={vaccineCard} />
-
             <div>
                 <div className="mb-4 flex items-center justify-between">
                     <p className="text-sm text-gray-500">Vaccination records for this patient</p>
-                    <Button onClick={handleCreate}>
-                        <Plus size={18} /> Record Vaccination
-                    </Button>
+                    <div className="flex items-center gap-2">
+                        <Button onClick={handleShowCard} variant="outline">
+                            <IdCard size={16} /> Vaccine Card
+                        </Button>
+                        <Button onClick={handleCreate}>
+                            <Plus size={18} /> Record Vaccination
+                        </Button>
+                    </div>
                 </div>
 
                 <DataTable

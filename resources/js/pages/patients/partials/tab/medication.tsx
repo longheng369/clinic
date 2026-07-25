@@ -19,7 +19,15 @@ interface PaginatedData<T> {
     to: number
 }
 
-const MedicationTab = ({ patientId, patient }: { patientId: number; patient: IPatient }) => {
+interface SelectedVisit {
+    id: number
+    type: string
+    visit_date: string
+    status: string
+    recorded_by?: string
+}
+
+const MedicationTab = ({ patientId, patient, selectedVisit }: { patientId: number; patient: IPatient; selectedVisit: SelectedVisit | null }) => {
     const { openModal, closeModal } = useModal()
     const { medicationAdministrations, activeVisits, medicines } = usePage<{
         medicationAdministrations: PaginatedData<IMedicationAdministration>
@@ -29,8 +37,6 @@ const MedicationTab = ({ patientId, patient }: { patientId: number; patient: IPa
 
     const [searchTerm, setSearchTerm] = useState('')
 
-    const activeIpdVisit = activeVisits.find((v) => v.type === 'IPD')
-
     const filteredData = useMemo(() => {
         if (!searchTerm.trim()) return medicationAdministrations.data
         const q = searchTerm.toLowerCase()
@@ -39,11 +45,11 @@ const MedicationTab = ({ patientId, patient }: { patientId: number; patient: IPa
         )
     }, [medicationAdministrations.data, searchTerm])
 
-    if (!activeIpdVisit) {
+    if (!selectedVisit) {
         return (
             <div className="flex flex-col items-center justify-center py-16 text-center">
                 <h3 className="text-lg font-semibold text-gray-900 mb-1">Medication</h3>
-                <p className="text-sm text-gray-500">Medication administration is only available for admitted (IPD) patients.</p>
+                <p className="text-sm text-gray-500">Select a visit to view medications.</p>
             </div>
         )
     }
@@ -56,6 +62,7 @@ const MedicationTab = ({ patientId, patient }: { patientId: number; patient: IPa
                     patientId={patientId}
                     activeVisits={activeVisits}
                     medicines={medicines}
+                    selectedVisitId={selectedVisit.id}
                     onClose={() => closeModal()}
                 />
             ),
@@ -72,6 +79,7 @@ const MedicationTab = ({ patientId, patient }: { patientId: number; patient: IPa
                     activeVisits={activeVisits}
                     medicines={medicines}
                     medication={prescription}
+                    selectedVisitId={selectedVisit.id}
                     onClose={() => closeModal()}
                 />
             ),
@@ -110,7 +118,7 @@ const MedicationTab = ({ patientId, patient }: { patientId: number; patient: IPa
                 <MarGrid
                     patient={patient}
                     medications={filteredData}
-                    visitId={activeIpdVisit.id}
+                    visitId={selectedVisit.id}
                     onEdit={handleEdit}
                 />
             )}

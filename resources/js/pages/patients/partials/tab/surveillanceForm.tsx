@@ -20,14 +20,17 @@ const O2_OPTIONS = [
 interface SurveillanceFormProps {
     patientId: number
     surveillance?: ISurveillance
+    allVisits?: { id: number; type: string; visit_date: string; status: string }[]
+    selectedVisitId?: number
     onClose: () => void
 }
 
-const SurveillanceForm = ({ patientId, surveillance, onClose }: SurveillanceFormProps) => {
+const SurveillanceForm = ({ patientId, surveillance, allVisits, selectedVisitId, onClose }: SurveillanceFormProps) => {
     const [isProcessing, setIsProcessing] = useState(false)
     const { toast } = useToast()
     const { control, handleSubmit } = useForm<ISurveillanceFormData>({
         defaultValues: surveillance ?? {
+            visit_id: selectedVisitId ?? undefined,
             systolic: null,
             diastolic: null,
             pulse: null,
@@ -37,6 +40,13 @@ const SurveillanceForm = ({ patientId, surveillance, onClose }: SurveillanceForm
             o2_supply: '',
         },
     })
+
+    const visitOptions = allVisits
+        ?.filter((v) => v.status === 'active')
+        .map((v) => ({
+            value: v.id,
+            label: `${v.type} — ${new Date(v.visit_date).toLocaleDateString()}`,
+        })) ?? []
 
     const onSubmit = handleSubmit((data) => {
         setIsProcessing(true)
@@ -63,6 +73,16 @@ const SurveillanceForm = ({ patientId, surveillance, onClose }: SurveillanceForm
     return (
         <form onSubmit={onSubmit} className="border-t border-slate-300" noValidate>
             <div className="space-y-4 p-6">
+                {visitOptions.length > 1 && (
+                    <Select
+                        label="Visit"
+                        control={control}
+                        name="visit_id"
+                        options={visitOptions}
+                        rules={{ required: 'This field is required' }}
+                    />
+                )}
+
                 <div className="grid grid-cols-2 gap-4">
                     <Input
                         label="Systolic (mmHg)"

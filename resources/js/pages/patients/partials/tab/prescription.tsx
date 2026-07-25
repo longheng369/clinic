@@ -19,7 +19,15 @@ interface PaginatedData<T> {
     to: number
 }
 
-const PrescriptionTab = ({ patientId }: { patientId: number }) => {
+interface SelectedVisit {
+    id: number
+    type: string
+    visit_date: string
+    status: string
+    recorded_by?: string
+}
+
+const PrescriptionTab = ({ patientId, selectedVisit }: { patientId: number; selectedVisit: SelectedVisit | null }) => {
     const { openModal, closeModal, openAlert } = useModal()
     const { prescriptions, activeVisits, medicines } = usePage<{
         prescriptions: PaginatedData<IPrescription>
@@ -30,8 +38,6 @@ const PrescriptionTab = ({ patientId }: { patientId: number }) => {
     const [searchTerm, setSearchTerm] = useState('')
     const [expandedId, setExpandedId] = useState<number | null>(null)
 
-    const hasActiveVisit = activeVisits.length > 0
-
     const filteredData = useMemo(() => {
         if (!searchTerm.trim()) return prescriptions.data
         const q = searchTerm.toLowerCase()
@@ -40,11 +46,11 @@ const PrescriptionTab = ({ patientId }: { patientId: number }) => {
         )
     }, [prescriptions.data, searchTerm])
 
-    if (!hasActiveVisit) {
+    if (!selectedVisit) {
         return (
             <div className="flex flex-col items-center justify-center py-16 text-center">
                 <h3 className="text-lg font-semibold text-gray-900 mb-1">Prescriptions</h3>
-                <p className="text-sm text-gray-500">Create an active visit to write prescriptions for this patient.</p>
+                <p className="text-sm text-gray-500">Select a visit to view prescriptions.</p>
             </div>
         )
     }
@@ -57,6 +63,7 @@ const PrescriptionTab = ({ patientId }: { patientId: number }) => {
                     patientId={patientId}
                     activeVisits={activeVisits}
                     medicines={medicines}
+                    selectedVisitId={selectedVisit.id}
                     onClose={() => closeModal()}
                 />
             ),
@@ -73,6 +80,7 @@ const PrescriptionTab = ({ patientId }: { patientId: number }) => {
                     activeVisits={activeVisits}
                     medicines={medicines}
                     prescription={prescription}
+                    selectedVisitId={selectedVisit.id}
                     onClose={() => closeModal()}
                 />
             ),

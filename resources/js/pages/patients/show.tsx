@@ -1,6 +1,6 @@
 import { Head, Link, usePage, router } from '@inertiajs/react'
 import { IPatient } from '@/interfaces/IPatient'
-import { ArrowLeft, User, Activity, Hospital, LogOut } from 'lucide-react'
+import { ArrowLeft, User, Activity, Hospital, LogOut, Circle } from 'lucide-react'
 import { useState } from 'react'
 import { useModal } from '@/components/modal'
 import ConsultationTab from './partials/tab/consultation'
@@ -11,30 +11,53 @@ import PrescriptionTab from './partials/tab/prescription'
 import ParaclinicByPatientTab from '../paraclinic-requests/partials/tab/byPatient'
 import VaccinationTab from './partials/tab/vaccination'
 import { formatDob } from '@/utils/date'
+import { cn } from '@/utils/cn'
 
 type Tab = 'consultation' | 'medication' | 'prescription' | 'admission' | 'paraclinic' | 'vaccination' | 'attachment' | 'surveillance'
 
-const TABS: { key: Tab; label: string }[] = [
+const ALL_TABS: { key: Tab; label: string; requiresIpd?: boolean }[] = [
     { key: 'consultation', label: 'Consultation' },
-    { key: 'medication', label: 'Medication' },
     { key: 'prescription', label: 'Prescription' },
     { key: 'paraclinic', label: 'Paraclinic' },
     { key: 'vaccination', label: 'Vaccination' },
     { key: 'attachment', label: 'Attachment' },
-    { key: 'surveillance', label: 'Surveillance' },
+    { key: 'medication', label: 'Medication', requiresIpd: true },
+    { key: 'surveillance', label: 'Surveillance', requiresIpd: true },
 ]
+
+interface VisitSummary {
+    id: number
+    type: string
+    status: string
+    visit_date: string
+    recorded_by?: string
+    closed_at?: string | null
+}
+
+interface SelectedVisit {
+    id: number
+    type: string
+    visit_date: string
+    status: string
+    recorded_by?: string
+}
 
 const PatientShow = ({ patient }: { patient: IPatient }) => {
     const params = new URLSearchParams(window.location.search)
     const tabFromUrl = params.get('tab')
-    const [activeTab, setActiveTab] = useState<Tab>(() => {
-        if (tabFromUrl && TABS.some((t) => t.key === tabFromUrl)) return tabFromUrl as Tab
-        return 'consultation'
-    })
-    const { activeVisits, visitHistory } = usePage<{
-        activeVisits: { id: number; type: string; visit_date: string; recorded_by?: string }[]
-        visitHistory: { data: { id: number; type: string; visit_date: string; recorded_by?: string; closed_at: string }[]; current_page: number; last_page: number }
+    const { selectedVisit, allVisits } = usePage<{
+        selectedVisit: SelectedVisit | null
+        allVisits: VisitSummary[]
     }>().props
+
+    const visibleTabs = selectedVisit?.type === 'IPD'
+        ? ALL_TABS
+        : ALL_TABS.filter((t) => !t.requiresIpd)
+
+    const [activeTab, setActiveTab] = useState<Tab>(() => {
+        if (tabFromUrl && visibleTabs.some((t) => t.key === tabFromUrl)) return tabFromUrl as Tab
+        return visibleTabs[0]?.key as Tab ?? 'consultation'
+    })
     const { openAlert } = useModal()
 
     const handleAdmit = (visitId: number) => {
@@ -62,6 +85,16 @@ const PatientShow = ({ patient }: { patient: IPatient }) => {
         const url = new URL(window.location.href)
         url.searchParams.set('tab', tab)
         window.history.replaceState({}, '', url)
+    }
+
+    const handleVisitSelect = (visitId: number) => {
+        const url = new URL(window.location.href)
+        url.searchParams.set('visit', String(visitId))
+        router.visit(url.pathname + url.search)
+    }
+
+    const formatVisitDate = (dateStr: string) => {
+        return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
     }
 
     return (
@@ -106,91 +139,116 @@ const PatientShow = ({ patient }: { patient: IPatient }) => {
                         </div>
                     </div>
 
-                    <div className="space-y-4">
-                        {activeVisits.length > 0 && (
-                            <div className="rounded-xl border border-gray-300 bg-white p-5">
-                                <div className="flex items-center gap-2 mb-3">
-                                    <Activity size={16} className="text-primary-500" />
-                                    <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-500">Active Visits</h2>
-                                </div>
-                                <div className="space-y-2">
-                                    {activeVisits.map((v) => (
-                                        <div key={v.id} className="rounded-lg border border-gray-100 bg-gray-50 px-3.5 py-2.5">
-                                            <div className="flex items-center justify-between gap-2">
-                                                <div className="flex items-center gap-2">
-                                                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-                                                        v.type === 'IPD' ? 'bg-amber-100 text-amber-700' : 'bg-primary-100 text-primary-700'
-                                                    }`}>
-                                                        {v.type === 'IPD' ? 'IPD' : 'OPD'}
-                                                    </span>
-                                                    <span className="text-xs text-gray-600">
-                                                        {new Date(v.visit_date).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}
+                    <div className="rounded-xl border border-gray-300 bg-white p-5">
+                        <div className="flex items-center justify-between mb-3">
+                            <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-500">Visits</h2>
+                            <span className="inline-flex items-center justify-center rounded-full bg-primary-100 px-2.5 py-0.5 text-xs font-medium text-primary-700">
+                                {allVisits.length}
+                            </span>
+                        </div>
+
+                        {allVisits.length === 0 ? (
+                            <p className="text-sm text-gray-400 py-4 text-center">No visits recorded</p>
+                        ) : (
+                            <div className="space-y-1">
+                                {allVisits.map((v) => {
+                                    const isSelected = selectedVisit?.id === v.id
+                                    return (
+                                        <div key={v.id} className="relative">
+                                            <button
+                                                onClick={() => handleVisitSelect(v.id)}
+                                                className={cn(
+                                                    'w-full text-left px-3.5 py-2.5 rounded-lg border transition-colors',
+                                                    isSelected
+                                                        ? 'border-primary-300 bg-primary-50/60 border-l-2 border-l-primary-500'
+                                                        : 'border-gray-100 bg-gray-50 hover:bg-gray-100 border-l-2 border-l-transparent',
+                                                )}
+                                            >
+                                                <div className="flex items-center justify-between gap-2">
+                                                    <div className="flex items-center gap-2 min-w-0">
+                                                        <span className={cn(
+                                                            'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium shrink-0',
+                                                            v.type === 'IPD' ? 'bg-amber-100 text-amber-700' : 'bg-primary-100 text-primary-700',
+                                                        )}>
+                                                            {v.type}
+                                                        </span>
+                                                        <span className="text-xs text-gray-600 truncate">
+                                                            {formatVisitDate(v.visit_date)}
+                                                        </span>
+                                                    </div>
+                                                    <span className="flex items-center gap-1 shrink-0">
+                                                        <Circle
+                                                            size={6}
+                                                            className={cn(
+                                                                'fill-current',
+                                                                v.status === 'active' ? 'text-green-500' : 'text-gray-400',
+                                                            )}
+                                                        />
+                                                        <span className="text-[11px] text-gray-400 capitalize">{v.status}</span>
                                                     </span>
                                                 </div>
-                                                {v.recorded_by && (
-                                                    <span className="text-[11px] text-gray-400 shrink-0">by {v.recorded_by}</span>
-                                                )}
-                                            </div>
-                                            <div className="flex items-center gap-2 mt-2">
-                                                {v.type === 'OPD' && (
-                                                    <button
-                                                        onClick={() => handleAdmit(v.id)}
-                                                        className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-medium text-amber-700 bg-amber-50 hover:bg-amber-100 transition-colors"
-                                                    >
-                                                        <Hospital size={12} />
-                                                        Admit
-                                                    </button>
-                                                )}
-                                                <button
-                                                    onClick={() => handleClose(v.id)}
-                                                    className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-medium text-gray-500 bg-gray-100 hover:bg-gray-200 transition-colors"
-                                                >
-                                                    <LogOut size={12} />
-                                                    Close
-                                                </button>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
 
-                        {visitHistory.data.length > 0 && (
-                            <div className="rounded-xl border border-gray-200 bg-white p-5">
-                                <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-500 mb-3">Visit History</h2>
-                                <div className="space-y-1.5">
-                                    {visitHistory.data.map((v) => (
-                                        <Link
-                                            key={v.id}
-                                            href={`/visits/${v.id}`}
-                                            className="flex items-center justify-between rounded-lg border border-gray-100 px-3.5 py-2 hover:bg-gray-50 transition-colors"
-                                        >
-                                            <div className="flex items-center gap-2">
-                                                <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-medium text-gray-600">
-                                                    {v.type}
-                                                </span>
-                                                <span className="text-xs text-gray-600">
-                                                    {new Date(v.visit_date).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}
-                                                </span>
-                                                <span className="text-[11px] text-gray-400">
-                                                    Closed {new Date(v.closed_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}
-                                                </span>
-                                            </div>
-                                            {v.recorded_by && (
-                                                <span className="text-[11px] text-gray-400 shrink-0">by {v.recorded_by}</span>
-                                            )}
-                                        </Link>
-                                    ))}
-                                </div>
+                                                <div className="flex items-center justify-between mt-1.5">
+                                                    <span className="text-[11px] text-gray-400">
+                                                        {v.recorded_by ? `by ${v.recorded_by}` : ''}
+                                                        {v.closed_at ? <span className="text-gray-400"> &middot; Closed {formatVisitDate(v.closed_at)}</span> : ''}
+                                                    </span>
+
+                                                    {v.status === 'active' && isSelected && (
+                                                        <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+                                                            {v.type === 'OPD' && (
+                                                                <button
+                                                                    onClick={() => handleAdmit(v.id)}
+                                                                    className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-medium text-amber-700 bg-amber-50 hover:bg-amber-100 transition-colors"
+                                                                >
+                                                                    <Hospital size={11} />
+                                                                    Admit
+                                                                </button>
+                                                            )}
+                                                            <button
+                                                                onClick={() => handleClose(v.id)}
+                                                                className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-medium text-gray-500 bg-gray-100 hover:bg-gray-200 transition-colors"
+                                                            >
+                                                                <LogOut size={11} />
+                                                                Close
+                                                            </button>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </button>
+                                        </div>
+                                    )
+                                })}
                             </div>
                         )}
                     </div>
                 </div>
 
+                {selectedVisit ? (
+                    <div className="mb-4 flex items-center gap-2 text-sm text-gray-600 bg-white rounded-lg border border-gray-200 px-4 py-2.5">
+                        <Circle size={8} className={cn('fill-current', selectedVisit.status === 'active' ? 'text-green-500' : 'text-gray-400')} />
+                        <span className="capitalize font-medium">{selectedVisit.status}</span>
+                        <span className="text-gray-300">&middot;</span>
+                        <span>{selectedVisit.type} Visit</span>
+                        <span className="text-gray-300">&middot;</span>
+                        <span>{formatVisitDate(selectedVisit.visit_date)}</span>
+                        {selectedVisit.recorded_by && (
+                            <>
+                                <span className="text-gray-300">&middot;</span>
+                                <span className="text-gray-400">by {selectedVisit.recorded_by}</span>
+                            </>
+                        )}
+                    </div>
+                ) : (
+                    <div className="mb-4 text-sm text-gray-500 bg-white rounded-lg border border-gray-200 px-4 py-2.5">
+                        No visits recorded
+                    </div>
+                )}
+
                 <div className="rounded-xl border border-gray-300 bg-white">
                     <div className="border-b border-gray-300">
                         <nav className="flex overflow-x-auto px-6">
-                            {TABS.map((tab) => (
+                            {visibleTabs.map((tab) => (
                                 <button
                                     key={tab.key}
                                     onClick={() => handleTabChange(tab.key)}
@@ -206,7 +264,7 @@ const PatientShow = ({ patient }: { patient: IPatient }) => {
                         </nav>
                     </div>
                     <div className="p-6">
-                        <TabContent tab={activeTab} patientId={patient.id} patient={patient} />
+                        <TabContent tab={activeTab} patientId={patient.id} patient={patient} selectedVisit={selectedVisit} />
                     </div>
                 </div>
             </div>
@@ -221,22 +279,22 @@ const InfoItem = ({ label, value, className }: { label: string; value: React.Rea
     </div>
 )
 
-const TabContent = ({ tab, patientId, patient }: { tab: Tab; patientId: number; patient: IPatient }) => {
+const TabContent = ({ tab, patientId, patient, selectedVisit }: { tab: Tab; patientId: number; patient: IPatient; selectedVisit: SelectedVisit | null }) => {
     switch (tab) {
         case 'consultation':
             return <ConsultationTab patientId={patientId} />
         case 'medication':
-            return <MedicationTab patientId={patientId} patient={patient} />
+            return <MedicationTab patientId={patientId} patient={patient} selectedVisit={selectedVisit} />
         case 'prescription':
-            return <PrescriptionTab patientId={patientId} />
+            return <PrescriptionTab patientId={patientId} selectedVisit={selectedVisit} />
         case 'paraclinic':
             return <ParaclinicByPatientTab patientId={patientId} />
         case 'attachment':
-            return <AttachmentsTab patientId={patientId} />
+            return <AttachmentsTab patientId={patientId} selectedVisit={selectedVisit} />
         case 'vaccination':
             return <VaccinationTab patient={patient} />
         case 'surveillance':
-            return <SurveillanceTab patientId={patientId} />
+            return <SurveillanceTab patientId={patientId} selectedVisit={selectedVisit} />
     }
 }
 

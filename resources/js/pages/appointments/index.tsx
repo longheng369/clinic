@@ -97,9 +97,9 @@ const Appointment = () => {
         },
         {
             header: 'Patient',
-            className: 'font-medium text-gray-900',
+            className: 'font-medium text-gray-900 w-50',
             cell: (a) => a.patient
-                ? `${a.patient.khmer_last_name} ${a.patient.khmer_first_name}`
+                ? <span className='font-khmer text-base'>{a.patient.khmer_last_name} {a.patient.khmer_first_name}</span>
                 : <span className="text-gray-300">&mdash;</span>,
         },
         {
@@ -181,7 +181,7 @@ const Appointment = () => {
                             <option value="cancelled">Cancelled</option>
                             <option value="no_show">No Show</option>
                         </select>
-                        <Button onClick={handleCreate} size="lg">
+                        <Button onClick={handleCreate} size="lg" variant="gradient">
                             <Plus size={20} /> New Appointment
                         </Button>
                     </div>

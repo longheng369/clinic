@@ -9,6 +9,7 @@ class UpdatePatientSurveillanceRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'visit_id' => ['nullable', 'integer', 'exists:visits,id'],
             'systolic' => ['required', 'integer', 'min:0', 'max:300'],
             'diastolic' => ['required', 'integer', 'min:0', 'max:200'],
             'pulse' => ['required', 'integer', 'min:0', 'max:300'],

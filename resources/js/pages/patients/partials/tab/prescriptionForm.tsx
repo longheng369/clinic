@@ -36,6 +36,7 @@ interface PrescriptionFormProps {
     activeVisits: { id: number; type: string; visit_date: string; recorded_by?: string }[]
     medicines: { id: number; name: string }[]
     prescription?: IPrescription
+    selectedVisitId?: number
     onClose: () => void
 }
 
@@ -62,14 +63,14 @@ const COL_WIDTHS = {
     actions: 'w-[44px]',
 }
 
-const PrescriptionForm = ({ patientId, activeVisits, medicines, prescription, onClose }: PrescriptionFormProps) => {
+const PrescriptionForm = ({ patientId, activeVisits, medicines, prescription, selectedVisitId, onClose }: PrescriptionFormProps) => {
     const [isProcessing, setIsProcessing] = useState(false)
     const { toast } = useToast()
 
     const { control, handleSubmit } = useForm<IPrescriptionFormData>({
         defaultValues: prescription
             ? {
-                  visit_id: activeVisits[0]?.id ?? 0,
+                  visit_id: selectedVisitId ?? activeVisits[0]?.id ?? 0,
                   notes: prescription.notes ?? '',
                   items: prescription.items.map((i) => ({
                       medicine_id: i.medicine?.id ?? null,
@@ -83,7 +84,7 @@ const PrescriptionForm = ({ patientId, activeVisits, medicines, prescription, on
                   })),
               }
             : {
-                  visit_id: activeVisits[0]?.id ?? 0,
+                  visit_id: selectedVisitId ?? activeVisits[0]?.id ?? 0,
                   notes: '',
                   items: [emptyItem()],
               },

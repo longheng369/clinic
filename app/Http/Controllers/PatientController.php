@@ -53,17 +53,39 @@ class PatientController extends Controller
         ]);
     }
 
-    public function show(Patient $patient)
+    public function show(Request $request, Patient $patient)
     {
-        $consultations = $patient->consultations()->with('recordedBy')->latest()->paginate(10)->withQueryString();
+        $selectedVisitId = $request->query('visit');
 
-        $surveillances = $patient->surveillances()->with('recordedBy')->latest()->paginate(10)->withQueryString();
+        $allVisits = $patient->visits()->with('recordedBy')->latest()->get()
+            ->map(fn ($v) => [
+                'id' => $v->id,
+                'type' => $v->type,
+                'status' => $v->status,
+                'visit_date' => $v->visit_date,
+                'recorded_by' => $v->recordedBy?->name,
+                'closed_at' => $v->status === 'closed' ? $v->updated_at : null,
+            ]);
 
-        $paraclinicRequests = $patient->paraclinicRequests()
-            ->with(['doctor', 'tests'])
-            ->latest()
-            ->paginate(10)
-            ->withQueryString()
+        if (! $selectedVisitId && $allVisits->isNotEmpty()) {
+            $selectedVisitId = $allVisits->first()['id'];
+        }
+
+        $selectedVisit = $selectedVisitId ? Visit::find($selectedVisitId) : null;
+
+        $consultationsQuery = $patient->consultations()->with('recordedBy');
+        $surveillancesQuery = $patient->surveillances()->with('recordedBy');
+        $paraclinicRequestsQuery = $patient->paraclinicRequests()->with(['doctor', 'tests']);
+
+        if ($selectedVisitId) {
+            $consultationsQuery->where('visit_id', $selectedVisitId);
+            $surveillancesQuery->where('visit_id', $selectedVisitId);
+            $paraclinicRequestsQuery->where('visit_id', $selectedVisitId);
+        }
+
+        $consultations = $consultationsQuery->latest()->paginate(10)->withQueryString();
+        $surveillances = $surveillancesQuery->latest()->paginate(10)->withQueryString();
+        $paraclinicRequests = $paraclinicRequestsQuery->latest()->paginate(10)->withQueryString()
             ->through(fn ($r) => [
                 'id' => $r->id,
                 'request_number' => $r->request_number,
@@ -75,36 +97,8 @@ class PatientController extends Controller
                 'total_amount' => (float) $r->total_amount,
             ]);
 
-        return Inertia::render('patients/show', [
-            'patient' => $patient,
-            'consultations' => $consultations->through(fn ($c) => [
-                'id' => $c->id,
-                'weight' => $c->weight ? (float) $c->weight : null,
-                'chief_complaint' => $c->chief_complaint,
-                'diagnosis' => $c->diagnosis,
-                'fee' => $c->fee ? (float) $c->fee : null,
-                'recorded_by' => $c->recordedBy?->name,
-                'created_at' => $c->created_at,
-            ]),
-            'attachments' => $patient->attachments()->with('uploadedBy')->latest()->get(),
-            'surveillances' => $surveillances->through(fn ($s) => [
-                'id' => $s->id,
-                'systolic' => $s->systolic,
-                'diastolic' => $s->diastolic,
-                'pulse' => $s->pulse,
-                'temperature' => (float) $s->temperature,
-                'rr' => $s->rr,
-                'spo2' => $s->spo2,
-                'o2_supply' => $s->o2_supply,
-                'recorded_by' => $s->recordedBy?->name,
-                'created_at' => $s->created_at,
-            ]),
-            'paraclinicRequests' => $paraclinicRequests,
-            'medicationAdministrations' => Visit::where('patient_id', $patient->id)
-                ->where('status', 'active')
-                ->latest()
-->first()
-                ?->medicationAdministrations()
+        $medicationAdministrations = $selectedVisit
+            ? $selectedVisit->medicationAdministrations()
                 ->with(['medicine', 'recordedBy', 'doses' => fn ($q) => $q->orderBy('scheduled_at')])
                 ->latest()
                 ->paginate(10)
@@ -136,41 +130,68 @@ class PatientController extends Controller
                         'note' => $d->note,
                     ])->values(),
                 ])
-                ?? ['data' => [], 'current_page' => 1, 'last_page' => 1, 'per_page' => 10, 'total' => 0, 'from' => 0, 'to' => 0],
-            'prescriptions' => (function () use ($patient) {
-                $activeVisit = Visit::where('patient_id', $patient->id)
-                    ->where('status', 'active')
-                    ->latest()
-                    ->first();
+            : ['data' => [], 'current_page' => 1, 'last_page' => 1, 'per_page' => 10, 'total' => 0, 'from' => 0, 'to' => 0];
 
-                if (! $activeVisit) {
-                    return ['data' => [], 'current_page' => 1, 'last_page' => 1, 'per_page' => 10, 'total' => 0, 'from' => 0, 'to' => 0];
-                }
+        $prescriptions = $selectedVisit
+            ? $selectedVisit->prescriptions()
+                ->with(['items.medicine', 'createdBy'])
+                ->latest()
+                ->paginate(10)
+                ->through(fn ($p) => [
+                    'id' => $p->id,
+                    'visit_id' => $p->visit_id,
+                    'visit_type' => $selectedVisit->type,
+                    'notes' => $p->notes,
+                    'recorded_by' => $p->createdBy?->name,
+                    'created_at' => $p->created_at,
+                    'items' => $p->items->map(fn ($i) => [
+                        'id' => $i->id,
+                        'medicine' => $i->medicine ? ['id' => $i->medicine->id, 'name' => $i->medicine->name] : null,
+                        'route' => $i->route,
+                        'dosage' => (float) $i->dosage,
+                        'unit' => $i->unit,
+                        'frequency' => $i->frequency,
+                        'duration_days' => $i->duration_days,
+                        'quantity' => $i->quantity ? (float) $i->quantity : null,
+                        'notes' => $i->notes,
+                    ])->values(),
+                ])
+            : ['data' => [], 'current_page' => 1, 'last_page' => 1, 'per_page' => 10, 'total' => 0, 'from' => 0, 'to' => 0];
 
-                return $activeVisit->prescriptions()
-                    ->with(['items.medicine', 'createdBy'])
-                    ->latest()
-                    ->paginate(10)
-                    ->through(fn ($p) => [
-                        'id' => $p->id,
-                        'visit_id' => $p->visit_id,
-                        'visit_type' => $activeVisit->type,
-                        'notes' => $p->notes,
-                        'recorded_by' => $p->createdBy?->name,
-                        'created_at' => $p->created_at,
-                        'items' => $p->items->map(fn ($i) => [
-                            'id' => $i->id,
-                            'medicine' => $i->medicine ? ['id' => $i->medicine->id, 'name' => $i->medicine->name] : null,
-                            'route' => $i->route,
-                            'dosage' => (float) $i->dosage,
-                            'unit' => $i->unit,
-                            'frequency' => $i->frequency,
-                            'duration_days' => $i->duration_days,
-                            'quantity' => $i->quantity ? (float) $i->quantity : null,
-                            'notes' => $i->notes,
-                        ])->values(),
-                    ]);
-            })(),
+        return Inertia::render('patients/show', [
+            'patient' => $patient,
+            'selectedVisit' => $selectedVisit ? [
+                'id' => $selectedVisit->id,
+                'type' => $selectedVisit->type,
+                'visit_date' => $selectedVisit->visit_date,
+                'status' => $selectedVisit->status,
+                'recorded_by' => $selectedVisit->recordedBy?->name,
+            ] : null,
+            'allVisits' => $allVisits,
+            'consultations' => $consultations->through(fn ($c) => [
+                'id' => $c->id,
+                'weight' => $c->weight ? (float) $c->weight : null,
+                'chief_complaint' => $c->chief_complaint,
+                'diagnosis' => $c->diagnosis,
+                'fee' => $c->fee ? (float) $c->fee : null,
+                'recorded_by' => $c->recordedBy?->name,
+                'created_at' => $c->created_at,
+            ]),
+            'surveillances' => $surveillances->through(fn ($s) => [
+                'id' => $s->id,
+                'systolic' => $s->systolic,
+                'diastolic' => $s->diastolic,
+                'pulse' => $s->pulse,
+                'temperature' => (float) $s->temperature,
+                'rr' => $s->rr,
+                'spo2' => $s->spo2,
+                'o2_supply' => $s->o2_supply,
+                'recorded_by' => $s->recordedBy?->name,
+                'created_at' => $s->created_at,
+            ]),
+            'paraclinicRequests' => $paraclinicRequests,
+            'medicationAdministrations' => $medicationAdministrations,
+            'prescriptions' => $prescriptions,
             'vaccinations' => $patient->vaccinations()
                 ->with(['vaccine', 'administeredBy'])
                 ->latest()
@@ -194,6 +215,9 @@ class PatientController extends Controller
                 $patient->nextDoseForVaccine($v),
             ))->filter(fn ($item) => $item['next_dose_due_date'] !== null && Carbon::parse($item['next_dose_due_date'])->lte(Carbon::now()->addDays(7)))->values(),
             'medicines' => Medicine::orderBy('name')->get(['id', 'name']),
+            'attachments' => $selectedVisit
+                ? $selectedVisit->attachments()->with('uploadedBy')->latest()->get()
+                : $patient->attachments()->with('uploadedBy')->latest()->get(),
             'activeVisits' => Visit::where('patient_id', $patient->id)
                 ->where('status', 'active')
                 ->with('recordedBy')
@@ -204,18 +228,6 @@ class PatientController extends Controller
                     'type' => $v->type,
                     'visit_date' => $v->visit_date,
                     'recorded_by' => $v->recordedBy?->name,
-                ]),
-            'visitHistory' => Visit::where('patient_id', $patient->id)
-                ->where('status', 'closed')
-                ->with('recordedBy')
-                ->latest()
-                ->paginate(5)
-                ->through(fn ($v) => [
-                    'id' => $v->id,
-                    'type' => $v->type,
-                    'visit_date' => $v->visit_date,
-                    'recorded_by' => $v->recordedBy?->name,
-                    'closed_at' => $v->updated_at,
                 ]),
         ]);
     }
@@ -243,12 +255,14 @@ class PatientController extends Controller
     {
         $request->validate([
             'file' => ['required', 'file', 'max:20480'],
+            'visit_id' => ['nullable', 'integer', 'exists:visits,id'],
         ]);
 
         $file = $request->file('file');
         $path = $file->store('patient-attachments');
 
         $patient->attachments()->create([
+            'visit_id' => $request->input('visit_id'),
             'file_name' => $file->getClientOriginalName(),
             'file_path' => $path,
             'file_type' => $file->getMimeType(),

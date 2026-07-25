@@ -16,6 +16,14 @@ interface Attachment {
     created_at: string
 }
 
+interface SelectedVisit {
+    id: number
+    type: string
+    visit_date: string
+    status: string
+    recorded_by?: string
+}
+
 const fileIcon = (type: string) => {
     if (type.startsWith('image/')) return <Image size={20} className="text-blue-500" />
     if (type.includes('pdf')) return <FileText size={20} className="text-red-500" />
@@ -28,7 +36,7 @@ const formatSize = (bytes: number) => {
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
-const AttachmentsTab = ({ patientId }: { patientId: number }) => {
+const AttachmentsTab = ({ patientId, selectedVisit }: { patientId: number; selectedVisit: SelectedVisit | null }) => {
     const [isUploading, setIsUploading] = useState(false)
     const [preview, setPreview] = useState<Attachment | null>(null)
     const { toast } = useToast()
@@ -42,6 +50,9 @@ const AttachmentsTab = ({ patientId }: { patientId: number }) => {
         setIsUploading(true)
         const formData = new FormData()
         formData.append('file', file)
+        if (selectedVisit?.id) {
+            formData.append('visit_id', String(selectedVisit.id))
+        }
 
         router.post(`/patients/${patientId}/attachments`, formData, {
             onSuccess: () => toast('File uploaded successfully!', { variant: 'success' }),
@@ -67,22 +78,27 @@ const AttachmentsTab = ({ patientId }: { patientId: number }) => {
 
     return (
         <div>
-            {/* Upload */}
-            <div className="mb-6 flex justify-end items-center gap-2">
-                <p className="text-xs text-gray-400 mt-1">Max file size: 20 MB</p>
-                <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary-500 text-white text-sm font-medium hover:bg-primary-600 transition-colors">
-                    <Upload size={18} />
-                    Upload File
-                    <input
-                        type="file"
-                        className="hidden"
-                        onChange={handleUpload}
-                        disabled={isUploading}
-                    />
-                </label>
+            <div className="mb-6 flex justify-between items-center gap-2">
+                <p className="text-xs text-gray-400">
+                    {selectedVisit ? 'Files attached to this visit' : 'All patient files'}
+                </p>
+                <div className="flex items-center gap-2">
+                    {!selectedVisit && (
+                        <p className="text-xs text-amber-600">No visit selected — files will not be tied to a visit.</p>
+                    )}
+                    <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary-500 text-white text-sm font-medium hover:bg-primary-600 transition-colors">
+                        <Upload size={18} />
+                        Upload File
+                        <input
+                            type="file"
+                            className="hidden"
+                            onChange={handleUpload}
+                            disabled={isUploading}
+                        />
+                    </label>
+                </div>
             </div>
 
-            {/* List */}
             {attachments.length === 0 ? (
                 <p className="text-sm text-gray-400 py-8 text-center">No files uploaded yet.</p>
             ) : (

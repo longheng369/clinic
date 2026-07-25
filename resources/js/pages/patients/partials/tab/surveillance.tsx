@@ -18,17 +18,23 @@ interface PaginatedData<T> {
     to: number
 }
 
-const SurveillanceTab = ({ patientId }: { patientId: number }) => {
+interface SelectedVisit {
+    id: number
+    type: string
+    visit_date: string
+    status: string
+    recorded_by?: string
+}
+
+const SurveillanceTab = ({ patientId, selectedVisit }: { patientId: number; selectedVisit: SelectedVisit | null }) => {
     const { openModal, closeModal, openAlert } = useModal()
-    const { surveillances, activeVisits } = usePage<{ surveillances: PaginatedData<ISurveillance>; activeVisits: { id: number; type: string }[] }>().props
+    const { surveillances, allVisits } = usePage<{ surveillances: PaginatedData<ISurveillance>; allVisits: { id: number; type: string; visit_date: string; status: string }[] }>().props
 
-    const activeIpdVisit = activeVisits.find((v) => v.type === 'IPD')
-
-    if (!activeIpdVisit) {
+    if (!selectedVisit) {
         return (
             <div className="flex flex-col items-center justify-center py-16 text-center">
                 <h3 className="text-lg font-semibold text-gray-900 mb-1">Surveillance</h3>
-                <p className="text-sm text-gray-500">Vital signs monitoring is only available for admitted (IPD) patients.</p>
+                <p className="text-sm text-gray-500">Select a visit to view surveillance records.</p>
             </div>
         )
     }
@@ -36,7 +42,14 @@ const SurveillanceTab = ({ patientId }: { patientId: number }) => {
     const handleCreate = () => {
         openModal({
             title: 'New Surveillance Record',
-            content: <SurveillanceForm patientId={patientId} onClose={() => closeModal()} />,
+            content: (
+                <SurveillanceForm
+                    patientId={patientId}
+                    allVisits={allVisits}
+                    selectedVisitId={selectedVisit.id}
+                    onClose={() => closeModal()}
+                />
+            ),
             config: { preventClickAway: true, maxWidth: '2xl' },
         })
     }
@@ -44,7 +57,15 @@ const SurveillanceTab = ({ patientId }: { patientId: number }) => {
     const handleEdit = (s: ISurveillance) => {
         openModal({
             title: 'Edit Surveillance Record',
-            content: <SurveillanceForm patientId={patientId} surveillance={s} onClose={() => closeModal()} />,
+            content: (
+                <SurveillanceForm
+                    patientId={patientId}
+                    surveillance={s}
+                    allVisits={allVisits}
+                    selectedVisitId={selectedVisit.id}
+                    onClose={() => closeModal()}
+                />
+            ),
             config: { preventClickAway: true, maxWidth: '2xl' },
         })
     }

@@ -20,6 +20,7 @@
 
 # architecture
 - For CRUD modals, store shared form templates in a partials folder within the page directory and reuse the same template for both create and edit operations. Confidence: 0.70
+- Patient sub-entities (attachments, medications, prescriptions, surveillances, consultations, paraclinic requests) should be scoped to a specific visit, not just owned by the patient. Confidence: 0.80
 
 # components
 - Keep the reusable form input component scoped to `<input>` elements only — do not add textarea support. Confidence: 0.60
@@ -31,12 +32,13 @@
 - Prefer DataTable component with pagination over card-based layouts for displaying tabular record data. Confidence: 0.65
 
 # workflow
+- For feature changes or significant refactors, write a detailed plan and get explicit approval before writing implementation code. Confidence: 0.60
 - Use Composer scripts (`composer.json` "scripts" section) as the task runner for project utility commands like db:dump / db:restore. Confidence: 0.55
 - In medication administration tracking, each "Provide" action marks a single individual dose as administered (do not batch multiple doses under one click based on interval like TID). Confidence: 0.70
 - For the MAR (medication administration record) tab, display medication orders as separate table rows rather than inside accordion/collapsible cards. Confidence: 0.70
 
 # architecture
-- Scope medication and surveillance tabs to only show for IPD (inpatient) visits, not OPD visits. Confidence: 0.55
+- Scope medication and surveillance tabs to only show for IPD (inpatient) visits, not OPD visits. Confidence: 0.75
 
 # workflow
 - For UX/UI related tasks, use the premium-eco-design-system agent at `.commandcode/agents/premium-eco-design-system.md`. Confidence: 0.75

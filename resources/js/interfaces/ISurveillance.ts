@@ -13,6 +13,7 @@ export interface ISurveillance {
 }
 
 export interface ISurveillanceFormData {
+    visit_id?: number;
     systolic: number | null;
     diastolic: number | null;
     pulse: number | null;

@@ -135,7 +135,7 @@ const Show = ({ request }: { request: IParaclinicRequest }) => {
                                     </label>
                                 )}
                                 <div className="relative group">
-                                    <Button variant="outlined">Update Status</Button>
+                                    <Button variant="outline">Update Status</Button>
                                     <div className="absolute right-0 top-full mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
                                         <div className="py-1">
                                             {transitions.map((s) => (
