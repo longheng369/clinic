@@ -76,25 +76,34 @@ const Patient = () => {
 
     const columns: Column<IPatient>[] = [
         {
-            header: 'Khmer Name',
-            className: 'font-medium text-gray-900',
-            cell: (p) => <span className='font-khmer text-[16px]'>{p.khmer_last_name} {p.khmer_first_name}</span>,
+            header: 'ឈ្មោះខ្មែរ',
+            classNames: {
+                header: 'font-khmer tracking-wide'
+            },
+            cell: (p) => <span className='font-khmer'>{p.khmer_last_name} {p.khmer_first_name}</span>,
         },
         {
-            header: 'English Name',
-            className: '',
+            header: 'ឈ្មោះ​ជា​ភាសា​អង់គ្លេស',
+            classNames: {
+                header: 'font-khmer tracking-wide'
+            },
             cell: (p) => p.first_name
                 ? `${p.last_name ?? ''} ${p.first_name}`.trim()
                 : <span className="text-gray-300">&mdash;</span>,
         },
         {
-            header: 'Phone',
-            className: 'whitespace-nowrap',
+            header: 'លេខទូរស័ព្ទ',
+            classNames: {
+                header: 'font-khmer tracking-wide',
+                body: 'whitespace-nowrap'
+            },
             cell: (p) => p.phone_number,
         },
         {
-            header: 'Gender',
-            className: '',
+            header: 'ភេទ',
+            classNames: {
+                header: 'font-khmer tracking-wide',
+            },
             cell: (p) => (
                 <span className={`capitalize ${p.gender === 'male' ? 'text-blue-600' : 'text-pink-600'}`}>
                     {p.gender}
@@ -102,18 +111,24 @@ const Patient = () => {
             ),
         },
         {
-            header: 'DOB',
-            className: 'whitespace-nowrap',
+            header: 'ថ្ងៃខែឆ្នាំកំណើត',
+            classNames: {
+                header: 'font-khmer tracking-wide'
+            },
             cell: (p) => formatDob(p.date_of_birth),
         },
         {
-            header: 'Blood',
-            className: '',
+            header: 'ប្រភេទឈាម',
+            classNames: {
+                header: 'font-khmer tracking-wide'
+            },
             cell: (p) => p.blood_group ?? <span className="text-gray-300">&mdash;</span>,
         },
         {
-            header: 'Actions',
-            className: 'text-end',
+            header: 'សកម្មភាព',
+            classNames: {
+                header: 'font-khmer text-end tracking-wide'
+            },
             cell: (p) => (
                 <div className="flex items-center justify-end">
                     <IconButton onClick={() => router.visit(`/patients/${p.id}`)} aria-label={`View ${p.khmer_first_name}`}>

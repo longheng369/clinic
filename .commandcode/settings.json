@@ -5,7 +5,10 @@
       "Shell(npx tsc --noEmit --pretty 2 >& 1)",
       "Shell(npx tsc --noEmit 2 >& 1)",
       "Shell(php -l app/Http/Controllers/PrescriptionController.php)",
-      "Shell(php -l app/Http/Controllers/PatientController.php)"
+      "Shell(php -l app/Http/Controllers/PatientController.php)",
+      "Shell(grep:*)",
+      "Shell(php artisan migrate:status 2 >& 1)",
+      "Shell(sqlite3:*)"
     ],
     "deny": [],
     "defaultMode": "default"

@@ -6,7 +6,7 @@ import MarGrid from './MarGrid'
 import { IMedicationAdministration } from '@/interfaces/IMedicationAdministration'
 import { IPatient } from '@/interfaces/IPatient'
 import { Button } from '@/components/ui/button'
-import { Pagination } from '@/components/table/DataTable'
+import Pagination from '@/components/table/Pagination'
 import { useState, useMemo } from 'react'
 
 interface PaginatedData<T> {

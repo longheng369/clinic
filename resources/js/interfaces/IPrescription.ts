@@ -21,13 +21,21 @@ export interface IPrescription {
 }
 
 export interface IPrescriptionItemFormData {
-    medicine_id: number | null;
+    medicine: {
+        id: number;
+        name: string;
+    };
+    quantity: number;
+    unit: {
+        id: number;
+        name: string;
+    };
     route: string;
-    dosage: number | null;
-    unit: string;
-    frequency: string;
-    duration_days: number | null;
-    quantity: number | null;
+    morning: number | null;
+    afternoon: number | null;
+    evening: number | null;
+    night: number | null;
+    numberOfDay: number;
     notes: string | null;
 }
 

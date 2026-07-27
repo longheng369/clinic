@@ -1,9 +1,10 @@
 import { Head, Link, usePage, router } from '@inertiajs/react'
 import { IPatient } from '@/interfaces/IPatient'
 import { IPrescription } from '@/interfaces/IPrescription'
-import { ArrowLeft, User, Activity, Hospital, LogOut, Circle } from 'lucide-react'
+import { ArrowLeft, Hospital, LogOut, Circle } from 'lucide-react'
 import { useState } from 'react'
 import { useModal } from '@/components/modal'
+import PatientInfo from '@/components/patient/patientInfo'
 import ConsultationTab from './partials/tab/consultation'
 import AttachmentsTab from './partials/tab/attachment'
 import SurveillanceTab from './partials/tab/surveillance'
@@ -11,7 +12,6 @@ import MedicationTab from './partials/tab/medication'
 import PrescriptionTab from './partials/tab/prescription'
 import ParaclinicByPatientTab from '../paraclinic-requests/partials/tab/byPatient'
 import VaccinationTab from './partials/tab/vaccination'
-import { formatDob } from '@/utils/date'
 import { cn } from '@/utils/cn'
 
 type Tab = 'consultation' | 'medication' | 'prescription' | 'admission' | 'paraclinic' | 'vaccination' | 'attachment' | 'surveillance'
@@ -127,20 +127,7 @@ const PatientShow = ({ patient }: { patient: IPatient }) => {
 
             <div className="p-8 flex-1 overflow-y-auto">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-                    <div className="lg:col-span-2 rounded-xl border border-gray-300 bg-white p-6">
-                        <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-500 mb-4">Basic Information</h2>
-                        <div className="grid grid-cols-3 gap-6">
-                            <InfoItem label="Khmer Name" value={`${patient.khmer_last_name} ${patient.khmer_first_name}`} className="font-khmer text-[16px]" />
-                            <InfoItem label="English Name" value={patient.first_name ? `${patient.last_name ?? ''} ${patient.first_name}`.trim() : null} />
-                            <InfoItem label="Date of Birth" value={formatDob(patient.date_of_birth)} />
-                            <InfoItem label="Phone Number" value={patient.phone_number} />
-                            <InfoItem label="Gender" value={<span className="capitalize">{patient.gender}</span>} />
-                            <InfoItem label="Blood Group" value={patient.blood_group} />
-                            <InfoItem label="National ID" value={patient.national_id} />
-                            <InfoItem label="Address" value={patient.address} />
-                            <InfoItem label="Allergy" value={patient.allergy} />
-                        </div>
-                    </div>
+                    <PatientInfo patient={patient} className="lg:col-span-2" />
 
                     <div className="rounded-xl border border-gray-300 bg-white p-5">
                         <div className="flex items-center justify-between mb-3">
@@ -275,13 +262,6 @@ const PatientShow = ({ patient }: { patient: IPatient }) => {
     )
 }
 
-const InfoItem = ({ label, value, className }: { label: string; value: React.ReactNode; className?: string }) => (
-    <div>
-        <dt className="text-xs font-medium uppercase tracking-wider text-gray-400 mb-1">{label}</dt>
-        <dd className={`text-sm text-gray-900 ${className ?? ''}`}>{value ?? <span className="text-gray-300">&mdash;</span>}</dd>
-    </div>
-)
-
 const TabContent = ({ tab, patientId, patient, selectedVisit, prescription, medicines }: { tab: Tab; patientId: number; patient: IPatient; selectedVisit: SelectedVisit | null; prescription: IPrescription | null; medicines: { id: number; name: string }[] }) => {
     switch (tab) {
         case 'consultation':
@@ -289,7 +269,7 @@ const TabContent = ({ tab, patientId, patient, selectedVisit, prescription, medi
         case 'medication':
             return <MedicationTab patientId={patientId} patient={patient} selectedVisit={selectedVisit} />
         case 'prescription':
-            return <PrescriptionTab patient={patient} patientId={patientId} selectedVisit={selectedVisit} prescription={prescription} medicines={medicines} />
+            return <PrescriptionTab patient={patient} patientId={patientId} selectedVisit={selectedVisit} prescription={prescription} />
         case 'paraclinic':
             return <ParaclinicByPatientTab patientId={patientId} />
         case 'attachment':

@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Battambang:wght@100;300;400;700;900&family=Moul&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Moul&family=Siemreap&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -14,7 +14,7 @@
 
 @theme {
     --font-sans: 'Poppins', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji';
-    --font-khmer: 'Battambang', system-ui;
+    --font-khmer: 'Siemreap', system-ui;
     --font-khmer-moul: 'Moul', system-ui;
     --animate-toast-slide-in: toast-slide-in 300ms ease-out both;
     --animate-modal-scale-in: modal-scale-in 200ms cubic-bezier(0.4, 0, 0.2, 1) both;

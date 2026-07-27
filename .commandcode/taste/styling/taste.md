@@ -10,3 +10,4 @@
 - Never use `max-w` Tailwind utility classes for new designs. Confidence: 0.80
 - For data display sections (patient info, record details), prefer a consistent label-above-value stacked layout where each field has a small gray label above a bolder value, rather than mixing inline `label: value` and stacked formats across fields in the same section. Confidence: 0.65
 - For data display sections, prefer a visually distinct "box" appearance with padding (e.g., `px-6 py-4`) so sections feel separated rather than blending into surrounding content. Confidence: 0.60
+- In `.tsx` files, use a trailing comma in generic arrow function type parameters (`<T,>`) to disambiguate the generic from a JSX opening tag — preventing the parser from treating `<T>` as an element. Confidence: 0.70

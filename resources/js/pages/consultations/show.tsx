@@ -1,5 +1,5 @@
 import { Head, Link } from '@inertiajs/react'
-import { ArrowLeft } from 'lucide-react'
+import {ArrowLeft, Pencil} from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { useEffect } from 'react'
 import ConsultationForm from './partials/ConsultationForm'
@@ -56,18 +56,18 @@ const ShowConsultation = ({ patient, consultation }: { patient: IPatient; consul
                         <ArrowLeft size={20} />
                     </Link>
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Consultation Details</h1>
+                        <h1 className="text-xl font-bold text-gray-900">Consultation Details</h1>
                         <p className="text-md text-gray-500">
                             Patient: <span className="font-medium font-khmer">{patient.khmer_last_name} {patient.khmer_first_name}</span>
                         </p>
                     </div>
                 </div>
                 <Link href={`/patients/${patient.id}/consultations/${consultation.id}/edit`}>
-                    <Button>Edit</Button>
+                    <Button><Pencil /> Edit</Button>
                 </Link>
             </div>
             <div className="p-8 flex-1 overflow-y-auto">
-                <div className="rounded-xl border border-gray-200 bg-white p-6">
+                <div className="rounded-xl border border-gray-300 bg-white p-6">
                     <ConsultationForm control={control} viewOnly />
                 </div>
             </div>

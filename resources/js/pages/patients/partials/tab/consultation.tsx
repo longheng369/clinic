@@ -86,7 +86,7 @@ const ConsultationTab = ({ patientId }: { patientId: number }) => {
             <div className="mb-4 flex items-center justify-between">
                 <p className="text-sm text-gray-500">Consultation records for this patient</p>
                 <Link href={`/patients/${patientId}/consultations/create`}>
-                    <Button><Plus size={18} /> New Consultation</Button>
+                    <Button variant="gradient"><Plus size={18} /> New Consultation</Button>
                 </Link>
             </div>
 

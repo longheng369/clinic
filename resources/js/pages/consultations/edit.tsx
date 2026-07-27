@@ -71,7 +71,7 @@ const EditConsultation = ({ patient, consultation }: { patient: IPatient; consul
                             <ArrowLeft size={20} />
                         </Link>
                         <div>
-                            <h1 className="text-2xl font-bold text-gray-900">Edit Consultation</h1>
+                            <h1 className="text-xl font-bold text-gray-900">Edit Consultation</h1>
                             <p className="text-md text-gray-500">
                                 Patient: <span className="font-medium font-khmer">{patient.khmer_last_name} {patient.khmer_first_name}</span>
                             </p>
@@ -79,14 +79,14 @@ const EditConsultation = ({ patient, consultation }: { patient: IPatient; consul
                     </div>
                 </div>
                 <div className="p-8 flex-1 overflow-y-auto">
-                    <div className="rounded-xl border border-gray-200 bg-white p-6">
+                    <div className="rounded-xl border border-gray-300 bg-white p-6">
                         <form onSubmit={onSubmit} noValidate>
                             <ConsultationForm control={control} />
-                            <div className="mt-6 flex justify-end gap-2 pt-4 border-t border-gray-200">
+                            <div className="mt-6 flex justify-end gap-2 pt-4">
                                 <Link href={`/patients/${patient.id}?tab=consultation`}>
                                     <Button type="button" variant="outline">Cancel</Button>
                                 </Link>
-                                <Button type="submit" disabled={isProcessing}>Update Consultation</Button>
+                                <Button type="submit" variant="gradient" disabled={isProcessing}>Update Consultation</Button>
                             </div>
                         </form>
                     </div>

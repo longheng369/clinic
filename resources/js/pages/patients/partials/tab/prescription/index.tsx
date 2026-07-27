@@ -1,14 +1,15 @@
-import { router } from '@inertiajs/react'
+import { router, usePage } from '@inertiajs/react'
 import { useModal } from '@/components/modal'
 import { Plus, Pencil, Trash2, Stethoscope } from 'lucide-react'
-import { IPrescription, IPrescriptionItemFormData } from '@/interfaces/IPrescription'
+import { IPrescription, IPrescriptionFormData, IPrescriptionItemFormData } from '@/interfaces/IPrescription'
 import { IPatient } from '@/interfaces/IPatient'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/toast'
 import { useRef } from 'react'
-import MedicineItemForm from '../../../prescriptions/partials/MedicineItemForm'
+import MedicineItemForm from './partials/prescriptionItemForm'
 import { cn } from '@/utils/cn'
 import { formatDob } from '@/utils/date'
+import { useFieldArray, useForm } from 'react-hook-form'
 
 interface SelectedVisit {
     id: number
@@ -23,33 +24,21 @@ const PrescriptionTab = ({
     patientId,
     selectedVisit,
     prescription,
-    medicines,
 }: {
     patient: IPatient
     patientId: number
     selectedVisit: SelectedVisit | null
     prescription: IPrescription | null
-    medicines: { id: number; name: string }[]
 }) => {
-    const { openModal, closeModal, openAlert } = useModal()
-    const { toast } = useToast()
-    const itemsRef = useRef<IPrescriptionItemFormData[]>(
-        prescription?.items.map((i) => ({
-            medicine_id: i.medicine?.id ?? null,
-            route: i.route,
-            dosage: i.dosage,
-            unit: i.unit,
-            frequency: i.frequency,
-            duration_days: i.duration_days,
-            quantity: i.quantity,
-            notes: i.notes,
-        })) ?? []
-    )
-
-    const getMedicineName = (id: number | null) => {
-        if (!id) return null
-        return medicines.find((m) => m.id === id)?.name ?? null
-    }
+    const { openModal, closeModal } = useModal()
+    const { medicines } = usePage<{ medicines: { id: number; name: string }[] }>().props
+    console.log(medicines)
+    const { control } = useForm<IPrescriptionFormData>();
+    const { fields, append, remove, update } = useFieldArray({
+        control,
+        name: 'items'
+    });
+    const { toast } = useToast();
 
     const savePrescription = (items: IPrescriptionItemFormData[]) => {
         if (!selectedVisit) {
@@ -83,11 +72,9 @@ const PrescriptionTab = ({
                 <MedicineItemForm
                     medicines={medicines}
                     onSave={(data) => {
-                        itemsRef.current = [...itemsRef.current, data]
-                        savePrescription(itemsRef.current)
-                        closeModal()
+                        append(data);
+                        closeModal();
                     }}
-                    onClose={() => closeModal()}
                 />
             ),
             config: { preventClickAway: true, maxWidth: '2xl' },
@@ -95,51 +82,20 @@ const PrescriptionTab = ({
     }
 
     const openEditModal = (index: number) => {
-        const item = prescription?.items[index]
-        if (!item) return
+        const item = fields[index];
         openModal({
             title: 'Edit Medicine',
             content: (
                 <MedicineItemForm
                     medicines={medicines}
-                    defaultValues={{
-                        medicine_id: item.medicine?.id ?? null,
-                        route: item.route,
-                        dosage: item.dosage,
-                        unit: item.unit,
-                        frequency: item.frequency,
-                        duration_days: item.duration_days,
-                        quantity: item.quantity,
-                        notes: item.notes,
-                    }}
+                    defaultValues={item}
                     onSave={(data) => {
-                        const updated = [...itemsRef.current]
-                        updated[index] = data
-                        itemsRef.current = updated
-                        savePrescription(updated)
-                        closeModal()
+                        update(index, data);
+                        closeModal();
                     }}
-                    onClose={() => closeModal()}
                 />
             ),
             config: { preventClickAway: true, maxWidth: '2xl' },
-        })
-    }
-
-    const handleRemove = (index: number) => {
-        const updated = itemsRef.current.filter((_, i) => i !== index)
-        itemsRef.current = updated
-        savePrescription(updated)
-    }
-
-    const handleDeletePrescription = () => {
-        if (!prescription) return
-        openAlert({
-            message: 'Delete this prescription?',
-            description: `${prescription.items.length} medicine(s) will be removed. This action cannot be undone.`,
-            variant: 'danger',
-            confirmLabel: 'Delete',
-            onConfirm: () => router.delete(`/patients/${patientId}/prescriptions/${prescription.id}`),
         })
     }
 
@@ -223,66 +179,41 @@ const PrescriptionTab = ({
             </div>
 
             {/* Medicine Table */}
-            <div className="px-6 py-4 border border-gray-300 mt-4">
+            <div>
                 {prescription.items.length === 0 ? (
                     <div className="py-10 text-center text-sm text-gray-400">
                         No medicines in this prescription.
                     </div>
                 ) : (
-                    <table className="w-full text-sm">
+                    <table className="w-full text-base mt-4 table-fixed border-collapse">
                         <thead>
-                            <tr className="border-b border-gray-300">
-                                <th className="py-2 w-8 text-center text-[11px] font-semibold uppercase tracking-wider text-gray-500">No</th>
-                                <th className="py-2 px-2 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500 w-[35%]">
-                                    <span className="font-khmer text-[12px]">ឈ្មោះថ្នាំ</span>
-                                    <span className="block text-gray-400 font-normal normal-case tracking-normal">Medicine</span>
-                                </th>
-                                <th className="py-2 px-2 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500 w-[10%]">Route</th>
-                                <th className="py-2 px-2 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500 w-[12%]">Doses</th>
-                                <th className="py-2 px-2 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500 w-[10%]">Freq</th>
-                                <th className="py-2 px-2 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500 w-[10%]">Duration</th>
-                                <th className="py-2 px-2 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">Note</th>
-                                <th className="py-2 w-14"></th>
+                            <tr className="bg-blue-200 border border-blue-200 font-semibold font-khmer">
+                                <th className="text-start px-2 py-4 w-[5%]">ល.រ</th>
+                                <th className="text-start w-[25%]">ឈ្មោះថ្នាំ</th>
+                                <th className="text-start w-[10%]">ចំនួន</th>
+                                <th className="text-start w-[20%]">ការប្រើប្រាស់</th>
+                                <th className="text-start w-[10%]">ចំនួនថ្ងៃ</th>
+                                <th className="text-start w-[30%]">កំណត់ចំណាំ</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {prescription.items.map((item, index) => (
-                                <tr
-                                    key={item.id ?? index}
-                                    className={cn(
-                                        'border-b border-gray-100 group',
-                                        index % 2 === 0 ? 'bg-gray-50/50' : 'bg-white',
-                                    )}
-                                >
-                                    <td className="py-3 text-center text-xs text-gray-400 font-medium">{index + 1}</td>
-                                    <td className="py-3 px-2 text-sm font-medium text-gray-900 truncate">{item.medicine?.name ?? <span className="text-gray-300">—</span>}</td>
-                                    <td className="py-3 px-2 text-xs text-gray-600">{item.route}</td>
-                                    <td className="py-3 px-2 text-xs text-gray-600">{item.dosage} {item.unit}</td>
-                                    <td className="py-3 px-2 text-xs text-gray-600">{item.frequency}</td>
-                                    <td className="py-3 px-2 text-xs text-gray-600">
-                                        {item.duration_days ? `${item.duration_days} days` : <span className="text-gray-300">—</span>}
-                                    </td>
-                                    <td className="py-3 px-2 text-xs text-gray-500 truncate">{item.notes ?? ''}</td>
-                                    <td className="py-3 text-center">
-                                        <div className="flex items-center justify-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button
-                                                type="button"
-                                                onClick={() => openEditModal(index)}
-                                                className="inline-flex items-center justify-center size-6 rounded text-gray-400 hover:text-primary-600 hover:bg-primary-50"
-                                            >
-                                                <Pencil size={13} />
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() => handleRemove(index)}
-                                                className="inline-flex items-center justify-center size-6 rounded text-gray-400 hover:text-red-500 hover:bg-red-50"
-                                            >
-                                                <Trash2 size={13} />
-                                            </button>
-                                        </div>
-                                    </td>
+                            {fields.map((field, index) => (
+                                <tr className="border border-gray-300 text-center cursor-pointer" onClick={() => openEditModal(index)}>
+                                    <td className="px-2 py-4 text-start">{index + 1}</td>
+                                    <td className="py-4 text-start">{field.medicine?.name}</td>
+                                    <td className="py-4 text-start">{field.quantity} {field.unit?.name}</td>
+                                    <td className="px-2 py-4 text-start font-khmer">{field.route} {field.morning && `ព្រឹក ${field.morning}គ្រាប់`} {field.morning && `រសៀល ${field.afternoon}គ្រាប់`} {field.morning && `ល្ងាច ${field.evening}គ្រាប់`} {field.morning && `យប់ ${field.night}គ្រាប់`}</td>
+                                    <td className="px-2 py-4 text-start">{field.numberOfDay}</td>
+                                    <td className="px-2 py-4 text-start font-khmer">{field.notes}</td>
                                 </tr>
                             ))}
+                            <tr>
+                                <td colSpan={6} className="px-2 py-4 text-center">
+                                    <Button variant="gradient" onClick={openAddModal}>
+                                        + Add medicine
+                                    </Button>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 )}

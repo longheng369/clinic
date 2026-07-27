@@ -5,6 +5,7 @@
 # react
 - Use light mode as the default design direction for UI components. Confidence: 0.65
 - Use `import { Link } from '@inertiajs/react'` for navigation instead of `<a>` tags. Confidence: 0.65
+- Prefers `usePage().props` from `@inertiajs/react` to access shared page data directly in deeply nested components instead of prop drilling through intermediate layers. Confidence: 0.65
 
 # styling
 See [styling/taste.md](styling/taste.md)
@@ -22,11 +23,12 @@ See [architecture/taste.md](architecture/taste.md)
 
 # react
 - Use react-hook-form for form validation instead of custom touched/blur state management. Confidence: 0.65
+- When a react-hook-form field needs to store a complex object (e.g., `{ id, name }`) rather than a scalar, use `useController` with a manual `onChange` handler instead of `register`, using the primitive (id) as the `<option value>` and reconstructing the full object in `onChange`. Confidence: 0.55
 - Persist tab/UI state via URL query parameters (?tab=) rather than localStorage. Confidence: 0.65
 - Prefer DataTable component with pagination over card-based layouts for displaying tabular record data. Confidence: 0.65
 
 # workflow
-- Run `npx tsc --noEmit` after TypeScript/TSX changes to verify no type errors before declaring completion. Confidence: 0.55
+- Run `npx tsc --noEmit` after TypeScript/TSX changes to verify no type errors before declaring completion. Confidence: 0.65
 - For feature changes or significant refactors, write a detailed plan and get explicit approval before writing implementation code. Confidence: 0.60
 - Use Composer scripts (`composer.json` "scripts" section) as the task runner for project utility commands like db:dump / db:restore. Confidence: 0.55
 - In medication administration tracking, each "Provide" action marks a single individual dose as administered (do not batch multiple doses under one click based on interval like TID). Confidence: 0.70

@@ -24,7 +24,7 @@ const Checkbox = ({
             aria-checked={checked}
             role="checkbox"
             className={cn(
-                'flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition-all duration-200',
+                'flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-all duration-200',
                 'focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2',
                 checked
                 ? 'border-primary-600 bg-primary-600 text-white'

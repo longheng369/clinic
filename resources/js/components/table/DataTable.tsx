@@ -1,23 +1,20 @@
 import { Link } from '@inertiajs/react'
 import { FolderOpen, ChevronLeft, ChevronRight } from 'lucide-react'
 import { type ReactNode } from 'react'
-
-export interface PaginationMeta {
-    current_page: number
-    last_page: number
-    per_page: number
-    total: number
-    from: number
-    to: number
-}
+import { clsx } from "clsx";
+import Pagination from "@/components/table/Pagination";
+import { PaginationMeta } from "@/interfaces/IPagination";
 
 export interface Column<T> {
     header: string
     cell: (row: T) => ReactNode
-    className?: string
+    classNames?: {
+        header?: string;
+        body?: string;
+    }
 }
 
-interface DataTableProps<T> {
+interface Props<T> {
     data: T[]
     keyExtractor: (row: T) => string | number
     columns: Column<T>[]
@@ -28,7 +25,7 @@ interface DataTableProps<T> {
     onRowClick?: (row: T) => void
 }
 
-export default function DataTable<T>({
+const DataTable = <T, >({
     data,
     keyExtractor,
     columns,
@@ -37,7 +34,7 @@ export default function DataTable<T>({
     pagination,
     baseUrl = '',
     onRowClick,
-}: DataTableProps<T>) {
+}: Props<T>) => {
     return (
         <>
             <div className="w-full border border-gray-300 rounded-xl overflow-hidden">
@@ -47,7 +44,7 @@ export default function DataTable<T>({
                             {columns.map((col, i) => (
                                 <th
                                     key={i}
-                                    className={`px-6 py-4 text-xs font-semibold uppercase tracking-wider text-gray-400 ${col.className ?? ''}`}
+                                    className={clsx('px-6 py-4 text-gray-500 text-sm', col.classNames?.header)}
                                 >
                                     {col.header}
                                 </th>
@@ -83,7 +80,7 @@ export default function DataTable<T>({
                                     {columns.map((col, i) => (
                                         <td
                                             key={i}
-                                            className={`px-6 py-3 text-sm text-gray-600 transition-colors duration-150 ${col.className ?? ''}`}
+                                            className={`px-6 py-3 text-sm transition-colors duration-150 ${col.classNames?.body ?? ''}`}
                                         >
                                             {col.cell(row)}
                                         </td>
@@ -103,59 +100,4 @@ export default function DataTable<T>({
     )
 }
 
-export function Pagination({ meta, baseUrl }: { meta: PaginationMeta; baseUrl: string }) {
-    const separator = baseUrl.includes('?') ? '&' : '?'
-
-    return (
-        <div className="mt-3 flex items-center justify-between">
-            <p className="text-sm text-gray-500">
-                Page {meta.current_page} of {meta.last_page}
-            </p>
-            <div className="flex items-center gap-1">
-                <Link
-                    href={`${baseUrl}${separator}page=${meta.current_page - 1}`}
-                    className={`inline-flex items-center gap-1 rounded-xl px-3 py-2 text-sm font-medium transition-all duration-150 ${
-                        meta.current_page === 1
-                            ? 'pointer-events-none text-gray-300'
-                            : 'text-gray-600 hover:bg-gray-100'
-                    }`}
-                    preserveScroll
-                    aria-disabled={meta.current_page === 1}
-                >
-                    <ChevronLeft size={16} />
-                    Previous
-                </Link>
-                {Array.from(
-                    { length: meta.last_page },
-                    (_, i) => i + 1,
-                ).map((page) => (
-                    <Link
-                        key={page}
-                        href={`${baseUrl}${separator}page=${page}`}
-                        className={`inline-flex items-center justify-center rounded-xl px-3 py-2 text-sm font-medium transition-all duration-150 ${
-                            page === meta.current_page
-                                ? 'bg-primary-500 text-white shadow-sm shadow-primary-500/20'
-                                : 'text-gray-600 hover:bg-gray-100'
-                        }`}
-                        preserveScroll
-                    >
-                        {page}
-                    </Link>
-                ))}
-                <Link
-                    href={`${baseUrl}${separator}page=${meta.current_page + 1}`}
-                    className={`inline-flex items-center gap-1 rounded-xl px-3 py-2 text-sm font-medium transition-all duration-150 ${
-                        meta.current_page === meta.last_page
-                            ? 'pointer-events-none text-gray-300'
-                            : 'text-gray-600 hover:bg-gray-100'
-                    }`}
-                    preserveScroll
-                    aria-disabled={meta.current_page === meta.last_page}
-                >
-                    Next
-                    <ChevronRight size={16} />
-                </Link>
-            </div>
-        </div>
-    )
-}
+export default DataTable;
