@@ -33,35 +33,40 @@ const ConsultationTab = ({ patientId }: { patientId: number }) => {
 
     const columns: Column<IConsultation>[] = [
         {
-            header: 'Date',
-            className: 'whitespace-nowrap',
+            header: 'កាលបរិច្ឆេទ',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (c) => formatCreatedDateTime(c.created_at),
         },
         {
-            header: 'Chief Complaint',
+            header: 'រោគសញ្ញាចម្បង',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (c) => (
                 <span className="max-w-xs truncate block">{c.chief_complaint}</span>
             ),
         },
         {
-            header: 'Diagnosis',
+            header: 'រោគវិនិច្ឆ័យ',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (c) => c.diagnosis ?? <span className="text-gray-300">&mdash;</span>,
         },
         {
-            header: 'Weight (kg)',
+            header: 'ទម្ងន់ (គីឡូក្រាម)',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (c) => c.weight ?? <span className="text-gray-300">&mdash;</span>,
         },
         {
-            header: 'Fee ($)',
+            header: 'តម្លៃ ($)',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (c) => c.fee != null ? c.fee.toFixed(2) : <span className="text-gray-300">&mdash;</span>,
         },
         {
-            header: 'Recorded By',
+            header: 'អ្នកកត់ត្រា',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (c) => c.recorded_by ?? <span className="text-gray-300">&mdash;</span>,
         },
         {
-            header: 'Actions',
-            className: 'text-end',
+            header: 'សកម្មភាព',
+            classNames: { header: 'font-khmer text-end tracking-wide' },
             cell: (c) => (
                 <div className="flex items-center justify-end">
                     <IconButton onClick={() => router.visit(`/patients/${patientId}/consultations/${c.id}`)} aria-label="View consultation">

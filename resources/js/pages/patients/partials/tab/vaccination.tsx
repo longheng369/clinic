@@ -61,17 +61,18 @@ const VaccinationTab = ({ patient }: VaccinationTabProps) => {
 
     const columns: Column<IPatientVaccination>[] = [
         {
-            header: 'Vaccine',
-            className: 'font-medium text-gray-900',
+            header: 'វ៉ាក់សាំង',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (v) => v.vaccine?.name ?? <span className="text-gray-300">&mdash;</span>,
         },
         {
-            header: 'Dose #',
-            cell: (v) => `Dose ${v.dose_number}`,
+            header: 'ដូស',
+            classNames: { header: 'font-khmer tracking-wide' },
+            cell: (v) => `ដូស ${v.dose_number}`,
         },
         {
-            header: 'Date Administered',
-            className: 'whitespace-nowrap',
+            header: 'កាលបរិច្ឆេទចាក់',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (v) =>
                 new Date(v.administered_date).toLocaleDateString('en-US', {
                     timeZone: 'Asia/Phnom_Penh',
@@ -81,17 +82,18 @@ const VaccinationTab = ({ patient }: VaccinationTabProps) => {
                 }),
         },
         {
-            header: 'Administered By',
+            header: 'អ្នកចាក់',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (v) => v.administered_by ?? <span className="text-gray-300">&mdash;</span>,
         },
         {
-            header: 'Notes',
-            className: 'max-w-xs truncate',
+            header: 'កំណត់ចំណាំ',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (v) => v.notes ?? <span className="text-gray-300">&mdash;</span>,
         },
         {
-            header: 'Actions',
-            className: 'text-end',
+            header: 'សកម្មភាព',
+            classNames: { header: 'font-khmer text-end tracking-wide' },
             cell: (v) => (
                 <div className="flex items-center justify-end">
                     <IconButton onClick={handleShowCard} aria-label="Show vaccination card">

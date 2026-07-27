@@ -78,38 +78,43 @@ const Medicine = () => {
 
     const columns: Column<IMedicine>[] = [
         {
-            header: 'Name',
-            className: 'font-medium text-gray-900',
+            header: 'ឈ្មោះ',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (med) => med.name,
         },
         {
-            header: 'Type',
+            header: 'ប្រភេទ',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (med) => med.type,
         },
         {
-            header: 'Category',
+            header: 'ប្រភេទចំណាត់ថ្នាក់',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (med) => med.category?.name ?? <span className="text-gray-300">&mdash;</span>,
         },
         {
-            header: 'Unit',
+            header: 'ឯកតា',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (med) => med.unit?.name ?? <span className="text-gray-300">&mdash;</span>,
         },
         {
-            header: 'Dosage',
+            header: 'កម្រិត',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (med) => med.dosage ?? <span className="text-gray-300">&mdash;</span>,
         },
         {
-            header: 'Unit Price',
+            header: 'តម្លៃឯកតា',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (med) => med.unit_price != null ? `$${Number(med.unit_price).toFixed(2)}` : <span className="text-gray-300">&mdash;</span>,
         },
         {
-            header: 'Created',
-            className: 'whitespace-nowrap',
+            header: 'បានបង្កើត',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (med) => formatCreatedDateTime(med.created_at)
         },
         {
-            header: 'Actions',
-            className: 'text-end',
+            header: 'សកម្មភាព',
+            classNames: { header: 'font-khmer text-end tracking-wide' },
             cell: (med) => (
                 <div className="flex items-center justify-end">
                     <IconButton onClick={() => handleEdit(med)} aria-label={`Edit ${med.name}`}>

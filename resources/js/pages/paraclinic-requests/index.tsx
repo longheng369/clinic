@@ -111,29 +111,33 @@ const Index = () => {
 
     const columns: Column<IParaclinicRequest>[] = [
         {
-            header: 'Request #',
-            className: 'font-medium text-gray-900 whitespace-nowrap',
+            header: 'លេខស្នើសុំ',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (r) => r.request_number,
         },
         {
-            header: 'Patient',
-            cell: (r) => r.patient ? <span className='font-khmer text-[16px]'>{r.patient.khmer_last_name} {r.patient.khmer_first_name}</span> : <span className="text-gray-300">&mdash;</span>,
+            header: 'អ្នកជំងឺ',
+            classNames: { header: 'font-khmer tracking-wide' },
+            cell: (r) => r.patient ? <span className='font-khmer'>{r.patient.khmer_last_name} {r.patient.khmer_first_name}</span> : <span className="text-gray-300">&mdash;</span>,
         },
         {
-            header: 'Doctor',
+            header: 'វេជ្ជបណ្ឌិត',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (r) => r.doctor?.name ?? <span className="text-gray-300">&mdash;</span>,
         },
         {
-            header: 'Facility',
+            header: 'មន្ទីរពិសោធន៍',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (r) => r.external_facility_name ?? <span className="text-gray-300">&mdash;</span>,
         },
         {
-            header: 'Date',
-            className: 'whitespace-nowrap',
+            header: 'កាលបរិច្ឆេទ',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (r) => r.request_date,
         },
         {
-            header: 'Status',
+            header: 'ស្ថានភាព',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (r) => (
                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${STATUS_BADGES[r.status] ?? 'bg-gray-100 text-gray-700'}`}>
                     {r.status}
@@ -141,7 +145,8 @@ const Index = () => {
             ),
         },
         {
-            header: 'Payment',
+            header: 'ការទូទាត់',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (r) => (
                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${PAYMENT_BADGES[r.payment_status] ?? 'bg-gray-100 text-gray-700'}`}>
                     {r.payment_status}
@@ -149,13 +154,13 @@ const Index = () => {
             ),
         },
         {
-            header: 'Amount',
-            className: 'text-end whitespace-nowrap',
+            header: 'ចំនួនទឹកប្រាក់',
+            classNames: { header: 'font-khmer text-end tracking-wide' },
             cell: (r) => `$${(r.total_amount ?? 0).toFixed(2)}`,
         },
         {
-            header: 'Actions',
-            className: 'text-end',
+            header: 'សកម្មភាព',
+            classNames: { header: 'font-khmer text-end tracking-wide' },
             cell: (r) => (
                 <div className="flex items-center justify-end">
                     <IconButton onClick={() => router.visit(`/paraclinic-requests/${r.id}`)} aria-label="View request">

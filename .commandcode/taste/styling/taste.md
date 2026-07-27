@@ -1,6 +1,6 @@
 # styling
 - For prescription display in patient detail tabs, prefer a realistic clinic prescription paper format: clinic header with Khmer/English name, doctor/date/Rx# info row, a proper HTML `<table>` with zebra-striped rows (columns: No, Medicine, Route, Dose, Frequency, Duration, Note), and a signature footer section separated by a double border. Confidence: 0.85
-- For clinic-facing documents (prescriptions, reports), use bilingual Khmer/English labels in headers, column titles, and signature sections. Confidence: 0.75
+- For clinic-facing documents and page-level UI (prescriptions, reports, DataTable headers, page titles), use Khmer language text rather than English. Bilingual Khmer/English labels are appropriate for formal printable documents like prescriptions. Confidence: 0.80
 - Include print-friendly CSS classes (`print:border-none`, `print:max-w-none`) on printable document containers. Confidence: 0.70
 - Use the `cn()` utility from `@/utils/cn` for conditional className merging in JSX. Confidence: 0.70
 - Keep form inputs at adequately visible dimensions; do not reduce sizing below Tailwind defaults. Confidence: 0.65
@@ -11,3 +11,10 @@
 - For data display sections (patient info, record details), prefer a consistent label-above-value stacked layout where each field has a small gray label above a bolder value, rather than mixing inline `label: value` and stacked formats across fields in the same section. Confidence: 0.65
 - For data display sections, prefer a visually distinct "box" appearance with padding (e.g., `px-6 py-4`) so sections feel separated rather than blending into surrounding content. Confidence: 0.60
 - In `.tsx` files, use a trailing comma in generic arrow function type parameters (`<T,>`) to disambiguate the generic from a JSX opening tag — preventing the parser from treating `<T>` as an element. Confidence: 0.70
+- For DataTable `Column` definitions, use `classNames: { body?: string; header?: string }` (a nested object) rather than a flat `className: string` for applying per-column CSS classes. The nested form allows targeting the header cell and body cell independently. Confidence: 0.80
+- All DataTable column headers should use Khmer language text (not English). Confidence: 0.85
+- DataTable column headers should use `classNames: { header: 'font-khmer tracking-wide' }` for standard columns, and `classNames: { header: 'font-khmer text-end tracking-wide' }` for the Actions column. Confidence: 0.85
+- Avoid `classNames: { body: ... }` on DataTable Columns — styling should go on headers, not body cells. Confidence: 0.70
+- Khmer text in DataTable row cells should use only the `font-khmer` class without any additional font-size or weight modifiers (no `font-khmer text-base`, `font-khmer text-[16px]`, etc.). Confidence: 0.80
+- Avoid `classNames: { body: ... }` on DataTable Columns — apply styling on the header cells only via `classNames: { header: ... }`. Confidence: 0.70
+- Page `<Head title>` and `<h1>` headings should use Khmer language text, not English. Confidence: 0.80

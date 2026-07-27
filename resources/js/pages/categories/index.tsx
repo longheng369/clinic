@@ -76,23 +76,23 @@ const Category = () => {
 
     const columns: Column<ICategory>[] = [
         {
-            header: 'Name',
-            className: 'font-medium text-gray-900',
+            header: 'ឈ្មោះ',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (cat) => cat.name,
         },
         {
-            header: 'Description',
-            className: 'max-w-xs truncate',
+            header: 'ការពិពណ៌នា',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (cat) => cat.description ?? <span className="text-gray-300">&mdash;</span>,
         },
         {
-            header: 'Created',
-            className: 'whitespace-nowrap',
+            header: 'បានបង្កើត',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (cat) => formatCreatedDateTime(cat.created_at),
         },
         {
-            header: 'Actions',
-            className: 'text-end',
+            header: 'សកម្មភាព',
+            classNames: { header: 'font-khmer text-end tracking-wide' },
             cell: (cat) => (
                 <div className="flex items-center justify-end">
                     <IconButton onClick={() => handleEdit(cat)} aria-label={`Edit ${cat.name}`}>

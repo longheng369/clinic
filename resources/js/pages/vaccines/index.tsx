@@ -85,30 +85,30 @@ const Vaccine = () => {
 
     const columns: Column<IVaccine>[] = [
         {
-            header: 'Name',
-            className: 'font-medium text-gray-900',
+            header: 'ឈ្មោះ',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (v) => v.name,
         },
         {
-            header: 'Description',
-            className: 'max-w-xs truncate',
+            header: 'ការពិពណ៌នា',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (v) => v.description ?? <span className="text-gray-300">&mdash;</span>,
         },
         {
-            header: 'Schedule',
-            className: 'whitespace-nowrap',
+            header: 'កាលវិភាគ',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (v) => (
                 <span className="text-xs text-gray-500">{summarizeRules(v)}</span>
             ),
         },
         {
-            header: 'Created',
-            className: 'whitespace-nowrap',
+            header: 'បានបង្កើត',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (v) => formatCreatedDateTime(v.created_at),
         },
         {
-            header: 'Actions',
-            className: 'text-end',
+            header: 'សកម្មភាព',
+            classNames: { header: 'font-khmer text-end tracking-wide' },
             cell: (v) => (
                 <div className="flex items-center justify-end">
                     <IconButton onClick={() => handleEdit(v)} aria-label={`Edit ${v.name}`}>

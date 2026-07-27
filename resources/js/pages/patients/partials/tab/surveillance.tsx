@@ -82,42 +82,48 @@ const SurveillanceTab = ({ patientId, selectedVisit }: { patientId: number; sele
 
     const columns: Column<ISurveillance>[] = [
         {
-            header: 'Date',
-            className: 'whitespace-nowrap',
+            header: 'កាលបរិច្ឆេទ',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (s) => formatCreatedDateTime(s.created_at),
         },
         {
-            header: 'BP (mmHg)',
-            className: 'whitespace-nowrap',
+            header: 'សម្ពាធឈាម',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (s) => `${s.systolic}/${s.diastolic}`,
         },
         {
-            header: 'Pulse (bpm)',
+            header: 'ជីពចរ',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (s) => s.pulse,
         },
         {
-            header: 'Temp (°C)',
+            header: 'សីតុណ្ហភាព',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (s) => s.temperature.toFixed(1),
         },
         {
-            header: 'RR (/min)',
+            header: 'ដង្ហើម',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (s) => s.rr,
         },
         {
-            header: 'SpO₂ (%)',
+            header: 'អុកស៊ីសែន',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (s) => s.spo2,
         },
         {
-            header: 'O₂ Supply',
+            header: 'ការផ្គត់ផ្គង់ O₂',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (s) => s.o2_supply,
         },
         {
-            header: 'Recorded By',
+            header: 'អ្នកកត់ត្រា',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (s) => s.recorded_by ?? <span className="text-gray-300">&mdash;</span>,
         },
         {
-            header: 'Actions',
-            className: 'text-end',
+            header: 'សកម្មភាព',
+            classNames: { header: 'font-khmer text-end tracking-wide' },
             cell: (s) => (
                 <div className="flex items-center justify-end">
                     <IconButton onClick={() => handleEdit(s)} aria-label="Edit surveillance">

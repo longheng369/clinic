@@ -91,19 +91,20 @@ const Appointment = () => {
 
     const columns: Column<IAppointment>[] = [
         {
-            header: 'Date',
-            className: 'whitespace-nowrap',
+            header: 'កាលបរិច្ឆេទ',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (a) => formatDob(a.created_at),
         },
         {
-            header: 'Patient',
-            className: 'font-medium text-gray-900 w-50',
+            header: 'អ្នកជំងឺ',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (a) => a.patient
-                ? <span className='font-khmer text-base'>{a.patient.khmer_last_name} {a.patient.khmer_first_name}</span>
+                ? <span className='font-khmer'>{a.patient.khmer_last_name} {a.patient.khmer_first_name}</span>
                 : <span className="text-gray-300">&mdash;</span>,
         },
         {
-            header: 'Type',
+            header: 'ប្រភេទ',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (a) => (
                 <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${TYPE_BADGES[a.type] ?? 'bg-gray-100 text-gray-600'}`}>
                     {a.type.replace('_', ' ')}
@@ -111,7 +112,8 @@ const Appointment = () => {
             ),
         },
         {
-            header: 'Status',
+            header: 'ស្ថានភាព',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (a) => (
                 <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize ${STATUS_BADGES[a.status] ?? 'bg-gray-100 text-gray-600'}`}>
                     {a.status.replace('_', ' ')}
@@ -119,23 +121,25 @@ const Appointment = () => {
             ),
         },
         {
-            header: 'Appointment Date',
-            className: 'whitespace-nowrap',
+            header: 'កាលបរិច្ឆេទណាត់',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (a) => formatDob(a.appointment_date),
         },
         {
-            header: 'Notes',
-            cell: (a) => a.notes?? <span className="text-gray-300">&mdash;</span>,
+            header: 'កំណត់ចំណាំ',
+            classNames: { header: 'font-khmer tracking-wide' },
+            cell: (a) => a.notes ?? <span className="text-gray-300">&mdash;</span>,
         },
         {
-            header: 'Vaccine Alert',
+            header: 'ការជូនដំណឹងវ៉ាក់សាំង',
+            classNames: { header: 'font-khmer tracking-wide' },
             cell: (a) => a.has_vaccine_alerts
-                ? <span className="inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">⚠ Due soon</span>
+                ? <span className="inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">⚠ ជិតដល់</span>
                 : <span className="text-gray-300">&mdash;</span>,
         },
         {
-            header: 'Actions',
-            className: 'text-end',
+            header: 'សកម្មភាព',
+            classNames: { header: 'font-khmer text-end tracking-wide' },
             cell: (a) => (
                 <div className="flex items-center justify-end">
                     <IconButton onClick={() => handleEdit(a)} aria-label="Edit appointment">
@@ -153,13 +157,13 @@ const Appointment = () => {
 
     return (
         <>
-            <Head title="Appointments" />
+            <Head title="កាលវិភាគ" />
             <div className="p-8">
                 <div className="mb-6 flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Appointments</h1>
+                        <h1 className="text-2xl font-bold text-gray-900">កាលវិភាគ</h1>
                         <p className="mt-1 text-sm text-gray-500">
-                            Manage patient appointments
+                            គ្រប់គ្រងកាលវិភាគអ្នកជំងឺ
                         </p>
                     </div>
                     <div className="flex items-center gap-3">
