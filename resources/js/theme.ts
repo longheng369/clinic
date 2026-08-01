@@ -30,7 +30,7 @@ const theme = createTheme({
       },
    },
    typography: {
-      fontFamily: '"Poppins", "Inter Variable", sans-serif',
+      fontFamily: '"Poppins", sans-serif',
       fontSize: 14,
    },
    shape: {
