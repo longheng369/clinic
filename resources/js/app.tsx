@@ -2,10 +2,12 @@ import '../css/app.css'
 import { createInertiaApp } from '@inertiajs/react'
 import { createRoot } from 'react-dom/client'
 import type { ComponentType, ReactNode } from 'react'
+import { ThemeProvider } from '@mui/material/styles'
 import { ModalProvider } from '@/components/modal'
 import { ToastProvider } from '@/components/toast'
 import AuthenticatedLayout from '@/layouts/authenticatedLayout'
 import GuestLayout from '@/layouts/guestLayout'
+import theme from '@/theme'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type PageComponent = ComponentType<any> & {
@@ -36,7 +38,9 @@ createInertiaApp({
         createRoot(el).render(
             <ToastProvider>
                 <ModalProvider>
-                    <App {...props} />
+                    <ThemeProvider theme={theme}>
+                        <App {...props} />
+                    </ThemeProvider>
                 </ModalProvider>
             </ToastProvider>
         )

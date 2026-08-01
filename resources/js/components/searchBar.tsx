@@ -6,9 +6,13 @@ const SearchBar = (props: TextFieldProps) => {
     return (
         <TextField
             {...props}
+            sx={{
+                flexShrink: 0
+            }}
+            size='small'
             slotProps={{
                 input: {
-                    startAdornment: <InputAdornment position="start"><Search /></InputAdornment>,
+                    startAdornment: <InputAdornment position="start"><Search size={16}/></InputAdornment>,
                 },
             }}
     />
