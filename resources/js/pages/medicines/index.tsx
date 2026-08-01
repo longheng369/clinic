@@ -1,54 +1,16 @@
-import { usePage, router } from '@inertiajs/react'
-import { Head } from '@inertiajs/react'
+import { Head, usePage } from '@inertiajs/react'
 import { useModal } from '@/components/modal'
-import { Pencil, Trash2, Plus } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import MedicineForm from './partials/createOrEdit'
-import { IMedicine } from '@/interfaces/IMedicine'
 import { IUnit } from '@/interfaces/IUnit';
-import { Button } from '@/components/ui/button'
-import IconButton from '@/components/button/iconButton'
-import DataTable, { type Column } from '@/components/table/DataTable'
-import { useState, useEffect } from 'react'
-import SearchBar from '@/components/searchBar'
-import { formatCreatedDateTime } from '@/utils/date'
-
-interface PaginatedData<T> {
-    data: T[]
-    current_page: number
-    last_page: number
-    per_page: number
-    total: number
-    from: number
-    to: number
-}
+import Button from '@mui/material/Button'
 
 const Medicine = () => {
-    const { openModal, closeModal, openAlert } = useModal()
+    const { openModal, closeModal } = useModal()
 
-    const { medicines, units, search: searchProp } = usePage<{
-        medicines: PaginatedData<IMedicine>
+    const { units } = usePage<{
         units: IUnit[]
-        search: string | null
     }>().props
-
-    const [searchTerm, setSearchTerm] = useState(searchProp ?? '')
-
-    useEffect(() => {
-        const timeout = setTimeout(() => {
-            if (searchTerm === searchProp) return
-            if (searchTerm) {
-                router.get('/medicines', { search: searchTerm }, { preserveState: true, replace: true })
-            } else {
-                router.get('/medicines', {}, { preserveState: true, replace: true })
-            }
-        }, 300)
-
-        return () => clearTimeout(timeout)
-    }, [searchTerm])
-
-    const baseUrl = searchProp
-        ? `/medicines?search=${encodeURIComponent(searchProp)}`
-        : '/medicines'
 
     const handleCreate = () => {
         openModal({
@@ -58,77 +20,57 @@ const Medicine = () => {
         })
     }
 
-    const handleEdit = (medicine: IMedicine) => {
-        openModal({
-            title: `Edit ${medicine.name}`,
-            content: <MedicineForm medicine={medicine} units={units} onClose={() => closeModal()} />,
-            config: { preventClickAway: true, maxWidth: '2xl' }
-        })
-    }
-
-    const handleDelete = (medicine: IMedicine) => {
-        openAlert({
-            message: 'Delete this medicine?',
-            description: 'This action cannot be undone.',
-            variant: 'danger',
-            confirmLabel: 'Delete',
-            onConfirm: () => router.delete(`/medicines/${medicine.id}`)
-        })
-    }
-
-    const columns: Column<IMedicine>[] = [
-        {
-            header: 'ឈ្មោះ',
-            classNames: { header: 'font-khmer tracking-wide' },
-            cell: (med) => med.name,
-        },
-        {
-            header: 'ប្រភេទ',
-            classNames: { header: 'font-khmer tracking-wide' },
-            cell: (med) => med.type,
-        },
-        {
-            header: 'ប្រភេទចំណាត់ថ្នាក់',
-            classNames: { header: 'font-khmer tracking-wide' },
-            cell: (med) => med.category?.name ?? <span className="text-gray-300">&mdash;</span>,
-        },
-        {
-            header: 'ឯកតា',
-            classNames: { header: 'font-khmer tracking-wide' },
-            cell: (med) => med.unit?.name ?? <span className="text-gray-300">&mdash;</span>,
-        },
-        {
-            header: 'កម្រិត',
-            classNames: { header: 'font-khmer tracking-wide' },
-            cell: (med) => med.dosage ?? <span className="text-gray-300">&mdash;</span>,
-        },
-        {
-            header: 'តម្លៃឯកតា',
-            classNames: { header: 'font-khmer tracking-wide' },
-            cell: (med) => med.unit_price != null ? `$${Number(med.unit_price).toFixed(2)}` : <span className="text-gray-300">&mdash;</span>,
-        },
-        {
-            header: 'បានបង្កើត',
-            classNames: { header: 'font-khmer tracking-wide' },
-            cell: (med) => formatCreatedDateTime(med.created_at)
-        },
-        {
-            header: 'សកម្មភាព',
-            classNames: { header: 'font-khmer text-end tracking-wide' },
-            cell: (med) => (
-                <div className="flex items-center justify-end">
-                    <IconButton onClick={() => handleEdit(med)} aria-label={`Edit ${med.name}`}>
-                        <Pencil size={16} />
-                    </IconButton>
-                    <IconButton color="error" onClick={() => handleDelete(med)} aria-label={`Delete ${med.name}`}>
-                        <Trash2 size={16} />
-                    </IconButton>
-                </div>
-            ),
-        },
-    ]
-
-    const { data, ...pagination } = medicines
+    // const columns: Column<IMedicine>[] = [
+    //     {
+    //         header: 'ឈ្មោះ',
+    //         classNames: { header: 'font-khmer tracking-wide' },
+    //         cell: (med) => med.name,
+    //     },
+    //     {
+    //         header: 'ប្រភេទ',
+    //         classNames: { header: 'font-khmer tracking-wide' },
+    //         cell: (med) => med.type,
+    //     },
+    //     {
+    //         header: 'ប្រភេទចំណាត់ថ្នាក់',
+    //         classNames: { header: 'font-khmer tracking-wide' },
+    //         cell: (med) => med.category?.name ?? <span className="text-gray-300">&mdash;</span>,
+    //     },
+    //     {
+    //         header: 'ឯកតា',
+    //         classNames: { header: 'font-khmer tracking-wide' },
+    //         cell: (med) => med.unit?.name ?? <span className="text-gray-300">&mdash;</span>,
+    //     },
+    //     {
+    //         header: 'កម្រិត',
+    //         classNames: { header: 'font-khmer tracking-wide' },
+    //         cell: (med) => med.dosage ?? <span className="text-gray-300">&mdash;</span>,
+    //     },
+    //     {
+    //         header: 'តម្លៃឯកតា',
+    //         classNames: { header: 'font-khmer tracking-wide' },
+    //         cell: (med) => med.unit_price != null ? `$${Number(med.unit_price).toFixed(2)}` : <span className="text-gray-300">&mdash;</span>,
+    //     },
+    //     {
+    //         header: 'បានបង្កើត',
+    //         classNames: { header: 'font-khmer tracking-wide' },
+    //         cell: (med) => formatCreatedDateTime(med.created_at)
+    //     },
+    //     {
+    //         header: 'សកម្មភាព',
+    //         classNames: { header: 'font-khmer text-end tracking-wide' },
+    //         cell: (med) => (
+    //             <div className="flex items-center justify-end">
+    //                 <IconButton onClick={() => handleEdit(med)} aria-label={`Edit ${med.name}`}>
+    //                     <Pencil size={16} />
+    //                 </IconButton>
+    //                 <IconButton color="error" onClick={() => handleDelete(med)} aria-label={`Delete ${med.name}`}>
+    //                     <Trash2 size={16} />
+    //                 </IconButton>
+    //             </div>
+    //         ),
+    //     },
+    // ]
 
     return (
         <>
@@ -142,17 +84,12 @@ const Medicine = () => {
                         </p>
                     </div>
                     <div className="flex items-center gap-3">
-                        <SearchBar value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder='Search medicine'/>
-                        <Button
-                            onClick={handleCreate}
-                            size="lg"
-                        >
-                            <Plus size={20} /> New Medicine
-                        </Button>
                     </div>
+
+                    <Button onClick={handleCreate} variant='contained' startIcon={<Plus size={16} />}>New Medicine</Button>
                 </div>
 
-                <DataTable
+                {/* <DataTable
                     data={data}
                     keyExtractor={(med) => med.id}
                     columns={columns}
@@ -160,7 +97,7 @@ const Medicine = () => {
                     emptyDescription="Get started by creating a new medicine."
                     pagination={pagination}
                     baseUrl={baseUrl}
-                />
+                /> */}
             </div>
         </>
     )

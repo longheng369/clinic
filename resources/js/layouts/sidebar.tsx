@@ -19,6 +19,7 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 
+
 interface SidebarOption {
   label: string
   icon?: LucideIcon
@@ -33,8 +34,9 @@ interface SidebarSection {
 }
 
 const Sidebar = () => {
-  const { url, props } = usePage()
-  const user = props.auth?.user
+  const { url, props: pageProps } = usePage()
+  const user = pageProps.auth?.user
+
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     Settings: true,
   })

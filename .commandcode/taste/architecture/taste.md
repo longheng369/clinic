@@ -8,3 +8,5 @@
 - Prescriptions have a one-to-one relationship with visits: each visit has exactly one prescription (use `firstOrCreate` on `visit_id`, not `HasMany`). Confidence: 0.85
 - For managing visit-scoped sub-entities (like prescriptions), prefer inline tab-based management UI (table + modal for add/edit within the tab) over dedicated create/edit pages. Confidence: 0.75
 - When standardizing component usage or patterns across the project, pick one module (e.g., patients) as the canonical "baseline" and align all other modules to match its conventions, rather than designing a new standard from scratch. Confidence: 0.75
+- Place ambient TypeScript declaration files (`.d.ts`) for module types and framework augmentations (e.g., Vite client types, CSS module declarations) in `resources/js/types/`. Confidence: 0.55
+- When `import.meta.glob`'s generic parameter causes type compatibility issues with the consuming API (e.g., `createInertiaApp`'s `resolve`), prefer omitting the generic and using an `as` type assertion on the result instead: `import.meta.glob('./pages/**/*.tsx') as Record<string, () => Promise<{ default: PageComponent }>>`. Confidence: 0.50

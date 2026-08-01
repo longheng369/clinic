@@ -18,7 +18,7 @@ interface PaginatedData<T> {
 }
 
 const ConsultationTab = ({ patientId }: { patientId: number }) => {
-    const { openModal, closeModal, openAlert } = useModal()
+    const { openAlert } = useModal()
     const { consultations } = usePage<{ consultations: PaginatedData<IConsultation> }>().props
 
     const handleDelete = (c: IConsultation) => {

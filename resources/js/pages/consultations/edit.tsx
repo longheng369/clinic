@@ -49,7 +49,7 @@ const EditConsultation = ({ patient, consultation }: { patient: IPatient; consul
 
     const onSubmit = handleSubmit((data) => {
         setIsProcessing(true)
-        router.put(`/patients/${patient.id}/consultations/${consultation.id}`, data as Record<string, any>, {
+        router.put(`/patients/${patient.id}/consultations/${consultation.id}`, data as Record<string, unknown>, {
             onSuccess: () => {
                 toast('Consultation updated!', { variant: 'success' })
                 router.visit(`/patients/${patient.id}?tab=consultation`)

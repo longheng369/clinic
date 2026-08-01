@@ -34,12 +34,6 @@ const variantStyles: Record<AlertVariant, { icon: React.ReactNode; iconBg: strin
   },
 }
 
-const buttonColor: Record<AlertVariant, 'error' | 'primary'> = {
-  danger: 'error',
-  warning: 'primary',
-  info: 'primary',
-}
-
 const Alert = ({
   message,
   description,

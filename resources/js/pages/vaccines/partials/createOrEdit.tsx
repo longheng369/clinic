@@ -1,7 +1,8 @@
 import { useForm, useFieldArray, type Control, type UseFormRegister } from 'react-hook-form'
+import type { FormDataConvertible } from '@inertiajs/core'
 import Input from '@/components/form/input'
 import Textarea from '@/components/form/textarea'
-import { IVaccine, IVaccineFormData, IVaccineRule, IVaccineDose } from '@/interfaces/IVaccine'
+import { IVaccine, IVaccineFormData, IVaccineRule } from '@/interfaces/IVaccine'
 import { useState } from 'react'
 import { router } from '@inertiajs/react'
 import { useToast } from '@/components/toast'
@@ -22,7 +23,7 @@ const defaultRule: IVaccineRule = {
 const VaccineForm = ({ vaccine, onClose }: VaccineFormProps) => {
     const [isProcessing, setIsProcessing] = useState(false)
     const { toast } = useToast()
-    const { control, handleSubmit, register, formState: { errors } } = useForm<IVaccineFormData>({
+    const { control, handleSubmit, register } = useForm<IVaccineFormData>({
         defaultValues: vaccine ?? {
             name: '',
             description: '',
@@ -44,7 +45,7 @@ const VaccineForm = ({ vaccine, onClose }: VaccineFormProps) => {
         }
 
         if (vaccine) {
-            router.put(`/vaccines/${vaccine.id}`, payload as any, {
+            router.put(`/vaccines/${vaccine.id}`, payload as unknown as Record<string, FormDataConvertible>, {
                 onSuccess: () => {
                     onClose()
                     toast('Vaccine updated successfully!', { variant: 'success', description: 'The vaccine has been updated.' })
@@ -54,7 +55,7 @@ const VaccineForm = ({ vaccine, onClose }: VaccineFormProps) => {
             return
         }
 
-        router.post('/vaccines', payload as any, {
+        router.post('/vaccines', payload as Record<string, FormDataConvertible>, {
             onSuccess: () => {
                 onClose()
                 toast('Vaccine created successfully!', { variant: 'success', description: 'The vaccine has been created.' })

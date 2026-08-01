@@ -1,6 +1,7 @@
 import { Head, Link, usePage } from '@inertiajs/react'
 import { IDashboardVaccinationAlert } from '@/interfaces/IPatientVaccination'
 import { AlertTriangle, Clock, Syringe, CheckCircle2 } from 'lucide-react'
+import Button from '@mui/material/Button'
 
 const Dashboard = () => {
     const { vaccinationDueAlerts } = usePage<{
@@ -12,6 +13,7 @@ const Dashboard = () => {
 
     return (
         <>
+            <Button>Test</Button>
             <Head title="Dashboard" />
             <div className="p-8">
                 <div className="mb-6">

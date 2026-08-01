@@ -1,5 +1,3 @@
-import { Link } from '@inertiajs/react'
-
 export default function GuestLayout({ children }: { children: React.ReactNode }) {
     return (
         <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-linear-145 from-primary-100 via-primary-50 to-secondary-50 px-4 py-12">

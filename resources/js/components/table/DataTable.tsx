@@ -1,5 +1,4 @@
-import { Link } from '@inertiajs/react'
-import { FolderOpen, ChevronLeft, ChevronRight } from 'lucide-react'
+import { FolderOpen } from 'lucide-react'
 import { type ReactNode } from 'react'
 import { clsx } from "clsx";
 import Pagination from "@/components/table/Pagination";

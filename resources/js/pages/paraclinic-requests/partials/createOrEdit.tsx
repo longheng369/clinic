@@ -124,7 +124,7 @@ const ParaclinicForm = ({ request, authUser, onClose }: ParaclinicFormProps) => 
     }, [subtotal, discount, setValue])
 
     const submitData = (data: IParaclinicRequestFormData, extra: Record<string, string> = {}) => {
-        const payload: Record<string, any> = { ...data, ...extra }
+        const payload: Record<string, unknown> = { ...data, ...extra }
         payload.tests = data.tests.map((t) => ({
             test_category: t.test_category,
             test_name: t.test_name,
@@ -137,7 +137,7 @@ const ParaclinicForm = ({ request, authUser, onClose }: ParaclinicFormProps) => 
     const onSubmit = handleSubmit((data) => {
         setIsProcessing(true)
         if (request) {
-            router.put(`/paraclinic-requests/${request.id}`, submitData(data) as any, {
+            router.put(`/paraclinic-requests/${request.id}`, submitData(data) as Record<string, unknown>, {
                 onSuccess: () => {
                     onClose()
                     toast('Request updated successfully!', { variant: 'success' })
@@ -147,7 +147,7 @@ const ParaclinicForm = ({ request, authUser, onClose }: ParaclinicFormProps) => 
             return
         }
 
-        router.post('/paraclinic-requests', submitData(data, { status: 'Draft' }) as any, {
+        router.post('/paraclinic-requests', submitData(data, { status: 'Draft' }) as Record<string, unknown>, {
             onSuccess: () => {
                 onClose()
                 toast('Request created successfully!', { variant: 'success' })
@@ -158,7 +158,7 @@ const ParaclinicForm = ({ request, authUser, onClose }: ParaclinicFormProps) => 
 
     const handleSubmitRequest = handleSubmit((data) => {
         setIsProcessing(true)
-        router.post('/paraclinic-requests', submitData(data, { status: 'Requested' }) as any, {
+        router.post('/paraclinic-requests', submitData(data, { status: 'Requested' }) as Record<string, unknown>, {
             onSuccess: () => {
                 onClose()
                 toast('Request submitted successfully!', { variant: 'success' })
@@ -252,6 +252,7 @@ const ParaclinicForm = ({ request, authUser, onClose }: ParaclinicFormProps) => 
                                         <Select
                                             label="Category"
                                             control={control}
+                                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                             name={`tests.${index}.test_category` as any}
                                             options={TEST_CATEGORIES}
                                             rules={{ required: 'Required' }}
@@ -259,6 +260,7 @@ const ParaclinicForm = ({ request, authUser, onClose }: ParaclinicFormProps) => 
                                         <Select
                                             label="Test Name"
                                             control={control}
+                                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                             name={`tests.${index}.test_name` as any}
                                             options={availableTests}
                                             rules={{ required: 'Required' }}
@@ -266,6 +268,7 @@ const ParaclinicForm = ({ request, authUser, onClose }: ParaclinicFormProps) => 
                                         <Select
                                             label="Priority"
                                             control={control}
+                                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                             name={`tests.${index}.priority` as any}
                                             options={PRIORITY_OPTIONS}
                                             rules={{ required: 'Required' }}
@@ -273,6 +276,7 @@ const ParaclinicForm = ({ request, authUser, onClose }: ParaclinicFormProps) => 
                                         <Input
                                             label="Instruction"
                                             control={control}
+                                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                             name={`tests.${index}.instruction` as any}
                                             placeholder="Optional"
                                         />

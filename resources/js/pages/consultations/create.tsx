@@ -1,5 +1,5 @@
 import { Head, Link, router } from '@inertiajs/react'
-import { ArrowLeft, Stethoscope } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { useState } from 'react'
 import ConsultationForm from './partials/ConsultationForm'
@@ -47,7 +47,7 @@ const CreateConsultation = ({ patient }: { patient: IPatient }) => {
 
     const onSubmit = handleSubmit((data) => {
         setIsProcessing(true)
-        router.post(`/patients/${patient.id}/consultations`, data as Record<string, any>, {
+        router.post(`/patients/${patient.id}/consultations`, data as Record<string, unknown>, {
             onSuccess: () => {
                 toast('Consultation created!', { variant: 'success' })
                 router.visit(`/patients/${patient.id}?tab=consultation`)

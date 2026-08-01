@@ -2,8 +2,7 @@ import { useState } from 'react'
 import Select from '@/components/selection/select'
 import Autocomplete from '@/components/selection/autocomplete'
 import { Head } from '@inertiajs/react';
-import { CheckIcon } from 'lucide-react';
-import { useForm, useWatch } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import RHFAutocomplete from '@/components/form/autocomplete';
 import RHFSelect from '@/components/form/select';
 
@@ -16,11 +15,6 @@ const ComponentPages = () => {
             select: ''
         }
     });
-
-    const AutocompleteValue = useWatch({
-        control,
-        name: 'auto_complete'
-    })
 
     const options = [
         { value: 'option1', label: 'Appointment' },

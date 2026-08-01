@@ -20,7 +20,7 @@ const AppointmentForm = ({ appointment, onClose }: AppointmentFormProps) => {
     const [vaccineAlerts, setVaccineAlerts] = useState<IAppointmentAlert[]>([])
     const [loadingAlerts, setLoadingAlerts] = useState(false)
     const { toast } = useToast()
-    const { control, handleSubmit, setValue, watch } = useForm<IAppointmentFormData>({
+    const { control, handleSubmit, watch } = useForm<IAppointmentFormData>({
         defaultValues: appointment ? {
             patient_id: appointment.patient?.id ?? null,
             appointment_date: appointment.appointment_date,

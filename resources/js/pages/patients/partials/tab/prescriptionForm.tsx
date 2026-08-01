@@ -262,7 +262,7 @@ const PrescriptionForm = ({ patientId, activeVisits, medicines, prescription, se
 
                     {fields.length === 0 && (
                         <div className="text-center py-6 text-sm text-gray-400 border border-dashed border-gray-200 rounded-lg mt-3">
-                            No medicines added. Click "Add Medicine" to begin.
+                            No medicines added. Click &quot;Add Medicine&quot; to begin.
                         </div>
                     )}
                 </div>

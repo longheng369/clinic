@@ -1,4 +1,4 @@
-import { Link, router, usePage } from '@inertiajs/react'
+import { Link, usePage } from '@inertiajs/react'
 import { IParaclinicRequest } from '@/interfaces/IParaclinicRequest'
 import DataTable, { type Column } from '@/components/table/DataTable'
 import { Button } from '@/components/ui/button'

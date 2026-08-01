@@ -1,13 +1,10 @@
-import { router, usePage } from '@inertiajs/react'
+import { usePage } from '@inertiajs/react'
 import { useModal } from '@/components/modal'
-import { Plus, Pencil, Trash2, Stethoscope } from 'lucide-react'
-import { IPrescription, IPrescriptionFormData, IPrescriptionItemFormData } from '@/interfaces/IPrescription'
+import { Plus, Stethoscope } from 'lucide-react'
+import { IPrescription, IPrescriptionFormData } from '@/interfaces/IPrescription'
 import { IPatient } from '@/interfaces/IPatient'
 import { Button } from '@/components/ui/button'
-import { useToast } from '@/components/toast'
-import { useRef } from 'react'
 import MedicineItemForm from './partials/prescriptionItemForm'
-import { cn } from '@/utils/cn'
 import { formatDob } from '@/utils/date'
 import { useFieldArray, useForm } from 'react-hook-form'
 
@@ -21,12 +18,10 @@ interface SelectedVisit {
 
 const PrescriptionTab = ({
     patient,
-    patientId,
     selectedVisit,
     prescription,
 }: {
     patient: IPatient
-    patientId: number
     selectedVisit: SelectedVisit | null
     prescription: IPrescription | null
 }) => {
@@ -34,36 +29,10 @@ const PrescriptionTab = ({
     const { medicines } = usePage<{ medicines: { id: number; name: string }[] }>().props
     console.log(medicines)
     const { control } = useForm<IPrescriptionFormData>();
-    const { fields, append, remove, update } = useFieldArray({
+    const { fields, append, update } = useFieldArray({
         control,
         name: 'items'
     });
-    const { toast } = useToast();
-
-    const savePrescription = (items: IPrescriptionItemFormData[]) => {
-        if (!selectedVisit) {
-            toast('No visit selected.', { variant: 'error' })
-            return
-        }
-
-        const payload = {
-            visit_id: selectedVisit.id,
-            items: items,
-            notes: prescription?.notes ?? '',
-        }
-
-        if (prescription) {
-            router.put(`/patients/${patientId}/prescriptions/${prescription.id}`, payload as Record<string, any>, {
-                onSuccess: () => toast('Prescription updated!', { variant: 'success' }),
-                onError: () => toast('Failed to save.', { variant: 'error' }),
-            })
-        } else {
-            router.post(`/patients/${patientId}/prescriptions`, payload as Record<string, any>, {
-                onSuccess: () => toast('Prescription created!', { variant: 'success' }),
-                onError: () => toast('Failed to save.', { variant: 'error' }),
-            })
-        }
-    }
 
     const openAddModal = () => {
         openModal({
@@ -112,7 +81,7 @@ const PrescriptionTab = ({
         return (
             <div className="flex flex-col items-center justify-center py-16 text-center">
                 <h3 className="text-lg font-semibold text-gray-900 mb-1">No Prescription</h3>
-                <p className="text-sm text-gray-500 mb-6">This visit doesn't have a prescription yet.</p>
+                <p className="text-sm text-gray-500 mb-6">This visit doesn&apos;t have a prescription yet.</p>
                 <Button onClick={openAddModal}>
                     <Plus size={18} /> Start Prescription
                 </Button>
@@ -198,7 +167,7 @@ const PrescriptionTab = ({
                         </thead>
                         <tbody>
                             {fields.map((field, index) => (
-                                <tr className="border border-gray-300 text-center cursor-pointer" onClick={() => openEditModal(index)}>
+                                <tr key={field.id} className="border border-gray-300 text-center cursor-pointer" onClick={() => openEditModal(index)}>
                                     <td className="px-2 py-4 text-start">{index + 1}</td>
                                     <td className="py-4 text-start">{field.medicine?.name}</td>
                                     <td className="py-4 text-start">{field.quantity} {field.unit?.name}</td>

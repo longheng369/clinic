@@ -5,7 +5,6 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { useModal } from '@/components/modal'
 import { useToast } from '@/components/toast'
-import { usePage } from '@inertiajs/react'
 
 const STATUS_BADGES: Record<string, string> = {
     Draft: 'bg-gray-100 text-gray-700',
@@ -82,16 +81,6 @@ const Show = ({ request }: { request: IParaclinicRequest }) => {
     const handleStatusChange = (status: string) => {
         router.patch(`/paraclinic-requests/${request.id}/status`, { status }, {
             onSuccess: () => toast(`Status updated to ${status}`, { variant: 'success' }),
-        })
-    }
-
-    const handleSaveReview = () => {
-        router.post(`/paraclinic-requests/${request.id}/results`, {
-            result_summary: resultSummary,
-            doctor_interpretation: doctorInterpretation,
-        }, {
-            onSuccess: () => toast('Review saved!', { variant: 'success' }),
-            onError: (err) => toast('Failed to save review', { variant: 'error' }),
         })
     }
 

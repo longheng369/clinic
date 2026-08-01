@@ -8,7 +8,10 @@
       "Shell(php -l app/Http/Controllers/PatientController.php)",
       "Shell(grep:*)",
       "Shell(php artisan migrate:status 2 >& 1)",
-      "Shell(sqlite3:*)"
+      "Shell(sqlite3:*)",
+      "Shell(npx eslint resources/js/app.tsx 2 >& 1)",
+      "Shell(npx eslint resources/js/pages/paraclinic-requests/show.tsx 2 >& 1)",
+      "Shell(npx eslint resources/js/pages/patients/partials/tab/prescription/index.tsx 2 >& 1)"
     ],
     "deny": [],
     "defaultMode": "default"
