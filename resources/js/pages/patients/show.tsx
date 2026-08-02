@@ -13,6 +13,7 @@ import PrescriptionTab from './partials/tab/prescription'
 import ParaclinicByPatientTab from '../paraclinic-requests/partials/tab/byPatient'
 import VaccinationTab from './partials/tab/vaccination'
 import { cn } from '@/utils/cn'
+import { Box, Tab, Tabs } from '@mui/material'
 
 type Tab = 'consultation' | 'medication' | 'prescription' | 'admission' | 'paraclinic' | 'vaccination' | 'attachment' | 'surveillance'
 
@@ -234,28 +235,34 @@ const PatientShow = ({ patient }: { patient: IPatient }) => {
                     </div>
                 )}
 
-                <div className="rounded-xl border border-gray-300 bg-white">
-                    <div className="border-b border-gray-300">
-                        <nav className="flex overflow-x-auto px-6">
+                <Box sx={{ borderRadius: 1, border: '1px solid #cbd5e1', bgcolor: '#fff' }}>
+                    <Box sx={{ borderBottom: '1px solid #cbd5e1' }}>
+                        <Tabs
+                            value={activeTab}
+                            onChange={(_, value) => handleTabChange(value as Tab)}
+                            variant="scrollable"
+                            scrollButtons="auto"
+                            sx={{
+                                px: 2,
+                                '& .MuiTab-root': {
+                                    textTransform: 'none',
+                                    fontWeight: 500,
+                                    py: 1.5,
+                                    color: '#64748b',
+                                    '&.Mui-selected': { color: '#4a7a4a' },
+                                },
+                                '& .MuiTabs-indicator': { bgcolor: '#5a8f5a' },
+                            }}
+                        >
                             {visibleTabs.map((tab) => (
-                                <button
-                                    key={tab.key}
-                                    onClick={() => handleTabChange(tab.key)}
-                                    className={`px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
-                                        activeTab === tab.key
-                                            ? 'border-primary-500 text-primary-600'
-                                            : 'border-transparent text-gray-500 hover:text-gray-700'
-                                    }`}
-                                >
-                                    {tab.label}
-                                </button>
+                                <Tab key={tab.key} value={tab.key} label={tab.label} />
                             ))}
-                        </nav>
-                    </div>
-                    <div className="p-6">
+                        </Tabs>
+                    </Box>
+                    <Box sx={{ p: 3 }}>
                         <TabContent tab={activeTab} patientId={patient.id} patient={patient} selectedVisit={selectedVisit} prescription={prescription} />
-                    </div>
-                </div>
+                    </Box>
+                </Box>
             </div>
         </div>
     )
