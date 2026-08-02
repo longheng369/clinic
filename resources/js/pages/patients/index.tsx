@@ -21,7 +21,7 @@ interface PaginatedData<T> {
 }
 
 const Patient = () => {
-    const { openModal, closeModal, openAlert } = useModal()
+    const { openModal, openAlert } = useModal()
 
     const { patients, search: searchProp } = usePage<{
         patients: PaginatedData<IPatient>
@@ -53,7 +53,7 @@ const Patient = () => {
     const handleCreate = () => {
         openModal({
             title: <Typography variant='h5' sx={{ fontWeight: 'medium' }}>New Patient</Typography>,
-            content: <PatientForm onClose={() => closeModal()} />,
+            content: <PatientForm />,
             config: { preventClickAway: true, maxWidth: '4xl' },
         })
     }
@@ -61,7 +61,7 @@ const Patient = () => {
     const handleEdit = (patient: IPatient) => {
         openModal({
             title: `Edit ${patient.khmer_first_name} ${patient.khmer_last_name}`,
-            content: <PatientForm patient={{ ...patient, date_of_birth: formatDob(patient.date_of_birth) }} onClose={() => closeModal()} />,
+            content: <PatientForm patient={{ ...patient, date_of_birth: formatDob(patient.date_of_birth) }} />,
             config: { preventClickAway: true, maxWidth: '4xl' },
         })
     }

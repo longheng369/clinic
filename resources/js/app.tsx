@@ -4,6 +4,8 @@ import { createRoot } from 'react-dom/client'
 import type { ComponentType, ReactNode } from 'react'
 import CssBaseline from '@mui/material/CssBaseline'
 import { ThemeProvider } from '@mui/material/styles'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { ModalProvider } from '@/components/modal'
 import { ToastProvider } from '@/components/toast'
 import AuthenticatedLayout from '@/layouts/authenticatedLayout'
@@ -40,9 +42,11 @@ createInertiaApp({
             <ToastProvider>
                 <ThemeProvider theme={theme}>
                     <CssBaseline />
-                    <ModalProvider>
-                        <App {...props} />
-                    </ModalProvider>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <ModalProvider>
+                            <App {...props} />
+                        </ModalProvider>
+                    </LocalizationProvider>
                 </ThemeProvider>
             </ToastProvider>
         )
