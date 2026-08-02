@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form'
-import Input from '@/components/form/input'
-import Select from '@/components/form/select'
+import Input from '@/components/form/input-deprecated'
+import Select from '@/components/form/select-deprecated'
 import { ISurveillance, ISurveillanceFormData } from '@/interfaces/ISurveillance'
 import { useState } from 'react'
 import { router } from '@inertiajs/react'

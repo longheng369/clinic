@@ -107,6 +107,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('categories/search', [CategoryController::class, 'search'])->name('api.categories.search');
+    Route::get('api/categories', [CategoryController::class, 'all'])->name('api.categories.all');
 
     Route::get('components', function () {
         return Inertia::render('components/index');

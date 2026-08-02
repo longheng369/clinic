@@ -1,5 +1,5 @@
 import { type Control } from 'react-hook-form'
-import Input from '@/components/form/input'
+import Input from '@/components/form/input-deprecated'
 import Textarea from '@/components/form/textarea'
 import ConsultationSection from './ConsultationSection'
 import {

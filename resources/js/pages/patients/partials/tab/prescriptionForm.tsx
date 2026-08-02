@@ -1,6 +1,6 @@
 import { useForm, useFieldArray } from 'react-hook-form'
-import Select from '@/components/form/select'
-import Input from '@/components/form/input'
+import Select from '@/components/form/select-deprecated'
+import Input from '@/components/form/input-deprecated'
 import Textarea from '@/components/form/textarea'
 import { IPrescription, IPrescriptionFormData } from '@/interfaces/IPrescription'
 import { useState } from 'react'

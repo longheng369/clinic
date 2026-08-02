@@ -1,8 +1,8 @@
 import { IPrescriptionItemFormData } from '@/interfaces/IPrescription';
 import React, { FC } from 'react'
 import { useForm, useController } from 'react-hook-form';
-import Input from '@/components/form/input';
-import RHFSelect from '@/components/form/select';
+import Input from '@/components/form/input-deprecated';
+import RHFSelect from '@/components/form/select-deprecated';
 import { Button } from '@/components/ui/button';
 
 interface Props {

@@ -1,6 +1,6 @@
 import { useForm, useFieldArray, type Control, type UseFormRegister } from 'react-hook-form'
 import type { FormDataConvertible } from '@inertiajs/core'
-import Input from '@/components/form/input'
+import Input from '@/components/form/input-deprecated'
 import Textarea from '@/components/form/textarea'
 import { IVaccine, IVaccineFormData, IVaccineRule } from '@/interfaces/IVaccine'
 import { useState } from 'react'

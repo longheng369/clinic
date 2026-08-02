@@ -4,7 +4,7 @@ import Autocomplete from '@/components/selection/autocomplete'
 import { Head } from '@inertiajs/react';
 import { useForm } from 'react-hook-form';
 import RHFAutocomplete from '@/components/form/autocomplete';
-import RHFSelect from '@/components/form/select';
+import RHFSelect from '@/components/form/select-deprecated';
 
 const ComponentPages = () => {
     const [value, setValue] = useState('');

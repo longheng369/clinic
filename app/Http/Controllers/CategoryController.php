@@ -64,4 +64,9 @@ class CategoryController extends Controller
             ->limit(25)
             ->get(['id', 'name']);
     }
+
+    public function all()
+    {
+        return Category::orderBy('name')->get(['id', 'name']);
+    }
 }

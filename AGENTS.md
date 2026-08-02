@@ -107,5 +107,11 @@ When creating form field components with react-hook-form:
 ## Common Workflows
 Document frequently used workflows and commands here.
 
+### MUI MCP Usage
+Use the MUI MCP tools whenever a task relates to MUI / MUI X components, props, theming, or codegen:
+- For any MUI component or API question, call `mui-mcp_useMuiDocs` first to pull version-matched docs. Project pairing: `@mui/material@9.2.0`, `@mui/x-data-grid@9.10.1` (pass `muiPairing: material v9, muiX v9`).
+- Follow up with `mui-mcp_fetchDocs` for specific pages surfaced by `useMuiDocs`.
+- To generate React + MUI code from a natural-language brief or Figma frame, use `mui-mcp_generateReactCode`.
+
 ## Agent Delegation
 - **UX/UI tasks**: Delegate to `.commandcode/agents/premium-eco-design-system.md`

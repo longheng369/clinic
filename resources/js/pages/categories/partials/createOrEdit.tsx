@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form'
-import Input from '@/components/form/input'
+import Input from '@/components/form/input-deprecated'
 import Textarea from '@/components/form/textarea'
 import { ICategory, ICategoryFormData } from '@/interfaces/ICategory';
 import { useState } from 'react';

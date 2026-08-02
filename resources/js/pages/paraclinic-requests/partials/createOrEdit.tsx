@@ -1,6 +1,6 @@
 import { useForm, useFieldArray } from 'react-hook-form'
-import Input from '@/components/form/input'
-import Select from '@/components/form/select'
+import Input from '@/components/form/input-deprecated'
+import Select from '@/components/form/select-deprecated'
 import SearchSelect from '@/components/form/searchSelect'
 import Textarea from '@/components/form/textarea'
 import { IParaclinicRequest, IParaclinicRequestFormData, IParaclinicRequestTest } from '@/interfaces/IParaclinicRequest'

@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form'
-import Input from '@/components/form/input'
-import Select from '@/components/form/select'
+import Input from '@/components/form/input-deprecated'
+import Select from '@/components/form/select-deprecated'
 import Textarea from '@/components/form/textarea'
 import { IPatient, IPatientFormData } from '@/interfaces/IPatient';
 import { useState } from 'react';

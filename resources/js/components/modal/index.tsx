@@ -6,7 +6,10 @@ import {
   useCallback,
   type ReactNode,
 } from 'react'
-import Modal from '@/components/modal/modal'
+import Dialog from '@mui/material/Dialog'
+import DialogTitle from '@mui/material/DialogTitle'
+import IconButton from '@mui/material/IconButton'
+import { X } from 'lucide-react'
 import Alert, { type AlertProps } from '@/components/modal/alert'
 
 interface ModalConfig {
@@ -19,7 +22,7 @@ interface ModalConfig {
 interface DialogConfig {
   id: string
   type: 'modal' | 'alert'
-  title: string
+  title: ReactNode
   content: ReactNode
   open: boolean
   config?: ModalConfig
@@ -40,9 +43,14 @@ export const useModal = () => {
   return ctx
 }
 
+const extendedMaxWidths: Record<string, string> = {
+  '2xl': '42rem',
+  '3xl': '48rem',
+  '4xl': '56rem',
+  '5xl': '64rem',
+}
 
 export const ModalProvider = ({ children }: { children: ReactNode }) => {
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const dialogIdRef = useRef(0)
   const [dialogs, setDialogs] = useState<DialogConfig[]>([])
 
@@ -75,53 +83,82 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
     setDialogs((prev) => {
       if (prev.length === 0) return prev
       const lastIndex = prev.length - 1
-      const target = prev[lastIndex]
-      if (!target.open) return prev
-
-      const updated = prev.map((d, i) =>
-        i === lastIndex ? { ...d, open: false } : d,
-      )
-
-      if (timeoutRef.current) clearTimeout(timeoutRef.current)
-      timeoutRef.current = setTimeout(() => {
-        setDialogs((current) => {
-          if (
-            current.length > 0 &&
-            current[current.length - 1].id === target.id
-          ) {
-            return current.slice(0, -1)
-          }
-          return current
-        })
-      }, 250)
-
-      return updated
+      return prev.map((d, i) => i === lastIndex ? { ...d, open: false } : d)
     })
+  }, [])
+
+  const handleExited = useCallback((dialogId: string) => {
+    setDialogs((prev) => prev.filter((d) => d.id !== dialogId))
   }, [])
 
   return (
     <ModalContext.Provider value={{ openModal, openAlert, closeModal }}>
       {children}
       {dialogs.map((dialog) => {
-          const content = dialog.type === 'alert' && dialog.alertProps
-            ? <Alert {...dialog.alertProps} onClose={closeModal} />
-            : dialog.content
+        const isAlert = dialog.type === 'alert'
 
-          return (
-            <Modal
-              key={dialog.id}
-              open={dialog.open}
-              onClose={closeModal}
-              title={dialog.title}
-              maxWidth={dialog.config?.maxWidth || 'md'}
-              preventClickAway={dialog.config?.preventClickAway}
-              preventEscape={dialog.config?.preventEscape}
-              scrollable={dialog.config?.scrollable}
-            >
-              {content}
-            </Modal>
-          )
-        })}
+        const content = isAlert && dialog.alertProps
+          ? <Alert {...dialog.alertProps} onClose={closeModal} />
+          : dialog.content
+
+        const handleClose = (_event: object, reason: 'backdropClick' | 'escapeKeyDown') => {
+          if (reason === 'backdropClick' && dialog.config?.preventClickAway) return
+          if (reason === 'escapeKeyDown' && dialog.config?.preventEscape) return
+          closeModal()
+        }
+
+        const defaultSizes = ['sm', 'md', 'lg', 'xl']
+        const muiMaxWidth = (dialog.config?.maxWidth && defaultSizes.includes(dialog.config.maxWidth)
+          ? dialog.config.maxWidth
+          : 'md') as 'sm' | 'md' | 'lg' | 'xl'
+
+        const customWidth = dialog.config?.maxWidth ? extendedMaxWidths[dialog.config.maxWidth] : undefined
+
+        const titleId = `${dialog.id}-title`
+        const descriptionId = `${dialog.id}-description`
+
+        return (
+          <Dialog
+            key={dialog.id}
+            open={dialog.open}
+            onClose={handleClose}
+            maxWidth={muiMaxWidth}
+            fullWidth
+            scroll={dialog.config?.scrollable ? 'paper' : 'body'}
+            role={isAlert ? 'alertdialog' : 'dialog'}
+            aria-labelledby={titleId}
+            aria-describedby={descriptionId}
+            slotProps={{
+              transition: {
+                onExited: () => handleExited(dialog.id),
+              },
+            }}
+            sx={customWidth ? {
+              '& .MuiDialog-paper': { maxWidth: customWidth },
+            } : undefined}
+          >
+            {isAlert ? (
+              <div id={descriptionId}>
+                {content}
+              </div>
+            ) : (
+              <>
+                <DialogTitle id={titleId} sx={{ m: 0, p: 2, pr: 6 }}>
+                  {dialog.title}
+                </DialogTitle>
+                <IconButton
+                  aria-label="close"
+                  onClick={() => closeModal()}
+                  sx={{ position: 'absolute', right: 8, top: 8 }}
+                >
+                  <X size={20} />
+                </IconButton>
+                {content}
+              </>
+            )}
+          </Dialog>
+        )
+      })}
     </ModalContext.Provider>
   )
 }

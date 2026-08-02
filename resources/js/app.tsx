@@ -2,6 +2,7 @@ import '../css/app.css'
 import { createInertiaApp } from '@inertiajs/react'
 import { createRoot } from 'react-dom/client'
 import type { ComponentType, ReactNode } from 'react'
+import CssBaseline from '@mui/material/CssBaseline'
 import { ThemeProvider } from '@mui/material/styles'
 import { ModalProvider } from '@/components/modal'
 import { ToastProvider } from '@/components/toast'
@@ -37,11 +38,12 @@ createInertiaApp({
         if (!el) return
         createRoot(el).render(
             <ToastProvider>
-                <ModalProvider>
-                    <ThemeProvider theme={theme}>
+                <ThemeProvider theme={theme}>
+                    <CssBaseline />
+                    <ModalProvider>
                         <App {...props} />
-                    </ThemeProvider>
-                </ModalProvider>
+                    </ModalProvider>
+                </ThemeProvider>
             </ToastProvider>
         )
     },

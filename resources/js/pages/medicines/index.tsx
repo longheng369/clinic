@@ -8,7 +8,7 @@ import { IUnit } from '@/interfaces/IUnit'
 import { DataGrid, type GridColDef, type GridPaginationModel, type GridRenderCellParams, GridActionsCellItem } from '@mui/x-data-grid'
 import { useState, useEffect, useCallback } from 'react'
 import SearchBar from '@/components/searchBar'
-import { formatCreatedDateTime } from '@/utils/date'
+import { formatDate } from '@/utils/date'
 import { Box, Typography, Button } from '@mui/material';
 
 interface PaginatedData<T> {
@@ -22,7 +22,7 @@ interface PaginatedData<T> {
 }
 
 const Medicine = () => {
-   const { openModal, closeModal, openAlert } = useModal()
+   const { openModal, openAlert } = useModal()
 
    const { medicines, units, search: searchProp } = usePage<{
       medicines: PaginatedData<IMedicine>
@@ -54,8 +54,8 @@ const Medicine = () => {
 
    const handleCreate = () => {
       openModal({
-         title: 'New Medicine',
-         content: <MedicineForm units={units} onClose={() => closeModal()} />,
+         title: <Typography variant='h5' sx={{ fontWeight: 'medium' }}>New Medicine</Typography>,
+         content: <MedicineForm units={units} />,
          config: { preventClickAway: true, maxWidth: '2xl' },
       })
    }
@@ -63,7 +63,7 @@ const Medicine = () => {
    const handleEdit = (medicine: IMedicine) => {
       openModal({
          title: `Edit ${medicine.name}`,
-         content: <MedicineForm medicine={medicine} units={units} onClose={() => closeModal()} />,
+         content: <MedicineForm medicine={medicine} units={units} />,
          config: { preventClickAway: true, maxWidth: '2xl' },
       })
    }
@@ -121,7 +121,7 @@ const Medicine = () => {
          headerName: 'បានបង្កើត',
          flex: 1,
          minWidth: 160,
-         valueGetter: (_value, row: IMedicine) => formatCreatedDateTime(row.created_at),
+         valueGetter: (_value, row: IMedicine) => formatDate(row.created_at),
       },
       {
          field: 'actions',
@@ -130,12 +130,14 @@ const Medicine = () => {
          width: 120,
          getActions: (params) => [
             <GridActionsCellItem
+               key={`edit-${params.id}`}
                icon={<Pencil size={16} className="text-blue-500" />}
                label={`Edit ${params.row.name}`}
                onClick={() => handleEdit(params.row as IMedicine)}
                showInMenu={false}
             />,
             <GridActionsCellItem
+               key={`delete-${params.id}`}
                icon={<Trash2 size={16} className="text-red-500" />}
                label={`Delete ${params.row.name}`}
                onClick={() => handleDelete(params.row as IMedicine)}
@@ -149,7 +151,7 @@ const Medicine = () => {
       <>
          <Head title="Medicines" />
          <Box sx={{ p: 4 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', bgcolor: 'Background', p: 2, borderRadius: 1 }}>
                <Box>
                   <Typography variant='h5' sx={{ fontWeight: 'medium' }}>Medicines</Typography>
                   <Typography variant='body2' sx={{ color: 'gray' }}>Manage your clinic medicines</Typography>

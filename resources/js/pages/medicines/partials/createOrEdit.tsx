@@ -1,150 +1,178 @@
 import { useForm } from 'react-hook-form'
 import Input from '@/components/form/input'
-import Textarea from '@/components/form/textarea'
 import Select from '@/components/form/select'
-import SearchSelect from '@/components/form/searchSelect'
-import { IMedicine, IMedicineFormData } from '@/interfaces/IMedicine';
+import { IMedicine, IMedicineFormData, MEDICINE_TYPES } from '@/interfaces/IMedicine';
 import { IUnit } from '@/interfaces/IUnit';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { router } from '@inertiajs/react';
-import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/toast'
+import { DialogActions, DialogContent, Grid, Box, Button } from '@mui/material'
+import { useModal } from '@/components/modal';
 
-interface MedicineFormProps {
-    medicine?: IMedicine;
-    units: IUnit[];
-    onClose: () => void;
+interface CategoryOption {
+   value: number
+   label: string
 }
 
-const MedicineForm = ({ medicine, units, onClose }: MedicineFormProps) => {
-    const [isProcessing, setIsProcessing] = useState(false);
-    const { toast } = useToast()
-    const { control, handleSubmit } = useForm<IMedicineFormData>({
-        defaultValues: medicine ?? {
-            name: '',
-            type: '',
-            description: '',
-            dosage: '',
-            category_id: null,
-            unit_id: null,
-            unit_price: null,
-        }
-    });
+interface MedicineFormProps {
+   medicine?: IMedicine;
+   units: IUnit[];
+}
 
-    const onSubmit = handleSubmit((data) => {
-        setIsProcessing(true);
-        if (medicine) {
-            router.put(`/medicines/${medicine.id}`, { ...data }, {
-                onSuccess: () => {
-                    onClose();
-                    toast('Medicine updated successfully!', { variant: 'success', description: 'The medicine has been updated.' });
-                },
-                onFinish: () => {
-                    setIsProcessing(false);
-                },
-            });
+const MedicineForm = ({ medicine, units }: MedicineFormProps) => {
+   const { closeModal } = useModal()
+   const [isProcessing, setIsProcessing] = useState(false);
+   const [categories, setCategories] = useState<CategoryOption[]>([]);
+   const [categoriesLoading, setCategoriesLoading] = useState(true);
+   const { toast } = useToast()
+   const { control, handleSubmit } = useForm<IMedicineFormData>({
+      defaultValues: medicine ?? {
+         name: '',
+         type: undefined,
+         description: '',
+         dosage: '',
+         category_id: null,
+         unit_id: null,
+         unit_price: null,
+      }
+   });
 
-            return;
-        }
+   useEffect(() => {
+      setCategoriesLoading(true)
+      fetch('/api/categories')
+         .then((res) => {
+            if (!res.ok) throw new Error('Failed to load categories')
+            return res.json()
+         })
+         .then((data: { id: number; name: string }[]) => {
+            setCategories(data.map((item) => ({ value: item.id, label: item.name })))
+         })
+         .catch(() => {
+            toast('Failed to load categories', { variant: 'error' })
+         })
+         .finally(() => setCategoriesLoading(false))
+   }, [])
 
-        router.post('/medicines', { ...data }, {
+   const onSubmit = handleSubmit((data) => {
+      setIsProcessing(true);
+      if (medicine) {
+         router.put(`/medicines/${medicine.id}`, { ...data }, {
             onSuccess: () => {
-                onClose();
-                toast('Medicine created successfully!', { variant: 'success', description: 'The medicine has been created.' })
-            },
-            onError: (errors) => {
-                if (errors.name) {
-                    toast('Unable to create medicine', {
-                        variant: 'error',
-                        description: errors.name,
-                    });
-                }
+               toast('Medicine updated successfully!', { variant: 'success', description: 'The medicine has been updated.' });
             },
             onFinish: () => {
-                setIsProcessing(false);
+               closeModal();
+               setIsProcessing(false);
             },
-        })
-    })
+         });
 
-    return (
-        <form onSubmit={onSubmit} className="border-t border-slate-300" noValidate>
-            <div className="space-y-4 p-6">
-                <Input
-                    label="Name"
-                    control={control}
-                    placeholder='Enter name'
-                    name='name'
-                    rules={{ required: 'This field is required' }}
-                />
+         return;
+      }
 
-                <Input
-                    label="Type"
-                    control={control}
-                    placeholder='Enter type'
-                    name='type'
-                    rules={{ required: 'This field is required' }}
-                />
+      router.post('/medicines', { ...data }, {
+         onSuccess: () => {
+            toast('Medicine created successfully!', { variant: 'success', description: 'The medicine has been created.' })
+         },
+         onError: (errors) => {
+            if (errors.name) {
+               toast('Unable to create medicine', {
+                  variant: 'error',
+                  description: errors.name,
+               });
+            }
+         },
+         onFinish: () => {
+            closeModal();
+            setIsProcessing(false);
+         },
+      })
+   })
 
-                <div className="grid grid-cols-2 gap-4">
-                    <SearchSelect
-                        label="Category"
-                        control={control}
-                        name='category_id'
-                        apiUrl="/categories/search"
-                        initialOption={medicine?.category ? { value: medicine.category.id, label: medicine.category.name } : undefined}
-                    />
-
-                    <Select
-                        label="Unit"
-                        control={control}
-                        name='unit_id'
-                        options={units.map((unit) => ({ value: unit.id, label: unit.name }))}
-                    />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                    <Input
-                        label="Dosage"
-                        control={control}
-                        placeholder='e.g. 500mg'
-                        name='dosage'
-                    />
-
-                    <Input
-                        label="Unit Price"
-                        control={control}
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        placeholder='0.00'
-                        name='unit_price'
-                    />
-                </div>
-
-                <Textarea
-                    label="Description"
-                    control={control}
-                    name='description'
-                />
-            </div>
-
-            <div className="flex justify-end gap-2 p-2 border-t border-slate-300">
-                <Button
-                    type="button"
-                    onClick={onClose}
-                    variant="outline"
-                >
-                    Cancel
-                </Button>
-                <Button
-                    type="submit"
-                    disabled={isProcessing}
-                >
-                    Submit
-                </Button>
-            </div>
-        </form>
-    )
+   return (
+      <Box component="form" onSubmit={onSubmit} noValidate>
+         <DialogContent sx={{ borderTop: 1, borderColor: 'divider' }}>
+            <Grid container spacing={3}>
+               <Grid size={{ md: 6 }}>
+                  <Input
+                     control={control}
+                     name='name'
+                     label="Name"
+                     sx={{
+                        fontFamily: 'Poppins'
+                     }}
+                     rules={{ required: 'This field is required' }}
+                  />
+               </Grid>
+            <Grid size={{ md: 6 }}>
+               <Select
+                  control={control}
+                  name='type'
+                  label="Type"
+                  options={MEDICINE_TYPES}
+                  rules={{ required: 'This field is required' }}
+               />
+            </Grid>
+               <Grid size={{ md: 6 }}>
+                  <Select
+                     control={control}
+                     name='category_id'
+                     label="Category"
+                     options={categories}
+                     disabled={categoriesLoading}
+                  />
+               </Grid>
+               <Grid size={{ md: 6 }}>
+                  <Select
+                     control={control}
+                     name='unit_id'
+                     label="Unit"
+                     options={units.map((unit) => ({ value: unit.id, label: unit.name }))}
+                     rules={{ required: 'Please select unit' }}
+                  />
+               </Grid>
+               <Grid size={{ md: 6 }}>
+                  <Input
+                     control={control}
+                     name='dosage'
+                     label="Dosage"
+                     rules={{ required: 'This field is required' }}
+                  />
+               </Grid>
+               <Grid size={{ md: 6 }}>
+                  <Input
+                     control={control}
+                     name='unit_price'
+                     label="Unit Price"
+                     rules={{ required: 'This field is required' }}
+                  />
+               </Grid>
+               <Grid size={{ md: 12 }}>
+                  <Input
+                     control={control}
+                     name='description'
+                     label="Description"
+                  />
+               </Grid>
+            </Grid>
+         </DialogContent>
+         <DialogActions>
+            <Button
+               type="button"
+               onClick={() => closeModal()}
+               variant="outlined"
+            >
+               Cancel
+            </Button>
+            <Button
+               type="submit"
+               disabled={isProcessing}
+               variant='contained'
+            >
+               {medicine ? "Save" : "Create"}
+            </Button>
+         </DialogActions>
+      </Box>
+   )
 }
 
 export default MedicineForm

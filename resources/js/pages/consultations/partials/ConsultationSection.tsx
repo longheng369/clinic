@@ -1,5 +1,5 @@
 import { useController, type Control, type Path } from 'react-hook-form'
-import Input from '@/components/form/input'
+import Input from '@/components/form/input-deprecated'
 import ConsultationCheckboxGroup from './ConsultationCheckboxGroup'
 import { type OptionType } from '../consultationTemplate'
 import { IConsultationFormData } from '@/interfaces/IConsultation'
