@@ -153,7 +153,7 @@ const Medicine = () => {
          <Box sx={{ p: 4 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', bgcolor: 'Background', p: 2, borderRadius: 1 }}>
                <Box>
-                  <Typography variant='h5' sx={{ fontWeight: 'medium' }}>Medicines</Typography>
+                  <Typography variant='h5' sx={{ fontWeight: 'bold' }}>Medicines</Typography>
                   <Typography variant='body2' sx={{ color: 'gray' }}>Manage your clinic medicines</Typography>
                </Box>
                <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>

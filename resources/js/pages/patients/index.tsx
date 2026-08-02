@@ -4,12 +4,11 @@ import { useModal } from '@/components/modal'
 import { Pencil, Trash2, Plus, Eye } from 'lucide-react'
 import PatientForm from './partials/createOrEdit'
 import { IPatient } from '@/interfaces/IPatient'
-import { Button } from '@/components/ui/button'
-import IconButton from '@/components/button/iconButton'
-import DataTable, { type Column } from '@/components/table/DataTable'
-import { useState, useEffect } from 'react'
+import { DataGrid, type GridColDef, type GridPaginationModel, type GridRenderCellParams, GridActionsCellItem } from '@mui/x-data-grid'
+import { useState, useEffect, useCallback } from 'react'
 import SearchBar from '@/components/searchBar'
 import { formatDob } from '@/utils/date'
+import { Box, Typography, Button } from '@mui/material';
 
 interface PaginatedData<T> {
     data: T[]
@@ -35,7 +34,7 @@ const Patient = () => {
         const timeout = setTimeout(() => {
             if ((searchTerm || '') === (searchProp || '')) return
             if (searchTerm) {
-                router.get('/patients', { search: searchTerm }, { preserveState: true, replace: true })
+                router.get('/patients', { search: searchTerm, page: 1 }, { preserveState: true, replace: true })
             } else {
                 router.get('/patients', {}, { preserveState: true, replace: true })
             }
@@ -44,23 +43,26 @@ const Patient = () => {
         return () => clearTimeout(timeout)
     }, [searchTerm])
 
-    const baseUrl = searchProp
-        ? `/patients?search=${encodeURIComponent(searchProp)}`
-        : '/patients'
+    const handlePaginationModelChange = useCallback((model: GridPaginationModel) => {
+        const page = model.page + 1
+        const params: Record<string, string | number> = { page }
+        if (searchProp) params.search = searchProp
+        router.get('/patients', params, { preserveState: true, replace: true })
+    }, [searchProp])
 
     const handleCreate = () => {
         openModal({
-            title: 'New Patient',
+            title: <Typography variant='h5' sx={{ fontWeight: 'medium' }}>New Patient</Typography>,
             content: <PatientForm onClose={() => closeModal()} />,
-            config: { preventClickAway: true, maxWidth: '4xl' }
+            config: { preventClickAway: true, maxWidth: '4xl' },
         })
     }
 
     const handleEdit = (patient: IPatient) => {
         openModal({
             title: `Edit ${patient.khmer_first_name} ${patient.khmer_last_name}`,
-            content: <PatientForm patient={{...patient, date_of_birth: formatDob(patient.date_of_birth)}} onClose={() => closeModal()} />,
-            config: { preventClickAway: true, maxWidth: '4xl' }
+            content: <PatientForm patient={{ ...patient, date_of_birth: formatDob(patient.date_of_birth) }} onClose={() => closeModal()} />,
+            config: { preventClickAway: true, maxWidth: '4xl' },
         })
     }
 
@@ -74,108 +76,124 @@ const Patient = () => {
         })
     }
 
-    const columns: Column<IPatient>[] = [
+    const columns: GridColDef[] = [
         {
-            header: 'ឈ្មោះខ្មែរ',
-            classNames: {
-                header: 'font-khmer tracking-wide'
-            },
-            cell: (p) => <span className='font-khmer'>{p.khmer_last_name} {p.khmer_first_name}</span>,
+            field: 'khmer_name',
+            headerName: 'ឈ្មោះខ្មែរ',
+            flex: 1,
+            minWidth: 180,
+            valueGetter: (_value, row: IPatient) => `${row.khmer_last_name} ${row.khmer_first_name}`,
+            renderCell: (params: GridRenderCellParams<IPatient>) =>
+                <span className="font-khmer">{params.value}</span>,
         },
         {
-            header: 'ឈ្មោះ​ជា​ភាសា​អង់គ្លេស',
-            classNames: {
-                header: 'font-khmer tracking-wide'
-            },
-            cell: (p) => p.first_name
-                ? `${p.last_name ?? ''} ${p.first_name}`.trim()
-                : <span className="text-gray-300">&mdash;</span>,
+            field: 'english_name',
+            headerName: 'ឈ្មោះ​ជា​ភាសា​អង់គ្លេស',
+            flex: 1,
+            minWidth: 180,
+            valueGetter: (_value, row: IPatient) =>
+                row.first_name ? `${row.last_name ?? ''} ${row.first_name}`.trim() : null,
+            renderCell: (params: GridRenderCellParams<IPatient>) =>
+                params.value ?? <span className="text-gray-300">&mdash;</span>,
         },
+        { field: 'phone_number', headerName: 'លេខទូរស័ព្ទ', flex: 1, minWidth: 130 },
         {
-            header: 'លេខទូរស័ព្ទ',
-            classNames: {
-                header: 'font-khmer tracking-wide',
-                body: 'whitespace-nowrap'
-            },
-            cell: (p) => p.phone_number,
-        },
-        {
-            header: 'ភេទ',
-            classNames: {
-                header: 'font-khmer tracking-wide',
-            },
-            cell: (p) => (
-                <span className={`capitalize ${p.gender === 'male' ? 'text-blue-600' : 'text-pink-600'}`}>
-                    {p.gender}
+            field: 'gender',
+            headerName: 'ភេទ',
+            flex: 1,
+            minWidth: 90,
+            renderCell: (params: GridRenderCellParams<IPatient>) => (
+                <span className={`capitalize ${params.value === 'male' ? 'text-blue-600' : 'text-pink-600'}`}>
+                    {params.value}
                 </span>
             ),
         },
         {
-            header: 'ថ្ងៃខែឆ្នាំកំណើត',
-            classNames: {
-                header: 'font-khmer tracking-wide'
-            },
-            cell: (p) => formatDob(p.date_of_birth),
+            field: 'date_of_birth',
+            headerName: 'ថ្ងៃខែឆ្នាំកំណើត',
+            flex: 1,
+            minWidth: 130,
+            valueGetter: (_value, row: IPatient) => formatDob(row.date_of_birth),
         },
         {
-            header: 'ប្រភេទឈាម',
-            classNames: {
-                header: 'font-khmer tracking-wide'
-            },
-            cell: (p) => p.blood_group ?? <span className="text-gray-300">&mdash;</span>,
+            field: 'blood_group',
+            headerName: 'ប្រភេទឈាម',
+            flex: 1,
+            minWidth: 110,
+            renderCell: (params: GridRenderCellParams<IPatient>) =>
+                params.value ?? <span className="text-gray-300">&mdash;</span>,
         },
         {
-            header: 'សកម្មភាព',
-            classNames: {
-                header: 'font-khmer text-end tracking-wide'
-            },
-            cell: (p) => (
-                <div className="flex items-center justify-end">
-                    <IconButton onClick={() => router.visit(`/patients/${p.id}`)} aria-label={`View ${p.khmer_first_name}`}>
-                        <Eye size={16} />
-                    </IconButton>
-                    <IconButton color='info' onClick={() => handleEdit(p)} aria-label={`Edit ${p.khmer_first_name}`}>
-                        <Pencil size={16} />
-                    </IconButton>
-                    <IconButton color="error" onClick={() => handleDelete(p)} aria-label={`Delete ${p.khmer_first_name}`}>
-                        <Trash2 size={16} />
-                    </IconButton>
-                </div>
-            ),
+            field: 'actions',
+            type: 'actions',
+            headerName: 'សកម្មភាព',
+            width: 150,
+            getActions: (params) => [
+                <GridActionsCellItem
+                    key={`view-${params.id}`}
+                    icon={<Eye size={16} className="text-gray-500" />}
+                    label={`View ${params.row.khmer_first_name}`}
+                    onClick={() => router.visit(`/patients/${params.id}`)}
+                    showInMenu={false}
+                />,
+                <GridActionsCellItem
+                    key={`edit-${params.id}`}
+                    icon={<Pencil size={16} className="text-blue-500" />}
+                    label={`Edit ${params.row.khmer_first_name}`}
+                    onClick={() => handleEdit(params.row as IPatient)}
+                    showInMenu={false}
+                />,
+                <GridActionsCellItem
+                    key={`delete-${params.id}`}
+                    icon={<Trash2 size={16} className="text-red-500" />}
+                    label={`Delete ${params.row.khmer_first_name}`}
+                    onClick={() => handleDelete(params.row as IPatient)}
+                    showInMenu={false}
+                />,
+            ],
         },
     ]
-
-    const { data, ...pagination } = patients
 
     return (
         <>
             <Head title="Patients" />
-            <div className="p-8">
-                <div className="mb-6 flex items-center justify-between">
-                    <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Patients</h1>
-                        <p className="mt-1 text-sm text-zinc-500">
-                            Manage your clinic patients
-                        </p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                        <SearchBar value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder='Search patient'/>
-                        <Button onClick={handleCreate} size="lg" variant="gradient">
-                            <Plus size={20} /> New Patient
+            <Box sx={{ p: 4 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', bgcolor: 'Background', p: 2, borderRadius: 1 }}>
+                    <Box>
+                        <Typography variant='h5' sx={{ fontWeight: 'bold' }}>Patients</Typography>
+                        <Typography variant='body2' sx={{ color: 'gray' }}>Manage your clinic patients</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+                        <SearchBar value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder='Search patient' />
+                        <Button
+                            onClick={handleCreate}
+                            variant='contained'
+                            startIcon={<Plus size={16} />}
+                        >
+                            New Patient
                         </Button>
-                    </div>
-                </div>
+                    </Box>
+                </Box>
 
-                <DataTable
-                    data={data}
-                    keyExtractor={(p) => p.id}
+                <DataGrid
+                    rows={patients.data}
                     columns={columns}
-                    emptyMessage="No patients found"
-                    emptyDescription="Get started by creating a new patient."
-                    pagination={pagination}
-                    baseUrl={baseUrl}
+                    rowCount={patients.total}
+                    paginationMode="server"
+                    paginationModel={{ page: patients.current_page - 1, pageSize: patients.per_page }}
+                    onPaginationModelChange={handlePaginationModelChange}
+                    pageSizeOptions={[10]}
+                    disableRowSelectionOnClick
+                    autoHeight
+                    sx={{
+                        mt: 3,
+                        '& .MuiDataGrid-columnHeaderTitle': {
+                            fontFamily: 'var(--font-khmer)',
+                            fontWeight: 'bold',
+                        },
+                    }}
                 />
-            </div>
+            </Box>
         </>
     )
 }
