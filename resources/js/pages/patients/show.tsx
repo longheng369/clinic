@@ -1,8 +1,8 @@
-import { Head, Link, usePage, router } from '@inertiajs/react'
+import { Head, usePage, router } from '@inertiajs/react'
 import { IPatient } from '@/interfaces/IPatient'
 import { IPrescription } from '@/interfaces/IPrescription'
-import { ArrowLeft, Hospital, LogOut, Circle } from 'lucide-react'
-import { useState } from 'react'
+import { Hospital, LogOut, Circle, X } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { useModal } from '@/components/modal'
 import PatientInfo from '@/components/patient/patientInfo'
 import ConsultationTab from './partials/tab/consultations'
@@ -13,7 +13,7 @@ import PrescriptionTab from './partials/tab/prescription'
 import ParaclinicByPatientTab from '../paraclinic-requests/partials/tab/byPatient'
 import VaccinationTab from './partials/tab/vaccination'
 import { cn } from '@/utils/cn'
-import { Box, IconButton, Tab, Tabs, Typography } from '@mui/material'
+import { Box, Button, IconButton, Tab, Tabs } from '@mui/material'
 
 type Tab = 'consultation' | 'medication' | 'prescription' | 'admission' | 'paraclinic' | 'vaccination' | 'attachment' | 'surveillance'
 
@@ -61,7 +61,19 @@ const PatientShow = ({ patient }: { patient: IPatient }) => {
       if (tabFromUrl && visibleTabs.some((t) => t.key === tabFromUrl)) return tabFromUrl as Tab
       return visibleTabs[0]?.key as Tab ?? 'consultation'
    })
-   const { openAlert } = useModal()
+    const { openAlert } = useModal()
+    const [isVisitDrawerOpen, setVisitDrawerOpen] = useState(false)
+
+    useEffect(() => {
+       if (!isVisitDrawerOpen) return
+
+       const handleEscape = (event: KeyboardEvent) => {
+          if (event.key === 'Escape') setVisitDrawerOpen(false)
+       }
+
+       window.addEventListener('keydown', handleEscape)
+       return () => window.removeEventListener('keydown', handleEscape)
+    }, [isVisitDrawerOpen])
 
    const handleAdmit = (visitId: number) => {
       openAlert({
@@ -91,6 +103,7 @@ const PatientShow = ({ patient }: { patient: IPatient }) => {
    }
 
    const handleVisitSelect = (visitId: number) => {
+      setVisitDrawerOpen(false)
       const url = new URL(window.location.href)
       url.searchParams.set('visit', String(visitId))
       router.visit(url.pathname + url.search)
@@ -104,110 +117,9 @@ const PatientShow = ({ patient }: { patient: IPatient }) => {
       <div className='h-full flex flex-col'>
          <Head title={`Patient - ${patient.khmer_last_name} ${patient.khmer_first_name}`} />
 
-         <div className="border-b border-gray-300 bg-white px-8 py-4">
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-               <IconButton
-                  onClick={() => router.visit('/patients')}
-                  size="small"
-                  aria-label="Back"
-                  sx={{ color: 'text.secondary' }}
-               >
-                  <ArrowLeft size={20} />
-               </IconButton>
-               <Box>
-                  <Typography variant="h6" sx={{ fontWeight: 700, color: 'text.primary', fontFamily: 'var(--font-khmer)' }}>{patient.khmer_last_name} {patient.khmer_first_name}</Typography>
-                  <Typography variant="body1" sx={{ color: 'text.secondary' }}>{patient.first_name} {patient.last_name}</Typography>
-               </Box>
-            </Box>
-         </div>
-
          <div className="p-8 flex-1 overflow-y-auto">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-               <PatientInfo patient={patient} className="lg:col-span-2" />
-
-               <div className="rounded-xl border border-gray-300 bg-white p-5">
-                  <div className="flex items-center justify-between mb-3">
-                     <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-500">Visits</h2>
-                     <span className="inline-flex items-center justify-center rounded-full bg-primary-100 px-2.5 py-0.5 text-xs font-medium text-primary-700">
-                        {allVisits.length}
-                     </span>
-                  </div>
-
-                  {allVisits.length === 0 ? (
-                     <p className="text-sm text-gray-400 py-4 text-center">No visits recorded</p>
-                  ) : (
-                     <div className="space-y-1">
-                        {allVisits.map((v) => {
-                           const isSelected = selectedVisit?.id === v.id
-                           return (
-                              <div key={v.id} className="relative">
-                                 <button
-                                    onClick={() => handleVisitSelect(v.id)}
-                                    className={cn(
-                                       'w-full text-left px-3.5 py-2.5 rounded-lg border transition-colors',
-                                       isSelected
-                                          ? 'border-primary-300 bg-primary-50/60 border-l-2 border-l-primary-500'
-                                          : 'border-gray-100 bg-gray-50 hover:bg-gray-100 border-l-2 border-l-transparent',
-                                    )}
-                                 >
-                                    <div className="flex items-center justify-between gap-2">
-                                       <div className="flex items-center gap-2 min-w-0">
-                                          <span className={cn(
-                                             'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium shrink-0',
-                                             v.type === 'IPD' ? 'bg-amber-100 text-amber-700' : 'bg-primary-100 text-primary-700',
-                                          )}>
-                                             {v.type}
-                                          </span>
-                                          <span className="text-xs text-gray-600 truncate">
-                                             {formatVisitDate(v.visit_date)}
-                                          </span>
-                                       </div>
-                                       <span className="flex items-center gap-1 shrink-0">
-                                          <Circle
-                                             size={6}
-                                             className={cn(
-                                                'fill-current',
-                                                v.status === 'active' ? 'text-green-500' : 'text-gray-400',
-                                             )}
-                                          />
-                                          <span className="text-[11px] text-gray-400 capitalize">{v.status}</span>
-                                       </span>
-                                    </div>
-
-                                    <div className="flex items-center justify-between mt-1.5">
-                                       <span className="text-[11px] text-gray-400">
-                                          {v.recorded_by ? `by ${v.recorded_by}` : ''}
-                                          {v.closed_at ? <span className="text-gray-400"> &middot; Closed {formatVisitDate(v.closed_at)}</span> : ''}
-                                       </span>
-
-                                       {v.status === 'active' && isSelected && (
-                                          <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
-                                             {v.type === 'OPD' && (
-                                                <button
-                                                   onClick={() => handleAdmit(v.id)}
-                                                   className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-medium text-amber-700 bg-amber-50 hover:bg-amber-100 transition-colors"
-                                                >
-                                                   <Hospital size={11} />
-                                                   Admit
-                                                </button>
-                                             )}
-                                             <button
-                                                onClick={() => handleClose(v.id)}
-                                                className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-medium text-gray-500 bg-gray-100 hover:bg-gray-200 transition-colors"
-                                             >
-                                                <LogOut size={11} />
-                                                Close
-                                             </button>
-                                          </div>
-                                       )}
-                                    </div>
-                                 </button>
-                              </div>
-                           )
-                        })}
-                     </div>
-                  )}
-               </div>
+               <PatientInfo patient={patient} className="lg:col-span-3" />
             </div>
 
             {selectedVisit ? (
@@ -260,6 +172,188 @@ const PatientShow = ({ patient }: { patient: IPatient }) => {
                </Box>
             </Box>
          </div>
+
+           <div
+              id="patient-visit-history"
+              role="dialog"
+              aria-label="Patient visit history"
+              className={cn(
+                 'fixed inset-y-0 right-0 z-[1200] w-[min(calc(100vw-40px),360px)] border-l border-slate-200 bg-slate-50 shadow-2xl transition-transform duration-300 ease-in-out sm:w-[380px]',
+                 isVisitDrawerOpen ? 'translate-x-0' : 'translate-x-full',
+              )}
+           >
+              <div className="relative h-full">
+                 <Button
+                    variant="contained"
+                    aria-label={isVisitDrawerOpen ? 'Close visit history' : 'Open visit history'}
+                    aria-expanded={isVisitDrawerOpen}
+                    aria-controls="patient-visit-history"
+                    onClick={() => setVisitDrawerOpen((open) => !open)}
+                    disableElevation
+                    sx={{
+                        minWidth: 0,
+                        width: 30,
+                        height: 120,
+                        padding: 0,
+                       position: 'absolute',
+                       left: -30,
+                       top: '50%',
+                       transform: 'translateY(-50%)',
+                       zIndex: 1,
+                       borderRadius: '12px 0 0 12px',
+                        border: '1px solid #cbd5e1',
+                        borderRight: 0,
+                        '& .visit-history-label': {
+                           writingMode: 'vertical-rl',
+                           textOrientation: 'mixed',
+                           transform: 'rotate(180deg)',
+                           whiteSpace: 'nowrap',
+                           fontSize: '0.7rem',
+                           letterSpacing: '0.05em',
+                        },
+                     }}
+                  >
+                     <span className="visit-history-label">Visit History</span>
+                  </Button>
+                 <div className="flex h-full flex-col" inert={!isVisitDrawerOpen ? true : undefined}>
+                    <div className="flex items-center justify-between border-b border-slate-200 bg-white px-5 py-4">
+                       <div>
+                          <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-500">Visit history</h2>
+                          <p className="mt-1 text-xs text-gray-400">{allVisits.length} recorded visits</p>
+                       </div>
+                       <IconButton aria-label="Close visit history" onClick={() => setVisitDrawerOpen(false)} size="small">
+                          <X size={18} />
+                       </IconButton>
+                    </div>
+                    <div className="flex-1 overflow-y-auto p-4">
+                       <VisitHistory
+                          allVisits={allVisits}
+                          selectedVisit={selectedVisit}
+                          formatVisitDate={formatVisitDate}
+                          onVisitSelect={handleVisitSelect}
+                          onAdmit={handleAdmit}
+                          onClose={handleClose}
+                       />
+                    </div>
+                 </div>
+              </div>
+           </div>
+
+           <button
+              type="button"
+              aria-label="Close visit history"
+              onClick={() => setVisitDrawerOpen(false)}
+              className={cn(
+                 'fixed inset-0 z-[1190] bg-slate-950/20 transition-opacity duration-300',
+                 isVisitDrawerOpen ? 'opacity-100' : 'pointer-events-none opacity-0',
+              )}
+           />
+
+       </div>
+   )
+}
+
+const VisitHistory = ({
+   allVisits,
+   selectedVisit,
+   formatVisitDate,
+   onVisitSelect,
+   onAdmit,
+   onClose,
+}: {
+   allVisits: VisitSummary[]
+   selectedVisit: SelectedVisit | null
+   formatVisitDate: (date: string) => string
+   onVisitSelect: (visitId: number) => void
+   onAdmit: (visitId: number) => void
+   onClose: (visitId: number) => void
+}) => {
+   if (allVisits.length === 0) {
+      return <p className="py-4 text-center text-sm text-gray-400">No visits recorded</p>
+   }
+
+   return (
+      <div className="relative space-y-4">
+         <div className="absolute bottom-3 left-3 top-3 w-px bg-slate-200" aria-hidden="true" />
+         {allVisits.map((v) => {
+            const isSelected = selectedVisit?.id === v.id
+
+            return (
+               <div key={v.id} className="relative flex gap-3">
+                  <div className="relative z-10 flex w-6 shrink-0 justify-center">
+                     <span
+                        className={cn(
+                           'mt-3 h-3 w-3 rounded-full border-2 border-white shadow-sm',
+                           isSelected
+                              ? 'bg-primary-500 ring-2 ring-primary-100'
+                              : v.status === 'active'
+                                ? 'bg-green-500'
+                                : 'bg-slate-300',
+                        )}
+                     />
+                  </div>
+
+                  <div className={cn(
+                     'min-w-0 flex-1 rounded-lg border transition-colors',
+                     isSelected
+                        ? 'border-primary-300 bg-primary-50/60'
+                        : 'border-gray-100 bg-gray-50 hover:border-gray-200 hover:bg-gray-100',
+                  )}>
+                  <button
+                     type="button"
+                     onClick={() => onVisitSelect(v.id)}
+                     className="w-full px-3.5 py-3 text-left"
+                  >
+                     <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                           <p className="text-sm font-semibold text-slate-700">{formatVisitDate(v.visit_date)}</p>
+                           <span className={cn(
+                              'mt-1 inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium',
+                              v.type === 'IPD' ? 'bg-amber-100 text-amber-700' : 'bg-primary-100 text-primary-700',
+                           )}>
+                              {v.type} visit
+                           </span>
+                        </div>
+                        <span className={cn(
+                           'shrink-0 text-[11px] font-medium capitalize',
+                           v.status === 'active' ? 'text-green-600' : 'text-gray-400',
+                        )}>
+                           {v.status}
+                        </span>
+                     </div>
+
+                     <div className="mt-2 text-[11px] text-gray-400">
+                        {v.recorded_by ? `Recorded by ${v.recorded_by}` : 'Recorded visit'}
+                        {v.closed_at ? <span> &middot; Closed {formatVisitDate(v.closed_at)}</span> : ''}
+                     </div>
+                  </button>
+
+                  {v.status === 'active' && isSelected && (
+                     <div className="flex items-center gap-1.5 border-t border-primary-100 px-3.5 py-2" onClick={(e) => e.stopPropagation()}>
+                        {v.type === 'OPD' && (
+                           <button
+                              type="button"
+                              onClick={() => onAdmit(v.id)}
+                              className="inline-flex items-center gap-1 rounded-md bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-700 transition-colors hover:bg-amber-100"
+                           >
+                              <Hospital size={11} />
+                              Admit
+                           </button>
+                        )}
+                        <button
+                           type="button"
+                           onClick={() => onClose(v.id)}
+                           className="inline-flex items-center gap-1 rounded-md bg-gray-100 px-2 py-0.5 text-[11px] font-medium text-gray-500 transition-colors hover:bg-gray-200"
+                        >
+                           <LogOut size={11} />
+                           Close
+                        </button>
+                     </div>
+                  )}
+                  </div>
+               </div>
+            )
+         })}
       </div>
    )
 }
