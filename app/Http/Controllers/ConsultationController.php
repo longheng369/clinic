@@ -12,7 +12,7 @@ class ConsultationController extends Controller
 {
     public function index(Patient $patient)
     {
-        return $patient->consultations()
+        $consultations = $patient->consultations()
             ->with('recordedBy')
             ->latest()
             ->paginate(10)
@@ -26,6 +26,11 @@ class ConsultationController extends Controller
                 'recorded_by' => $c->recordedBy?->name,
                 'created_at' => $c->created_at,
             ]);
+
+        return Inertia::render('patients/partials/tab/consultations/index', [
+            'patientId' => $patient->id,
+            'consultations' => $consultations,
+        ]);
     }
 
     public function create(Patient $patient)

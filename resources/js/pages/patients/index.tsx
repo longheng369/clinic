@@ -60,7 +60,7 @@ const Patient = () => {
 
     const handleEdit = (patient: IPatient) => {
         openModal({
-            title: `Edit ${patient.khmer_first_name} ${patient.khmer_last_name}`,
+            title: <Typography variant='h5' sx={{ fontWeight: 'medium' }}>Edit <Typography variant='h6' component='span' sx={{ fontFamily: 'var(--font-khmer)'}}>{patient.khmer_first_name} {patient.khmer_last_name}</Typography></Typography>,
             content: <PatientForm patient={{ ...patient, date_of_birth: formatDob(patient.date_of_birth) }} />,
             config: { preventClickAway: true, maxWidth: '4xl' },
         })

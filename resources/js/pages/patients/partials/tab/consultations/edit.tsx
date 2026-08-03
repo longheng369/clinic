@@ -62,7 +62,7 @@ const EditConsultation = ({ patient, consultation }: { patient: IPatient; consul
         <>
             <Head title="Edit Consultation" />
             <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                <Box sx={{ borderBottom: '1px solid #cbd5e1', bgcolor: '#fff', px: 4, py: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Box sx={{ borderBottom: 1, borderColor: 'divider', bgcolor: '#fff', px: 4, py: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
                     <IconButton
                         onClick={() => router.visit(`/patients/${patient.id}?tab=consultation`)}
                         size="small"

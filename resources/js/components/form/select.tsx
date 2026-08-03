@@ -2,7 +2,7 @@ import { FormHelperText, SelectProps } from "@mui/material";
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
+import MuiSelect from '@mui/material/Select';
 import {
    useController,
    type Control,
@@ -22,7 +22,7 @@ type Props<T extends FieldValues = FieldValues> = {
    options: IOption<string | number>[];
 } & SelectProps;
 
-const CustomSelect = <T extends FieldValues = FieldValues>({ control, name, rules, options, ...rest }: Props<T>) => {
+const Select = <T extends FieldValues = FieldValues>({ control, name, rules, options, ...rest }: Props<T>) => {
    const { field, fieldState } = useController({
       control,
       name,
@@ -32,7 +32,7 @@ const CustomSelect = <T extends FieldValues = FieldValues>({ control, name, rule
    return (
       <FormControl variant="standard" fullWidth size="small" error={!!fieldState.error} required={!!rules?.required}>
          <InputLabel id={name}>{rest.label}</InputLabel>
-         <Select
+         <MuiSelect
             labelId={name}
             {...field}
             {...rest}
@@ -42,10 +42,10 @@ const CustomSelect = <T extends FieldValues = FieldValues>({ control, name, rule
             {options.map((opt) => (
                <MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>
             ))}
-         </Select>
+         </MuiSelect>
          {fieldState.error && <FormHelperText>{fieldState.error.message}</FormHelperText>}
       </FormControl>
    )
 }
 
-export default CustomSelect
+export default Select

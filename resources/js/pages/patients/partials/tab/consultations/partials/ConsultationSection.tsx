@@ -1,9 +1,11 @@
 import { useController, type Control, type Path } from 'react-hook-form'
 import Input from '@/components/form/input'
-import ConsultationCheckboxGroup from './ConsultationCheckboxGroup'
+import Checkbox from '@/components/form/checkbox'
+import CheckboxGroup from '@/components/form/checkboxGroup'
 import { type OptionType } from '../consultationTemplate'
 import { IConsultationFormData } from '@/interfaces/IConsultation'
-import { Box, Checkbox, FormControlLabel, Typography } from '@mui/material'
+import { cn } from '@/utils/cn'
+import { Box, Grid, Typography } from '@mui/material'
 
 type SectionProps = {
    title: string
@@ -28,55 +30,66 @@ const OTHER_FIELD_MAP: Record<string, string> = {
    psycology_symptoms: 'psycology_others_note',
 }
 
-const NormalCheckbox = ({ control, name, othersName, disabled }: { control: Control<IConsultationFormData>; name: Path<IConsultationFormData>; othersName: Path<IConsultationFormData>; disabled?: boolean }) => {
-   const { field } = useController({ control, name })
-   const { field: othersField } = useController({ control, name: othersName })
-   const value: string[] = Array.isArray(field.value) ? field.value : []
-   const isNormal = value.includes('NORMAL')
-
-   return (
-      <FormControlLabel
-         control={
-            <Checkbox
-               checked={isNormal}
-               disabled={disabled}
-               onChange={() => {
-                  field.onChange(isNormal ? [] : ['NORMAL'])
-                  if (!isNormal) othersField.onChange('')
-               }}
-               size="small"
-            />
-         }
-         label={<span className="text-sm">Normal</span>}
-         sx={{ m: 0 }}
-      />
-   )
-}
-
 const ConsultationSection = ({ title, name, options, control, disabled }: SectionProps) => {
-   const restOptions = options.filter((o) => o.value !== 'NORMAL')
-   const othersName = OTHER_FIELD_MAP[name] as Path<IConsultationFormData>
+    const hasNormalOption = options.some((option) => option.value === 'NORMAL')
+    const checkboxOptions = options
+      .filter((option) => option.value !== 'NORMAL')
+      .map((option) => ({
+         value: option.value,
+         colSpan: option.colSpan,
+         text: option.text && (
+            <span className={cn('text-base font-semibold text-gray-800', /[\u1780-\u17FF\u19E0-\u19FF]/.test(option.text) && 'font-khmer')}>
+               {option.text}
+            </span>
+         ),
+         label: option.label && (
+            <span className={cn('text-base', /[\u1780-\u17FF\u19E0-\u19FF]/.test(option.label) && 'font-khmer')}>
+               {option.label}
+            </span>
+            ),
+        }))
+    const othersName = OTHER_FIELD_MAP[name] as Path<IConsultationFormData>
+    const { field: othersField } = useController({ control, name: othersName })
 
-   return (
-      <Box>
-         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+    return (
+       <Grid size={12}>
+          <Box>
+             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: hasNormalOption ? 'space-between' : 'flex-start' }}>
             <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'text.primary' }}>{title}</Typography>
-            <NormalCheckbox control={control} name={name as Path<IConsultationFormData>} othersName={othersName} disabled={disabled} />
+               {hasNormalOption && (
+                  <Checkbox
+                     control={control}
+                     name={name as Path<IConsultationFormData>}
+                     value="NORMAL"
+                     exclusive
+                     disabled={disabled}
+                     label={<span className="text-sm">Normal</span>}
+                     size="small"
+                     sx={{ p: 0.5 }}
+                     onCheckedChange={(checked) => {
+                        if (checked) othersField.onChange('')
+                     }}
+                  />
+               )}
+            </Box>
+            <CheckboxGroup
+               control={control}
+               name={name as Path<IConsultationFormData>}
+               options={checkboxOptions}
+               disabled={disabled}
+               exclusiveValue={hasNormalOption ? 'NORMAL' : undefined}
+               grid
+               checkboxProps={{ size: 'small', sx: { p: 0.5 } }}
+            />
+            <Input
+               control={control}
+               name={othersName}
+               label="Others"
+               placeholder="Specify other symptoms..."
+               disabled={disabled}
+            />
          </Box>
-         <ConsultationCheckboxGroup
-            control={control}
-            name={name as Path<IConsultationFormData>}
-            options={restOptions}
-            disabled={disabled}
-         />
-         <Input
-            control={control}
-            name={othersName}
-            label="Others"
-            placeholder="Specify other symptoms..."
-            disabled={disabled}
-         />
-      </Box>
+      </Grid>
    )
 }
 

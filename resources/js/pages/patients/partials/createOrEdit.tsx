@@ -83,6 +83,7 @@ const PatientForm = ({ patient }: PatientFormProps) => {
                      name="khmer_first_name"
                      label="Khmer First Name"
                      sx={{ fontFamily: KHMER_FONT }}
+                     slotProps={{ htmlInput: { spellCheck: false } }}
                      rules={{
                         required: 'This field is required',
                         pattern: {
@@ -98,6 +99,7 @@ const PatientForm = ({ patient }: PatientFormProps) => {
                      name="khmer_last_name"
                      label="Khmer Last Name"
                      sx={{ fontFamily: KHMER_FONT }}
+                     slotProps={{ htmlInput: { spellCheck: false } }}
                      rules={{
                         required: 'This field is required',
                         pattern: {
@@ -112,6 +114,7 @@ const PatientForm = ({ patient }: PatientFormProps) => {
                      control={control}
                      name="first_name"
                      label="First Name (English)"
+                     slotProps={{ htmlInput: { spellCheck: false } }}
                   />
                </Grid>
                <Grid size={{ md: 6 }}>
@@ -119,6 +122,7 @@ const PatientForm = ({ patient }: PatientFormProps) => {
                      control={control}
                      name="last_name"
                      label="Last Name (English)"
+                     slotProps={{ htmlInput: { spellCheck: false } }}
                   />
                </Grid>
                <Grid size={{ md: 6 }}>
