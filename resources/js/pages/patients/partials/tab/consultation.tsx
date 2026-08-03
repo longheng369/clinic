@@ -1,11 +1,12 @@
-import { Link, router, usePage } from '@inertiajs/react'
+import { router, usePage, Link as InertiaLink } from '@inertiajs/react'
 import { useModal } from '@/components/modal'
 import { Pencil, Trash2, Plus, Eye } from 'lucide-react'
 import { IConsultation } from '@/interfaces/IConsultation'
-import { Button } from '@/components/ui/button'
-import IconButton from '@/components/button/iconButton'
-import DataTable, { type Column } from '@/components/table/DataTable'
+import { DataGrid, type GridColDef, type GridPaginationModel, type GridRenderCellParams, GridActionsCellItem } from '@mui/x-data-grid'
+import { useCallback } from 'react'
+import type React from 'react'
 import { formatCreatedDateTime } from '@/utils/date'
+import { Box, Button, Typography } from '@mui/material'
 
 interface PaginatedData<T> {
     data: T[]
@@ -20,91 +21,139 @@ interface PaginatedData<T> {
 const ConsultationTab = ({ patientId }: { patientId: number }) => {
     const { openAlert } = useModal()
     const { consultations } = usePage<{ consultations: PaginatedData<IConsultation> }>().props
+    const { data: rows, total, current_page, per_page } = consultations
 
-    const handleDelete = (c: IConsultation) => {
+    const handleDelete = (consultation: IConsultation) => {
         openAlert({
             message: 'Delete this consultation?',
             description: 'This action cannot be undone.',
             variant: 'danger',
             confirmLabel: 'Delete',
-            onConfirm: () => router.delete(`/patients/${patientId}/consultations/${c.id}`),
+            onConfirm: () => router.delete(`/patients/${patientId}/consultations/${consultation.id}`),
         })
     }
 
-    const columns: Column<IConsultation>[] = [
+    const handlePaginationModelChange = useCallback((model: GridPaginationModel) => {
+        router.get(`/patients/${patientId}`, { page: String(model.page + 1), tab: 'consultation' }, { preserveState: true, replace: true })
+    }, [patientId])
+
+    const columns: GridColDef[] = [
         {
-            header: 'កាលបរិច្ឆេទ',
-            classNames: { header: 'font-khmer tracking-wide' },
-            cell: (c) => formatCreatedDateTime(c.created_at),
+            field: 'created_at',
+            headerName: 'កាលបរិច្ឆេទ',
+            flex: 1,
+            minWidth: 150,
+            valueGetter: (_value, row: IConsultation) => formatCreatedDateTime(row.created_at),
         },
         {
-            header: 'រោគសញ្ញាចម្បង',
-            classNames: { header: 'font-khmer tracking-wide' },
-            cell: (c) => (
-                <span className="max-w-xs truncate block">{c.chief_complaint}</span>
+            field: 'chief_complaint',
+            headerName: 'រោគសញ្ញាចំបង',
+            flex: 2,
+            minWidth: 220,
+            renderCell: (params: GridRenderCellParams<IConsultation>) => (
+                <Box component="span" sx={{ display: 'block', maxWidth: 260, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {params.value}
+                </Box>
             ),
         },
         {
-            header: 'រោគវិនិច្ឆ័យ',
-            classNames: { header: 'font-khmer tracking-wide' },
-            cell: (c) => c.diagnosis ?? <span className="text-gray-300">&mdash;</span>,
+            field: 'diagnosis',
+            headerName: 'រោគវិនិច្ឆ័យ',
+            flex: 1,
+            minWidth: 150,
+            renderCell: (params: GridRenderCellParams<IConsultation>) =>
+                params.value ?? <span className="text-gray-300">&mdash;</span>,
         },
         {
-            header: 'ទម្ងន់ (គីឡូក្រាម)',
-            classNames: { header: 'font-khmer tracking-wide' },
-            cell: (c) => c.weight ?? <span className="text-gray-300">&mdash;</span>,
+            field: 'weight',
+            headerName: 'ទម្ងន់ (គីឡូក្រាម)',
+            flex: 1,
+            minWidth: 120,
+            renderCell: (params: GridRenderCellParams<IConsultation>) =>
+                params.value ?? <span className="text-gray-300">&mdash;</span>,
         },
         {
-            header: 'តម្លៃ ($)',
-            classNames: { header: 'font-khmer tracking-wide' },
-            cell: (c) => c.fee != null ? c.fee.toFixed(2) : <span className="text-gray-300">&mdash;</span>,
+            field: 'fee',
+            headerName: 'តម្លៃ ($)',
+            flex: 1,
+            minWidth: 110,
+            valueGetter: (_: never, row: IConsultation) => row.fee != null ? row.fee.toFixed(2) : null,
+            renderCell: (params: GridRenderCellParams<IConsultation>) =>
+                params.value ?? <span className="text-gray-300">&mdash;</span>,
         },
         {
-            header: 'អ្នកកត់ត្រា',
-            classNames: { header: 'font-khmer tracking-wide' },
-            cell: (c) => c.recorded_by ?? <span className="text-gray-300">&mdash;</span>,
+            field: 'recorded_by',
+            headerName: 'អ្នកកត់ត្រា',
+            flex: 1,
+            minWidth: 130,
+            renderCell: (params: GridRenderCellParams<IConsultation>) =>
+                params.value ?? <span className="text-gray-300">&mdash;</span>,
         },
         {
-            header: 'សកម្មភាព',
-            classNames: { header: 'font-khmer text-end tracking-wide' },
-            cell: (c) => (
-                <div className="flex items-center justify-end">
-                    <IconButton onClick={() => router.visit(`/patients/${patientId}/consultations/${c.id}`)} aria-label="View consultation">
-                        <Eye size={16} />
-                    </IconButton>
-                    <IconButton onClick={() => router.visit(`/patients/${patientId}/consultations/${c.id}/edit`)} aria-label="Edit consultation">
-                        <Pencil size={16} />
-                    </IconButton>
-                    <IconButton color="error" onClick={() => handleDelete(c)} aria-label="Delete consultation">
-                        <Trash2 size={16} />
-                    </IconButton>
-                </div>
-            ),
+            field: 'actions',
+            type: 'actions',
+            headerName: 'សកម្មភាព',
+            width: 150,
+            getActions: (params) => [
+                <GridActionsCellItem
+                    key={`view-${params.id}`}
+                    icon={<Eye size={16} className="text-gray-500" />}
+                    label="View consultation"
+                    onClick={() => router.visit(`/patients/${patientId}/consultations/${params.row.id}`)}
+                    showInMenu={false}
+                />,
+                <GridActionsCellItem
+                    key={`edit-${params.id}`}
+                    icon={<Pencil size={16} className="text-blue-500" />}
+                    label="Edit consultation"
+                    onClick={() => router.visit(`/patients/${patientId}/consultations/${params.row.id}/edit`)}
+                    showInMenu={false}
+                />,
+                <GridActionsCellItem
+                    key={`delete-${params.id}`}
+                    icon={<Trash2 size={16} className="text-red-500" />}
+                    label="Delete consultation"
+                    onClick={() => handleDelete(params.row as IConsultation)}
+                    showInMenu={false}
+                />,
+            ],
         },
     ]
 
-    const { data, ...pagination } = consultations
-    const baseUrl = `/patients/${patientId}`
-
     return (
-        <div>
-            <div className="mb-4 flex items-center justify-between">
-                <p className="text-sm text-gray-500">Consultation records for this patient</p>
-                <Link href={`/patients/${patientId}/consultations/create`}>
-                    <Button variant="gradient"><Plus size={18} /> New Consultation</Button>
-                </Link>
-            </div>
+        <Box>
+            <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                    Consultation records for this patient
+                </Typography>
+                <Button
+                    component={InertiaLink as React.ElementType}
+                    href={`/patients/${patientId}/consultations/create`}
+                    variant="contained"
+                    startIcon={<Plus size={16} />}
+                >
+                    New Consultation
+                </Button>
+            </Box>
 
-            <DataTable
-                data={data}
-                keyExtractor={(c) => c.id}
+            <DataGrid
+                rows={rows}
                 columns={columns}
-                emptyMessage="No consultation records"
-                emptyDescription="Create a consultation for this patient."
-                pagination={pagination}
-                baseUrl={baseUrl}
+                rowCount={total}
+                paginationMode="server"
+                paginationModel={{ page: current_page - 1, pageSize: per_page }}
+                onPaginationModelChange={handlePaginationModelChange}
+                pageSizeOptions={[10]}
+                disableRowSelectionOnClick
+                autoHeight
+                sx={{
+                    '& .MuiDataGrid-columnHeaderTitle': {
+                        fontFamily: 'var(--font-khmer)',
+                        fontWeight: 'bold',
+                    },
+                }}
             />
-        </div>
+        </Box>
     )
 }
 

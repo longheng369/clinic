@@ -32,7 +32,7 @@ class ConsultationController extends Controller
     {
         $activeVisits = $patient->visits()->where('status', 'active')->latest()->get();
 
-        return Inertia::render('consultations/create', [
+        return Inertia::render('patients/partials/tab/consultations/create', [
             'patient' => $patient,
             'activeVisits' => $activeVisits->map(fn ($v) => [
                 'id' => $v->id,
@@ -62,7 +62,7 @@ class ConsultationController extends Controller
     {
         $consultation->load('recordedBy');
 
-        return Inertia::render('consultations/show', [
+        return Inertia::render('patients/partials/tab/consultations/show', [
             'patient' => $patient,
             'consultation' => [
                 'id' => $consultation->id,
@@ -106,7 +106,7 @@ class ConsultationController extends Controller
     {
         $consultation->load('recordedBy');
 
-        return Inertia::render('consultations/edit', [
+        return Inertia::render('patients/partials/tab/consultations/edit', [
             'patient' => $patient,
             'consultation' => [
                 'id' => $consultation->id,

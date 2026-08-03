@@ -1,11 +1,11 @@
-import { Head, Link } from '@inertiajs/react'
-import {ArrowLeft, Pencil} from 'lucide-react'
+import { Head, router } from '@inertiajs/react'
+import { ArrowLeft, Pencil } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { useEffect } from 'react'
 import ConsultationForm from './partials/ConsultationForm'
-import { Button } from '@/components/ui/button'
 import type { IConsultation, IConsultationFormData } from '@/interfaces/IConsultation'
 import type { IPatient } from '@/interfaces/IPatient'
+import { Box, Button, IconButton, Paper, Typography } from '@mui/material'
 
 const ShowConsultation = ({ patient, consultation }: { patient: IPatient; consultation: IConsultation }) => {
     const { control, reset } = useForm<IConsultationFormData>()
@@ -45,33 +45,41 @@ const ShowConsultation = ({ patient, consultation }: { patient: IPatient; consul
     }, [consultation])
 
     return (
-        <section className='h-full flex flex-col'>
+        <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
             <Head title="Consultation Details" />
-            <div className="flex items-center justify-between sticky top-0 bg-background py-4 px-6 z-1 border-b border-gray-300">
-                <div className="flex items-center gap-4">
-                    <Link
-                        href={`/patients/${patient.id}?tab=consultation`}
-                        className="flex items-center justify-center size-9 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+            <Box sx={{ borderBottom: '1px solid #cbd5e1', bgcolor: '#fff', px: 4, py: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <IconButton
+                        onClick={() => router.visit(`/patients/${patient.id}?tab=consultation`)}
+                        size="small"
+                        aria-label="Back"
+                        sx={{ color: 'text.secondary' }}
                     >
                         <ArrowLeft size={20} />
-                    </Link>
-                    <div>
-                        <h1 className="text-xl font-bold text-gray-900">Consultation Details</h1>
-                        <p className="text-md text-gray-500">
-                            Patient: <span className="font-medium font-khmer">{patient.khmer_last_name} {patient.khmer_first_name}</span>
-                        </p>
-                    </div>
-                </div>
-                <Link href={`/patients/${patient.id}/consultations/${consultation.id}/edit`}>
-                    <Button><Pencil /> Edit</Button>
-                </Link>
-            </div>
-            <div className="p-8 flex-1 overflow-y-auto">
-                <div className="rounded-xl border border-gray-300 bg-white p-6">
+                    </IconButton>
+                    <Box>
+                        <Typography variant="h6" sx={{ fontWeight: 700, color: 'text.primary' }}>Consultation Details</Typography>
+                        <Typography variant="body1" sx={{ color: 'text.secondary' }}>
+                            Patient: <Box component="span" sx={{ fontWeight: 500, fontFamily: 'var(--font-khmer)' }}>
+                                {patient.khmer_last_name} {patient.khmer_first_name}
+                            </Box>
+                        </Typography>
+                    </Box>
+                </Box>
+                <Button
+                    variant="contained"
+                    startIcon={<Pencil />}
+                    onClick={() => router.visit(`/patients/${patient.id}/consultations/${consultation.id}/edit`)}
+                >
+                    Edit
+                </Button>
+            </Box>
+            <Box sx={{ p: { xs: 2, md: 4 }, flex: 1, overflowY: 'auto' }}>
+                <Paper variant="outlined" sx={{ p: 3 }}>
                     <ConsultationForm control={control} viewOnly />
-                </div>
-            </div>
-        </section>
+                </Paper>
+            </Box>
+        </Box>
     )
 }
 

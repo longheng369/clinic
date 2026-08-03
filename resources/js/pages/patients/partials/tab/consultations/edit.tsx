@@ -1,12 +1,12 @@
-import { Head, Link, router } from '@inertiajs/react'
+import { Head, router } from '@inertiajs/react'
 import { ArrowLeft } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { useState, useEffect } from 'react'
 import ConsultationForm from './partials/ConsultationForm'
-import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/toast'
 import { type IConsultation, type IConsultationFormData } from '@/interfaces/IConsultation'
 import type { IPatient } from '@/interfaces/IPatient'
+import { Box, Button, IconButton, Paper, Typography } from '@mui/material'
 
 const EditConsultation = ({ patient, consultation }: { patient: IPatient; consultation: IConsultation }) => {
     const [isProcessing, setIsProcessing] = useState(false)
@@ -49,7 +49,7 @@ const EditConsultation = ({ patient, consultation }: { patient: IPatient; consul
 
     const onSubmit = handleSubmit((data) => {
         setIsProcessing(true)
-        router.put(`/patients/${patient.id}/consultations/${consultation.id}`, data as Record<string, unknown>, {
+        router.put(`/patients/${patient.id}/consultations/${consultation.id}`, { ...data }, {
             onSuccess: () => {
                 toast('Consultation updated!', { variant: 'success' })
                 router.visit(`/patients/${patient.id}?tab=consultation`)
@@ -61,37 +61,46 @@ const EditConsultation = ({ patient, consultation }: { patient: IPatient; consul
     return (
         <>
             <Head title="Edit Consultation" />
-            <div className='h-full flex flex-col'>
-                <div className="flex items-center justify-between sticky top-0 bg-background p-6 py-4 z-1 border-b border-gray-300">
-                    <div className="flex items-center gap-4">
-                        <Link
-                            href={`/patients/${patient.id}?tab=consultation`}
-                            className="flex items-center justify-center size-9 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
-                        >
-                            <ArrowLeft size={20} />
-                        </Link>
-                        <div>
-                            <h1 className="text-xl font-bold text-gray-900">Edit Consultation</h1>
-                            <p className="text-md text-gray-500">
-                                Patient: <span className="font-medium font-khmer">{patient.khmer_last_name} {patient.khmer_first_name}</span>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div className="p-8 flex-1 overflow-y-auto">
-                    <div className="rounded-xl border border-gray-300 bg-white p-6">
-                        <form onSubmit={onSubmit} noValidate>
+            <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <Box sx={{ borderBottom: '1px solid #cbd5e1', bgcolor: '#fff', px: 4, py: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <IconButton
+                        onClick={() => router.visit(`/patients/${patient.id}?tab=consultation`)}
+                        size="small"
+                        aria-label="Back"
+                        sx={{ color: 'text.secondary' }}
+                    >
+                        <ArrowLeft size={20} />
+                    </IconButton>
+                    <Box>
+                        <Typography variant="h6" sx={{ fontWeight: 700, color: 'text.primary' }}>Edit Consultation</Typography>
+                        <Typography variant="body1" sx={{ color: 'text.secondary' }}>
+                            Patient: <Box component="span" sx={{ fontWeight: 500, fontFamily: 'var(--font-khmer)' }}>
+                                {patient.khmer_last_name} {patient.khmer_first_name}
+                            </Box>
+                        </Typography>
+                    </Box>
+                </Box>
+
+                <Box sx={{ p: 4, flex: 1, overflowY: 'auto' }}>
+                    <Paper variant="outlined" sx={{ p: 3 }}>
+                        <Box component="form" onSubmit={onSubmit} noValidate>
                             <ConsultationForm control={control} />
-                            <div className="mt-6 flex justify-end gap-2 pt-4">
-                                <Link href={`/patients/${patient.id}?tab=consultation`}>
-                                    <Button type="button" variant="outline">Cancel</Button>
-                                </Link>
-                                <Button type="submit" variant="gradient" disabled={isProcessing}>Update Consultation</Button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
+                            <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end', gap: 1.5, pt: 2 }}>
+                                <Button
+                                    type="button"
+                                    variant="outlined"
+                                    onClick={() => router.visit(`/patients/${patient.id}?tab=consultation`)}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button type="submit" variant="contained" disabled={isProcessing}>
+                                    Update Consultation
+                                </Button>
+                            </Box>
+                        </Box>
+                    </Paper>
+                </Box>
+            </Box>
         </>
     )
 }
