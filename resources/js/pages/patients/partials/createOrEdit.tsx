@@ -20,8 +20,6 @@ const BLOOD_GROUPS = [
    { value: 'O-', label: 'O-' },
 ]
 
-const KHMER_FONT = "'Battambang', 'Serey', 'Khmer OS', 'Noto Sans Khmer', sans-serif"
-
 interface PatientFormProps {
    patient?: IPatient;
 }
@@ -82,7 +80,7 @@ const PatientForm = ({ patient }: PatientFormProps) => {
                      control={control}
                      name="khmer_first_name"
                      label="Khmer First Name"
-                     sx={{ fontFamily: KHMER_FONT }}
+                      sx={{ '& .MuiInputBase-input': { fontFamily: 'var(--font-khmer)' } }}
                      slotProps={{ htmlInput: { spellCheck: false } }}
                      rules={{
                         required: 'This field is required',
@@ -98,7 +96,7 @@ const PatientForm = ({ patient }: PatientFormProps) => {
                      control={control}
                      name="khmer_last_name"
                      label="Khmer Last Name"
-                     sx={{ fontFamily: KHMER_FONT }}
+                      sx={{ '& .MuiInputBase-input': { fontFamily: 'var(--font-khmer)' } }}
                      slotProps={{ htmlInput: { spellCheck: false } }}
                      rules={{
                         required: 'This field is required',

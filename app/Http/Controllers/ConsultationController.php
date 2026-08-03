@@ -27,7 +27,7 @@ class ConsultationController extends Controller
                 'created_at' => $c->created_at,
             ]);
 
-        return Inertia::render('patients/partials/tab/consultations/index', [
+        return Inertia::render('patients/partials/tab/consultation/index', [
             'patientId' => $patient->id,
             'consultations' => $consultations,
         ]);
@@ -37,7 +37,7 @@ class ConsultationController extends Controller
     {
         $activeVisits = $patient->visits()->where('status', 'active')->latest()->get();
 
-        return Inertia::render('patients/partials/tab/consultations/create', [
+        return Inertia::render('patients/partials/tab/consultation/create', [
             'patient' => $patient,
             'activeVisits' => $activeVisits->map(fn ($v) => [
                 'id' => $v->id,
@@ -67,7 +67,7 @@ class ConsultationController extends Controller
     {
         $consultation->load('recordedBy');
 
-        return Inertia::render('patients/partials/tab/consultations/show', [
+        return Inertia::render('patients/partials/tab/consultation/show', [
             'patient' => $patient,
             'consultation' => [
                 'id' => $consultation->id,
@@ -111,7 +111,7 @@ class ConsultationController extends Controller
     {
         $consultation->load('recordedBy');
 
-        return Inertia::render('patients/partials/tab/consultations/edit', [
+        return Inertia::render('patients/partials/tab/consultation/edit', [
             'patient' => $patient,
             'consultation' => [
                 'id' => $consultation->id,
