@@ -15,6 +15,8 @@ export default defineConfig([
   pluginReact.configs.flat.recommended,
   {
     rules: {
+      indent: ["error", 3, { SwitchCase: 1 }],
+      "@typescript-eslint/no-explicit-any": "off",
       "react/react-in-jsx-scope": "off",
       "react/jsx-uses-react": "off",
     },

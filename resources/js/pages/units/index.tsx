@@ -22,126 +22,126 @@ interface PaginatedData<T> {
 }
 
 const Unit = () => {
-    const { openModal, closeModal, openAlert } = useModal()
+   const { openModal, closeModal, openAlert } = useModal()
 
-    const { units, search: searchProp } = usePage<{
+   const { units, search: searchProp } = usePage<{
         units: PaginatedData<IUnit>
         search: string | null
     }>().props
 
-    const [searchTerm, setSearchTerm] = useState(searchProp ?? '')
+   const [searchTerm, setSearchTerm] = useState(searchProp ?? '')
 
-    useEffect(() => {
-        const timeout = setTimeout(() => {
-            if ((searchTerm || '') === (searchProp || '')) return
-            if (searchTerm) {
-                router.get('/settings/units', { search: searchTerm }, { preserveState: true, replace: true })
-            } else {
-                router.get('/settings/units', {}, { preserveState: true, replace: true })
-            }
-        }, 300)
+   useEffect(() => {
+      const timeout = setTimeout(() => {
+         if ((searchTerm || '') === (searchProp || '')) return
+         if (searchTerm) {
+            router.get('/settings/units', { search: searchTerm }, { preserveState: true, replace: true })
+         } else {
+            router.get('/settings/units', {}, { preserveState: true, replace: true })
+         }
+      }, 300)
 
-        return () => clearTimeout(timeout)
-    }, [searchTerm])
+      return () => clearTimeout(timeout)
+   }, [searchTerm])
 
-    const baseUrl = searchProp
-        ? `/settings/units?search=${encodeURIComponent(searchProp)}`
-        : '/settings/units'
+   const baseUrl = searchProp
+      ? `/settings/units?search=${encodeURIComponent(searchProp)}`
+      : '/settings/units'
 
-    const handleCreate = () => {
-        openModal({
-            title: 'New Unit',
-            content: <UnitForm onClose={() => closeModal()} />,
-            config: { preventClickAway: true }
-        })
-    }
+   const handleCreate = () => {
+      openModal({
+         title: 'New Unit',
+         content: <UnitForm onClose={() => closeModal()} />,
+         config: { preventClickAway: true }
+      })
+   }
 
-    const handleEdit = (unit: IUnit) => {
-        openModal({
-            title: `Edit ${unit.name}`,
-            content: <UnitForm unit={unit} onClose={() => closeModal()} />,
-            config: { preventClickAway: true }
-        })
-    }
+   const handleEdit = (unit: IUnit) => {
+      openModal({
+         title: `Edit ${unit.name}`,
+         content: <UnitForm unit={unit} onClose={() => closeModal()} />,
+         config: { preventClickAway: true }
+      })
+   }
 
-    const handleDelete = (unit: IUnit) => {
-        openAlert({
-            message: 'Delete this unit?',
-            description: 'This action cannot be undone.',
-            variant: 'danger',
-            confirmLabel: 'Delete',
-            onConfirm: () => router.delete(`/settings/units/${unit.id}`)
-        })
-    }
+   const handleDelete = (unit: IUnit) => {
+      openAlert({
+         message: 'Delete this unit?',
+         description: 'This action cannot be undone.',
+         variant: 'danger',
+         confirmLabel: 'Delete',
+         onConfirm: () => router.delete(`/settings/units/${unit.id}`)
+      })
+   }
 
-    const columns: Column<IUnit>[] = [
-        {
-            header: 'ឈ្មោះ',
-            classNames: { header: 'font-khmer tracking-wide' },
-            cell: (unit) => unit.name,
-        },
-        {
-            header: 'ការពិពណ៌នា',
-            classNames: { header: 'font-khmer tracking-wide' },
-            cell: (unit) => unit.description ?? <span className="text-gray-300">&mdash;</span>,
-        },
-        {
-            header: 'បានបង្កើត',
-            classNames: { header: 'font-khmer tracking-wide' },
-            cell: (unit) => formatCreatedDateTime(unit.created_at),
-        },
-        {
-            header: 'សកម្មភាព',
-            classNames: { header: 'font-khmer text-end tracking-wide' },
-            cell: (unit) => (
-                <div className="flex items-center justify-end">
-                    <IconButton onClick={() => handleEdit(unit)} aria-label={`Edit ${unit.name}`}>
-                        <Pencil size={16} />
-                    </IconButton>
-                    <IconButton color="error" onClick={() => handleDelete(unit)} aria-label={`Delete ${unit.name}`}>
-                        <Trash2 size={16} />
-                    </IconButton>
-                </div>
-            ),
-        },
-    ]
-
-    const { data, ...pagination } = units
-
-    return (
-        <>
-            <Head title="Units" />
-            <div className="p-8">
-                <div className="mb-6 flex items-center justify-between">
-                    <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Units</h1>
-                        <p className="mt-1 text-sm text-gray-500">
-                            Manage your clinic units
-                        </p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                        <SearchBar value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder='Search unit'/>
-                        <Button
-                            onClick={handleCreate}
-                            size="lg"
-                        >
-                            <Plus size={20} /> New Unit
-                        </Button>
-                    </div>
-                </div>
-
-                <DataTable
-                    data={data}
-                    keyExtractor={(unit) => unit.id}
-                    columns={columns}
-                    emptyMessage="No units found"
-                    emptyDescription="Get started by creating a new unit."
-                    pagination={pagination}
-                    baseUrl={baseUrl}
-                />
+   const columns: Column<IUnit>[] = [
+      {
+         header: 'ឈ្មោះ',
+         classNames: { header: 'font-khmer tracking-wide' },
+         cell: (unit) => unit.name,
+      },
+      {
+         header: 'ការពិពណ៌នា',
+         classNames: { header: 'font-khmer tracking-wide' },
+         cell: (unit) => unit.description ?? <span className="text-gray-300">&mdash;</span>,
+      },
+      {
+         header: 'បានបង្កើត',
+         classNames: { header: 'font-khmer tracking-wide' },
+         cell: (unit) => formatCreatedDateTime(unit.created_at),
+      },
+      {
+         header: 'សកម្មភាព',
+         classNames: { header: 'font-khmer text-end tracking-wide' },
+         cell: (unit) => (
+            <div className="flex items-center justify-end">
+               <IconButton onClick={() => handleEdit(unit)} aria-label={`Edit ${unit.name}`}>
+                  <Pencil size={16} />
+               </IconButton>
+               <IconButton color="error" onClick={() => handleDelete(unit)} aria-label={`Delete ${unit.name}`}>
+                  <Trash2 size={16} />
+               </IconButton>
             </div>
-        </>
-    )
+         ),
+      },
+   ]
+
+   const { data, ...pagination } = units
+
+   return (
+      <>
+         <Head title="Units" />
+         <div className="p-8">
+            <div className="mb-6 flex items-center justify-between">
+               <div>
+                  <h1 className="text-2xl font-bold text-gray-900">Units</h1>
+                  <p className="mt-1 text-sm text-gray-500">
+                            Manage your clinic units
+                  </p>
+               </div>
+               <div className="flex items-center gap-3">
+                  <SearchBar value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder='Search unit'/>
+                  <Button
+                     onClick={handleCreate}
+                     size="lg"
+                  >
+                     <Plus size={20} /> New Unit
+                  </Button>
+               </div>
+            </div>
+
+            <DataTable
+               data={data}
+               keyExtractor={(unit) => unit.id}
+               columns={columns}
+               emptyMessage="No units found"
+               emptyDescription="Get started by creating a new unit."
+               pagination={pagination}
+               baseUrl={baseUrl}
+            />
+         </div>
+      </>
+   )
 }
 
 export default Unit

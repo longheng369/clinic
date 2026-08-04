@@ -103,15 +103,15 @@ const MedicineForm = ({ medicine, units }: MedicineFormProps) => {
                      rules={{ required: 'This field is required' }}
                   />
                </Grid>
-            <Grid size={{ md: 6 }}>
-               <Select
-                  control={control}
-                  name='type'
-                  label="Type"
-                  options={MEDICINE_TYPES}
-                  rules={{ required: 'This field is required' }}
-               />
-            </Grid>
+               <Grid size={{ md: 6 }}>
+                  <Select
+                     control={control}
+                     name='type'
+                     label="Type"
+                     options={MEDICINE_TYPES}
+                     rules={{ required: 'This field is required' }}
+                  />
+               </Grid>
                <Grid size={{ md: 6 }}>
                   <Select
                      control={control}

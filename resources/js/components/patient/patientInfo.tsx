@@ -5,7 +5,7 @@ import { cn } from '@/utils/cn'
 
 const InfoItem = ({ label, value, className }: { label: string; value: ReactNode; className?: string }) => (
    <div>
-       <dt className="font-khmer text-gray-500 text-sm mb-0.5">{label}</dt>
+      <dt className="font-khmer text-gray-500 text-sm mb-0.5">{label}</dt>
       <dd className={cn('text-sm text-gray-900', className)}>
          {value ?? <span className="text-gray-300">&mdash;</span>}
       </dd>

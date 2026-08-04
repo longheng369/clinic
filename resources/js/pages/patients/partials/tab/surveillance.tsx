@@ -27,139 +27,139 @@ interface SelectedVisit {
 }
 
 const SurveillanceTab = ({ patientId, selectedVisit }: { patientId: number; selectedVisit: SelectedVisit | null }) => {
-    const { openModal, closeModal, openAlert } = useModal()
-    const { surveillances, allVisits } = usePage<{ surveillances: PaginatedData<ISurveillance>; allVisits: { id: number; type: string; visit_date: string; status: string }[] }>().props
+   const { openModal, closeModal, openAlert } = useModal()
+   const { surveillances, allVisits } = usePage<{ surveillances: PaginatedData<ISurveillance>; allVisits: { id: number; type: string; visit_date: string; status: string }[] }>().props
 
-    if (!selectedVisit) {
-        return (
-            <div className="flex flex-col items-center justify-center py-16 text-center">
-                <h3 className="text-lg font-semibold text-gray-900 mb-1">Surveillance</h3>
-                <p className="text-sm text-gray-500">Select a visit to view surveillance records.</p>
-            </div>
-        )
-    }
+   if (!selectedVisit) {
+      return (
+         <div className="flex flex-col items-center justify-center py-16 text-center">
+            <h3 className="text-lg font-semibold text-gray-900 mb-1">Surveillance</h3>
+            <p className="text-sm text-gray-500">Select a visit to view surveillance records.</p>
+         </div>
+      )
+   }
 
-    const handleCreate = () => {
-        openModal({
-            title: 'New Surveillance Record',
-            content: (
-                <SurveillanceForm
-                    patientId={patientId}
-                    allVisits={allVisits}
-                    selectedVisitId={selectedVisit.id}
-                    onClose={() => closeModal()}
-                />
-            ),
-            config: { preventClickAway: true, maxWidth: '2xl' },
-        })
-    }
-
-    const handleEdit = (s: ISurveillance) => {
-        openModal({
-            title: 'Edit Surveillance Record',
-            content: (
-                <SurveillanceForm
-                    patientId={patientId}
-                    surveillance={s}
-                    allVisits={allVisits}
-                    selectedVisitId={selectedVisit.id}
-                    onClose={() => closeModal()}
-                />
-            ),
-            config: { preventClickAway: true, maxWidth: '2xl' },
-        })
-    }
-
-    const handleDelete = (s: ISurveillance) => {
-        openAlert({
-            message: 'Delete this surveillance record?',
-            description: 'This action cannot be undone.',
-            variant: 'danger',
-            confirmLabel: 'Delete',
-            onConfirm: () => router.delete(`/patients/${patientId}/surveillances/${s.id}`),
-        })
-    }
-
-    const columns: Column<ISurveillance>[] = [
-        {
-            header: 'កាលបរិច្ឆេទ',
-            classNames: { header: 'font-khmer tracking-wide' },
-            cell: (s) => formatCreatedDateTime(s.created_at),
-        },
-        {
-            header: 'សម្ពាធឈាម',
-            classNames: { header: 'font-khmer tracking-wide' },
-            cell: (s) => `${s.systolic}/${s.diastolic}`,
-        },
-        {
-            header: 'ជីពចរ',
-            classNames: { header: 'font-khmer tracking-wide' },
-            cell: (s) => s.pulse,
-        },
-        {
-            header: 'សីតុណ្ហភាព',
-            classNames: { header: 'font-khmer tracking-wide' },
-            cell: (s) => s.temperature.toFixed(1),
-        },
-        {
-            header: 'ដង្ហើម',
-            classNames: { header: 'font-khmer tracking-wide' },
-            cell: (s) => s.rr,
-        },
-        {
-            header: 'អុកស៊ីសែន',
-            classNames: { header: 'font-khmer tracking-wide' },
-            cell: (s) => s.spo2,
-        },
-        {
-            header: 'ការផ្គត់ផ្គង់ O₂',
-            classNames: { header: 'font-khmer tracking-wide' },
-            cell: (s) => s.o2_supply,
-        },
-        {
-            header: 'អ្នកកត់ត្រា',
-            classNames: { header: 'font-khmer tracking-wide' },
-            cell: (s) => s.recorded_by ?? <span className="text-gray-300">&mdash;</span>,
-        },
-        {
-            header: 'សកម្មភាព',
-            classNames: { header: 'font-khmer text-end tracking-wide' },
-            cell: (s) => (
-                <div className="flex items-center justify-end">
-                    <IconButton onClick={() => handleEdit(s)} aria-label="Edit surveillance">
-                        <Pencil size={16} />
-                    </IconButton>
-                    <IconButton color="error" onClick={() => handleDelete(s)} aria-label="Delete surveillance">
-                        <Trash2 size={16} />
-                    </IconButton>
-                </div>
-            ),
-        },
-    ]
-
-    const { data, ...pagination } = surveillances
-    const baseUrl = `/patients/${patientId}`
-
-    return (
-        <div>
-            <div className="mb-4 flex items-center justify-between">
-                <p className="text-sm text-gray-500">Vital signs and surveillance records</p>
-                <Button onClick={handleCreate}>
-                    <Plus size={18} /> New Record
-                </Button>
-            </div>
-
-            <DataTable
-                data={data}
-                keyExtractor={(s) => s.id}
-                columns={columns}
-                emptyMessage="No surveillance records"
-                emptyDescription="Record vital signs for this patient."
-                pagination={pagination}
-                baseUrl={baseUrl}
+   const handleCreate = () => {
+      openModal({
+         title: 'New Surveillance Record',
+         content: (
+            <SurveillanceForm
+               patientId={patientId}
+               allVisits={allVisits}
+               selectedVisitId={selectedVisit.id}
+               onClose={() => closeModal()}
             />
-        </div>
-    )
+         ),
+         config: { preventClickAway: true, maxWidth: '2xl' },
+      })
+   }
+
+   const handleEdit = (s: ISurveillance) => {
+      openModal({
+         title: 'Edit Surveillance Record',
+         content: (
+            <SurveillanceForm
+               patientId={patientId}
+               surveillance={s}
+               allVisits={allVisits}
+               selectedVisitId={selectedVisit.id}
+               onClose={() => closeModal()}
+            />
+         ),
+         config: { preventClickAway: true, maxWidth: '2xl' },
+      })
+   }
+
+   const handleDelete = (s: ISurveillance) => {
+      openAlert({
+         message: 'Delete this surveillance record?',
+         description: 'This action cannot be undone.',
+         variant: 'danger',
+         confirmLabel: 'Delete',
+         onConfirm: () => router.delete(`/patients/${patientId}/surveillances/${s.id}`),
+      })
+   }
+
+   const columns: Column<ISurveillance>[] = [
+      {
+         header: 'កាលបរិច្ឆេទ',
+         classNames: { header: 'font-khmer tracking-wide' },
+         cell: (s) => formatCreatedDateTime(s.created_at),
+      },
+      {
+         header: 'សម្ពាធឈាម',
+         classNames: { header: 'font-khmer tracking-wide' },
+         cell: (s) => `${s.systolic}/${s.diastolic}`,
+      },
+      {
+         header: 'ជីពចរ',
+         classNames: { header: 'font-khmer tracking-wide' },
+         cell: (s) => s.pulse,
+      },
+      {
+         header: 'សីតុណ្ហភាព',
+         classNames: { header: 'font-khmer tracking-wide' },
+         cell: (s) => s.temperature.toFixed(1),
+      },
+      {
+         header: 'ដង្ហើម',
+         classNames: { header: 'font-khmer tracking-wide' },
+         cell: (s) => s.rr,
+      },
+      {
+         header: 'អុកស៊ីសែន',
+         classNames: { header: 'font-khmer tracking-wide' },
+         cell: (s) => s.spo2,
+      },
+      {
+         header: 'ការផ្គត់ផ្គង់ O₂',
+         classNames: { header: 'font-khmer tracking-wide' },
+         cell: (s) => s.o2_supply,
+      },
+      {
+         header: 'អ្នកកត់ត្រា',
+         classNames: { header: 'font-khmer tracking-wide' },
+         cell: (s) => s.recorded_by ?? <span className="text-gray-300">&mdash;</span>,
+      },
+      {
+         header: 'សកម្មភាព',
+         classNames: { header: 'font-khmer text-end tracking-wide' },
+         cell: (s) => (
+            <div className="flex items-center justify-end">
+               <IconButton onClick={() => handleEdit(s)} aria-label="Edit surveillance">
+                  <Pencil size={16} />
+               </IconButton>
+               <IconButton color="error" onClick={() => handleDelete(s)} aria-label="Delete surveillance">
+                  <Trash2 size={16} />
+               </IconButton>
+            </div>
+         ),
+      },
+   ]
+
+   const { data, ...pagination } = surveillances
+   const baseUrl = `/patients/${patientId}`
+
+   return (
+      <div>
+         <div className="mb-4 flex items-center justify-between">
+            <p className="text-sm text-gray-500">Vital signs and surveillance records</p>
+            <Button onClick={handleCreate}>
+               <Plus size={18} /> New Record
+            </Button>
+         </div>
+
+         <DataTable
+            data={data}
+            keyExtractor={(s) => s.id}
+            columns={columns}
+            emptyMessage="No surveillance records"
+            emptyDescription="Record vital signs for this patient."
+            pagination={pagination}
+            baseUrl={baseUrl}
+         />
+      </div>
+   )
 }
 
 export default SurveillanceTab

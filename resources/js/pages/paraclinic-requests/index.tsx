@@ -21,224 +21,224 @@ interface PaginatedData<T> {
 }
 
 const STATUS_BADGES: Record<string, string> = {
-    Draft: 'bg-gray-100 text-gray-700',
-    Requested: 'bg-blue-100 text-blue-700',
-    'Waiting Result': 'bg-amber-100 text-amber-700',
-    'Result Received': 'bg-green-100 text-green-700',
-    Reviewed: 'bg-indigo-100 text-indigo-700',
-    Completed: 'bg-emerald-100 text-emerald-700',
-    Cancelled: 'bg-red-100 text-red-700',
+   Draft: 'bg-gray-100 text-gray-700',
+   Requested: 'bg-blue-100 text-blue-700',
+   'Waiting Result': 'bg-amber-100 text-amber-700',
+   'Result Received': 'bg-green-100 text-green-700',
+   Reviewed: 'bg-indigo-100 text-indigo-700',
+   Completed: 'bg-emerald-100 text-emerald-700',
+   Cancelled: 'bg-red-100 text-red-700',
 }
 
 const PAYMENT_BADGES: Record<string, string> = {
-    Unpaid: 'bg-red-50 text-red-600',
-    Partial: 'bg-amber-50 text-amber-600',
-    Paid: 'bg-green-50 text-green-600',
+   Unpaid: 'bg-red-50 text-red-600',
+   Partial: 'bg-amber-50 text-amber-600',
+   Paid: 'bg-green-50 text-green-600',
 }
 
 const STATUS_OPTIONS = [
-    { value: '', label: 'All Statuses' },
-    { value: 'Draft', label: 'Draft' },
-    { value: 'Requested', label: 'Requested' },
-    { value: 'Waiting Result', label: 'Waiting Result' },
-    { value: 'Result Received', label: 'Result Received' },
-    { value: 'Reviewed', label: 'Reviewed' },
-    { value: 'Completed', label: 'Completed' },
-    { value: 'Cancelled', label: 'Cancelled' },
+   { value: '', label: 'All Statuses' },
+   { value: 'Draft', label: 'Draft' },
+   { value: 'Requested', label: 'Requested' },
+   { value: 'Waiting Result', label: 'Waiting Result' },
+   { value: 'Result Received', label: 'Result Received' },
+   { value: 'Reviewed', label: 'Reviewed' },
+   { value: 'Completed', label: 'Completed' },
+   { value: 'Cancelled', label: 'Cancelled' },
 ]
 
 const PAYMENT_OPTIONS = [
-    { value: '', label: 'All Payments' },
-    { value: 'Unpaid', label: 'Unpaid' },
-    { value: 'Partial', label: 'Partial' },
-    { value: 'Paid', label: 'Paid' },
+   { value: '', label: 'All Payments' },
+   { value: 'Unpaid', label: 'Unpaid' },
+   { value: 'Partial', label: 'Partial' },
+   { value: 'Paid', label: 'Paid' },
 ]
 
 const Index = () => {
-    const { openModal, closeModal, openAlert } = useModal()
-    const { requests, search: searchProp, filters, auth } = usePage<{
+   const { openModal, closeModal, openAlert } = useModal()
+   const { requests, search: searchProp, filters, auth } = usePage<{
         requests: PaginatedData<IParaclinicRequest>
         search: string | null
         filters: { status: string | null; payment_status: string | null; date_from: string | null; date_to: string | null }
         auth: { user: { id: number; name: string } }
     }>().props
 
-    const [searchTerm, setSearchTerm] = useState(searchProp ?? '')
-    const [filterStatus, setFilterStatus] = useState(filters.status ?? '')
-    const [filterPayment, setFilterPayment] = useState(filters.payment_status ?? '')
+   const [searchTerm, setSearchTerm] = useState(searchProp ?? '')
+   const [filterStatus, setFilterStatus] = useState(filters.status ?? '')
+   const [filterPayment, setFilterPayment] = useState(filters.payment_status ?? '')
 
-    useEffect(() => {
-        const timeout = setTimeout(() => {
-            if ((searchTerm || '') === (searchProp || '')) return
-            if (searchTerm) {
-                router.get('/paraclinic-requests', { search: searchTerm }, { preserveState: true, replace: true })
-            } else {
-                router.get('/paraclinic-requests', {}, { preserveState: true, replace: true })
-            }
-        }, 300)
-        return () => clearTimeout(timeout)
-    }, [searchTerm])
+   useEffect(() => {
+      const timeout = setTimeout(() => {
+         if ((searchTerm || '') === (searchProp || '')) return
+         if (searchTerm) {
+            router.get('/paraclinic-requests', { search: searchTerm }, { preserveState: true, replace: true })
+         } else {
+            router.get('/paraclinic-requests', {}, { preserveState: true, replace: true })
+         }
+      }, 300)
+      return () => clearTimeout(timeout)
+   }, [searchTerm])
 
-    const baseUrl = searchProp
-        ? `/paraclinic-requests?search=${encodeURIComponent(searchProp)}`
-        : '/paraclinic-requests'
+   const baseUrl = searchProp
+      ? `/paraclinic-requests?search=${encodeURIComponent(searchProp)}`
+      : '/paraclinic-requests'
 
-    const handleCreate = () => {
-        openModal({
-            title: 'New Paraclinic Request',
-            content: <ParaclinicForm authUser={auth.user} onClose={() => closeModal()} />,
-            config: { preventClickAway: true, maxWidth: '4xl' },
-        })
-    }
+   const handleCreate = () => {
+      openModal({
+         title: 'New Paraclinic Request',
+         content: <ParaclinicForm authUser={auth.user} onClose={() => closeModal()} />,
+         config: { preventClickAway: true, maxWidth: '4xl' },
+      })
+   }
 
-    const handleEdit = (r: IParaclinicRequest) => {
-        openModal({
-            title: `Edit Request ${r.request_number}`,
-            content: <ParaclinicForm request={r} authUser={auth.user} onClose={() => closeModal()} />,
-            config: { preventClickAway: true, maxWidth: '4xl' },
-        })
-    }
+   const handleEdit = (r: IParaclinicRequest) => {
+      openModal({
+         title: `Edit Request ${r.request_number}`,
+         content: <ParaclinicForm request={r} authUser={auth.user} onClose={() => closeModal()} />,
+         config: { preventClickAway: true, maxWidth: '4xl' },
+      })
+   }
 
-    const handleDelete = (r: IParaclinicRequest) => {
-        openAlert({
-            message: `Delete request ${r.request_number}?`,
-            description: 'This action cannot be undone.',
-            variant: 'danger',
-            confirmLabel: 'Delete',
-            onConfirm: () => router.delete(`/paraclinic-requests/${r.id}`),
-        })
-    }
+   const handleDelete = (r: IParaclinicRequest) => {
+      openAlert({
+         message: `Delete request ${r.request_number}?`,
+         description: 'This action cannot be undone.',
+         variant: 'danger',
+         confirmLabel: 'Delete',
+         onConfirm: () => router.delete(`/paraclinic-requests/${r.id}`),
+      })
+   }
 
-    const columns: Column<IParaclinicRequest>[] = [
-        {
-            header: 'លេខស្នើសុំ',
-            classNames: { header: 'font-khmer tracking-wide' },
-            cell: (r) => r.request_number,
-        },
-        {
-            header: 'អ្នកជំងឺ',
-            classNames: { header: 'font-khmer tracking-wide' },
-            cell: (r) => r.patient ? <span className='font-khmer'>{r.patient.khmer_last_name} {r.patient.khmer_first_name}</span> : <span className="text-gray-300">&mdash;</span>,
-        },
-        {
-            header: 'វេជ្ជបណ្ឌិត',
-            classNames: { header: 'font-khmer tracking-wide' },
-            cell: (r) => r.doctor?.name ?? <span className="text-gray-300">&mdash;</span>,
-        },
-        {
-            header: 'មន្ទីរពិសោធន៍',
-            classNames: { header: 'font-khmer tracking-wide' },
-            cell: (r) => r.external_facility_name ?? <span className="text-gray-300">&mdash;</span>,
-        },
-        {
-            header: 'កាលបរិច្ឆេទ',
-            classNames: { header: 'font-khmer tracking-wide' },
-            cell: (r) => r.request_date,
-        },
-        {
-            header: 'ស្ថានភាព',
-            classNames: { header: 'font-khmer tracking-wide' },
-            cell: (r) => (
-                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${STATUS_BADGES[r.status] ?? 'bg-gray-100 text-gray-700'}`}>
-                    {r.status}
-                </span>
-            ),
-        },
-        {
-            header: 'ការទូទាត់',
-            classNames: { header: 'font-khmer tracking-wide' },
-            cell: (r) => (
-                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${PAYMENT_BADGES[r.payment_status] ?? 'bg-gray-100 text-gray-700'}`}>
-                    {r.payment_status}
-                </span>
-            ),
-        },
-        {
-            header: 'ចំនួនទឹកប្រាក់',
-            classNames: { header: 'font-khmer text-end tracking-wide' },
-            cell: (r) => `$${(r.total_amount ?? 0).toFixed(2)}`,
-        },
-        {
-            header: 'សកម្មភាព',
-            classNames: { header: 'font-khmer text-end tracking-wide' },
-            cell: (r) => (
-                <div className="flex items-center justify-end">
-                    <IconButton onClick={() => router.visit(`/paraclinic-requests/${r.id}`)} aria-label="View request">
-                        <Eye size={16} />
-                    </IconButton>
-                    <IconButton onClick={() => handleEdit(r)} aria-label="Edit request">
-                        <Pencil size={16} />
-                    </IconButton>
-                    <IconButton color="error" onClick={() => handleDelete(r)} aria-label="Delete request">
-                        <Trash2 size={16} />
-                    </IconButton>
-                </div>
-            ),
-        },
-    ]
-
-    const { data, ...pagination } = requests
-
-    return (
-        <>
-            <Head title="Paraclinic Requests" />
-            <div className="p-8">
-                <div className="mb-6 flex items-center justify-between">
-                    <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Paraclinic Requests</h1>
-                        <p className="mt-1 text-sm text-gray-500">Manage diagnostic test requests for patients</p>
-                    </div>
-                    <Button onClick={handleCreate} size="lg">
-                        <Plus size={20} /> New Request
-                    </Button>
-                </div>
-
-                <div className="mb-4 flex items-center gap-3">
-                    <div className="flex-1 max-w-md">
-                        <SearchBar value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder='Search by request number or patient...'/>
-                    </div>
-                    <div className="w-44">
-                        <select
-                            value={filterStatus}
-                            onChange={(e) => {
-                                setFilterStatus(e.target.value)
-                                router.get('/paraclinic-requests', { status: e.target.value || null }, { preserveState: true, replace: true })
-                            }}
-                            className="w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
-                        >
-                            {STATUS_OPTIONS.map((o) => (
-                                <option key={o.value} value={o.value}>{o.label}</option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className="w-44">
-                        <select
-                            value={filterPayment}
-                            onChange={(e) => {
-                                setFilterPayment(e.target.value)
-                                router.get('/paraclinic-requests', { payment_status: e.target.value || null }, { preserveState: true, replace: true })
-                            }}
-                            className="w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
-                        >
-                            {PAYMENT_OPTIONS.map((o) => (
-                                <option key={o.value} value={o.value}>{o.label}</option>
-                            ))}
-                        </select>
-                    </div>
-                </div>
-
-                <DataTable
-                    data={data}
-                    keyExtractor={(r) => r.id}
-                    columns={columns}
-                    emptyMessage="No paraclinic requests found"
-                    emptyDescription="Get started by creating a new request."
-                    pagination={pagination}
-                    baseUrl={baseUrl}
-                />
+   const columns: Column<IParaclinicRequest>[] = [
+      {
+         header: 'លេខស្នើសុំ',
+         classNames: { header: 'font-khmer tracking-wide' },
+         cell: (r) => r.request_number,
+      },
+      {
+         header: 'អ្នកជំងឺ',
+         classNames: { header: 'font-khmer tracking-wide' },
+         cell: (r) => r.patient ? <span className='font-khmer'>{r.patient.khmer_last_name} {r.patient.khmer_first_name}</span> : <span className="text-gray-300">&mdash;</span>,
+      },
+      {
+         header: 'វេជ្ជបណ្ឌិត',
+         classNames: { header: 'font-khmer tracking-wide' },
+         cell: (r) => r.doctor?.name ?? <span className="text-gray-300">&mdash;</span>,
+      },
+      {
+         header: 'មន្ទីរពិសោធន៍',
+         classNames: { header: 'font-khmer tracking-wide' },
+         cell: (r) => r.external_facility_name ?? <span className="text-gray-300">&mdash;</span>,
+      },
+      {
+         header: 'កាលបរិច្ឆេទ',
+         classNames: { header: 'font-khmer tracking-wide' },
+         cell: (r) => r.request_date,
+      },
+      {
+         header: 'ស្ថានភាព',
+         classNames: { header: 'font-khmer tracking-wide' },
+         cell: (r) => (
+            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${STATUS_BADGES[r.status] ?? 'bg-gray-100 text-gray-700'}`}>
+               {r.status}
+            </span>
+         ),
+      },
+      {
+         header: 'ការទូទាត់',
+         classNames: { header: 'font-khmer tracking-wide' },
+         cell: (r) => (
+            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${PAYMENT_BADGES[r.payment_status] ?? 'bg-gray-100 text-gray-700'}`}>
+               {r.payment_status}
+            </span>
+         ),
+      },
+      {
+         header: 'ចំនួនទឹកប្រាក់',
+         classNames: { header: 'font-khmer text-end tracking-wide' },
+         cell: (r) => `$${(r.total_amount ?? 0).toFixed(2)}`,
+      },
+      {
+         header: 'សកម្មភាព',
+         classNames: { header: 'font-khmer text-end tracking-wide' },
+         cell: (r) => (
+            <div className="flex items-center justify-end">
+               <IconButton onClick={() => router.visit(`/paraclinic-requests/${r.id}`)} aria-label="View request">
+                  <Eye size={16} />
+               </IconButton>
+               <IconButton onClick={() => handleEdit(r)} aria-label="Edit request">
+                  <Pencil size={16} />
+               </IconButton>
+               <IconButton color="error" onClick={() => handleDelete(r)} aria-label="Delete request">
+                  <Trash2 size={16} />
+               </IconButton>
             </div>
-        </>
-    )
+         ),
+      },
+   ]
+
+   const { data, ...pagination } = requests
+
+   return (
+      <>
+         <Head title="Paraclinic Requests" />
+         <div className="p-8">
+            <div className="mb-6 flex items-center justify-between">
+               <div>
+                  <h1 className="text-2xl font-bold text-gray-900">Paraclinic Requests</h1>
+                  <p className="mt-1 text-sm text-gray-500">Manage diagnostic test requests for patients</p>
+               </div>
+               <Button onClick={handleCreate} size="lg">
+                  <Plus size={20} /> New Request
+               </Button>
+            </div>
+
+            <div className="mb-4 flex items-center gap-3">
+               <div className="flex-1 max-w-md">
+                  <SearchBar value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder='Search by request number or patient...'/>
+               </div>
+               <div className="w-44">
+                  <select
+                     value={filterStatus}
+                     onChange={(e) => {
+                        setFilterStatus(e.target.value)
+                        router.get('/paraclinic-requests', { status: e.target.value || null }, { preserveState: true, replace: true })
+                     }}
+                     className="w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  >
+                     {STATUS_OPTIONS.map((o) => (
+                        <option key={o.value} value={o.value}>{o.label}</option>
+                     ))}
+                  </select>
+               </div>
+               <div className="w-44">
+                  <select
+                     value={filterPayment}
+                     onChange={(e) => {
+                        setFilterPayment(e.target.value)
+                        router.get('/paraclinic-requests', { payment_status: e.target.value || null }, { preserveState: true, replace: true })
+                     }}
+                     className="w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  >
+                     {PAYMENT_OPTIONS.map((o) => (
+                        <option key={o.value} value={o.value}>{o.label}</option>
+                     ))}
+                  </select>
+               </div>
+            </div>
+
+            <DataTable
+               data={data}
+               keyExtractor={(r) => r.id}
+               columns={columns}
+               emptyMessage="No paraclinic requests found"
+               emptyDescription="Get started by creating a new request."
+               pagination={pagination}
+               baseUrl={baseUrl}
+            />
+         </div>
+      </>
+   )
 }
 
 export default Index

@@ -80,7 +80,7 @@ const PatientForm = ({ patient }: PatientFormProps) => {
                      control={control}
                      name="khmer_first_name"
                      label="Khmer First Name"
-                      sx={{ '& .MuiInputBase-input': { fontFamily: 'var(--font-khmer)' } }}
+                     sx={{ '& .MuiInputBase-input': { fontFamily: 'var(--font-khmer)' } }}
                      slotProps={{ htmlInput: { spellCheck: false } }}
                      rules={{
                         required: 'This field is required',
@@ -96,7 +96,7 @@ const PatientForm = ({ patient }: PatientFormProps) => {
                      control={control}
                      name="khmer_last_name"
                      label="Khmer Last Name"
-                      sx={{ '& .MuiInputBase-input': { fontFamily: 'var(--font-khmer)' } }}
+                     sx={{ '& .MuiInputBase-input': { fontFamily: 'var(--font-khmer)' } }}
                      slotProps={{ htmlInput: { spellCheck: false } }}
                      rules={{
                         required: 'This field is required',

@@ -31,8 +31,8 @@ const OTHER_FIELD_MAP: Record<string, string> = {
 }
 
 const ConsultationSection = ({ title, name, options, control, disabled }: SectionProps) => {
-    const hasNormalOption = options.some((option) => option.value === 'NORMAL')
-    const checkboxOptions = options
+   const hasNormalOption = options.some((option) => option.value === 'NORMAL')
+   const checkboxOptions = options
       .filter((option) => option.value !== 'NORMAL')
       .map((option) => ({
          value: option.value,
@@ -46,16 +46,16 @@ const ConsultationSection = ({ title, name, options, control, disabled }: Sectio
             <span className={cn('text-base', /[\u1780-\u17FF\u19E0-\u19FF]/.test(option.label) && 'font-khmer')}>
                {option.label}
             </span>
-            ),
-        }))
-    const othersName = OTHER_FIELD_MAP[name] as Path<IConsultationFormData>
-    const { field: othersField } = useController({ control, name: othersName })
+         ),
+      }))
+   const othersName = OTHER_FIELD_MAP[name] as Path<IConsultationFormData>
+   const { field: othersField } = useController({ control, name: othersName })
 
-    return (
-       <Grid size={12}>
-          <Box>
-             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: hasNormalOption ? 'space-between' : 'flex-start' }}>
-            <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'text.primary' }}>{title}</Typography>
+   return (
+      <Grid size={12}>
+         <Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: hasNormalOption ? 'space-between' : 'flex-start' }}>
+               <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'text.primary' }}>{title}</Typography>
                {hasNormalOption && (
                   <Checkbox
                      control={control}

@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
-import Input from '@/components/form/input-deprecated'
-import Select from '@/components/form/select-deprecated'
-import Textarea from '@/components/form/textarea'
+import Input from '@/components/form/input'
+import NumberInput from '@/components/form/number'
+import Select from '@/components/form/select'
 import { IMedicationAdministration, IMedicationFormData } from '@/interfaces/IMedicationAdministration'
 import { useState } from 'react'
 import { router } from '@inertiajs/react'
@@ -150,12 +150,10 @@ const MedicationForm = ({ patientId, activeVisits, medicines, medication, select
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-               <Input
+               <NumberInput
                   label="Dosage"
                   control={control}
-                  type="number"
-                  step="0.01"
-                  min={0}
+                  slotProps={{ htmlInput: { min: 0, step: 0.01 } }}
                   placeholder="e.g. 500"
                   name="dosage"
                   rules={{ required: 'Required', min: { value: 0, message: 'Min 0' } }}
@@ -171,12 +169,10 @@ const MedicationForm = ({ patientId, activeVisits, medicines, medication, select
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-               <Input
+               <NumberInput
                   label="Duration (total doses)"
                   control={control}
-                  type="number"
-                  min={1}
-                  max={365}
+                  slotProps={{ htmlInput: { min: 1, max: 365 } }}
                   placeholder="e.g. 3"
                   name="duration"
                   rules={{ required: 'Required', min: { value: 1, message: 'Min 1' } }}
@@ -190,11 +186,13 @@ const MedicationForm = ({ patientId, activeVisits, medicines, medication, select
                />
             </div>
 
-            <Textarea
+            <Input
                label="Notes"
                control={control}
                name="notes"
                placeholder="Optional notes..."
+               multiline
+               rows={3}
             />
          </div>
 

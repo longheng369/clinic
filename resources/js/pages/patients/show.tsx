@@ -61,19 +61,19 @@ const PatientShow = ({ patient }: { patient: IPatient }) => {
       if (tabFromUrl && visibleTabs.some((t) => t.key === tabFromUrl)) return tabFromUrl as Tab
       return visibleTabs[0]?.key as Tab ?? 'consultation'
    })
-    const { openAlert } = useModal()
-    const [isVisitDrawerOpen, setVisitDrawerOpen] = useState(false)
+   const { openAlert } = useModal()
+   const [isVisitDrawerOpen, setVisitDrawerOpen] = useState(false)
 
-    useEffect(() => {
-       if (!isVisitDrawerOpen) return
+   useEffect(() => {
+      if (!isVisitDrawerOpen) return
 
-       const handleEscape = (event: KeyboardEvent) => {
-          if (event.key === 'Escape') setVisitDrawerOpen(false)
-       }
+      const handleEscape = (event: KeyboardEvent) => {
+         if (event.key === 'Escape') setVisitDrawerOpen(false)
+      }
 
-       window.addEventListener('keydown', handleEscape)
-       return () => window.removeEventListener('keydown', handleEscape)
-    }, [isVisitDrawerOpen])
+      window.addEventListener('keydown', handleEscape)
+      return () => window.removeEventListener('keydown', handleEscape)
+   }, [isVisitDrawerOpen])
 
    const handleAdmit = (visitId: number) => {
       openAlert({
@@ -173,83 +173,83 @@ const PatientShow = ({ patient }: { patient: IPatient }) => {
             </Box>
          </div>
 
-           <div
-              id="patient-visit-history"
-              role="dialog"
-              aria-label="Patient visit history"
-              className={cn(
-                 'fixed inset-y-0 right-0 z-[1200] w-[min(calc(100vw-40px),360px)] border-l border-slate-200 bg-slate-50 shadow-2xl transition-transform duration-300 ease-in-out sm:w-[380px]',
-                 isVisitDrawerOpen ? 'translate-x-0' : 'translate-x-full',
-              )}
-           >
-              <div className="relative h-full">
-                 <Button
-                    variant="contained"
-                    aria-label={isVisitDrawerOpen ? 'Close visit history' : 'Open visit history'}
-                    aria-expanded={isVisitDrawerOpen}
-                    aria-controls="patient-visit-history"
-                    onClick={() => setVisitDrawerOpen((open) => !open)}
-                    disableElevation
-                    sx={{
-                        minWidth: 0,
-                        width: 30,
-                        height: 120,
-                        padding: 0,
-                       position: 'absolute',
-                       left: -30,
-                       top: '50%',
-                       transform: 'translateY(-50%)',
-                       zIndex: 1,
-                       borderRadius: '12px 0 0 12px',
-                        border: '1px solid #cbd5e1',
-                        borderRight: 0,
-                        '& .visit-history-label': {
-                           writingMode: 'vertical-rl',
-                           textOrientation: 'mixed',
-                           transform: 'rotate(180deg)',
-                           whiteSpace: 'nowrap',
-                           fontSize: '0.7rem',
-                           letterSpacing: '0.05em',
-                        },
-                     }}
-                  >
-                     <span className="visit-history-label">Visit History</span>
-                  </Button>
-                 <div className="flex h-full flex-col" inert={!isVisitDrawerOpen ? true : undefined}>
-                    <div className="flex items-center justify-between border-b border-slate-200 bg-white px-5 py-4">
-                       <div>
-                          <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-500">Visit history</h2>
-                          <p className="mt-1 text-xs text-gray-400">{allVisits.length} recorded visits</p>
-                       </div>
-                       <IconButton aria-label="Close visit history" onClick={() => setVisitDrawerOpen(false)} size="small">
-                          <X size={18} />
-                       </IconButton>
-                    </div>
-                    <div className="flex-1 overflow-y-auto p-4">
-                       <VisitHistory
-                          allVisits={allVisits}
-                          selectedVisit={selectedVisit}
-                          formatVisitDate={formatVisitDate}
-                          onVisitSelect={handleVisitSelect}
-                          onAdmit={handleAdmit}
-                          onClose={handleClose}
-                       />
-                    </div>
-                 </div>
-              </div>
-           </div>
+         <div
+            id="patient-visit-history"
+            role="dialog"
+            aria-label="Patient visit history"
+            className={cn(
+               'fixed inset-y-0 right-0 z-1200 w-[min(calc(100vw-40px),360px)] border-l border-slate-200 bg-slate-50 shadow-2xl transition-transform duration-300 ease-in-out sm:w-[380px]',
+               isVisitDrawerOpen ? 'translate-x-0' : 'translate-x-full',
+            )}
+         >
+            <div className="relative h-full">
+               <Button
+                  variant="contained"
+                  aria-label={isVisitDrawerOpen ? 'Close visit history' : 'Open visit history'}
+                  aria-expanded={isVisitDrawerOpen}
+                  aria-controls="patient-visit-history"
+                  onClick={() => setVisitDrawerOpen((open) => !open)}
+                  disableElevation
+                  sx={{
+                     minWidth: 0,
+                     width: 30,
+                     height: 120,
+                     padding: 0,
+                     position: 'absolute',
+                     left: -30,
+                     top: '50%',
+                     transform: 'translateY(-50%)',
+                     zIndex: 1,
+                     borderRadius: '12px 0 0 12px',
+                     border: '1px solid #cbd5e1',
+                     borderRight: 0,
+                     '& .visit-history-label': {
+                        writingMode: 'vertical-rl',
+                        textOrientation: 'mixed',
+                        transform: 'rotate(180deg)',
+                        whiteSpace: 'nowrap',
+                        fontSize: '0.7rem',
+                        letterSpacing: '0.05em',
+                     },
+                  }}
+               >
+                  <span className="visit-history-label">Visit History</span>
+               </Button>
+               <div className="flex h-full flex-col" inert={!isVisitDrawerOpen ? true : undefined}>
+                  <div className="flex items-center justify-between border-b border-slate-200 bg-white px-5 py-4">
+                     <div>
+                        <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-500">Visit history</h2>
+                        <p className="mt-1 text-xs text-gray-400">{allVisits.length} recorded visits</p>
+                     </div>
+                     <IconButton aria-label="Close visit history" onClick={() => setVisitDrawerOpen(false)} size="small">
+                        <X size={18} />
+                     </IconButton>
+                  </div>
+                  <div className="flex-1 overflow-y-auto p-4">
+                     <VisitHistory
+                        allVisits={allVisits}
+                        selectedVisit={selectedVisit}
+                        formatVisitDate={formatVisitDate}
+                        onVisitSelect={handleVisitSelect}
+                        onAdmit={handleAdmit}
+                        onClose={handleClose}
+                     />
+                  </div>
+               </div>
+            </div>
+         </div>
 
-           <button
-              type="button"
-              aria-label="Close visit history"
-              onClick={() => setVisitDrawerOpen(false)}
-              className={cn(
-                 'fixed inset-0 z-[1190] bg-slate-950/20 transition-opacity duration-300',
-                 isVisitDrawerOpen ? 'opacity-100' : 'pointer-events-none opacity-0',
-              )}
-           />
+         <button
+            type="button"
+            aria-label="Close visit history"
+            onClick={() => setVisitDrawerOpen(false)}
+            className={cn(
+               'fixed inset-0 z-1190 bg-slate-950/20 transition-opacity duration-300',
+               isVisitDrawerOpen ? 'opacity-100' : 'pointer-events-none opacity-0',
+            )}
+         />
 
-       </div>
+      </div>
    )
 }
 
@@ -287,8 +287,8 @@ const VisitHistory = ({
                            isSelected
                               ? 'bg-primary-500 ring-2 ring-primary-100'
                               : v.status === 'active'
-                                ? 'bg-green-500'
-                                : 'bg-slate-300',
+                                 ? 'bg-green-500'
+                                 : 'bg-slate-300',
                         )}
                      />
                   </div>
@@ -299,57 +299,57 @@ const VisitHistory = ({
                         ? 'border-primary-300 bg-primary-50/60'
                         : 'border-gray-100 bg-gray-50 hover:border-gray-200 hover:bg-gray-100',
                   )}>
-                  <button
-                     type="button"
-                     onClick={() => onVisitSelect(v.id)}
-                     className="w-full px-3.5 py-3 text-left"
-                  >
-                     <div className="flex items-start justify-between gap-3">
-                        <div className="min-w-0">
-                           <p className="text-sm font-semibold text-slate-700">{formatVisitDate(v.visit_date)}</p>
+                     <button
+                        type="button"
+                        onClick={() => onVisitSelect(v.id)}
+                        className="w-full px-3.5 py-3 text-left"
+                     >
+                        <div className="flex items-start justify-between gap-3">
+                           <div className="min-w-0">
+                              <p className="text-sm font-semibold text-slate-700">{formatVisitDate(v.visit_date)}</p>
+                              <span className={cn(
+                                 'mt-1 inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium',
+                                 v.type === 'IPD' ? 'bg-amber-100 text-amber-700' : 'bg-primary-100 text-primary-700',
+                              )}>
+                                 {v.type} visit
+                              </span>
+                           </div>
                            <span className={cn(
-                              'mt-1 inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium',
-                              v.type === 'IPD' ? 'bg-amber-100 text-amber-700' : 'bg-primary-100 text-primary-700',
+                              'shrink-0 text-[11px] font-medium capitalize',
+                              v.status === 'active' ? 'text-green-600' : 'text-gray-400',
                            )}>
-                              {v.type} visit
+                              {v.status}
                            </span>
                         </div>
-                        <span className={cn(
-                           'shrink-0 text-[11px] font-medium capitalize',
-                           v.status === 'active' ? 'text-green-600' : 'text-gray-400',
-                        )}>
-                           {v.status}
-                        </span>
-                     </div>
 
-                     <div className="mt-2 text-[11px] text-gray-400">
-                        {v.recorded_by ? `Recorded by ${v.recorded_by}` : 'Recorded visit'}
-                        {v.closed_at ? <span> &middot; Closed {formatVisitDate(v.closed_at)}</span> : ''}
-                     </div>
-                  </button>
+                        <div className="mt-2 text-[11px] text-gray-400">
+                           {v.recorded_by ? `Recorded by ${v.recorded_by}` : 'Recorded visit'}
+                           {v.closed_at ? <span> &middot; Closed {formatVisitDate(v.closed_at)}</span> : ''}
+                        </div>
+                     </button>
 
-                  {v.status === 'active' && isSelected && (
-                     <div className="flex items-center gap-1.5 border-t border-primary-100 px-3.5 py-2" onClick={(e) => e.stopPropagation()}>
-                        {v.type === 'OPD' && (
+                     {v.status === 'active' && isSelected && (
+                        <div className="flex items-center gap-1.5 border-t border-primary-100 px-3.5 py-2" onClick={(e) => e.stopPropagation()}>
+                           {v.type === 'OPD' && (
+                              <button
+                                 type="button"
+                                 onClick={() => onAdmit(v.id)}
+                                 className="inline-flex items-center gap-1 rounded-md bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-700 transition-colors hover:bg-amber-100"
+                              >
+                                 <Hospital size={11} />
+                              Admit
+                              </button>
+                           )}
                            <button
                               type="button"
-                              onClick={() => onAdmit(v.id)}
-                              className="inline-flex items-center gap-1 rounded-md bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-700 transition-colors hover:bg-amber-100"
+                              onClick={() => onClose(v.id)}
+                              className="inline-flex items-center gap-1 rounded-md bg-gray-100 px-2 py-0.5 text-[11px] font-medium text-gray-500 transition-colors hover:bg-gray-200"
                            >
-                              <Hospital size={11} />
-                              Admit
-                           </button>
-                        )}
-                        <button
-                           type="button"
-                           onClick={() => onClose(v.id)}
-                           className="inline-flex items-center gap-1 rounded-md bg-gray-100 px-2 py-0.5 text-[11px] font-medium text-gray-500 transition-colors hover:bg-gray-200"
-                        >
-                           <LogOut size={11} />
+                              <LogOut size={11} />
                            Close
-                        </button>
-                     </div>
-                  )}
+                           </button>
+                        </div>
+                     )}
                   </div>
                </div>
             )

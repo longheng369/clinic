@@ -19,7 +19,7 @@ type Props<T extends FieldValues = FieldValues> = {
       RegisterOptions<T, Path<T>>,
       "valueAsNumber" | "valueAsDate" | "setValueAs" | "disabled"
    >;
-   options: IOption<string | number>[];
+   options: IOption<any>[];
 } & SelectProps;
 
 const Select = <T extends FieldValues = FieldValues>({ control, name, rules, options, ...rest }: Props<T>) => {
