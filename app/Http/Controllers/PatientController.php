@@ -6,6 +6,7 @@ use App\Models\Medicine;
 use App\Models\ParaclinicRequest;
 use App\Models\Patient;
 use App\Models\PatientAttachment;
+use App\Models\Unit;
 use App\Models\Vaccine;
 use App\Models\Visit;
 use Carbon\Carbon;
@@ -213,6 +214,7 @@ class PatientController extends Controller
                 $patient->nextDoseForVaccine($v),
             ))->filter(fn ($item) => $item['next_dose_due_date'] !== null && Carbon::parse($item['next_dose_due_date'])->lte(Carbon::now()->addDays(7)))->values(),
             'medicines' => Medicine::orderBy('name')->get(['id', 'name']),
+            'units' => Unit::orderBy('name')->get(['id', 'name']),
             'attachments' => $selectedVisit
                 ? $selectedVisit->attachments()->with('uploadedBy')->latest()->get()
                 : $patient->attachments()->with('uploadedBy')->latest()->get(),

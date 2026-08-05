@@ -337,7 +337,7 @@ const VisitHistory = ({
                                  className="inline-flex items-center gap-1 rounded-md bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-700 transition-colors hover:bg-amber-100"
                               >
                                  <Hospital size={11} />
-                              Admit
+                                 Admit
                               </button>
                            )}
                            <button
@@ -346,7 +346,7 @@ const VisitHistory = ({
                               className="inline-flex items-center gap-1 rounded-md bg-gray-100 px-2 py-0.5 text-[11px] font-medium text-gray-500 transition-colors hover:bg-gray-200"
                            >
                               <LogOut size={11} />
-                           Close
+                              Close
                            </button>
                         </div>
                      )}
