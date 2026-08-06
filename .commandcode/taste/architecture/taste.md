@@ -6,6 +6,7 @@
 - For multi-item forms (e.g., prescriptions with medicine rows), prefer a read-only summary table with modal dialogs for individual item add/edit — table for scannable overview, pop-up form for focused detail entry. Confidence: 0.85
 - Patient sub-entities (attachments, medications, prescriptions, surveillances, consultations, paraclinic requests) should be scoped to a specific visit, not just owned by the patient. Confidence: 0.80
 - Prescriptions have a one-to-one relationship with visits: each visit has exactly one prescription (use `firstOrCreate` on `visit_id`, not `HasMany`). Confidence: 0.85
+- When a separate update endpoint/path exists, keep the `store` action create-only — no delete-then-recreate (upsert) or conditional item-creation guards in `store`; enforce the uniqueness/existence rule via FormRequest validation (e.g., `Rule::unique('prescriptions', 'visit_id')`) so `store` is a plain create. Confidence: 0.80
 - For managing visit-scoped sub-entities (like prescriptions), prefer inline tab-based management UI (table + modal for add/edit within the tab) over dedicated create/edit pages. Confidence: 0.75
 - When standardizing component usage or patterns across the project, pick one module (e.g., patients) as the canonical "baseline" and align all other modules to match its conventions, rather than designing a new standard from scratch. Confidence: 0.75
 - Place ambient TypeScript declaration files (`.d.ts`) for module types and framework augmentations (e.g., Vite client types, CSS module declarations) in `resources/js/types/`. Confidence: 0.55

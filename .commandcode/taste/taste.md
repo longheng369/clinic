@@ -3,6 +3,7 @@
 [cmd]: https://commandcode.ai/
 
 # react
+- Define React component props with the `type` keyword and name the type `Props` (e.g., `type Props = { ... }`). Confidence: 0.85
 - Use light mode as the default design direction for UI components. Confidence: 0.65
 - Use `import { Link } from '@inertiajs/react'` for navigation instead of `<a>` tags. Confidence: 0.65
 - Prefers `usePage().props` from `@inertiajs/react` to access shared page data directly in deeply nested components instead of prop drilling through intermediate layers. Confidence: 0.65
@@ -14,6 +15,7 @@ See [styling/taste.md](styling/taste.md)
 - Use `constrained()` instead of `foreign()->references()->on()` in migrations. Confidence: 0.65
 - Use `#[Fillable]` attribute syntax (Laravel 13) instead of `protected $fillable` property. Confidence: 0.65
 - Use `created_by` instead of `recorded_by` for tracking who created a record. Confidence: 0.65
+- Attach authorship automatically via a model `booted()` hook with a `creating` event (e.g., setting `created_by` from the authenticated user) instead of assigning it manually in controllers. Confidence: 0.75
 
 # architecture
 See [architecture/taste.md](architecture/taste.md)
@@ -28,12 +30,7 @@ See [architecture/taste.md](architecture/taste.md)
 - Prefer DataTable component with pagination over card-based layouts for displaying tabular record data. Confidence: 0.65
 
 # workflow
-- Run `npx tsc --noEmit` after TypeScript/TSX changes to verify no type errors before declaring completion. Confidence: 0.65
-- For feature changes or significant refactors, write a detailed plan and get explicit approval before writing implementation code. Confidence: 0.60
-- Use Composer scripts (`composer.json` "scripts" section) as the task runner for project utility commands like db:dump / db:restore. Confidence: 0.55
-- In medication administration tracking, each "Provide" action marks a single individual dose as administered (do not batch multiple doses under one click based on interval like TID). Confidence: 0.70
-- For the MAR (medication administration record) tab, display medication orders as separate table rows rather than inside accordion/collapsible cards. Confidence: 0.70
-
+See [workflow/taste.md](workflow/taste.md)
 # architecture
 - Scope medication and surveillance tabs to only show for IPD (inpatient) visits, not OPD visits. Confidence: 0.75
 
@@ -53,4 +50,5 @@ See [architecture/taste.md](architecture/taste.md)
 
 # laravel
 - Use `firstOrCreate()` instead of `create()` in seeders to prevent duplicate records on re-runs. Confidence: 0.65
+- Enforce business rules like "only one record per parent" via FormRequest validation (`Rule::unique`) rather than controller-side `firstOrCreate`/upsert logic — keep controllers as plain creates/updates and let validation reject duplicates. Confidence: 0.65
 

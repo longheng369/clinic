@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Auth;
 
 #[Fillable([
     'visit_id',
@@ -27,5 +28,16 @@ class Prescription extends Model
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (Prescription $prescription) {
+            $user = Auth::user();
+
+            if ($prescription->created_by === null && $user) {
+                $prescription->created_by = $user->id;
+            }
+        });
     }
 }

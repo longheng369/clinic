@@ -1,7 +1,12 @@
 # workflow
-- For UX/UI related tasks, use the premium-eco-design-system agent at `.commandcode/agents/premium-eco-design-system.md`. Confidence: 0.75
-- When medication dose progress reaches 100% (all doses taken), automatically set the medication status to "Discontinued". Confidence: 0.70
-- Separate medication orders (doctor side) from administrations (nurse history) — the doctor creates orders with dose/frequency, the nurse provides individual administrations. Confidence: 0.70
-- When a nurse provides a pending administration and the count is still below the target frequency, auto-create the next pending administration. Confidence: 0.70
-- Never modify past administrations — for significant dose changes, stop the old medication order and create a new one instead. Confidence: 0.75
-- Before deleting a source file, grep the codebase for all references to it to confirm it is truly dead code — only delete when zero imports or references remain. Confidence: 0.75
+- Maintains project-wide coding conventions in AGENTS.md (e.g., under a "Code Style Guidelines" section) so agents can reference and follow them. Confidence: 0.55
+- Develops PHP projects in VS Code with the Intelephense language server (`bmewburn.vscode-intelephense-client`). Confidence: 0.65
+- When the IDE reports errors (e.g., "Not enough arguments. Expected 1. Found 0.") that contradict working runtime behavior, investigate the root cause (language server mis-resolving Eloquent magic methods / stale index) and avoid "fixing" working code — distinguish real errors from tooling false positives before changing anything. Confidence: 0.65
+- Prefers permanent, root-cause fixes for tooling issues (e.g., ide-helper stubs or `@method` docblocks for Intelephense) over temporary workarounds like reloading/restarting the language server. Confidence: 0.65
+- Run `npx tsc --noEmit` after TypeScript/TSX changes to verify no type errors before declaring completion. Confidence: 0.75
+- Use `php artisan ide-helper:generate` and `php artisan ide-helper:models` to give the IDE exact Laravel model signatures and eliminate Intelephense false-positive warnings on Eloquent magic methods. Confidence: 0.55
+- Run eslint on modified files after a refactor to confirm they pass lint before declaring completion. Confidence: 0.55
+- For feature changes or significant refactors, write a detailed plan and get explicit approval before writing implementation code. Confidence: 0.60
+- Use Composer scripts (`composer.json` "scripts" section) as the task runner for project utility commands like db:dump / db:restore. Confidence: 0.55
+- In medication administration tracking, each "Provide" action marks a single individual dose as administered (do not batch multiple doses under one click based on interval like TID). Confidence: 0.70
+- For the MAR (medication administration record) tab, display medication orders as separate table rows rather than inside accordion/collapsible cards. Confidence: 0.70

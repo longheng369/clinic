@@ -3,13 +3,14 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StorePrescriptionRequest extends FormRequest
 {
     public function rules(): array
     {
         return [
-            'visit_id' => ['required', 'exists:visits,id'],
+            'visit_id' => ['required', 'exists:visits,id', Rule::unique('prescriptions', 'visit_id')],
             'notes' => ['nullable', 'string', 'max:1000'],
             'items' => ['required', 'array', 'min:1'],
             'items.*.medicine_id' => ['required', 'exists:medicines,id'],

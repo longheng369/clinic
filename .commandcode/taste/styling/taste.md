@@ -18,3 +18,7 @@
 - Khmer text in DataTable row cells should use only the `font-khmer` class without any additional font-size or weight modifiers (no `font-khmer text-base`, `font-khmer text-[16px]`, etc.). Confidence: 0.80
 - Avoid `classNames: { body: ... }` on DataTable Columns — apply styling on the header cells only via `classNames: { header: ... }`. Confidence: 0.70
 - Page `<Head title>` and `<h1>` headings should use Khmer language text, not English. Confidence: 0.80
+- Prefer MUI (Material UI) components over raw Tailwind utility divs for page-level UI — when converting a file to MUI, convert all remaining Tailwind-only sections (status bars, drawers, lists) so the file uses MUI consistently throughout rather than mixing both. Confidence: 0.85
+- Use MUI primitives for structure: `Paper` + `Typography`/`Divider` for status/info bars, `Drawer` for side panels, `List`/`ListItemButton` for timelines/lists, `IconButton` for close actions. Confidence: 0.75
+- Use MUI `Drawer` with `slotProps={{ paper: ... }}` instead of hand-rolled backdrop + escape-key handling, and prefer `slotProps.paper` over the deprecated `PaperProps` to keep TypeScript types clean. Confidence: 0.60
+- For clickable list items/rows, use MUI `ListItemButton` (ripple built in via ButtonBase) instead of `ListItem` with a raw onClick handler — the user explicitly wants a ripple effect on click. Confidence: 0.70

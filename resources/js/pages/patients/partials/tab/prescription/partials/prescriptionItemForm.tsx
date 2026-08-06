@@ -42,7 +42,7 @@ const PrescriptionItemForm: FC<Props> = ({
          : {
             medicine: '',
             unit: '',
-            route: 'PO',
+            route: '',
             notes: null,
             quantity: 0,
             morning: 0,

@@ -21,6 +21,7 @@ When implementing a new feature, limit context reading to these directories/file
 - Follow existing patterns in the codebase
 - Extract complex conditions into meaningful boolean variables
 - Use `import { cn } from '@/utils/cn'` for class name merging (shared utility, do not define inline)
+- Define React component props with the `type` keyword and name them `Props` (e.g., `type Props = { ... }`)
 
 ## Architecture Notes
 
