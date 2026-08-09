@@ -5,14 +5,25 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUnitRequest;
 use App\Http\Requests\UpdateUnitRequest;
 use App\Models\Unit;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class UnitController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $search = $request->query('search');
+
         return Inertia::render('units/index', [
-            'units' => Unit::latest()->paginate(10),
+            'units' => Unit::query()
+                ->latest()
+                ->when($search, fn ($query) => $query->where(function ($query) use ($search) {
+                    $query->where('name', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%");
+                }))
+                ->paginate(10)
+                ->withQueryString(),
+            'search' => $search,
         ]);
     }
 

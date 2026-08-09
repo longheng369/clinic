@@ -4,6 +4,7 @@
 - Include print-friendly CSS classes (`print:border-none`, `print:max-w-none`) on printable document containers. Confidence: 0.70
 - Use the `cn()` utility from `@/utils/cn` for conditional className merging in JSX. Confidence: 0.70
 - Keep form inputs at adequately visible dimensions; do not reduce sizing below Tailwind defaults. Confidence: 0.65
+- Prefer action buttons beside search inputs to match the input's compact size/height rather than using a taller default button size. Confidence: 0.70
 - Use primary-500 color for input focus outlines/rings. Confidence: 0.75
 - Prefer blue-based accent colors (primary-50 range) over default orange/warm accent tones. Confidence: 0.70
 - Avoid Tailwind CSS transition classes (transition-all, duration-*) on UI components — prefer instant state changes. Confidence: 0.60
@@ -23,3 +24,5 @@
 - Use MUI `Drawer` with `slotProps={{ paper: ... }}` instead of hand-rolled backdrop + escape-key handling, and prefer `slotProps.paper` over the deprecated `PaperProps` to keep TypeScript types clean. Confidence: 0.60
 - For clickable list items/rows, use MUI `ListItemButton` (ripple built in via ButtonBase) instead of `ListItem` with a raw onClick handler — the user explicitly wants a ripple effect on click. Confidence: 0.70
 - Use MUI as the sole UI and styling system: eliminate Tailwind CSS and its utility classes/directives rather than mixing Tailwind with MUI. Confidence: 0.95
+- For tabular pages that should match the Patients feature, prefer the Patients-style MUI X `DataGrid` pattern over the reusable `DataTable` component. Confidence: 0.85
+- Prefer table components to have a visible border style around the table, with visually collapsed internal vertical and horizontal dividers (one border per shared edge, avoiding doubled lines); keep the final column’s outer edge clean when appropriate. Confidence: 0.95

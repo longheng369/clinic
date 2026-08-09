@@ -8,7 +8,6 @@ import {
    RulerDimensionLine,
    Settings,
    Syringe,
-   Tags,
    Users,
 } from 'lucide-react'
 import type { ISidebarSection } from '@/interfaces/ISidebar'

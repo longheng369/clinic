@@ -46,7 +46,6 @@ const theme = createTheme({
          primary: '#1e293b',
          secondary: '#64748b',
       },
-      divider: '#cbd5e1',
    },
    typography: {
       fontFamily: '"Poppins", "Siemreap", system-ui, sans-serif',
@@ -59,7 +58,6 @@ const theme = createTheme({
    shape: {
       borderRadius: 10,
    },
-   spacing: 4,
    components: {
       MuiCssBaseline: {
          styleOverrides: {
@@ -69,49 +67,9 @@ const theme = createTheme({
          },
       },
       MuiButton: {
-         defaultProps: {
-            disableElevation: true,
-         },
          styleOverrides: {
             root: {
                textTransform: 'none',
-               fontWeight: 500,
-               borderRadius: 10,
-            },
-         },
-      },
-      MuiIconButton: {
-         styleOverrides: {
-            root: {
-               borderRadius: 10,
-            },
-         },
-      },
-      MuiTextField: {
-         defaultProps: {
-            size: 'small',
-            fullWidth: true,
-            variant: 'standard',
-         },
-         styleOverrides: {
-            root: {
-               '& .MuiOutlinedInput-root': {
-                  borderRadius: 10,
-               },
-            },
-         },
-      },
-      MuiFormControl: {
-         defaultProps: {
-            fullWidth: true,
-            size: 'small',
-            variant: 'standard',
-         },
-      },
-      MuiPaper: {
-         styleOverrides: {
-            root: {
-               backgroundImage: 'none',
             },
          },
       },
@@ -119,13 +77,6 @@ const theme = createTheme({
          styleOverrides: {
             paper: {
                borderRadius: 16,
-            },
-         },
-      },
-      MuiChip: {
-         styleOverrides: {
-            root: {
-               borderRadius: 8,
             },
          },
       },

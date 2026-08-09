@@ -9,16 +9,9 @@
 
 :root {
     font-family: 'Poppins', 'Siemreap', ui-sans-serif, system-ui, sans-serif;
-    color: #1e293b;
     background: #efefef;
     font-synthesis: none;
     text-rendering: optimizeLegibility;
-}
-
-html,
-body,
-#app {
-    min-height: 100%;
 }
 
 html {
@@ -26,7 +19,6 @@ html {
 }
 
 body {
-    min-width: 320px;
     margin: 0;
     background: #efefef;
     color: #1e293b;

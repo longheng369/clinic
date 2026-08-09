@@ -73,7 +73,6 @@ const Sidebar = () => {
    const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
       Settings: true,
    })
-   const [collapsed, setCollapsed] = useState(false)
 
    const toggleSection = (label: string) => {
       setExpandedSections((prev) => ({ ...prev, [label]: !prev[label] }))
@@ -109,28 +108,6 @@ const Sidebar = () => {
       const isExpanded = expandedSections[item.label]
 
       if (item.children) {
-         if (collapsed && !nested) {
-            return (
-               <ListItem key={item.label} disablePadding sx={{ display: 'flex', justifyContent: 'center', mb: 0.5 }}>
-                  <Tooltip title={item.label} placement="right">
-                     <ListItemButton
-                        onClick={() => { setCollapsed(false); toggleSection(item.label) }}
-                        aria-label={item.label}
-                        sx={{
-                           justifyContent: 'center',
-                           width: 40,
-                           height: 40,
-                           borderRadius: 1,
-                           ...inactiveItemSx,
-                        }}
-                     >
-                        {Icon && <Icon size={20} />}
-                     </ListItemButton>
-                  </Tooltip>
-               </ListItem>
-            )
-         }
-
          return (
             <Box key={item.label}>
                <ListItem disablePadding>
@@ -138,18 +115,16 @@ const Sidebar = () => {
                      onClick={() => toggleSection(item.label)}
                      sx={{
                         borderRadius: 1,
-                        p: 3,
-                        gap: 1.5,
                         ...inactiveItemSx,
                      }}
                   >
-                     <ListItemIcon sx={{ minWidth: 0, color: 'inherit' }}>
-                        {Icon && <Icon size={18} />}
+                     <ListItemIcon sx={{ color: 'inherit' }}>
+                        {Icon && <Icon size={16} />}
                      </ListItemIcon>
                      <ListItemText
                         primary={item.label}
                         sx={{ my: 0 }}
-                        slotProps={{ primary: { sx: { fontSize: 14, fontWeight: 500 } } }}
+                        
                      />
                      {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                   </ListItemButton>
@@ -164,60 +139,19 @@ const Sidebar = () => {
       }
 
       const isActive = item.path === url
-      if (collapsed && !nested) {
-         return (
-            <ListItem key={item.path ?? item.label} disablePadding sx={{ display: 'flex', justifyContent: 'center', mb: 0.5 }}>
-               <Tooltip title={item.label} placement="right">
-                  <ListItemButton
-                     component={SidebarLink as React.ElementType}
-                     href={item.path!}
-                     aria-label={item.label}
-                     sx={{
-                        position: 'relative',
-                        justifyContent: 'center',
-                        width: 40,
-                        height: 40,
-                        borderRadius: 1,
-                        ...(isActive ? activeItemSx : inactiveItemSx),
-                        borderRight: 'none',
-                        ...(isActive
-                           ? {
-                              '&::after': {
-                                 content: '""',
-                                 position: 'absolute',
-                                 left: 0,
-                                 top: '50%',
-                                 transform: 'translateY(-50%)',
-                                 height: 20,
-                                 width: 2,
-                                 borderRadius: '9999px',
-                                 bgcolor: '#ffffff',
-                              },
-                           }
-                           : {}),
-                     }}
-                  >
-                     {Icon && <Icon size={20} />}
-                  </ListItemButton>
-               </Tooltip>
-            </ListItem>
-         )
-      }
 
       return (
-         <ListItem key={item.path ?? item.label} disablePadding sx={{ mb: 0.5 }}>
+         <ListItem key={item.path ?? item.label} disablePadding>
             <ListItemButton
                component={SidebarLink as React.ElementType}
                href={item.path!}
                sx={{
                   borderRadius: 1,
-                  p: 2,
-                  gap: 1.5,
                   ...(isActive ? activeItemSx : inactiveItemSx),
                }}
             >
-               <ListItemIcon sx={{ minWidth: 0, color: 'inherit' }}>
-                  {Icon && <Icon size={18} />}
+               <ListItemIcon sx={{ color: 'inherit' }}>
+                  {Icon && <Icon size={16} />}
                </ListItemIcon>
                <ListItemText
                   primary={item.label}
@@ -242,19 +176,18 @@ const Sidebar = () => {
             bgcolor: '#ffffff',
             borderRight: `1px solid ${colors.border}`,
             zIndex: 30,
-            width: collapsed ? 64 : 300,
+            width: 300,
             transition: 'width 200ms ease',
          }}
       >
-         {/* Logo */}
          <Box
             sx={{
                display: 'flex',
                alignItems: 'center',
                gap: 1.5,
-               px: collapsed ? 0 : 3,
+               px: 3,
                py: 2.5,
-               justifyContent: collapsed ? 'center' : 'flex-start',
+               justifyContent: 'flex-start',
             }}
          >
             <Box
@@ -273,153 +206,71 @@ const Sidebar = () => {
             >
                <Stethoscope size={20} />
             </Box>
-            {!collapsed && (
-               <>
-                  <Typography sx={{ fontSize: 18, fontWeight: 600, letterSpacing: '-0.025em', color: colors.text }}>
-                     Clinic
-                  </Typography>
-                  <IconButton
-                     onClick={() => setCollapsed(true)}
-                     size="small"
-                     aria-label="Collapse sidebar"
-                     sx={{
-                        ml: 'auto',
-                        p: 1,
-                        borderRadius: 1,
-                        color: colors.muted,
-                        '&:hover': { bgcolor: colors.primary50, color: colors.primary600 },
-                     }}
-                  >
-                     <PanelLeft size={18} />
-                  </IconButton>
-               </>
-            )}
-            {collapsed && (
-               <IconButton
-                  onClick={() => setCollapsed(false)}
-                  size="small"
-                  aria-label="Expand sidebar"
-                  sx={{
-                     position: 'absolute',
-                     right: -12,
-                     top: 24,
-                     p: 0.75,
-                     bgcolor: '#ffffff',
-                     border: `1px solid ${colors.primary100}`,
-                     boxShadow: 2,
-                     color: colors.primary600,
-                     '&:hover': { bgcolor: colors.primary50 },
-                  }}
-               >
-                  <PanelRight size={14} />
-               </IconButton>
-            )}
          </Box>
 
-         {/* Navigation */}
-         <Box component="nav" sx={{ flex: 1, overflowY: 'auto', px: 4, py: 2.5 }}>
+         <Box component="nav" sx={{ flex: 1, overflowY: 'auto', px: 2 }}>
             {sidebarSections.map((section) => (
                <Box key={section.title} sx={{ mb: 4 }}>
-                  {!collapsed && (
-                     <Typography
-                        sx={{
-                           fontSize: 11,
-                           fontWeight: 600,
-                           textTransform: 'uppercase',
-                           letterSpacing: '0.05em',
-                           color: colors.muted,
-                           mb: 1,
-                           px: 1.5,
-                        }}
-                     >
-                        {section.title}
-                     </Typography>
-                  )}
-                  <List disablePadding sx={{ mt: 3 }}>
+                  <Typography
+                     sx={{
+                        fontSize: 11,
+                        fontWeight: 600,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                        color: colors.muted,
+                     }}
+                  >
+                     {section.title}
+                  </Typography>
+                  <List>
                      {section.items.map((item) => renderSidebarItem(item))}
                   </List>
                </Box>
             ))}
          </Box>
 
-         {/* Profile */}
          <Box sx={{ borderTop: `1px solid ${colors.primary100}`, px: 2, py: 2 }}>
-            {collapsed ? (
-               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
-                  <Tooltip title="Profile" placement="right">
-                     <IconButton
-                        onClick={() => router.visit('/profile')}
-                        aria-label="Profile"
-                        sx={{ borderRadius: 1, '&:hover': { bgcolor: colors.primary50 } }}
-                     >
-                        <Avatar
-                           sx={{
-                              width: 32,
-                              height: 32,
-                              backgroundImage: `linear-gradient(135deg, #7aab7a, ${colors.primary600})`,
-                              fontSize: 12,
-                              fontWeight: 600,
-                           }}
-                        >
-                           {(user?.name ?? 'U').charAt(0).toUpperCase()}
-                        </Avatar>
-                     </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Logout" placement="right">
-                     <IconButton
-                        onClick={handleLogout}
-                        aria-label="Logout"
-                        sx={{ borderRadius: 1, color: '#f87171', '&:hover': { color: '#dc2626', bgcolor: '#fef2f2' } }}
-                     >
-                        <LogOut size={18} />
-                     </IconButton>
-                  </Tooltip>
+            <ListItemButton
+               onClick={() => router.visit('/profile')}
+               sx={{ borderRadius: 1, px: 1.5, py: 1, '&:hover': { bgcolor: colors.primary50 } }}
+            >
+               <Avatar
+                  sx={{
+                     width: 36,
+                     height: 36,
+                     flexShrink: 0,
+                     backgroundImage: `linear-gradient(135deg, #7aab7a, ${colors.primary600})`,
+                     fontSize: 12,
+                     fontWeight: 600,
+                     mr: 1.5,
+                  }}
+               >
+                  {(user?.name ?? 'U').charAt(0).toUpperCase()}
+               </Avatar>
+               <Box sx={{ minWidth: 0 }}>
+                  <Typography sx={{ fontSize: 14, fontWeight: 500, color: colors.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                     {user?.name ?? 'User'}
+                  </Typography>
+                  <Typography sx={{ fontSize: 12, color: colors.muted, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                     {user?.email ?? ''}
+                  </Typography>
                </Box>
-            ) : (
-               <>
-                  <ListItemButton
-                     onClick={() => router.visit('/profile')}
-                     sx={{ borderRadius: 1, px: 1.5, py: 1, '&:hover': { bgcolor: colors.primary50 } }}
-                  >
-                     <Avatar
-                        sx={{
-                           width: 36,
-                           height: 36,
-                           flexShrink: 0,
-                           backgroundImage: `linear-gradient(135deg, #7aab7a, ${colors.primary600})`,
-                           fontSize: 12,
-                           fontWeight: 600,
-                           mr: 1.5,
-                        }}
-                     >
-                        {(user?.name ?? 'U').charAt(0).toUpperCase()}
-                     </Avatar>
-                     <Box sx={{ minWidth: 0 }}>
-                        <Typography sx={{ fontSize: 14, fontWeight: 500, color: colors.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                           {user?.name ?? 'User'}
-                        </Typography>
-                        <Typography sx={{ fontSize: 12, color: colors.muted, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                           {user?.email ?? ''}
-                        </Typography>
-                     </Box>
-                  </ListItemButton>
-                  <ListItemButton
-                     onClick={handleLogout}
-                     sx={{
-                        borderRadius: 1,
-                        mt: 0.5,
-                        px: 1.5,
-                        py: 1,
-                        gap: 1.5,
-                        color: '#f87171',
-                        '&:hover': { color: '#dc2626', bgcolor: '#fef2f2' },
-                     }}
-                  >
-                     <LogOut size={18} />
-                     <Typography sx={{ fontSize: 14 }}>Logout</Typography>
-                  </ListItemButton>
-               </>
-            )}
+            </ListItemButton>
+            <ListItemButton
+               onClick={handleLogout}
+               sx={{
+                  borderRadius: 1,
+                  mt: 0.5,
+                  px: 1.5,
+                  py: 1,
+                  gap: 1.5,
+                  color: '#f87171',
+                  '&:hover': { color: '#dc2626', bgcolor: '#fef2f2' },
+               }}
+            >
+               <LogOut size={18} />
+               <Typography sx={{ fontSize: 14 }}>Logout</Typography>
+            </ListItemButton>
          </Box>
       </Box>
    )

@@ -11,22 +11,22 @@ import { formatDob } from '@/utils/date'
 import { Box, Typography, Button } from '@mui/material';
 
 interface PaginatedData<T> {
-    data: T[]
-    current_page: number
-    last_page: number
-    per_page: number
-    total: number
-    from: number
-    to: number
+   data: T[]
+   current_page: number
+   last_page: number
+   per_page: number
+   total: number
+   from: number
+   to: number
 }
 
 const Patient = () => {
    const { openModal, openAlert } = useModal()
 
    const { patients, search: searchProp } = usePage<{
-        patients: PaginatedData<IPatient>
-        search: string | null
-    }>().props
+      patients: PaginatedData<IPatient>
+      search: string | null
+   }>().props
 
    const [searchTerm, setSearchTerm] = useState(searchProp ?? '')
 
@@ -60,7 +60,7 @@ const Patient = () => {
 
    const handleEdit = (patient: IPatient) => {
       openModal({
-         title: <Typography variant='h5' sx={{ fontWeight: 'medium' }}>Edit <Typography variant='h6' component='span' sx={{ fontFamily: 'var(--font-khmer)'}}>{patient.khmer_first_name} {patient.khmer_last_name}</Typography></Typography>,
+         title: <Typography variant='h5' sx={{ fontWeight: 'medium' }}>Edit <Typography variant='h6' component='span' sx={{ fontFamily: 'var(--font-khmer)' }}>{patient.khmer_first_name} {patient.khmer_last_name}</Typography></Typography>,
          content: <PatientForm patient={patient} />,
          config: { preventClickAway: true, maxWidth: '4xl' },
       })
@@ -83,8 +83,6 @@ const Patient = () => {
          flex: 1,
          minWidth: 180,
          valueGetter: (_value, row: IPatient) => `${row.khmer_last_name} ${row.khmer_first_name}`,
-         renderCell: (params: GridRenderCellParams<IPatient>) =>
-            <Typography sx={{ fontFamily: 'Siemreap, Poppins, sans-serif' }}>{params.value}</Typography>,
       },
       {
          field: 'english_name',
@@ -103,7 +101,7 @@ const Patient = () => {
          flex: 1,
          minWidth: 90,
          renderCell: (params: GridRenderCellParams<IPatient>) => (
-            <Typography sx={{ textTransform: 'capitalize', color: params.value === 'male' ? 'info.main' : 'secondary.main' }}>
+            <Typography component="span" sx={{ textTransform: 'capitalize', color: params.value === 'male' ? 'info.main' : 'secondary.main' }}>
                {params.value}
             </Typography>
          ),
@@ -157,20 +155,21 @@ const Patient = () => {
    return (
       <>
          <Head title="Patients" />
-         <Box sx={{ p: 4 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', bgcolor: 'Background', p: 2, borderRadius: 1 }}>
+         <Box sx={{ p: 6 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', bgcolor: 'Background', p: 4, borderRadius: 1 }}>
                <Box>
                   <Typography variant='h5' sx={{ fontWeight: 'bold' }}>Patients</Typography>
                   <Typography variant='body2' sx={{ color: 'gray' }}>Manage your clinic patients</Typography>
                </Box>
-               <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 3 }}>
                   <SearchBar value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder='Search patient' />
                   <Button
                      onClick={handleCreate}
                      variant='contained'
+                     size='small'
                      startIcon={<Plus size={16} />}
                   >
-                            New Patient
+                     New Patient
                   </Button>
                </Box>
             </Box>
@@ -187,10 +186,6 @@ const Patient = () => {
                autoHeight
                sx={{
                   mt: 3,
-                  '& .MuiDataGrid-columnHeaderTitle': {
-                     fontFamily: 'var(--font-khmer)',
-                     fontWeight: 'bold',
-                  },
                }}
             />
          </Box>
