@@ -130,6 +130,11 @@ class VisitController extends Controller
     public function close(Visit $visit)
     {
         abort_if($visit->status !== 'active', 403, 'Visit is already closed.');
+        abort_unless(
+            $visit->prescriptions()->whereHas('items')->exists(),
+            422,
+            'A prescription with at least one item is required before closing the visit.'
+        );
 
         $visit->update(['status' => 'closed']);
 

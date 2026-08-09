@@ -18,7 +18,7 @@ interface PaginatedData<T> {
     to: number
 }
 
-const ConsultationTab = ({ patientId }: { patientId: number }) => {
+const ConsultationTab = ({ patientId, visitId }: { patientId: number; visitId: number | null }) => {
    const { openAlert } = useModal()
    const { consultations } = usePage<{ consultations: PaginatedData<IConsultation> }>().props
    const { data: rows, total, current_page, per_page } = consultations
@@ -128,7 +128,7 @@ const ConsultationTab = ({ patientId }: { patientId: number }) => {
             </Typography>
             <Button
                component={InertiaLink as React.ElementType}
-               href={`/patients/${patientId}/consultations/create`}
+               href={`/patients/${patientId}/consultations/create${visitId ? `?visit=${visitId}` : ''}`}
                variant="contained"
                startIcon={<Plus size={16} />}
             >

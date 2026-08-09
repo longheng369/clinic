@@ -8,7 +8,7 @@ import { IConsultationFormData } from '@/interfaces/IConsultation'
 import type { IPatient } from '@/interfaces/IPatient'
 import { Box, Button, IconButton, Paper, Typography } from '@mui/material'
 
-const CreateConsultation = ({ patient }: { patient: IPatient }) => {
+const CreateConsultation = ({ patient, visitId }: { patient: IPatient; visitId: number | null }) => {
    const [isProcessing, setIsProcessing] = useState(false)
    const { toast } = useToast()
    const { control, handleSubmit } = useForm<IConsultationFormData>({
@@ -47,10 +47,10 @@ const CreateConsultation = ({ patient }: { patient: IPatient }) => {
 
    const onSubmit = handleSubmit((data) => {
       setIsProcessing(true)
-      router.post(`/patients/${patient.id}/consultations`, { ...data }, {
+      router.post(`/patients/${patient.id}/consultations`, { ...data, visit_id: visitId }, {
          onSuccess: () => {
             toast('Consultation created!', { variant: 'success' })
-            router.visit(`/patients/${patient.id}?tab=consultation`)
+            router.visit(`/patients/${patient.id}?visit=${visitId ?? ''}&tab=consultation`)
          },
          onFinish: () => setIsProcessing(false),
       })

@@ -9,6 +9,7 @@ class StoreConsultationRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'visit_id' => ['required', 'integer', 'exists:visits,id'],
             'weight' => ['nullable', 'numeric', 'min:0', 'max:500'],
             'chief_complaint' => ['required', 'string', 'max:65535'],
             'respiratory_system_symptoms' => ['nullable', 'array'],

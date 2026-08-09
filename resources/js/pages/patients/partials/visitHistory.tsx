@@ -1,6 +1,6 @@
 import { IVisit, IVisitWithMetaData } from '@/interfaces/IVisit';
 import { formatCreatedDateTime } from '@/utils/date'
-import { Chip, List, ListItemButton, Typography } from '@mui/material'
+import { Button, Chip, List, ListItemButton, Typography } from '@mui/material'
 
 type Props = {
    allVisits: IVisit[]
@@ -22,9 +22,6 @@ const VisitHistory = ({
    onAdmit,
    onClose,
 }: Props) => {
-   void onAdmit
-   void onClose
-
    if (allVisits.length === 0) {
       return (
          <Typography sx={{ py: 4, textAlign: 'center', color: 'text.disabled', fontSize: 14 }}>
@@ -64,6 +61,33 @@ const VisitHistory = ({
                      {formatCreatedDateTime(v.created_at)}
                   </Typography>
                   <Chip label={v.type} size='small' color={v.type === 'IPD' ? 'warning' : 'info'} />
+                  {v.status === 'active' && (
+                     <>
+                        {v.type === 'OPD' && (
+                           <Button
+                              size="small"
+                              variant="outlined"
+                              onClick={(event) => {
+                                 event.stopPropagation()
+                                 onAdmit(v.id)
+                              }}
+                           >
+                              Admit
+                           </Button>
+                        )}
+                        <Button
+                           size="small"
+                           color="warning"
+                           variant="outlined"
+                           onClick={(event) => {
+                              event.stopPropagation()
+                              onClose(v.id)
+                           }}
+                        >
+                           Close
+                        </Button>
+                     </>
+                  )}
                </ListItemButton>
             )
          })}

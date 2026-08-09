@@ -60,11 +60,21 @@ class PatientController extends Controller
 
         $allVisits = $patient->visits()->with('createdBy')->latest()->get();
 
-        if (! $selectedVisitId && $allVisits->isNotEmpty()) {
-            $selectedVisitId = $allVisits->first()['id'];
-        }
+        $selectedVisit = $selectedVisitId
+            ? $patient->visits()
+                ->with('createdBy')
+                ->where('status', 'active')
+                ->whereKey($selectedVisitId)
+                ->first()
+            : null;
 
-        $selectedVisit = $selectedVisitId ? Visit::query()->with('createdBy')->find($selectedVisitId) : $patient->visits()->with('createdBy')->where('status', 'active')->latest()->first();
+        $selectedVisit ??= $patient->visits()
+            ->with('createdBy')
+            ->where('status', 'active')
+            ->latest()
+            ->first();
+
+        $selectedVisitId = $selectedVisit?->id;
 
         $consultationsQuery = $patient->consultations()->with('createdBy');
         $surveillancesQuery = $patient->surveillances()->with('createdBy');

@@ -70,10 +70,16 @@ const PatientShow = ({ patient }: Props) => {
    const handleClose = (visitId: number) => {
       openAlert({
          message: 'Close this visit?',
-         description: 'All records will remain but no new activity can be added.',
+         description: 'A prescription with at least one item is required before closing.',
          variant: 'warning',
          confirmLabel: 'Close',
-         onConfirm: () => router.patch(`/visits/${visitId}/close`),
+         onConfirm: () => router.patch(`/visits/${visitId}/close`, {}, {
+            onSuccess: () => toast('Visit closed successfully.', { variant: 'success' }),
+            onError: (errors) => {
+               const message = Object.values(errors)[0]
+               toast(typeof message === 'string' ? message : 'Unable to close visit.', { variant: 'error' })
+            },
+         }),
       })
    }
 
@@ -281,7 +287,7 @@ const PatientShow = ({ patient }: Props) => {
 const TabContent = ({ tab, patientId, patient, selectedVisit, prescription }: { tab: Tab; patientId: number; patient: IPatient; selectedVisit: IVisitWithMetaData | null; prescription: IPrescription | null }) => {
    switch (tab) {
       case 'consultation':
-         return <ConsultationTab patientId={patientId} />
+         return <ConsultationTab patientId={patientId} visitId={selectedVisit?.id ?? null} />
       case 'medication':
          return <MedicationTab patientId={patientId} patient={patient} selectedVisit={selectedVisit} />
       case 'prescription':

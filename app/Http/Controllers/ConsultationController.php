@@ -6,6 +6,7 @@ use App\Http\Requests\StoreConsultationRequest;
 use App\Http\Requests\UpdateConsultationRequest;
 use App\Models\Consultation;
 use App\Models\Patient;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class ConsultationController extends Controller
@@ -33,34 +34,36 @@ class ConsultationController extends Controller
         ]);
     }
 
-    public function create(Patient $patient)
+    public function create(Request $request, Patient $patient)
     {
-        $activeVisits = $patient->visits()->where('status', 'active')->latest()->get();
+        $visit = $patient->visits()
+            ->whereKey($request->query('visit'))
+            ->where('status', 'active')
+            ->first();
 
         return Inertia::render('patients/partials/tab/consultation/create', [
             'patient' => $patient,
-            'activeVisits' => $activeVisits->map(fn ($v) => [
-                'id' => $v->id,
-                'type' => $v->type,
-                'visit_date' => $v->visit_date,
-            ]),
+            'visitId' => $visit?->id,
         ]);
     }
 
     public function store(StoreConsultationRequest $request, Patient $patient)
     {
-        $visit = $patient->visits()->create([
-            'type' => 'OPD',
-            'created_by' => auth()->id(),
-        ]);
+        $visit = $patient->visits()
+            ->whereKey($request->validated('visit_id'))
+            ->where('status', 'active')
+            ->firstOrFail();
 
         $patient->consultations()->create(array_merge(
             $request->validated(),
             ['visit_id' => $visit->id, 'recorded_by' => auth()->id()]
         ));
 
-        return redirect()->route('patients.show', $patient->id)
-            ->with('success', 'Consultation created.');
+        return redirect()->route('patients.show', [
+            'patient' => $patient,
+            'visit' => $visit->id,
+            'tab' => 'consultation',
+        ])->with('success', 'Consultation created.');
     }
 
     public function show(Patient $patient, Consultation $consultation)

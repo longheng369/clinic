@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePrescriptionRequest;
 use App\Http\Requests\UpdatePrescriptionRequest;
+use App\Models\Patient;
 use App\Models\Prescription;
 
 class PrescriptionController extends Controller
@@ -20,7 +21,7 @@ class PrescriptionController extends Controller
         return back()->with('success', 'Prescription saved.');
     }
 
-    public function update(UpdatePrescriptionRequest $request, Prescription $prescription)
+    public function update(UpdatePrescriptionRequest $request, Patient $patient, Prescription $prescription)
     {
         $validated = $request->validated();
         $items = $validated['items'];

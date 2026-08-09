@@ -12,3 +12,4 @@
 - Use Composer scripts (`composer.json` "scripts" section) as the task runner for project utility commands like db:dump / db:restore. Confidence: 0.55
 - In medication administration tracking, each "Provide" action marks a single individual dose as administered (do not batch multiple doses under one click based on interval like TID). Confidence: 0.70
 - For the MAR (medication administration record) tab, display medication orders as separate table rows rather than inside accordion/collapsible cards. Confidence: 0.70
+- Show a success toast after successful create and edit mutations, using distinct feedback messages for created versus updated records. Confidence: 0.70
