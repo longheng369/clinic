@@ -109,13 +109,13 @@ const PatientShow = ({ patient }: Props) => {
    }
 
    return (
-      <div className='h-full flex flex-col'>
+      <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
          <Head title={`Patient - ${patient.khmer_last_name} ${patient.khmer_first_name}`} />
 
-         <div className="p-8 flex-1 overflow-y-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-               <PatientInfo patient={patient} className="lg:col-span-3" />
-            </div>
+         <Box sx={{ flex: 1, overflowY: 'auto', p: 4 }}>
+            <Box sx={{ mb: 3 }}>
+               <PatientInfo patient={patient} />
+            </Box>
 
             {selectedVisit ? (
                <Paper
@@ -210,7 +210,7 @@ const PatientShow = ({ patient }: Props) => {
                   </Button>
                </Box>
             )}
-         </div>
+         </Box>
 
          <Button
             variant="contained"
@@ -240,7 +240,7 @@ const PatientShow = ({ patient }: Props) => {
                },
             }}
          >
-            <span className="visit-history-label">Visit History</span>
+            <Box sx={{}}>Visit History</Box>
          </Button>
 
          <Drawer
@@ -274,7 +274,7 @@ const PatientShow = ({ patient }: Props) => {
                </Box>
             </Box>
          </Drawer>
-      </div>
+      </Box>
    )
 }
 

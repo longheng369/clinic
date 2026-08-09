@@ -22,3 +22,4 @@
 - Use MUI primitives for structure: `Paper` + `Typography`/`Divider` for status/info bars, `Drawer` for side panels, `List`/`ListItemButton` for timelines/lists, `IconButton` for close actions. Confidence: 0.75
 - Use MUI `Drawer` with `slotProps={{ paper: ... }}` instead of hand-rolled backdrop + escape-key handling, and prefer `slotProps.paper` over the deprecated `PaperProps` to keep TypeScript types clean. Confidence: 0.60
 - For clickable list items/rows, use MUI `ListItemButton` (ripple built in via ButtonBase) instead of `ListItem` with a raw onClick handler — the user explicitly wants a ripple effect on click. Confidence: 0.70
+- Use MUI as the sole UI and styling system: eliminate Tailwind CSS and its utility classes/directives rather than mixing Tailwind with MUI. Confidence: 0.95

@@ -167,11 +167,11 @@ const PrescriptionTab = ({
 
    if (!selectedVisit) {
       return (
-         <Box className="flex flex-col items-center justify-center py-16 text-center">
-            <Typography component="h3" className="text-lg font-semibold text-gray-900 mb-1">
+         <Box sx={{}}>
+            <Typography component="h3" sx={{}}>
                Prescriptions
             </Typography>
-            <Typography component="p" className="text-sm text-gray-500">
+            <Typography component="p" sx={{ mt: 0.5 }}>
                Select a visit to manage prescriptions.
             </Typography>
          </Box>
@@ -228,8 +228,22 @@ const PrescriptionTab = ({
          <Typography sx={{ fontFamily: 'var(--font-khmer-moul)', color: 'blue', textAlign: 'center', letterSpacing: 1 }}>ព្រះរាជាណាចក្រកម្ពុជា</Typography>
          <Typography sx={{ fontFamily: 'var(--font-khmer-moul)', color: 'blue', textAlign: 'center', letterSpacing: 1, mt: 0.5 }}>ជាតិ សាសនា ព្រះមហាក្សត្រ</Typography>
 
-         <Box className='flex items-center justify-center size-20 rounded-full bg-linear-to-br from-primary-500 to-primary-700 shrink-0 absolute top-8 left-8'>
-            <Stethoscope size={30} className='text-white' />
+         <Box
+            sx={{
+               position: 'absolute',
+               top: 32,
+               left: 32,
+               display: 'flex',
+               width: 80,
+               height: 80,
+               alignItems: 'center',
+               justifyContent: 'center',
+               flexShrink: 0,
+               borderRadius: '50%',
+               background: 'linear-gradient(135deg, #5a8f5a, #3d633d)',
+            }}
+         >
+            <Stethoscope size={30} color="#fff" />
          </Box>
 
          <Box sx={{ mt: 5 }}>
@@ -254,8 +268,8 @@ const PrescriptionTab = ({
          </Box>
 
          {/* Patient Info */}
-         <Box className="border border-gray-300 p-4 mt-4">
-            <Box className="grid grid-cols-4">
+         <Box sx={{ mt: 3, display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 2 }}>
+            <Box>
                <Box>
                   <Typography sx={{ fontFamily: 'var(--font-khmer)', color: 'gray' }}>
                      ឈ្មោះ
@@ -263,7 +277,7 @@ const PrescriptionTab = ({
                   <Typography component="p" sx={{ fontFamily: 'var(--font-khmer)' }}>
                      {patient.khmer_first_name} {patient.khmer_last_name}
                      {patient.first_name && (
-                        <Typography component="span" className="font-sans text-gray-500 text-xs ml-1.5">
+                        <Typography component="span" sx={{ ml: 0.5 }}>
                            ({patient.last_name ? `${patient.last_name} ` : ''}{patient.first_name})
                         </Typography>
                      )}
@@ -273,7 +287,7 @@ const PrescriptionTab = ({
                   <Typography sx={{ fontFamily: 'var(--font-khmer)', color: 'gray' }}>
                      អាយុ
                   </Typography>
-                  <Typography component="p" className="text-sm">
+                  <Typography component="p" sx={{ mt: 0.5 }}>
                      {formatDob(patient.date_of_birth)}
                   </Typography>
                </Box>
@@ -281,7 +295,7 @@ const PrescriptionTab = ({
                   <Typography sx={{ fontFamily: 'var(--font-khmer)', color: 'gray' }}>
                      ភេទ
                   </Typography>
-                  <Typography component="p" className="text-sm capitalize">
+                  <Typography component="p" sx={{ mt: 0.5 }}>
                      {patient.gender}
                   </Typography>
                </Box>
@@ -289,7 +303,7 @@ const PrescriptionTab = ({
                   <Typography sx={{ fontFamily: 'var(--font-khmer)', color: 'gray' }}>
                      ទូរស័ព្ទ
                   </Typography>
-                  <Typography component="p" className="text-sm">
+                  <Typography component="p" sx={{ mt: 0.5 }}>
                      {patient.phone_number}
                   </Typography>
                </Box>
@@ -299,7 +313,7 @@ const PrescriptionTab = ({
          {/* Medicine Table */}
          <Box>
             {fields.length === 0 ? (
-               <Box className="py-10 text-center text-sm text-gray-400">
+               <Box sx={{ py: 4, textAlign: 'center', color: 'text.secondary' }}>
                   No medicines in this prescription.
                </Box>
             ) : (

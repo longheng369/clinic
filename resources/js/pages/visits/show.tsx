@@ -1,3 +1,4 @@
+import { Box } from '@mui/material'
 import { Head, Link } from '@inertiajs/react'
 import { ArrowLeft, Calendar } from 'lucide-react'
 
@@ -85,12 +86,12 @@ interface ParaclinicRow {
     created_at: string
 }
 
-const STATUS_BADGE: Record<string, { label: string; className: string }> = {
-   prescribed: { label: 'Prescribed', className: 'bg-blue-100 text-blue-700' },
-   active: { label: 'Active', className: 'bg-green-100 text-green-700' },
-   provided: { label: 'Provided', className: 'bg-green-100 text-green-700' },
-   continued: { label: 'Continued', className: 'bg-amber-100 text-amber-700' },
-   stopped: { label: 'Stopped', className: 'bg-gray-100 text-gray-500' },
+const STATUS_BADGE: Record<string, { label: string; backgroundColor: string; color: string }> = {
+   prescribed: { label: 'Prescribed', backgroundColor: '#dbeafe', color: '#1d4ed8' },
+   active: { label: 'Active', backgroundColor: '#dcfce7', color: '#15803d' },
+   provided: { label: 'Provided', backgroundColor: '#dcfce7', color: '#15803d' },
+   continued: { label: 'Continued', backgroundColor: '#fef3c7', color: '#b45309' },
+   stopped: { label: 'Stopped', backgroundColor: '#f3f4f6', color: '#6b7280' },
 }
 
 const VisitShow = ({ visit, patient, consultations, medicationAdministrations, prescriptions, surveillances, paraclinicRequests }: {
@@ -106,55 +107,52 @@ const VisitShow = ({ visit, patient, consultations, medicationAdministrations, p
       <>
          <Head title={`Visit - ${patient.khmer_last_name} ${patient.khmer_first_name}`} />
 
-         <div className="border-b border-gray-200 bg-white px-8 py-4">
-            <div className="flex items-center gap-4">
+         <Box>
+            <Box>
                <Link
                   href={`/patients/${patient.id}`}
-                  className="flex items-center justify-center size-9 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
                >
                   <ArrowLeft size={20} />
                </Link>
-               <div className="flex items-center gap-3">
-                  <div className="flex items-center justify-center size-10 rounded-full bg-primary-100 text-primary-600">
+               <Box>
+                  <Box>
                      <Calendar size={20} />
-                  </div>
-                  <div>
-                     <h1 className="text-xl font-bold text-gray-900">
-                        <span className="font-khmer text-[18px]">{patient.khmer_last_name} {patient.khmer_first_name}</span>
-                     </h1>
-                     <div className="flex items-center gap-2 mt-0.5">
-                        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                           visit.type === 'IPD' ? 'bg-amber-100 text-amber-700' : 'bg-primary-100 text-primary-700'
-                        }`}>
+                  </Box>
+                  <Box>
+                     <Box>
+                        <Box>{patient.khmer_last_name} {patient.khmer_first_name}</Box>
+                     </Box>
+                     <Box>
+                        <Box>
                            {visit.type}
-                        </span>
-                        <span className="text-sm text-gray-500">
+                        </Box>
+                        <Box>
                            {new Date(visit.visit_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: '2-digit' })}
-                        </span>
-                        <span className={`text-xs ${visit.status === 'active' ? 'text-green-600' : 'text-gray-400'}`}>
+                        </Box>
+                        <Box>
                                     &middot; {visit.status}
-                        </span>
-                     </div>
-                  </div>
-               </div>
-            </div>
-         </div>
+                        </Box>
+                     </Box>
+                  </Box>
+               </Box>
+            </Box>
+         </Box>
 
-         <div className="p-8 space-y-6">
+         <Box>
             {/* Consultations */}
             {consultations.length > 0 && (
                <Section title="Consultations" count={consultations.length}>
                   {consultations.map((c) => (
                      <Row key={c.id}>
-                        <div className="min-w-0 flex-1">
-                           <p className="text-sm font-medium text-gray-900 truncate">{c.chief_complaint}</p>
-                           {c.diagnosis && <p className="text-xs text-gray-500 mt-0.5">{c.diagnosis}</p>}
-                        </div>
-                        <div className="flex items-center gap-3 text-xs text-gray-400 shrink-0">
-                           {c.fee ? <span>${c.fee.toFixed(2)}</span> : null}
-                           <span>{new Date(c.created_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}</span>
-                           {c.recorded_by && <span>by {c.recorded_by}</span>}
-                        </div>
+                        <Box>
+                           <Box>{c.chief_complaint}</Box>
+                           {c.diagnosis && <Box>{c.diagnosis}</Box>}
+                        </Box>
+                        <Box>
+                           {c.fee ? <Box>${c.fee.toFixed(2)}</Box> : null}
+                           <Box>{new Date(c.created_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}</Box>
+                           {c.recorded_by && <Box>by {c.recorded_by}</Box>}
+                        </Box>
                      </Row>
                   ))}
                </Section>
@@ -164,23 +162,23 @@ const VisitShow = ({ visit, patient, consultations, medicationAdministrations, p
             {medicationAdministrations.length > 0 && (
                <Section title="Medications" count={medicationAdministrations.length}>
                   {medicationAdministrations.map((m) => {
-                     const badge = STATUS_BADGE[m.status] ?? { label: m.status, className: 'bg-gray-100 text-gray-600' }
+                     const badge = STATUS_BADGE[m.status] ?? { label: m.status, backgroundColor: '#f3f4f6', color: '#4b5563' }
                      return (
                         <Row key={m.id}>
-                           <div className="flex items-center gap-3 min-w-0 flex-1">
-                              <span className="text-sm font-medium text-gray-900 truncate">{m.medicine ?? '—'}</span>
-                              <span className="text-xs text-gray-500">{m.route}</span>
-                              <span className="text-xs text-gray-500">{m.dosage} {m.unit} &middot; {m.interval}</span>
-                           </div>
-                           <div className="flex items-center gap-3 shrink-0">
-                              <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${badge.className}`}>
+                           <Box>
+                              <Box>{m.medicine ?? '—'}</Box>
+                              <Box>{m.route}</Box>
+                              <Box>{m.dosage} {m.unit} &middot; {m.interval}</Box>
+                           </Box>
+                           <Box>
+                              <Box sx={{ backgroundColor: badge.backgroundColor, color: badge.color }}>
                                  {badge.label}
-                              </span>
-                              <span className="text-xs text-gray-400">
+                              </Box>
+                              <Box>
                                  {new Date(m.created_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}
-                              </span>
-                              {m.recorded_by && <span className="text-xs text-gray-400">by {m.recorded_by}</span>}
-                           </div>
+                              </Box>
+                              {m.recorded_by && <Box>by {m.recorded_by}</Box>}
+                           </Box>
                         </Row>
                      )
                   })}
@@ -191,39 +189,39 @@ const VisitShow = ({ visit, patient, consultations, medicationAdministrations, p
             {prescriptions.length > 0 && (
                <Section title="Prescriptions" count={prescriptions.length}>
                   {prescriptions.map((p) => (
-                     <div key={p.id} className="divide-y divide-gray-50">
-                        <div className="flex items-center justify-between px-5 py-3 bg-gray-50/50">
-                           <div className="flex items-center gap-2 text-sm font-semibold text-gray-900">
+                     <Box key={p.id}>
+                        <Box>
+                           <Box>
                                         Prescription #{p.id}
-                              <span className="text-xs font-normal text-gray-400">
+                              <Box>
                                  {p.items.length} medicine{p.items.length !== 1 ? 's' : ''}
-                              </span>
-                           </div>
-                           <div className="flex items-center gap-3 text-xs text-gray-400 shrink-0">
-                              <span>{new Date(p.created_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}</span>
-                              {p.recorded_by && <span>by {p.recorded_by}</span>}
-                           </div>
-                        </div>
+                              </Box>
+                           </Box>
+                           <Box>
+                              <Box>{new Date(p.created_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}</Box>
+                              {p.recorded_by && <Box>by {p.recorded_by}</Box>}
+                           </Box>
+                        </Box>
                         {p.items.map((item) => (
                            <Row key={item.id}>
-                              <div className="flex items-center gap-3 min-w-0 flex-1">
-                                 <span className="text-sm font-medium text-gray-900 truncate">{item.medicine ?? '—'}</span>
-                                 <span className="text-xs text-gray-500">{item.route}</span>
-                                 <span className="text-xs text-gray-500">{item.dosage} {item.unit} &middot; {item.frequency}</span>
-                                 {item.duration_days && <span className="text-xs text-gray-400">{item.duration_days}d</span>}
-                                 {item.quantity && <span className="text-xs text-gray-400">Qty: {item.quantity}</span>}
-                              </div>
-                              <div className="text-xs text-gray-400 shrink-0">
-                                 {item.notes && <span className="truncate max-w-[120px]">{item.notes}</span>}
-                              </div>
+                              <Box>
+                                 <Box>{item.medicine ?? '—'}</Box>
+                                 <Box>{item.route}</Box>
+                                 <Box>{item.dosage} {item.unit} &middot; {item.frequency}</Box>
+                                 {item.duration_days && <Box>{item.duration_days}d</Box>}
+                                 {item.quantity && <Box>Qty: {item.quantity}</Box>}
+                              </Box>
+                              <Box>
+                                 {item.notes && <Box>{item.notes}</Box>}
+                              </Box>
                            </Row>
                         ))}
                         {p.notes && (
-                           <div className="px-5 py-2 bg-gray-50/30 text-xs text-gray-400">
+                           <Box>
                                         Note: {p.notes}
-                           </div>
+                           </Box>
                         )}
-                     </div>
+                     </Box>
                   ))}
                </Section>
             )}
@@ -233,18 +231,18 @@ const VisitShow = ({ visit, patient, consultations, medicationAdministrations, p
                <Section title="Vital Signs" count={surveillances.length}>
                   {surveillances.map((s) => (
                      <Row key={s.id}>
-                        <div className="flex items-center gap-4 flex-1">
-                           <span className="text-sm text-gray-900 font-medium">{s.systolic}/{s.diastolic}</span>
-                           <span className="text-xs text-gray-500">Pulse {s.pulse}</span>
-                           <span className="text-xs text-gray-500">Temp {s.temperature.toFixed(1)}°C</span>
-                           <span className="text-xs text-gray-500">RR {s.rr}</span>
-                           <span className="text-xs text-gray-500">SpO₂ {s.spo2}%</span>
-                           <span className="text-xs text-gray-400">{s.o2_supply}</span>
-                        </div>
-                        <div className="flex items-center gap-3 text-xs text-gray-400 shrink-0">
-                           <span>{new Date(s.created_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}</span>
-                           {s.recorded_by && <span>by {s.recorded_by}</span>}
-                        </div>
+                        <Box>
+                           <Box>{s.systolic}/{s.diastolic}</Box>
+                           <Box>Pulse {s.pulse}</Box>
+                           <Box>Temp {s.temperature.toFixed(1)}°C</Box>
+                           <Box>RR {s.rr}</Box>
+                           <Box>SpO₂ {s.spo2}%</Box>
+                           <Box>{s.o2_supply}</Box>
+                        </Box>
+                        <Box>
+                           <Box>{new Date(s.created_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}</Box>
+                           {s.recorded_by && <Box>by {s.recorded_by}</Box>}
+                        </Box>
                      </Row>
                   ))}
                </Section>
@@ -255,43 +253,43 @@ const VisitShow = ({ visit, patient, consultations, medicationAdministrations, p
                <Section title="Paraclinic Requests" count={paraclinicRequests.length}>
                   {paraclinicRequests.map((r) => (
                      <Row key={r.id}>
-                        <div className="flex items-center gap-3 min-w-0 flex-1">
-                           <span className="text-sm font-medium text-gray-900">{r.request_number}</span>
-                           {r.doctor && <span className="text-xs text-gray-500">Dr. {r.doctor}</span>}
-                           <span className="text-xs text-gray-400">{r.tests_count} test{r.tests_count !== 1 ? 's' : ''}</span>
-                        </div>
-                        <div className="flex items-center gap-3 text-xs shrink-0">
-                           <span className="text-gray-500">{r.status}</span>
-                           <span className="text-gray-400">{new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}</span>
-                        </div>
+                        <Box>
+                           <Box>{r.request_number}</Box>
+                           {r.doctor && <Box>Dr. {r.doctor}</Box>}
+                           <Box>{r.tests_count} test{r.tests_count !== 1 ? 's' : ''}</Box>
+                        </Box>
+                        <Box>
+                           <Box>{r.status}</Box>
+                           <Box>{new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}</Box>
+                        </Box>
                      </Row>
                   ))}
                </Section>
             )}
 
             {consultations.length === 0 && medicationAdministrations.length === 0 && prescriptions.length === 0 && surveillances.length === 0 && paraclinicRequests.length === 0 && (
-               <div className="flex flex-col items-center justify-center py-16 text-center">
-                  <Calendar size={40} className="text-gray-300 mb-3" />
-                  <h3 className="text-lg font-semibold text-gray-900 mb-1">No records</h3>
-                  <p className="text-sm text-gray-500">This visit has no associated records.</p>
-               </div>
+               <Box>
+                  <Calendar size={40} />
+                  <Box>No records</Box>
+                  <Box>This visit has no associated records.</Box>
+               </Box>
             )}
-         </div>
+         </Box>
       </>
    )
 }
 
 const Section = ({ title, count, children }: { title: string; count: number; children: React.ReactNode }) => (
-   <div className="rounded-xl border border-gray-200 bg-white">
-      <div className="border-b border-gray-100 px-5 py-3">
-         <h2 className="text-sm font-semibold text-gray-700">{title} <span className="text-gray-400 font-normal">({count})</span></h2>
-      </div>
-      <div className="divide-y divide-gray-50">{children}</div>
-   </div>
+   <Box>
+      <Box>
+         <Box>{title} <Box>({count})</Box></Box>
+      </Box>
+      <Box>{children}</Box>
+   </Box>
 )
 
 const Row = ({ children }: { children: React.ReactNode }) => (
-   <div className="flex items-center justify-between px-5 py-3">{children}</div>
+   <Box>{children}</Box>
 )
 
 export default VisitShow

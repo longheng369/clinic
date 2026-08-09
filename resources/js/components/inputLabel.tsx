@@ -1,20 +1,13 @@
-import type { LabelHTMLAttributes } from 'react'
+import { FormLabel, type FormLabelProps } from '@mui/material'
 
-export default function InputLabel({
-   value,
-   className = '',
-   children,
-   ...props
-}: { value?: string } & LabelHTMLAttributes<HTMLLabelElement>) {
-   return (
-      <label
-         {...props}
-         className={
-            `block text-sm font-medium text-gray-700 ` +
-                className
-         }
-      >
-         {value ? value : children}
-      </label>
-   )
+type Props = FormLabelProps & {
+   value?: string
 }
+
+const InputLabel = ({ value, children, ...props }: Props) => (
+   <FormLabel {...props}>
+      {value ?? children}
+   </FormLabel>
+)
+
+export default InputLabel

@@ -4,7 +4,7 @@ import { useModal } from '@/components/modal'
 import { Pencil, Trash2, Plus } from 'lucide-react'
 import CategoryForm from './partials/createOrEdit'
 import { ICategory } from '@/interfaces/ICategory'
-import { Button } from '@/components/ui/button'
+import { Box, Button, Stack, Typography } from '@mui/material'
 import IconButton from '@/components/button/iconButton'
 import DataTable, { type Column } from '@/components/table/DataTable'
 import { useState, useEffect } from 'react'
@@ -77,31 +77,31 @@ const Category = () => {
    const columns: Column<ICategory>[] = [
       {
          header: 'ឈ្មោះ',
-         classNames: { header: 'font-khmer tracking-wide' },
+         classNames: {},
          cell: (cat) => cat.name,
       },
       {
          header: 'ការពិពណ៌នា',
-         classNames: { header: 'font-khmer tracking-wide' },
-         cell: (cat) => cat.description ?? <span className="text-gray-300">&mdash;</span>,
+         classNames: {},
+         cell: (cat) => cat.description ?? <Typography component="span" sx={{ color: 'text.disabled' }}>&mdash;</Typography>,
       },
       {
          header: 'បានបង្កើត',
-         classNames: { header: 'font-khmer tracking-wide' },
+         classNames: {},
          cell: (cat) => formatCreatedDateTime(cat.created_at),
       },
       {
          header: 'សកម្មភាព',
-         classNames: { header: 'font-khmer text-end tracking-wide' },
+         classNames: {},
          cell: (cat) => (
-            <div className="flex items-center justify-end">
+            <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'flex-end' }}>
                <IconButton onClick={() => handleEdit(cat)} aria-label={`Edit ${cat.name}`}>
                   <Pencil size={16} />
                </IconButton>
                <IconButton color="error" onClick={() => handleDelete(cat)} aria-label={`Delete ${cat.name}`}>
                   <Trash2 size={16} />
                </IconButton>
-            </div>
+            </Stack>
          ),
       },
    ]
@@ -111,24 +111,25 @@ const Category = () => {
    return (
       <>
          <Head title="Categories" />
-         <div className="p-8">
-            <div className="mb-6 flex items-center justify-between">
-               <div>
-                  <h1 className="text-2xl font-bold text-gray-900">Categories</h1>
-                  <p className="mt-1 text-sm text-gray-500">
+         <Box sx={{ p: 4 }}>
+            <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{mb: 3, alignItems: { md: 'center' , justifyContent: 'space-between'}}}>
+               <Box>
+                  <Typography variant="h5" sx={{ fontWeight: 'bold' }}>Categories</Typography>
+                  <Typography variant="body2" color="text.secondary">
                             Manage your clinic categories
-                  </p>
-               </div>
-               <div className="flex items-center gap-3">
+                  </Typography>
+               </Box>
+               <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
                   <SearchBar value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder='Search category'/>
                   <Button
                      onClick={handleCreate}
-                     size="lg"
+                     size="large"
+                     variant="contained"
                   >
                      <Plus size={20} /> New Category
                   </Button>
-               </div>
-            </div>
+               </Stack>
+            </Stack>
 
             <DataTable
                data={data}
@@ -139,7 +140,7 @@ const Category = () => {
                pagination={pagination}
                baseUrl={baseUrl}
             />
-         </div>
+         </Box>
       </>
    )
 }

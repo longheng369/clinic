@@ -1,3 +1,4 @@
+import { Box } from '@mui/material'
 import { usePage, router } from '@inertiajs/react'
 import { useModal } from '@/components/modal'
 import { Trash2, Plus, IdCard } from 'lucide-react'
@@ -63,7 +64,7 @@ const VaccinationTab = ({ patient }: VaccinationTabProps) => {
       {
          header: 'វ៉ាក់សាំង',
          classNames: { header: 'font-khmer tracking-wide' },
-         cell: (v) => v.vaccine?.name ?? <span className="text-gray-300">&mdash;</span>,
+         cell: (v) => v.vaccine?.name ?? <Box sx={{}}>&mdash;</Box>,
       },
       {
          header: 'ដូស',
@@ -84,25 +85,25 @@ const VaccinationTab = ({ patient }: VaccinationTabProps) => {
       {
          header: 'អ្នកចាក់',
          classNames: { header: 'font-khmer tracking-wide' },
-         cell: (v) => v.administered_by ?? <span className="text-gray-300">&mdash;</span>,
+         cell: (v) => v.administered_by ?? <Box sx={{}}>&mdash;</Box>,
       },
       {
          header: 'កំណត់ចំណាំ',
          classNames: { header: 'font-khmer tracking-wide' },
-         cell: (v) => v.notes ?? <span className="text-gray-300">&mdash;</span>,
+         cell: (v) => v.notes ?? <Box sx={{}}>&mdash;</Box>,
       },
       {
          header: 'សកម្មភាព',
          classNames: { header: 'font-khmer text-end tracking-wide' },
          cell: (v) => (
-            <div className="flex items-center justify-end">
+            <Box sx={{}}>
                <IconButton onClick={handleShowCard} aria-label="Show vaccination card">
                   <IdCard size={16} />
                </IconButton>
                <IconButton color="error" onClick={() => handleDelete(v)} aria-label="Delete vaccination">
                   <Trash2 size={16} />
                </IconButton>
-            </div>
+            </Box>
          ),
       },
    ]
@@ -111,21 +112,21 @@ const VaccinationTab = ({ patient }: VaccinationTabProps) => {
    const baseUrl = `/patients/${patient.id}`
 
    return (
-      <div className="space-y-6">
+      <Box sx={{}}>
          <VaccinationAlertBanner alerts={vaccinationAlerts} />
 
-         <div>
-            <div className="mb-4 flex items-center justify-between">
-               <p className="text-sm text-gray-500">Vaccination records for this patient</p>
-               <div className="flex items-center gap-2">
+         <Box>
+            <Box sx={{}}>
+               <Box sx={{}}>Vaccination records for this patient</Box>
+               <Box sx={{}}>
                   <Button onClick={handleShowCard} variant="outline">
                      <IdCard size={16} /> Vaccine Card
                   </Button>
                   <Button onClick={handleCreate}>
                      <Plus size={18} /> Record Vaccination
                   </Button>
-               </div>
-            </div>
+               </Box>
+            </Box>
 
             <DataTable
                data={data}
@@ -136,8 +137,8 @@ const VaccinationTab = ({ patient }: VaccinationTabProps) => {
                pagination={pagination}
                baseUrl={baseUrl}
             />
-         </div>
-      </div>
+         </Box>
+      </Box>
    )
 }
 

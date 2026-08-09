@@ -4,7 +4,7 @@ import Textarea from '@/components/form/textarea'
 import { IUnit, IUnitFormData } from '@/interfaces/IUnit';
 import { useState } from 'react';
 import { router } from '@inertiajs/react';
-import { Button } from '@/components/ui/button';
+import { Box, Button, Stack } from '@mui/material';
 import { useToast } from '@/components/toast'
 
 interface UnitFormProps {
@@ -55,8 +55,8 @@ const UnitForm = ({ unit, onClose }: UnitFormProps) => {
    })
 
    return (
-      <form onSubmit={onSubmit} className="border-t border-slate-300" noValidate>
-         <div className="space-y-4 p-6">
+      <Box component="form" onSubmit={onSubmit} sx={{ borderTop: 1, borderColor: 'divider' }} noValidate>
+         <Stack spacing={2} sx={{ p: 3 }}>
             <Input
                label="Name"
                control={control}
@@ -70,13 +70,13 @@ const UnitForm = ({ unit, onClose }: UnitFormProps) => {
                control={control}
                name='description'
             />
-         </div>
+         </Stack>
 
-         <div className="flex justify-end gap-2 p-2 border-t border-slate-300">
+         <Stack direction="row" spacing={1} sx={{p: 1, borderTop: 1, borderColor: 'divider', justifyContent: 'flex-end'}}>
             <Button
                type="button"
                onClick={onClose}
-               variant="outline"
+               variant="outlined"
             >
                     Cancel
             </Button>
@@ -86,8 +86,8 @@ const UnitForm = ({ unit, onClose }: UnitFormProps) => {
             >
                     Submit
             </Button>
-         </div>
-      </form>
+         </Stack>
+      </Box>
    )
 }
 

@@ -1,3 +1,4 @@
+import { Box } from '@mui/material'
 import { router } from '@inertiajs/react'
 import { useModal } from '@/components/modal'
 import IconButton from '@/components/button/iconButton'
@@ -42,34 +43,34 @@ const DoseRow = ({ dose, visitId, orderStatus }: DoseRowProps) => {
    }
 
    return (
-      <div className="flex items-center justify-between rounded-lg border border-gray-100 bg-white px-4 py-2.5">
-         <div className="flex items-center gap-3">
-            <span className="text-xs text-gray-400 min-w-[20px]">
+      <Box sx={{}}>
+         <Box sx={{}}>
+            <Box sx={{}}>
                {dose.administration_no != null ? `#${dose.administration_no}` : ''}
-            </span>
-            <span className="text-sm font-medium text-gray-700 min-w-[70px]">
+            </Box>
+            <Box sx={{}}>
                {formatCreatedDateTime(dose.scheduled_at)}
-            </span>
+            </Box>
             <DoseStatusBadge dose={dose} />
             {dose.status === 'provided' && dose.administered_by && (
-               <span className="text-xs text-gray-400">
+               <Box sx={{}}>
                         by {dose.administered_by}
                   {dose.unit_price != null && (
-                     <span className="ml-1 text-primary-600 font-medium">
+                     <Box sx={{}}>
                                 ${Number(dose.unit_price).toFixed(2)}
-                     </span>
+                     </Box>
                   )}
-               </span>
+               </Box>
             )}
             {(dose.status === 'missed' || dose.status === 'refused' || dose.status === 'cancelled') && dose.reason && (
-               <span className="text-xs text-gray-400">&mdash; {dose.reason}</span>
+               <Box sx={{}}>&mdash; {dose.reason}</Box>
             )}
             {dose.note && (
-               <span className="text-xs text-gray-400 italic">{dose.note}</span>
+               <Box sx={{}}>{dose.note}</Box>
             )}
-         </div>
+         </Box>
          {actionEnabled && (
-            <div className="flex items-center gap-1">
+            <Box sx={{}}>
                <IconButton onClick={handleProvide} aria-label="Provide dose" title="Provide">
                   <Check size={16} />
                </IconButton>
@@ -79,9 +80,9 @@ const DoseRow = ({ dose, visitId, orderStatus }: DoseRowProps) => {
                <IconButton color="error" onClick={handleRefused} aria-label="Refused dose" title="Refused">
                   <X size={16} />
                </IconButton>
-            </div>
+            </Box>
          )}
-      </div>
+      </Box>
    )
 }
 

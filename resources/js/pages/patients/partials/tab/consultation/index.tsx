@@ -62,7 +62,7 @@ const ConsultationTab = ({ patientId }: { patientId: number }) => {
          flex: 1,
          minWidth: 150,
          renderCell: (params: GridRenderCellParams<IConsultation>) =>
-            params.value ?? <span className="text-gray-300">&mdash;</span>,
+            params.value ?? <Box sx={{}}>&mdash;</Box>,
       },
       {
          field: 'weight',
@@ -70,7 +70,7 @@ const ConsultationTab = ({ patientId }: { patientId: number }) => {
          flex: 1,
          minWidth: 120,
          renderCell: (params: GridRenderCellParams<IConsultation>) =>
-            params.value ?? <span className="text-gray-300">&mdash;</span>,
+            params.value ?? <Box sx={{}}>&mdash;</Box>,
       },
       {
          field: 'fee',
@@ -79,7 +79,7 @@ const ConsultationTab = ({ patientId }: { patientId: number }) => {
          minWidth: 110,
          valueGetter: (_: never, row: IConsultation) => row.fee != null ? row.fee.toFixed(2) : null,
          renderCell: (params: GridRenderCellParams<IConsultation>) =>
-            params.value ?? <span className="text-gray-300">&mdash;</span>,
+            params.value ?? <Box sx={{}}>&mdash;</Box>,
       },
       {
          field: 'recorded_by',
@@ -87,7 +87,7 @@ const ConsultationTab = ({ patientId }: { patientId: number }) => {
          flex: 1,
          minWidth: 130,
          renderCell: (params: GridRenderCellParams<IConsultation>) =>
-            params.value ?? <span className="text-gray-300">&mdash;</span>,
+            params.value ?? <Box sx={{}}>&mdash;</Box>,
       },
       {
          field: 'actions',
@@ -97,21 +97,21 @@ const ConsultationTab = ({ patientId }: { patientId: number }) => {
          getActions: (params) => [
             <GridActionsCellItem
                key={`view-${params.id}`}
-               icon={<Eye size={16} className="text-gray-500" />}
+               icon={<Eye size={16} />}
                label="View consultation"
                onClick={() => router.visit(`/patients/${patientId}/consultations/${params.row.id}`)}
                showInMenu={false}
             />,
             <GridActionsCellItem
                key={`edit-${params.id}`}
-               icon={<Pencil size={16} className="text-blue-500" />}
+               icon={<Pencil size={16} />}
                label="Edit consultation"
                onClick={() => router.visit(`/patients/${patientId}/consultations/${params.row.id}/edit`)}
                showInMenu={false}
             />,
             <GridActionsCellItem
                key={`delete-${params.id}`}
-               icon={<Trash2 size={16} className="text-red-500" />}
+               icon={<Trash2 size={16} />}
                label="Delete consultation"
                onClick={() => handleDelete(params.row as IConsultation)}
                showInMenu={false}

@@ -1,30 +1,30 @@
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Stack } from '@mui/material'
 import { FolderOpen } from 'lucide-react'
 import { type ReactNode } from 'react'
-import { clsx } from "clsx";
-import Pagination from "@/components/table/Pagination";
-import { PaginationMeta } from "@/interfaces/IPagination";
+import Pagination from '@/components/table/Pagination'
+import { PaginationMeta } from '@/interfaces/IPagination'
 
 export interface Column<T> {
-    header: string
-    cell: (row: T) => ReactNode
-    classNames?: {
-        header?: string;
-        body?: string;
-    }
+   header: string
+   cell: (row: T) => ReactNode
+   classNames?: {
+      header?: string
+      body?: string
+   }
 }
 
-interface Props<T> {
-    data: T[]
-    keyExtractor: (row: T) => string | number
-    columns: Column<T>[]
-    emptyMessage?: string
-    emptyDescription?: string
-    pagination?: PaginationMeta
-    baseUrl?: string
-    onRowClick?: (row: T) => void
+type Props<T> = {
+   data: T[]
+   keyExtractor: (row: T) => string | number
+   columns: Column<T>[]
+   emptyMessage?: string
+   emptyDescription?: string
+   pagination?: PaginationMeta
+   baseUrl?: string
+   onRowClick?: (row: T) => void
 }
 
-const DataTable = <T, >({
+const DataTable = <T,>({
    data,
    keyExtractor,
    columns,
@@ -33,70 +33,49 @@ const DataTable = <T, >({
    pagination,
    baseUrl = '',
    onRowClick,
-}: Props<T>) => {
-   return (
+}: Props<T>) => (
       <>
-         <div className="w-full border border-gray-300 rounded-xl overflow-hidden">
-            <table className="w-full text-left">
-               <thead className='bg-white'>
-                  <tr className="border-b border-gray-300">
-                     {columns.map((col, i) => (
-                        <th
-                           key={i}
-                           className={clsx('px-6 py-4 text-gray-500 text-sm', col.classNames?.header)}
-                        >
-                           {col.header}
-                        </th>
+         <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 3, overflow: 'hidden' }}>
+            <Table>
+               <TableHead>
+                  <TableRow>
+                     {columns.map((column) => (
+                        <TableCell key={column.header} sx={{ color: 'text.secondary', fontSize: 14, fontWeight: 500 }}>
+                           {column.header}
+                        </TableCell>
                      ))}
-                  </tr>
-               </thead>
-               <tbody className="divide-y divide-gray-300">
+                  </TableRow>
+               </TableHead>
+               <TableBody>
                   {data.length === 0 ? (
-                     <tr>
-                        <td colSpan={columns.length} className="px-6 py-20">
-                           <div className="flex flex-col items-center gap-3 text-gray-400">
-                              <FolderOpen size={44} strokeWidth={1.5} className="text-gray-300" />
-                              <p className="text-sm font-medium text-gray-500">
-                                 {emptyMessage}
-                              </p>
-                              <p className="text-xs text-gray-400">
-                                 {emptyDescription}
-                              </p>
-                           </div>
-                        </td>
-                     </tr>
-                  ) : (
-                     data.map((row) => (
-                        <tr
-                           key={keyExtractor(row)}
-                           className={`transition-all duration-150 bg-white hover:bg-primary-50 ${
-                              onRowClick
-                                 ? 'cursor-pointer hover:bg-primary-50/60 hover:[&>td]:text-gray-900'
-                                 : ''
-                           }`}
-                           onClick={onRowClick ? () => onRowClick(row) : undefined}
-                        >
-                           {columns.map((col, i) => (
-                              <td
-                                 key={i}
-                                 className={`px-6 py-3 text-sm transition-colors duration-150 ${col.classNames?.body ?? ''}`}
-                              >
-                                 {col.cell(row)}
-                              </td>
-                           ))}
-                        </tr>
-                     ))
-                  )}
-               </tbody>
-            </table>
-         </div>
-
-
-         {pagination && pagination.last_page > 1 && (
-            <Pagination meta={pagination} baseUrl={baseUrl} />
-         )}
+                     <TableRow>
+                        <TableCell colSpan={columns.length} sx={{ py: 10 }}>
+                           <Stack spacing={1.5} sx={{ alignItems: 'center' }}>
+                              <FolderOpen size={44} strokeWidth={1.5} color="#cbd5e1" />
+                              <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>{emptyMessage}</Typography>
+                              <Typography variant="caption" color="text.disabled">{emptyDescription}</Typography>
+                           </Stack>
+                        </TableCell>
+                     </TableRow>
+                  ) : data.map((row) => (
+                     <TableRow
+                        key={keyExtractor(row)}
+                        hover={!!onRowClick}
+                        onClick={onRowClick ? () => onRowClick(row) : undefined}
+                        sx={onRowClick ? { cursor: 'pointer' } : undefined}
+                     >
+                        {columns.map((column) => (
+                           <TableCell key={column.header} sx={{ fontSize: 14 }}>
+                              {column.cell(row)}
+                           </TableCell>
+                        ))}
+                     </TableRow>
+                  ))}
+               </TableBody>
+            </Table>
+         </TableContainer>
+         {pagination && pagination.last_page > 1 && <Pagination meta={pagination} baseUrl={baseUrl} />}
       </>
    )
-}
 
-export default DataTable;
+export default DataTable

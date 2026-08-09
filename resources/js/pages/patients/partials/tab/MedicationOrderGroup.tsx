@@ -1,3 +1,4 @@
+import { Box } from '@mui/material'
 import { router } from '@inertiajs/react'
 import { useModal } from '@/components/modal'
 import { Pencil, StopCircle, Play, Pause, RotateCcw } from 'lucide-react'
@@ -80,38 +81,38 @@ const MedicationOrderGroup = ({ prescription, visitId, onEdit }: MedicationOrder
       .sort((a, b) => a - b)
 
    return (
-      <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
+      <Box sx={{}}>
          {/* Order Header */}
-         <div className="px-5 py-4 flex items-center justify-between">
-            <div className="flex items-center gap-3 min-w-0">
-               <div>
-                  <div className="flex items-center gap-2">
-                     <span className="text-sm font-semibold text-gray-900">{medicineName}</span>
-                     <span className={`inline-block rounded-full px-2 py-0.5 text-[11px] font-medium ${statusBadge.className}`}>
+         <Box sx={{}}>
+            <Box sx={{}}>
+               <Box>
+                  <Box sx={{}}>
+                     <Box sx={{}}>{medicineName}</Box>
+                     <Box sx={{}}>
                         {statusBadge.label}
-                     </span>
-                  </div>
-                  <div className="flex items-center gap-2 mt-1">
-                     <span className="text-xs text-gray-500">{prescription.dosage} {prescription.unit}</span>
-                     <span className="text-gray-300">&middot;</span>
-                     <span className="text-xs text-gray-500">{prescription.route}</span>
-                     <span className="text-gray-300">&middot;</span>
-                     <span className="text-xs text-gray-500">{prescription.interval}</span>
+                     </Box>
+                  </Box>
+                  <Box sx={{}}>
+                     <Box sx={{}}>{prescription.dosage} {prescription.unit}</Box>
+                     <Box sx={{}}>&middot;</Box>
+                     <Box sx={{}}>{prescription.route}</Box>
+                     <Box sx={{}}>&middot;</Box>
+                     <Box sx={{}}>{prescription.interval}</Box>
                      {unitPrice != null && (
                         <>
-                           <span className="text-gray-300">&middot;</span>
-                           <span className="text-xs text-gray-500">${Number(unitPrice).toFixed(2)}/dose</span>
+                           <Box sx={{}}>&middot;</Box>
+                           <Box sx={{}}>${Number(unitPrice).toFixed(2)}/dose</Box>
                         </>
                      )}
-                  </div>
+                  </Box>
                   {prescription.notes && (
-                     <p className="mt-1 text-xs text-gray-400 truncate max-w-md">{prescription.notes}</p>
+                     <Box sx={{}}>{prescription.notes}</Box>
                   )}
-               </div>
-            </div>
+               </Box>
+            </Box>
 
             {/* Doctor Actions */}
-            <div className="flex items-center gap-1.5 shrink-0">
+            <Box sx={{}}>
                {canEdit && (
                   <IconButton onClick={() => onEdit(prescription)} aria-label="Edit order" title="Edit">
                      <Pencil size={14} />
@@ -148,20 +149,20 @@ const MedicationOrderGroup = ({ prescription, visitId, onEdit }: MedicationOrder
                   </>
                )}
                {prescription.status === 'stopped' && (
-                  <span className="text-xs font-medium text-red-500">Stopped</span>
+                  <Box sx={{}}>Stopped</Box>
                )}
-            </div>
-         </div>
+            </Box>
+         </Box>
 
          {/* Cycles Table */}
          {cycles.length > 0 ? (
-            <div className="border-t border-gray-100">
+            <Box sx={{}}>
                {/* Column Headers */}
-               <div className="grid grid-cols-[80px_1fr_160px] gap-4 px-5 py-2 bg-gray-50 border-b border-gray-100">
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">Cycle</span>
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">Doses</span>
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 text-right">Progress</span>
-               </div>
+               <Box sx={{}}>
+                  <Box sx={{}}>Cycle</Box>
+                  <Box sx={{}}>Doses</Box>
+                  <Box sx={{}}>Progress</Box>
+               </Box>
 
                {cycles.map((cycleNo) => {
                   const cycleDoses = (dosesByCycle[cycleNo] ?? []).sort(
@@ -178,13 +179,13 @@ const MedicationOrderGroup = ({ prescription, visitId, onEdit }: MedicationOrder
                      />
                   )
                })}
-            </div>
+            </Box>
          ) : (
-            <div className="border-t border-gray-100 px-5 py-8 text-sm text-gray-400 text-center">
+            <Box sx={{}}>
                     No doses recorded yet
-            </div>
+            </Box>
          )}
-      </div>
+      </Box>
    )
 }
 

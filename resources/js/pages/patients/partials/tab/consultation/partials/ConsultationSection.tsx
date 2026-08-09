@@ -4,7 +4,6 @@ import Checkbox from '@/components/form/checkbox'
 import CheckboxGroup from '@/components/form/checkboxGroup'
 import { type OptionType } from '../consultationTemplate'
 import { IConsultationFormData } from '@/interfaces/IConsultation'
-import { cn } from '@/utils/cn'
 import { Box, Grid, Typography } from '@mui/material'
 
 type SectionProps = {
@@ -38,14 +37,14 @@ const ConsultationSection = ({ title, name, options, control, disabled }: Sectio
          value: option.value,
          colSpan: option.colSpan,
          text: option.text && (
-            <span className={cn('text-base font-semibold text-gray-800', /[\u1780-\u17FF\u19E0-\u19FF]/.test(option.text) && 'font-khmer')}>
+            <Box sx={{}}>
                {option.text}
-            </span>
+            </Box>
          ),
          label: option.label && (
-            <span className={cn('text-base', /[\u1780-\u17FF\u19E0-\u19FF]/.test(option.label) && 'font-khmer')}>
+            <Box sx={{}}>
                {option.label}
-            </span>
+            </Box>
          ),
       }))
    const othersName = OTHER_FIELD_MAP[name] as Path<IConsultationFormData>
@@ -63,7 +62,7 @@ const ConsultationSection = ({ title, name, options, control, disabled }: Sectio
                      value="NORMAL"
                      exclusive
                      disabled={disabled}
-                     label={<span className="text-sm">Normal</span>}
+                     label={<Box sx={{}}>Normal</Box>}
                      size="small"
                      sx={{ p: 0.5 }}
                      onCheckedChange={(checked) => {

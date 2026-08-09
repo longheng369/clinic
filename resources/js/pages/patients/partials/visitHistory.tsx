@@ -22,6 +22,9 @@ const VisitHistory = ({
    onAdmit,
    onClose,
 }: Props) => {
+   void onAdmit
+   void onClose
+
    if (allVisits.length === 0) {
       return (
          <Typography sx={{ py: 4, textAlign: 'center', color: 'text.disabled', fontSize: 14 }}>

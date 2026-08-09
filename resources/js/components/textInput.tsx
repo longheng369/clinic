@@ -1,7 +1,12 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, type InputHTMLAttributes } from 'react'
+import { TextField } from '@mui/material'
+
+type Props = Omit<InputHTMLAttributes<HTMLInputElement>, 'color' | 'size' | 'className'> & {
+   isFocused?: boolean
+}
 
 export default forwardRef(function TextInput(
-   { type = 'text', className = '', isFocused = false, ...props }: InputHTMLAttributes<HTMLInputElement> & { isFocused?: boolean },
+   { type = 'text', isFocused = false, ...props }: Props,
    ref: React.Ref<{ focus: () => void }>,
 ) {
    const localRef = useRef<HTMLInputElement>(null)
@@ -11,20 +16,15 @@ export default forwardRef(function TextInput(
    }))
 
    useEffect(() => {
-      if (isFocused) {
-         localRef.current?.focus()
-      }
+      if (isFocused) localRef.current?.focus()
    }, [isFocused])
 
    return (
-      <input
+      <TextField
          {...props}
          type={type}
-         className={
-            'rounded-xl border border-gray-300 px-3 py-2.5 shadow-sm outline-hidden focus:outline-2 focus:outline-primary-500 focus:border-primary-500 text-sm transition-all duration-200 ' +
-                className
-         }
-         ref={localRef}
+         inputRef={localRef}
+         variant="standard"
       />
    )
 })

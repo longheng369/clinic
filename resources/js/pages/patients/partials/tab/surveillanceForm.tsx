@@ -1,3 +1,4 @@
+import { Box } from '@mui/material'
 import { useForm } from 'react-hook-form'
 import Input from '@/components/form/input-deprecated'
 import Select from '@/components/form/select-deprecated'
@@ -71,8 +72,8 @@ const SurveillanceForm = ({ patientId, surveillance, allVisits, selectedVisitId,
    })
 
    return (
-      <form onSubmit={onSubmit} className="border-t border-slate-300" noValidate>
-         <div className="space-y-4 p-6">
+      <form onSubmit={onSubmit} noValidate>
+         <Box>
             {visitOptions.length > 1 && (
                <Select
                   label="Visit"
@@ -83,13 +84,13 @@ const SurveillanceForm = ({ patientId, surveillance, allVisits, selectedVisitId,
                />
             )}
 
-            <div className="grid grid-cols-2 gap-4">
+            <Box>
                <Input
                   label="Systolic (mmHg)"
                   control={control}
                   type="number"
-                  min={0}
-                  max={300}
+
+
                   placeholder="e.g. 120"
                   name="systolic"
                   rules={{ required: 'Required', min: { value: 0, message: 'Min 0' }, max: { value: 300, message: 'Max 300' } }}
@@ -98,21 +99,21 @@ const SurveillanceForm = ({ patientId, surveillance, allVisits, selectedVisitId,
                   label="Diastolic (mmHg)"
                   control={control}
                   type="number"
-                  min={0}
-                  max={200}
+
+
                   placeholder="e.g. 80"
                   name="diastolic"
                   rules={{ required: 'Required', min: { value: 0, message: 'Min 0' }, max: { value: 200, message: 'Max 200' } }}
                />
-            </div>
+            </Box>
 
-            <div className="grid grid-cols-3 gap-4">
+            <Box>
                <Input
                   label="Pulse (bpm)"
                   control={control}
                   type="number"
-                  min={0}
-                  max={300}
+
+
                   placeholder="e.g. 72"
                   name="pulse"
                   rules={{ required: 'Required', min: { value: 0, message: 'Min 0' }, max: { value: 300, message: 'Max 300' } }}
@@ -121,9 +122,9 @@ const SurveillanceForm = ({ patientId, surveillance, allVisits, selectedVisitId,
                   label="Temperature (°C)"
                   control={control}
                   type="number"
-                  step="0.1"
-                  min={30}
-                  max={45}
+
+
+
                   placeholder="e.g. 36.5"
                   name="temperature"
                   rules={{ required: 'Required', min: { value: 30, message: 'Min 30' }, max: { value: 45, message: 'Max 45' } }}
@@ -132,21 +133,21 @@ const SurveillanceForm = ({ patientId, surveillance, allVisits, selectedVisitId,
                   label="RR (breaths/min)"
                   control={control}
                   type="number"
-                  min={0}
-                  max={100}
+
+
                   placeholder="e.g. 16"
                   name="rr"
                   rules={{ required: 'Required', min: { value: 0, message: 'Min 0' }, max: { value: 100, message: 'Max 100' } }}
                />
-            </div>
+            </Box>
 
-            <div className="grid grid-cols-2 gap-4">
+            <Box>
                <Input
                   label="SpO₂ (%)"
                   control={control}
                   type="number"
-                  min={0}
-                  max={100}
+
+
                   placeholder="e.g. 98"
                   name="spo2"
                   rules={{ required: 'Required', min: { value: 0, message: 'Min 0' }, max: { value: 100, message: 'Max 100' } }}
@@ -158,13 +159,13 @@ const SurveillanceForm = ({ patientId, surveillance, allVisits, selectedVisitId,
                   options={O2_OPTIONS}
                   rules={{ required: 'This field is required' }}
                />
-            </div>
-         </div>
+            </Box>
+         </Box>
 
-         <div className="flex justify-end gap-2 p-2 border-t border-slate-300">
+         <Box>
             <Button type="button" onClick={onClose} variant="outline">Cancel</Button>
             <Button type="submit" disabled={isProcessing}>Submit</Button>
-         </div>
+         </Box>
       </form>
    )
 }

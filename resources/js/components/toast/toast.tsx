@@ -1,57 +1,22 @@
 import { useEffect } from 'react'
-import { X, CheckCircle, AlertCircle, AlertTriangle, Info } from 'lucide-react'
+import { Alert, IconButton, Snackbar, Stack, Typography } from '@mui/material'
+import { X } from 'lucide-react'
 
 export type ToastVariant = 'success' | 'error' | 'warning' | 'info'
 
 export interface ToastData {
-  id: string
-  message: string
-  description?: string
-  variant: ToastVariant
-  duration: number
+   id: string
+   message: string
+   description?: string
+   variant: ToastVariant
+   duration: number
 }
 
-interface ToastProps extends ToastData {
-  onClose: (id: string) => void
+type Props = ToastData & {
+   onClose: (id: string) => void
 }
 
-const cn = (...classes: (string | false | undefined | null)[]) =>
-   classes.filter(Boolean).join(' ')
-
-const variantStyles: Record<ToastVariant, { bg: string; border: string; iconBg: string }> = {
-   success: {
-      bg: 'bg-green-50',
-      border: 'border-green-600',
-      iconBg: 'text-green-500',
-   },
-   error: {
-      bg: 'bg-red-50',
-      border: 'border-red-200',
-      iconBg: 'text-red-500',
-   },
-   warning: {
-      bg: 'bg-amber-50',
-      border: 'border-amber-200',
-      iconBg: 'text-amber-500',
-   },
-   info: {
-      bg: 'bg-primary-50',
-      border: 'border-primary-200',
-      iconBg: 'text-primary-500',
-   },
-}
-
-const icons: Record<ToastVariant, typeof CheckCircle> = {
-   success: CheckCircle,
-   error: AlertCircle,
-   warning: AlertTriangle,
-   info: Info,
-}
-
-export default function Toast({ id, message, description, variant, duration, onClose }: ToastProps) {
-   const styles = variantStyles[variant]
-   const Icon = icons[variant]
-
+const Toast = ({ id, message, description, variant, duration, onClose }: Props) => {
    useEffect(() => {
       if (duration <= 0) return
       const timer = setTimeout(() => onClose(id), duration)
@@ -59,32 +24,28 @@ export default function Toast({ id, message, description, variant, duration, onC
    }, [id, duration, onClose])
 
    return (
-      <div
-         className={cn(
-            'pointer-events-auto flex w-full max-w-sm rounded-2xl border p-4 shadow-xl shadow-primary-500/5 backdrop-blur-sm',
-            styles.bg,
-            styles.border,
-            'animate-toast-slide-in',
-         )}
-         role="alert"
+      <Snackbar
+         open
+         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+         sx={{ position: 'static', transform: 'none' }}
       >
-         <div className="flex shrink-0 items-start pt-0.5">
-            <Icon className={cn('h-5 w-5', styles.iconBg)} />
-         </div>
-
-         <div className="ml-3 flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900">{message}</p>
-            {description && (
-               <p className="mt-1 text-sm text-gray-600">{description}</p>
+         <Alert
+            severity={variant}
+            role="alert"
+            sx={{ width: '100%', minWidth: 320, alignItems: 'flex-start' }}
+            action={(
+               <IconButton size="small" color="inherit" onClick={() => onClose(id)} aria-label="Close notification">
+                  <X size={16} />
+               </IconButton>
             )}
-         </div>
-
-         <button
-            onClick={() => onClose(id)}
-            className="ml-3 shrink-0 inline-flex text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
          >
-            <X className="h-4 w-4" />
-         </button>
-      </div>
+            <Stack spacing={0.25}>
+               <Typography variant="body2" sx={{ fontWeight: 600 }}>{message}</Typography>
+               {description && <Typography variant="caption">{description}</Typography>}
+            </Stack>
+         </Alert>
+      </Snackbar>
    )
 }
+
+export default Toast

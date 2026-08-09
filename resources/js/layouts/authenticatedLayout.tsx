@@ -1,17 +1,18 @@
+import { Box } from '@mui/material'
 import Sidebar from './sidebar'
 
-type AuthenticatedLayoutProps = {
-  children: React.ReactNode
+type Props = {
+   children: React.ReactNode
 }
 
-const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
+const AuthenticatedLayout = ({ children }: Props) => {
    return (
-      <main className="flex h-screen">
+      <Box component="main" sx={{ display: 'flex', height: '100vh' }}>
          <Sidebar />
-         <section className="flex-1 max-h-screen">
+         <Box component="section" sx={{ flex: 1, maxHeight: '100vh', overflow: 'hidden' }}>
             {children}
-         </section>
-      </main>
+         </Box>
+      </Box>
    )
 }
 

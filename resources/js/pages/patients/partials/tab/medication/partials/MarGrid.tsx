@@ -1,3 +1,4 @@
+import { Box } from '@mui/material'
 import { router } from '@inertiajs/react'
 import { useModal } from '@/components/modal'
 import { Pencil, StopCircle, Play, Pause, RotateCcw } from 'lucide-react'
@@ -8,13 +9,12 @@ import MarGridCell from './MarGridCell'
 import { Button } from '@/components/ui/button'
 import IconButton from '@/components/button/iconButton'
 import { formatDob } from '@/utils/date'
-import { cn } from '@/utils/cn'
 
-const ORDER_STATUS: Record<string, { label: string; className: string }> = {
-   active: { label: 'Active', className: 'bg-green-100 text-green-700' },
-   on_hold: { label: 'On Hold', className: 'bg-amber-100 text-amber-700' },
-   stopped: { label: 'Stopped', className: 'bg-red-100 text-red-700' },
-   completed: { label: 'Completed', className: 'bg-blue-100 text-blue-700' },
+const ORDER_STATUS: Record<string, { label: string }> = {
+   active: { label: 'Active' },
+   on_hold: { label: 'On Hold' },
+   stopped: { label: 'Stopped' },
+   completed: { label: 'Completed' },
 }
 
 const DOSE_TIMES: Record<string, string[]> = {
@@ -141,61 +141,61 @@ const MarGrid = ({ patient, medications, visitId, onEdit }: MarGridProps) => {
    }
 
    return (
-      <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
+      <Box>
          {/* Patient MAR Header */}
-         <div className="px-5 py-4 border-b border-gray-100">
-            <div className="flex items-center gap-4 flex-wrap">
-               <div>
-                  <span className="text-sm font-semibold text-gray-900">
+         <Box>
+            <Box>
+               <Box>
+                  <Box>
                      {patient.khmer_last_name} {patient.khmer_first_name}
-                  </span>
+                  </Box>
                   {patient.first_name && (
-                     <span className="ml-1.5 text-sm text-gray-500">
+                     <Box>
                         ({patient.last_name ? `${patient.last_name} ` : ''}{patient.first_name})
-                     </span>
+                     </Box>
                   )}
-               </div>
-               <span className="text-gray-300">&middot;</span>
-               <span className="text-xs text-gray-500">
+               </Box>
+               <Box>&middot;</Box>
+               <Box>
                   DOB: {formatDob(patient.date_of_birth)}
-               </span>
+               </Box>
                {patient.blood_group && (
                   <>
-                     <span className="text-gray-300">&middot;</span>
-                     <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-red-50 text-red-600`}>
+                     <Box>&middot;</Box>
+                     <Box>
                         {patient.blood_group}
-                     </span>
+                     </Box>
                   </>
                )}
                {patient.allergy && (
                   <>
-                     <span className="text-gray-300">&middot;</span>
-                     <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-600">
+                     <Box>&middot;</Box>
+                     <Box>
                         Allergy: {patient.allergy}
-                     </span>
+                     </Box>
                   </>
                )}
                {dateColumns.length > 0 && (
                   <>
-                     <span className="text-gray-300">&middot;</span>
-                     <span className="text-xs text-gray-400">
+                     <Box>&middot;</Box>
+                     <Box>
                         {dateColumns[0].slice(5)} – {dateColumns[dateColumns.length - 1].slice(5)}
-                     </span>
+                     </Box>
                   </>
                )}
-            </div>
-         </div>
+            </Box>
+         </Box>
 
          {/* Grid Table */}
-         <div className="overflow-x-auto">
-            <table className="w-full min-w-[800px]">
+         <Box>
+            <table>
                <thead>
                   <tr>
-                     <th className="sticky left-0 z-10 bg-gray-50 px-4 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400 border-b border-gray-100 min-w-[280px]">
+                     <th>
                         Medication
                      </th>
                      {dateColumns.map((dateKey) => (
-                        <th key={dateKey} className="px-2 py-2 text-center text-[11px] font-semibold uppercase tracking-wider text-gray-400 border-b border-gray-100 min-w-[96px]">
+                        <th key={dateKey}>
                            {formatDate(new Date(dateKey + 'T00:00:00'))}
                         </th>
                      ))}
@@ -222,45 +222,42 @@ const MarGrid = ({ patient, medications, visitId, onEdit }: MarGridProps) => {
                      return (
                         <tr
                            key={medication.id}
-                           className={cn(
-                              'group border-b border-gray-100',
-                              medication.status === 'stopped' && 'bg-yellow-50/30'
-                           )}
+
                         >
                            {/* Medication Info Column */}
-                           <td className="sticky left-0 z-10 bg-white group-hover:bg-gray-50 px-4 py-3 border-r border-gray-100 min-w-[280px]">
+                           <td>
                               {medication.status === 'stopped' && (
-                                 <div className="bg-yellow-50/50 -mx-4 -my-3 px-4 py-3" />
+                                 <Box />
                               )}
-                              <div className="relative">
-                                 <div className="flex items-center gap-2">
-                                    <span className="text-sm font-semibold text-gray-900">{medicineName}</span>
-                                    <span className={`inline-block rounded-full px-2 py-0.5 text-[11px] font-medium ${statusBadge.className}`}>
+                              <Box>
+                                 <Box>
+                                    <Box>{medicineName}</Box>
+                                    <Box>
                                        {statusBadge.label}
-                                    </span>
-                                 </div>
-                                 <div className="flex items-center gap-2 mt-1">
-                                    <span className="text-xs text-gray-500">{medication.dosage} {medication.unit}</span>
-                                    <span className="text-gray-300">&middot;</span>
-                                    <span className="text-xs text-gray-500">{medication.route}</span>
-                                    <span className="text-gray-300">&middot;</span>
-                                    <span className="text-xs text-gray-500">{medication.interval}</span>
+                                    </Box>
+                                 </Box>
+                                 <Box>
+                                    <Box>{medication.dosage} {medication.unit}</Box>
+                                    <Box>&middot;</Box>
+                                    <Box>{medication.route}</Box>
+                                    <Box>&middot;</Box>
+                                    <Box>{medication.interval}</Box>
                                     {unitPrice != null && (
                                        <>
-                                          <span className="text-gray-300">&middot;</span>
-                                          <span className="text-xs text-gray-500">${Number(unitPrice).toFixed(2)}/dose</span>
+                                          <Box>&middot;</Box>
+                                          <Box>${Number(unitPrice).toFixed(2)}/dose</Box>
                                        </>
                                     )}
-                                 </div>
+                                 </Box>
                                  {medication.recorded_by && (
-                                    <span className="text-xs text-gray-400">Dr. {medication.recorded_by}</span>
+                                    <Box>Dr. {medication.recorded_by}</Box>
                                  )}
                                  {medication.notes && (
-                                    <p className="mt-1 text-xs text-gray-400 truncate max-w-[260px]">{medication.notes}</p>
+                                    <Box>{medication.notes}</Box>
                                  )}
 
                                  {/* Action Buttons */}
-                                 <div className="flex items-center gap-1 mt-2">
+                                 <Box>
                                     {canEdit && (
                                        <IconButton onClick={() => onEdit(medication)} aria-label="Edit order" title="Edit">
                                           <Pencil size={14} />
@@ -297,16 +294,16 @@ const MarGrid = ({ patient, medications, visitId, onEdit }: MarGridProps) => {
                                        </>
                                     )}
                                     {medication.status === 'stopped' && (
-                                       <span className="text-xs font-medium text-red-500">Stopped</span>
+                                       <Box>Stopped</Box>
                                     )}
-                                 </div>
-                              </div>
+                                 </Box>
+                              </Box>
                            </td>
 
                            {/* Date Cells */}
                            {dateColumns.map((dateKey) => (
-                              <td key={dateKey} className="px-1.5 py-2 align-top">
-                                 <div className="flex flex-col items-center gap-1">
+                              <td key={dateKey}>
+                                 <Box>
                                     {timeSlots.map((time, idx) => {
                                        const slotKey = `${dateKey}T${time}`
                                        const dose = doseMap.get(slotKey)
@@ -319,7 +316,7 @@ const MarGrid = ({ patient, medications, visitId, onEdit }: MarGridProps) => {
                                           />
                                        )
                                     })}
-                                 </div>
+                                 </Box>
                               </td>
                            ))}
                         </tr>
@@ -327,21 +324,21 @@ const MarGrid = ({ patient, medications, visitId, onEdit }: MarGridProps) => {
                   })}
                </tbody>
             </table>
-         </div>
+         </Box>
 
          {/* Initials Legend */}
          {initialsMap.size > 0 && (
-            <div className="border-t border-gray-100 px-5 py-3">
-               <span className="text-xs font-medium text-gray-500 mr-3">Initials:</span>
+            <Box>
+               <Box>Initials:</Box>
                {Array.from(initialsMap.entries()).map(([initials, name], i) => (
-                  <span key={initials} className="text-xs text-gray-500">
-                     {i > 0 && <span className="mx-2 text-gray-300">&middot;</span>}
-                     <span className="font-semibold text-gray-700">{initials}</span> = {name}
-                  </span>
+                  <Box key={initials}>
+                     {i > 0 && <Box>&middot;</Box>}
+                     <Box>{initials}</Box> = {name}
+                  </Box>
                ))}
-            </div>
+            </Box>
          )}
-      </div>
+      </Box>
    )
 }
 

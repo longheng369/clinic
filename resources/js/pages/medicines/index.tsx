@@ -88,7 +88,7 @@ const Medicine = () => {
          minWidth: 180,
          valueGetter: (_value, row: IMedicine) => row.category?.name ?? null,
          renderCell: (params: GridRenderCellParams<IMedicine>) =>
-            params.value ?? <span className="text-gray-300">&mdash;</span>,
+            params.value ?? <Typography component="span" color="text.disabled">&mdash;</Typography>,
       },
       {
          field: 'unit',
@@ -97,7 +97,7 @@ const Medicine = () => {
          minWidth: 100,
          valueGetter: (_value, row: IMedicine) => row.unit?.name ?? null,
          renderCell: (params: GridRenderCellParams<IMedicine>) =>
-            params.value ?? <span className="text-gray-300">&mdash;</span>,
+            params.value ?? <Typography component="span" color="text.disabled">&mdash;</Typography>,
       },
       {
          field: 'dosage',
@@ -105,7 +105,7 @@ const Medicine = () => {
          flex: 1,
          minWidth: 120,
          renderCell: (params: GridRenderCellParams<IMedicine>) =>
-            params.value ?? <span className="text-gray-300">&mdash;</span>,
+            params.value ?? <Typography component="span" color="text.disabled">&mdash;</Typography>,
       },
       {
          field: 'unit_price',
@@ -114,7 +114,7 @@ const Medicine = () => {
          minWidth: 120,
          valueGetter: (_value, row: IMedicine) => row.unit_price != null ? `$${Number(row.unit_price).toFixed(2)}` : null,
          renderCell: (params: GridRenderCellParams<IMedicine>) =>
-            params.value ?? <span className="text-gray-300">&mdash;</span>,
+            params.value ?? <Typography component="span" color="text.disabled">&mdash;</Typography>,
       },
       {
          field: 'created_at',
@@ -131,14 +131,14 @@ const Medicine = () => {
          getActions: (params) => [
             <GridActionsCellItem
                key={`edit-${params.id}`}
-               icon={<Pencil size={16} className="text-blue-500" />}
+               icon={<Pencil size={16} color="#2563eb" />}
                label={`Edit ${params.row.name}`}
                onClick={() => handleEdit(params.row as IMedicine)}
                showInMenu={false}
             />,
             <GridActionsCellItem
                key={`delete-${params.id}`}
-               icon={<Trash2 size={16} className="text-red-500" />}
+               icon={<Trash2 size={16} color="#dc2626" />}
                label={`Delete ${params.row.name}`}
                onClick={() => handleDelete(params.row as IMedicine)}
                showInMenu={false}

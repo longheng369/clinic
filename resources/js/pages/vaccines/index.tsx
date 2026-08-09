@@ -4,7 +4,7 @@ import { useModal } from '@/components/modal'
 import { Pencil, Trash2, Plus, Syringe } from 'lucide-react'
 import VaccineForm from './partials/createOrEdit'
 import { IVaccine } from '@/interfaces/IVaccine'
-import { Button } from '@/components/ui/button'
+import { Box, Button, Stack, Typography } from '@mui/material'
 import IconButton from '@/components/button/iconButton'
 import DataTable, { type Column } from '@/components/table/DataTable'
 import { useState, useEffect } from 'react'
@@ -86,38 +86,38 @@ const Vaccine = () => {
    const columns: Column<IVaccine>[] = [
       {
          header: 'ឈ្មោះ',
-         classNames: { header: 'font-khmer tracking-wide' },
+         classNames: {},
          cell: (v) => v.name,
       },
       {
          header: 'ការពិពណ៌នា',
-         classNames: { header: 'font-khmer tracking-wide' },
-         cell: (v) => v.description ?? <span className="text-gray-300">&mdash;</span>,
+         classNames: {},
+         cell: (v) => v.description ?? <Typography component="span" sx={{ color: 'text.disabled' }}>&mdash;</Typography>,
       },
       {
          header: 'កាលវិភាគ',
-         classNames: { header: 'font-khmer tracking-wide' },
+         classNames: {},
          cell: (v) => (
-            <span className="text-xs text-gray-500">{summarizeRules(v)}</span>
+            <Typography component="span" variant="body2" color="text.secondary">{summarizeRules(v)}</Typography>
          ),
       },
       {
          header: 'បានបង្កើត',
-         classNames: { header: 'font-khmer tracking-wide' },
+         classNames: {},
          cell: (v) => formatCreatedDateTime(v.created_at),
       },
       {
          header: 'សកម្មភាព',
-         classNames: { header: 'font-khmer text-end tracking-wide' },
+         classNames: {},
          cell: (v) => (
-            <div className="flex items-center justify-end">
+            <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'flex-end' }}>
                <IconButton onClick={() => handleEdit(v)} aria-label={`Edit ${v.name}`}>
                   <Pencil size={16} />
                </IconButton>
                <IconButton color="error" onClick={() => handleDelete(v)} aria-label={`Delete ${v.name}`}>
                   <Trash2 size={16} />
                </IconButton>
-            </div>
+            </Stack>
          ),
       },
    ]
@@ -127,28 +127,26 @@ const Vaccine = () => {
    return (
       <>
          <Head title="Vaccines" />
-         <div className="p-8">
-            <div className="mb-6 flex items-center justify-between">
-               <div className="flex items-center gap-2">
-                  <Syringe size={24} className="text-primary-500" />
-                  <div>
-                     <h1 className="text-2xl font-bold text-gray-900">Vaccines</h1>
-                     <p className="mt-1 text-sm text-gray-500">
-                                Manage vaccine definitions and dose schedules
-                     </p>
-                  </div>
-               </div>
-               <div className="flex items-center gap-3">
+         <Box sx={{ p: 4 }}>
+            <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{mb: 3, alignItems: { md: 'center' , justifyContent: 'space-between'}}}>
+               <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+                  <Syringe size={24} color="var(--mui-palette-primary-main)" />
+                  <Box>
+                     <Typography variant="h5" sx={{ fontWeight: 'bold' }}>Vaccines</Typography>
+                     <Typography variant="body2" color="text.secondary">Manage vaccine definitions and dose schedules</Typography>
+                  </Box>
+               </Stack>
+               <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
                   <SearchBar value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder='Search vaccine'/>
                   <Button
                      onClick={handleCreate}
-                     size="lg"
-                     variant="gradient"
+                     size="large"
+                     variant="contained"
                   >
                      <Plus size={20} /> New Vaccine
                   </Button>
-               </div>
-            </div>
+               </Stack>
+            </Stack>
 
             <DataTable
                data={data}
@@ -159,7 +157,7 @@ const Vaccine = () => {
                pagination={pagination}
                baseUrl={baseUrl}
             />
-         </div>
+         </Box>
       </>
    )
 }

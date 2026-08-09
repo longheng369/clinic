@@ -1,3 +1,4 @@
+import { Box } from '@mui/material'
 import { useForm } from 'react-hook-form'
 import Input from '@/components/form/input-deprecated'
 import Textarea from '@/components/form/textarea'
@@ -46,8 +47,8 @@ const VaccinationForm = ({ patientId, vaccines, onClose }: VaccinationFormProps)
    })
 
    return (
-      <form onSubmit={onSubmit} className="border-t border-slate-300" noValidate>
-         <div className="space-y-4 p-6">
+      <form onSubmit={onSubmit} noValidate>
+         <Box>
             <Select
                label="Vaccine"
                control={control}
@@ -61,7 +62,7 @@ const VaccinationForm = ({ patientId, vaccines, onClose }: VaccinationFormProps)
                control={control}
                name="dose_number"
                type="number"
-               min={1}
+
                placeholder="e.g. 1"
                rules={{ required: 'This field is required' }}
             />
@@ -79,16 +80,16 @@ const VaccinationForm = ({ patientId, vaccines, onClose }: VaccinationFormProps)
                control={control}
                name="notes"
             />
-         </div>
+         </Box>
 
-         <div className="flex justify-end gap-2 p-2 border-t border-slate-300">
+         <Box>
             <Button type="button" onClick={onClose} variant="outline">
                     Cancel
             </Button>
             <Button type="submit" disabled={isProcessing}>
                     Record
             </Button>
-         </div>
+         </Box>
       </form>
    )
 }

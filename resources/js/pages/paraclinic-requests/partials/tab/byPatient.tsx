@@ -1,96 +1,14 @@
 import { Link, usePage } from '@inertiajs/react'
 import { IParaclinicRequest } from '@/interfaces/IParaclinicRequest'
 import DataTable, { type Column } from '@/components/table/DataTable'
-import { Button } from '@/components/ui/button'
+import { Button, Chip, Stack, Typography } from '@mui/material'
 import { Plus } from 'lucide-react'
-
-interface PaginatedData<T> {
-    data: T[]
-    current_page: number
-    last_page: number
-    per_page: number
-    total: number
-    from: number
-    to: number
-}
-
-const STATUS_BADGES: Record<string, string> = {
-   Draft: 'bg-gray-100 text-gray-700',
-   Requested: 'bg-blue-100 text-blue-700',
-   'Waiting Result': 'bg-amber-100 text-amber-700',
-   'Result Received': 'bg-green-100 text-green-700',
-   Reviewed: 'bg-indigo-100 text-indigo-700',
-   Completed: 'bg-emerald-100 text-emerald-700',
-   Cancelled: 'bg-red-100 text-red-700',
-}
-
+interface PaginatedData<T> { data: T[]; current_page: number; last_page: number; per_page: number; total: number; from: number; to: number }
+const STATUS_COLORS: Record<string, 'default' | 'primary' | 'error' | 'info' | 'success' | 'warning'> = { Draft: 'default', Requested: 'info', 'Waiting Result': 'warning', 'Result Received': 'success', Reviewed: 'primary', Completed: 'success', Cancelled: 'error' }
 const ParaclinicByPatientTab = ({ patientId }: { patientId: number }) => {
    const { paraclinicRequests } = usePage<{ paraclinicRequests: PaginatedData<IParaclinicRequest> }>().props
-
-   const columns: Column<IParaclinicRequest>[] = [
-      {
-         header: 'លេខស្នើសុំ',
-         classNames: { header: 'font-khmer tracking-wide' },
-         cell: (r) => (
-            <Link href={`/paraclinic-requests/${r.id}`} className="text-primary-600 hover:text-primary-700">
-               {r.request_number}
-            </Link>
-         ),
-      },
-      {
-         header: 'វេជ្ជបណ្ឌិត',
-         classNames: { header: 'font-khmer tracking-wide' },
-         cell: (r) => r.doctor?.name ?? <span className="text-gray-300">&mdash;</span>,
-      },
-      {
-         header: 'មន្ទីរពិសោធន៍',
-         classNames: { header: 'font-khmer tracking-wide' },
-         cell: (r) => r.external_facility_name ?? <span className="text-gray-300">&mdash;</span>,
-      },
-      {
-         header: 'កាលបរិច្ឆេទ',
-         classNames: { header: 'font-khmer tracking-wide' },
-         cell: (r) => r.request_date,
-      },
-      {
-         header: 'ស្ថានភាព',
-         classNames: { header: 'font-khmer tracking-wide' },
-         cell: (r) => (
-            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${STATUS_BADGES[r.status] ?? 'bg-gray-100 text-gray-700'}`}>
-               {r.status}
-            </span>
-         ),
-      },
-      {
-         header: 'ចំនួនទឹកប្រាក់',
-         classNames: { header: 'font-khmer text-end tracking-wide' },
-         cell: (r) => `$${(r.total_amount ?? 0).toFixed(2)}`,
-      },
-   ]
-
+   const columns: Column<IParaclinicRequest>[] = [{ header: 'លេខស្នើសុំ', cell: (r) => <Link href={`/paraclinic-requests/${r.id}`} style={{ color: 'inherit' }}>{r.request_number}</Link> }, { header: 'វេជ្ជបណ្ឌិត', cell: (r) => r.doctor?.name ?? <Typography component="span" color="text.disabled">&mdash;</Typography> }, { header: 'មន្ទីរពិសោធន៍', cell: (r) => r.external_facility_name ?? <Typography component="span" color="text.disabled">&mdash;</Typography> }, { header: 'កាលបរិច្ឆេទ', cell: (r) => r.request_date }, { header: 'ស្ថានភាព', cell: (r) => <Chip size="small" label={r.status} color={STATUS_COLORS[r.status] ?? 'default'} /> }, { header: 'ចំនួនទឹកប្រាក់', cell: (r) => `$${(r.total_amount ?? 0).toFixed(2)}` }]
    const { data, ...pagination } = paraclinicRequests
-   const baseUrl = `/patients/${patientId}`
-
-   return (
-      <div>
-         <div className="mb-4 flex items-center justify-between">
-            <p className="text-sm text-gray-500">Paraclinic test requests for this patient</p>
-            <Link href={`/paraclinic-requests?patient_id=${patientId}`}>
-               <Button><Plus size={18} /> New Request</Button>
-            </Link>
-         </div>
-
-         <DataTable
-            data={data}
-            keyExtractor={(r) => r.id}
-            columns={columns}
-            emptyMessage="No paraclinic requests"
-            emptyDescription="Create a paraclinic request for this patient."
-            pagination={pagination}
-            baseUrl={baseUrl}
-         />
-      </div>
-   )
+   return <Stack spacing={2}><Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between' }}><Typography color="text.secondary" variant="body2">Paraclinic test requests for this patient</Typography><Link href={`/paraclinic-requests?patient_id=${patientId}`}><Button startIcon={<Plus size={18} />} variant="contained">New Request</Button></Link></Stack><DataTable data={data} keyExtractor={(r) => r.id} columns={columns} emptyMessage="No paraclinic requests" emptyDescription="Create a paraclinic request for this patient." pagination={pagination} baseUrl={`/patients/${patientId}`} /></Stack>
 }
-
 export default ParaclinicByPatientTab

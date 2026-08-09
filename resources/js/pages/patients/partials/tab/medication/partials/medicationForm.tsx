@@ -1,3 +1,4 @@
+import { Box } from '@mui/material'
 import { useForm } from 'react-hook-form'
 import Input from '@/components/form/input'
 import NumberInput from '@/components/form/number'
@@ -112,8 +113,8 @@ const MedicationForm = ({ patientId, activeVisits, medicines, medication, select
    })
 
    return (
-      <form onSubmit={onSubmit} className="border-t border-slate-300" noValidate>
-         <div className="space-y-4 p-6">
+      <form onSubmit={onSubmit} noValidate>
+         <Box>
             {visitOptions.length > 1 && (
                <Select
                   label="Visit"
@@ -132,7 +133,7 @@ const MedicationForm = ({ patientId, activeVisits, medicines, medication, select
                rules={{ required: 'This field is required' }}
             />
 
-            <div className="grid grid-cols-2 gap-4">
+            <Box>
                <Select
                   label="Route"
                   control={control}
@@ -147,9 +148,9 @@ const MedicationForm = ({ patientId, activeVisits, medicines, medication, select
                   options={INTERVAL_OPTIONS}
                   rules={{ required: 'This field is required' }}
                />
-            </div>
+            </Box>
 
-            <div className="grid grid-cols-2 gap-4">
+            <Box>
                <NumberInput
                   label="Dosage"
                   control={control}
@@ -166,9 +167,9 @@ const MedicationForm = ({ patientId, activeVisits, medicines, medication, select
                   name="unit"
                   rules={{ required: 'Required' }}
                />
-            </div>
+            </Box>
 
-            <div className="grid grid-cols-2 gap-4">
+            <Box>
                <NumberInput
                   label="Duration (total doses)"
                   control={control}
@@ -184,7 +185,7 @@ const MedicationForm = ({ patientId, activeVisits, medicines, medication, select
                   name="starts_at"
                   rules={{ required: 'Required' }}
                />
-            </div>
+            </Box>
 
             <Input
                label="Notes"
@@ -194,14 +195,14 @@ const MedicationForm = ({ patientId, activeVisits, medicines, medication, select
                multiline
                rows={3}
             />
-         </div>
+         </Box>
 
-         <div className="flex justify-end gap-2 p-2 border-t border-slate-300">
+         <Box>
             <Button type="button" onClick={onClose} variant="outline">Cancel</Button>
             <Button type="submit" disabled={isProcessing}>
                {medication ? 'Update' : 'Add to Drug Chart'}
             </Button>
-         </div>
+         </Box>
       </form>
    )
 }

@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/react'
-import { Check, ChevronDown, Loader2 } from 'lucide-react'
+import { Autocomplete, CircularProgress, TextField } from '@mui/material'
 import {
    useController,
    type Control,
@@ -10,25 +9,20 @@ import {
 } from 'react-hook-form'
 
 type SelectOption = {
-  value: string | number
-  label: string
+   value: string | number
+   label: string
 }
 
-type SearchSelectProps<T extends FieldValues = FieldValues> = {
-  control: Control<T>
-  name: Path<T>
-  rules?: Omit<
-    RegisterOptions<T, Path<T>>,
-    'valueAsDate' | 'setValueAs' | 'disabled'
-  >
-  label: string
-  options?: SelectOption[]
-  apiUrl?: string
-  initialOption?: SelectOption
-  placeholder?: string
+type Props<T extends FieldValues = FieldValues> = {
+   control: Control<T>
+   name: Path<T>
+   rules?: Omit<RegisterOptions<T, Path<T>>, 'valueAsDate' | 'setValueAs' | 'disabled'>
+   label: string
+   options?: SelectOption[]
+   apiUrl?: string
+   initialOption?: SelectOption
+   placeholder?: string
 }
-
-const cn = (...classes: (string | false | undefined | null)[]) => classes.filter(Boolean).join(' ')
 
 const SearchSelect = <T extends FieldValues = FieldValues>({
    control,
@@ -39,27 +33,21 @@ const SearchSelect = <T extends FieldValues = FieldValues>({
    apiUrl,
    initialOption,
    placeholder = 'Search...',
-}: SearchSelectProps<T>) => {
-   const { field, fieldState: { error } } = useController({
-      control,
-      name,
-      rules,
-   })
-
+}: Props<T>) => {
+   const { field, fieldState } = useController({ control, name, rules })
    const [query, setQuery] = useState('')
    const [apiOptions, setApiOptions] = useState<SelectOption[]>([])
    const [isLoading, setIsLoading] = useState(false)
    const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined)
+   const isApiMode = Boolean(apiUrl)
 
    useEffect(() => {
-      if (!apiUrl) return
-
-      if (!query) return
+      if (!apiUrl || !query) return
 
       debounceRef.current = setTimeout(() => {
          setIsLoading(true)
          fetch(`${apiUrl}?q=${encodeURIComponent(query)}`)
-            .then((res) => res.json())
+            .then((response) => response.json())
             .then((data: { id: string | number; name: string }[]) => {
                setApiOptions(data.map((item) => ({ value: item.id, label: item.name })))
             })
@@ -69,76 +57,57 @@ const SearchSelect = <T extends FieldValues = FieldValues>({
       return () => clearTimeout(debounceRef.current)
    }, [query, apiUrl])
 
-   const isApiMode = !!apiUrl
-
-   const displayOptions = isApiMode && initialOption && !apiOptions.some((o) => o.value === initialOption.value)
+   const displayOptions = isApiMode && initialOption && !apiOptions.some((option) => option.value === initialOption.value)
       ? [initialOption, ...apiOptions]
       : isApiMode
          ? apiOptions
          : query === ''
             ? options
-            : options.filter((opt) => opt.label.toLowerCase().includes(query.toLowerCase()))
-
-   const selected = displayOptions.find((opt) => opt.value === field.value) ?? null
-
-   const inputBase =
-    'w-full rounded-lg border px-3 py-2.5 pr-10 outline-none text-sm focus:ring-2'
-   const defaultStyle = 'border-gray-300 focus:ring-primary-500/20 focus:border-primary-500'
-   const errorStyle = 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
+            : options.filter((option) => option.label.toLowerCase().includes(query.toLowerCase()))
+   const selected = displayOptions.find((option) => option.value === field.value) ?? null
 
    return (
-      <div className="flex flex-col">
-         <label className={cn('block text-sm font-medium text-gray-700 mb-1', error && 'text-red-500')}>
-            {label} {rules?.required && <span className="text-red-500">*</span>}
-         </label>
-         <Combobox
-            value={selected}
-            onChange={(val) => {
-               field.onChange(val?.value ?? null)
-            }}
-            onClose={() => {
+      <Autocomplete
+         options={displayOptions}
+         value={selected}
+         inputValue={selected ? selected.label : query}
+         loading={isLoading}
+         onInputChange={(_, value, reason) => {
+            if (reason === 'clear') {
                setQuery('')
-            }}
-         >
-            <div className="relative">
-               <ComboboxInput
-                  className={cn(inputBase, error ? errorStyle : defaultStyle)}
-                  displayValue={(opt: SelectOption | null) => opt?.label ?? ''}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder={placeholder}
-               />
-               <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
-                  {isLoading ? (
-                     <Loader2 size={16} className="text-gray-400 animate-spin" />
-                  ) : (
-                     <ChevronDown size={16} className="text-gray-400" />
-                  )}
-               </ComboboxButton>
-            </div>
-            <ComboboxOptions
-               anchor="bottom"
-               className="z-50 mt-1 max-h-60 w-[var(--input-width)] overflow-auto rounded-md bg-white py-1 ring-1 ring-black ring-opacity-5 empty:invisible"
-            >
-               {displayOptions.length === 0 && query !== '' ? (
-                  <div className="px-3 py-2 text-sm text-gray-500">
-                     {isLoading ? 'Searching...' : 'No results found'}
-                  </div>
-               ) : (
-                  displayOptions.map((opt) => (
-                     <ComboboxOption
-                        key={opt.value}
-                        value={opt}
-                        className="group flex cursor-pointer items-center gap-2 px-3 py-2 text-sm data-[focus]:bg-primary-50"
-                     >
-                        <Check size={14} className="invisible text-primary-600 group-data-[selected]:visible" />
-                        {opt.label}
-                     </ComboboxOption>
-                  ))
-               )}
-            </ComboboxOptions>
-         </Combobox>
-         {error && <span className="mt-1 text-sm text-red-500">{error.message}</span>}
-      </div>
+               field.onChange(null)
+               return
+            }
+            setQuery(value)
+         }}
+         onChange={(_, value) => field.onChange(value?.value ?? null)}
+         getOptionLabel={(option) => option.label}
+         isOptionEqualToValue={(option, value) => option.value === value.value}
+         noOptionsText={isLoading ? 'Searching...' : 'No results found'}
+         renderInput={(params) => (
+            <TextField
+               {...params}
+               label={label}
+               placeholder={placeholder}
+               required={!!rules?.required}
+               error={!!fieldState.error}
+               helperText={fieldState.error?.message}
+               slotProps={{
+                  input: {
+                     ...params.slotProps.input,
+                     endAdornment: (
+                        <>
+                           {isLoading ? <CircularProgress color="inherit" size={16} /> : null}
+                           {params.slotProps.input.endAdornment}
+                        </>
+                     ),
+                  },
+                  inputLabel: params.slotProps.inputLabel,
+                  htmlInput: params.slotProps.htmlInput,
+               }}
+            />
+         )}
+      />
    )
 }
 

@@ -1,3 +1,4 @@
+import { Box } from '@mui/material'
 import type { IMedicationDose } from '@/interfaces/IMedicationDose'
 
 const DOSE_STATUS: Record<string, { label: string; className: string }> = {
@@ -25,9 +26,9 @@ const DoseStatusBadge = ({ dose }: DoseStatusBadgeProps) => {
    const badge = DOSE_STATUS[effective]
 
    return (
-      <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${badge.className}`}>
+      <Box sx={{}}>
          {badge.label}
-      </span>
+      </Box>
    )
 }
 

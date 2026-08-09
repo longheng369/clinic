@@ -1,13 +1,58 @@
-export default function GuestLayout({ children }: { children: React.ReactNode }) {
-   return (
-      <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-linear-145 from-primary-100 via-primary-50 to-secondary-50 px-4 py-12">
-         {/* Background decorative gradients */}
-         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_var(--color-primary-200)_0%,_transparent_50%)]" />
-         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_var(--color-secondary-200)_0%,_transparent_50%)]" />
+import { Box, Paper } from '@mui/material'
 
-         <div className="relative w-full max-w-md rounded-3xl bg-white/95 shadow-xl shadow-primary-500/5 ring-1 ring-primary-100/50 backdrop-blur-sm px-8 py-8">
+type Props = {
+   children: React.ReactNode
+}
+
+const GuestLayout = ({ children }: Props) => {
+   return (
+      <Box
+         sx={{
+            position: 'relative',
+            display: 'flex',
+            minHeight: '100vh',
+            alignItems: 'center',
+            justifyContent: 'center',
+            overflow: 'hidden',
+            px: { xs: 2, sm: 4 },
+            py: 6,
+            background: 'linear-gradient(135deg, #e3f0e3 0%, #f4f9f4 50%, #f0e8e0 100%)',
+            '&::before': {
+               content: '""',
+               position: 'absolute',
+               inset: 0,
+               pointerEvents: 'none',
+               background: 'radial-gradient(ellipse at top left, #c8e0c8 0%, transparent 50%)',
+            },
+            '&::after': {
+               content: '""',
+               position: 'absolute',
+               inset: 0,
+               pointerEvents: 'none',
+               background: 'radial-gradient(ellipse at bottom right, #e0d0c1 0%, transparent 50%)',
+            },
+         }}
+      >
+         <Paper
+            elevation={0}
+            sx={{
+               position: 'relative',
+               zIndex: 1,
+               width: '100%',
+               maxWidth: 448,
+               px: 4,
+               py: 4,
+               borderRadius: 3,
+               bgcolor: 'rgba(255, 255, 255, 0.95)',
+               boxShadow: '0 20px 25px -5px rgba(90, 143, 90, 0.05)',
+               border: '1px solid rgba(200, 224, 200, 0.5)',
+               backdropFilter: 'blur(8px)',
+            }}
+         >
             {children}
-         </div>
-      </div>
+         </Paper>
+      </Box>
    )
 }
+
+export default GuestLayout

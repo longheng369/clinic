@@ -1,3 +1,4 @@
+import { Box } from '@mui/material'
 import { useState } from 'react'
 import { AlertTriangle, Clock, X } from 'lucide-react'
 import { IVaccinationAlert } from '@/interfaces/IPatientVaccination'
@@ -15,59 +16,59 @@ const VaccinationAlertBanner = ({ alerts }: VaccinationAlertBannerProps) => {
    const upcoming = alerts.filter((a) => new Date(a.next_dose_due_date) >= new Date())
 
    return (
-      <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4">
-         <div className="flex items-start justify-between">
-            <div className="flex items-start gap-3">
-               <AlertTriangle size={20} className="mt-0.5 shrink-0 text-red-500" />
-               <div>
-                  <h3 className="text-sm font-semibold text-red-800">
+      <Box >
+         <Box >
+            <Box >
+               <AlertTriangle size={20} />
+               <Box>
+                  <Box >
                             Vaccination Alerts
-                  </h3>
+                  </Box>
                   {overdue.length > 0 && (
-                     <div className="mt-2">
-                        <p className="text-xs font-medium text-red-700 uppercase tracking-wider mb-1">
+                     <Box >
+                        <Box >
                                     Overdue
-                        </p>
-                        <ul className="space-y-1">
+                        </Box>
+                        <Box >
                            {overdue.map((a) => (
-                              <li key={`${a.vaccine.id}-${a.next_dose_number}`} className="text-sm text-red-700 flex items-center gap-2">
-                                 <AlertTriangle size={12} className="shrink-0" />
-                                 <span>
+                              <Box key={`${a.vaccine.id}-${a.next_dose_number}`} >
+                                 <AlertTriangle size={12} />
+                                 <Box>
                                     <strong>{a.vaccine.name}</strong> — Dose {a.next_dose_number} was due {a.next_dose_due_date}
-                                 </span>
-                              </li>
+                                 </Box>
+                              </Box>
                            ))}
-                        </ul>
-                     </div>
+                        </Box>
+                     </Box>
                   )}
                   {upcoming.length > 0 && (
-                     <div className="mt-3">
-                        <p className="text-xs font-medium text-amber-700 uppercase tracking-wider mb-1">
+                     <Box >
+                        <Box >
                                     Due Soon
-                        </p>
-                        <ul className="space-y-1">
+                        </Box>
+                        <Box >
                            {upcoming.map((a) => (
-                              <li key={`${a.vaccine.id}-${a.next_dose_number}`} className="text-sm text-amber-700 flex items-center gap-2">
-                                 <Clock size={12} className="shrink-0" />
-                                 <span>
+                              <Box key={`${a.vaccine.id}-${a.next_dose_number}`} >
+                                 <Clock size={12} />
+                                 <Box>
                                     <strong>{a.vaccine.name}</strong> — Dose {a.next_dose_number} due {a.next_dose_due_date}
-                                 </span>
-                              </li>
+                                 </Box>
+                              </Box>
                            ))}
-                        </ul>
-                     </div>
+                        </Box>
+                     </Box>
                   )}
-               </div>
-            </div>
+               </Box>
+            </Box>
             <button
                type="button"
                onClick={() => setDismissed(true)}
-               className="shrink-0 rounded p-1 text-red-400 hover:bg-red-100 hover:text-red-600"
+               style={{ border: 0, background: 'none' }}
             >
                <X size={16} />
             </button>
-         </div>
-      </div>
+         </Box>
+      </Box>
    )
 }
 

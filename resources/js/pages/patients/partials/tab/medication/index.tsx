@@ -1,3 +1,4 @@
+import { Box } from '@mui/material'
 import { usePage } from '@inertiajs/react'
 import { useModal } from '@/components/modal'
 import { Plus, Search } from 'lucide-react'
@@ -46,10 +47,10 @@ const MedicationTab = ({ patientId, patient, selectedVisit }: Props) => {
 
    if (!selectedVisit) {
       return (
-         <div className="flex flex-col items-center justify-center py-16 text-center">
-            <h3 className="text-lg font-semibold text-gray-900 mb-1">Medication</h3>
-            <p className="text-sm text-gray-500">Select a visit to view medications.</p>
-         </div>
+         <Box>
+            <Box>Medication</Box>
+            <Box>Select a visit to view medications.</Box>
+         </Box>
       )
    }
 
@@ -89,30 +90,30 @@ const MedicationTab = ({ patientId, patient, selectedVisit }: Props) => {
    const { data, ...pagination } = medicationAdministrations
 
    return (
-      <div>
-         <div className="mb-4 flex items-center justify-between gap-3">
-            <div className="relative flex-1 max-w-xs">
-               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-               <input
+      <Box>
+         <Box>
+            <Box>
+               <Search size={16} />
+               <Box
+                  component="input"
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Filter prescriptions..."
-                  className="w-full rounded-lg border border-gray-300 py-2 pl-9 pr-3 text-sm outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                />
-            </div>
+            </Box>
             <Button onClick={handleCreate}>
                <Plus size={18} /> Add to Drug Chart
             </Button>
-         </div>
+         </Box>
 
          {filteredData.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 text-center">
-               <p className="text-sm font-medium text-gray-900">No prescriptions found</p>
-               <p className="mt-1 text-sm text-gray-500">
+            <Box>
+               <Box>No prescriptions found</Box>
+               <Box>
                   {searchTerm ? 'Try a different search term.' : 'Add medication to the drug chart for this patient.'}
-               </p>
-            </div>
+               </Box>
+            </Box>
          ) : (
             <MarGrid
                patient={patient}
@@ -123,7 +124,7 @@ const MedicationTab = ({ patientId, patient, selectedVisit }: Props) => {
          )}
 
          {!searchTerm.trim() && data.length > 0 && (
-            <div className="mt-4">
+            <Box>
                <Pagination
                   meta={{
                      current_page: pagination.current_page,
@@ -135,9 +136,9 @@ const MedicationTab = ({ patientId, patient, selectedVisit }: Props) => {
                   }}
                   baseUrl={window.location.pathname + window.location.search}
                />
-            </div>
+            </Box>
          )}
-      </div>
+      </Box>
    )
 }
 

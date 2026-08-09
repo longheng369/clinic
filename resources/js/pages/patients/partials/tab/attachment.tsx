@@ -1,3 +1,4 @@
+import { Box } from '@mui/material'
 import { useState } from 'react'
 import { router } from '@inertiajs/react'
 import { useToast } from '@/components/toast'
@@ -18,9 +19,9 @@ interface Attachment {
 }
 
 const fileIcon = (type: string) => {
-   if (type.startsWith('image/')) return <Image size={20} className="text-blue-500" />
-   if (type.includes('pdf')) return <FileText size={20} className="text-red-500" />
-   return <File size={20} className="text-gray-500" />
+   if (type.startsWith('image/')) return <Image size={20} />
+   if (type.includes('pdf')) return <FileText size={20} />
+   return <File size={20} />
 }
 
 const formatSize = (bytes: number) => {
@@ -75,98 +76,97 @@ const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
    }
 
    return (
-      <div>
-         <div className="mb-6 flex justify-between items-center gap-2">
-            <p className="text-xs text-gray-400">
+      <Box>
+         <Box>
+            <Box>
                {selectedVisit ? 'Files attached to this visit' : 'All patient files'}
-            </p>
-            <div className="flex items-center gap-2">
+            </Box>
+            <Box>
                {!selectedVisit && (
-                  <p className="text-xs text-amber-600">No visit selected — files will not be tied to a visit.</p>
+                  <Box>No visit selected — files will not be tied to a visit.</Box>
                )}
-               <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary-500 text-white text-sm font-medium hover:bg-primary-600 transition-colors">
+               <Box component="label">
                   <Upload size={18} />
                   Upload File
                   <input
                      type="file"
-                     className="hidden"
                      onChange={handleUpload}
                      disabled={isUploading}
                   />
-               </label>
-            </div>
-         </div>
+               </Box>
+            </Box>
+         </Box>
 
          {attachments.length === 0 ? (
-            <p className="text-sm text-gray-400 py-8 text-center">No files uploaded yet.</p>
+            <Box>No files uploaded yet.</Box>
          ) : (
-            <div className="space-y-2">
+            <Box>
                {attachments.map((a) => (
-                  <div
+                  <Box
                      key={a.id}
-                     className="flex items-center gap-3 px-4 py-3 rounded-lg border border-gray-200 hover:border-gray-300 bg-white transition-colors"
+
                   >
                      {fileIcon(a.file_type)}
-                     <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate">{a.file_name}</p>
-                        <p className="text-xs text-gray-400">
+                     <Box>
+                        <Box>{a.file_name}</Box>
+                        <Box>
                            {formatSize(a.file_size)}
                            {a.uploaded_by && ` • by ${a.uploaded_by.name}`}
-                        </p>
-                     </div>
-                     <div className="flex items-center gap-1">
-                        <button
+                        </Box>
+                     </Box>
+                     <Box>
+                        <Box
                            onClick={() => setPreview(a)}
-                           className="text-sm text-primary-600 hover:text-primary-700 px-2 py-1 rounded hover:bg-primary-50"
+
                         >
                            <Eye size={16} />
-                        </button>
-                        <button
+                        </Box>
+                        <Box
                            onClick={() => handleDelete(a)}
-                           className="p-1.5 rounded-lg text-red-500 hover:text-red-500 hover:bg-red-50 transition-colors"
+
                         >
                            <Trash2 size={16} />
-                        </button>
-                     </div>
-                  </div>
+                        </Box>
+                     </Box>
+                  </Box>
                ))}
-            </div>
+            </Box>
          )}
          {preview && preview.file_type.includes('pdf') && (
             <Modal open={!!preview} onClose={() => setPreview(null)} title={preview.file_name} fullScreen>
-               <iframe
+               <Box
+                  component="iframe"
                   src={`/patients/attachments/${preview.id}/view`}
-                  className="w-full flex-1 rounded-b-lg"
                />
             </Modal>
          )}
          {preview && !preview.file_type.includes('pdf') && (
             <Modal open={!!preview} onClose={() => setPreview(null)} title={preview.file_name} maxWidth="4xl">
                {preview.file_type.startsWith('image/') ? (
-                  <div className="p-4">
-                     <img
+                  <Box>
+                     <Box
+                        component="img"
                         src={`/patients/attachments/${preview.id}/view`}
                         alt={preview.file_name}
-                        className="max-w-full max-h-[80vh] mx-auto rounded"
                      />
-                  </div>
+                  </Box>
                ) : (
-                  <div className="p-8 text-center text-gray-400">
-                     <File size={48} className="mx-auto mb-3" />
-                     <p className="text-sm">Preview not available for this file type.</p>
-                     <a
+                  <Box>
+                     <File size={48} />
+                     <Box>Preview not available for this file type.</Box>
+                     <Box
+                        component="a"
                         href={`/patients/attachments/${preview.id}/view`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-block mt-3 text-sm text-primary-600 underline"
                      >
                         Download instead
-                     </a>
-                  </div>
+                     </Box>
+                  </Box>
                )}
             </Modal>
          )}
-      </div>
+      </Box>
    )
 }
 

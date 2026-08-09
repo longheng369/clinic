@@ -1,68 +1,61 @@
-import React from 'react';
-import { Link } from "@inertiajs/react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { PaginationMeta } from "@/interfaces/IPagination";
+import { Box, Button, Stack, Typography } from '@mui/material'
+import { Link } from '@inertiajs/react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { PaginationMeta } from '@/interfaces/IPagination'
+import type { ElementType } from 'react'
 
-interface Props {
-    meta: PaginationMeta;
-    baseUrl: string;
+const InertiaLinkComponent = Link as unknown as ElementType
+
+type Props = {
+   meta: PaginationMeta
+   baseUrl: string
 }
 
 const Pagination = ({ meta, baseUrl }: Props) => {
    const separator = baseUrl.includes('?') ? '&' : '?'
+   const link = (page: number) => `${baseUrl}${separator}page=${page}`
 
    return (
-      <div className="mt-3 flex items-center justify-between">
-         <p className="text-sm text-gray-500">
-                Page {meta.current_page} of {meta.last_page}
-         </p>
-         <div className="flex items-center gap-1">
-            <Link
-               href={`${baseUrl}${separator}page=${meta.current_page - 1}`}
-               className={`inline-flex items-center gap-1 rounded-xl px-3 py-2 text-sm font-medium transition-all duration-150 ${
-                  meta.current_page === 1
-                     ? 'pointer-events-none text-gray-300'
-                     : 'text-gray-600 hover:bg-gray-100'
-               }`}
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mt: 1.5, alignItems: { xs: 'stretch', sm: 'center' }, justifyContent: 'space-between' }}>
+         <Typography variant="body2" color="text.secondary">Page {meta.current_page} of {meta.last_page}</Typography>
+         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, justifyContent: { xs: 'flex-start', sm: 'flex-end' } }}>
+            <Button
+               component={InertiaLinkComponent}
+               href={link(meta.current_page - 1)}
                preserveScroll
-               aria-disabled={meta.current_page === 1}
+               disabled={meta.current_page === 1}
+               size="small"
+               startIcon={<ChevronLeft size={16} />}
             >
-               <ChevronLeft size={16} />
-                    Previous
-            </Link>
-            {Array.from(
-               { length: meta.last_page },
-               (_, i) => i + 1,
-            ).map((page) => (
-               <Link
+               Previous
+            </Button>
+            {Array.from({ length: meta.last_page }, (_, index) => index + 1).map((page) => (
+               <Button
                   key={page}
-                  href={`${baseUrl}${separator}page=${page}`}
-                  className={`inline-flex items-center justify-center rounded-xl px-3 py-2 text-sm font-medium transition-all duration-150 ${
-                     page === meta.current_page
-                        ? 'bg-primary-500 text-white shadow-sm shadow-primary-500/20'
-                        : 'text-gray-600 hover:bg-gray-100'
-                  }`}
+                  component={InertiaLinkComponent}
+                  href={link(page)}
                   preserveScroll
+                  size="small"
+                  variant={page === meta.current_page ? 'contained' : 'text'}
+                  color={page === meta.current_page ? 'primary' : 'inherit'}
+                  sx={{ minWidth: 36 }}
                >
                   {page}
-               </Link>
+               </Button>
             ))}
-            <Link
-               href={`${baseUrl}${separator}page=${meta.current_page + 1}`}
-               className={`inline-flex items-center gap-1 rounded-xl px-3 py-2 text-sm font-medium transition-all duration-150 ${
-                  meta.current_page === meta.last_page
-                     ? 'pointer-events-none text-gray-300'
-                     : 'text-gray-600 hover:bg-gray-100'
-               }`}
+            <Button
+               component={InertiaLinkComponent}
+               href={link(meta.current_page + 1)}
                preserveScroll
-               aria-disabled={meta.current_page === meta.last_page}
+               disabled={meta.current_page === meta.last_page}
+               size="small"
+               endIcon={<ChevronRight size={16} />}
             >
-                    Next
-               <ChevronRight size={16} />
-            </Link>
-         </div>
-      </div>
+               Next
+            </Button>
+         </Box>
+      </Stack>
    )
 }
 
-export default Pagination;
+export default Pagination

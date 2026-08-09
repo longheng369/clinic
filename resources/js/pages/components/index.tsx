@@ -5,6 +5,7 @@ import { Head } from '@inertiajs/react';
 import { useForm } from 'react-hook-form';
 import RHFAutocomplete from '@/components/form/autocomplete';
 import RHFSelect from '@/components/form/select-deprecated';
+import { Box } from '@mui/material'
 
 const ComponentPages = () => {
    const [value, setValue] = useState('');
@@ -28,7 +29,7 @@ const ComponentPages = () => {
    return (
       <>
          <Head title='Components'/>
-         <div className='grid grid-cols-3 gap-4 p-4 m-4 shadow-md rounded-xl'>
+         <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2, p: 2, m: 2, boxShadow: 3, borderRadius: 3 }}>
             <Select
                options={options}
                value={value}
@@ -43,7 +44,7 @@ const ComponentPages = () => {
             />
             <RHFAutocomplete control={control} label='Autocomplete' options={options} name='auto_complete' rules={{ required: "This field is required" }} />
             <RHFSelect control={control} name='select' label='Select' options={options} />
-         </div>
+         </Box>
       </>
    )
 }

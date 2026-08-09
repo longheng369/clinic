@@ -84,7 +84,7 @@ const Patient = () => {
          minWidth: 180,
          valueGetter: (_value, row: IPatient) => `${row.khmer_last_name} ${row.khmer_first_name}`,
          renderCell: (params: GridRenderCellParams<IPatient>) =>
-            <span className="font-khmer">{params.value}</span>,
+            <Typography sx={{ fontFamily: 'Siemreap, Poppins, sans-serif' }}>{params.value}</Typography>,
       },
       {
          field: 'english_name',
@@ -94,7 +94,7 @@ const Patient = () => {
          valueGetter: (_value, row: IPatient) =>
             row.first_name ? `${row.last_name ?? ''} ${row.first_name}`.trim() : null,
          renderCell: (params: GridRenderCellParams<IPatient>) =>
-            params.value ?? <span className="text-gray-300">&mdash;</span>,
+            params.value ?? <Typography component="span" color="text.disabled">&mdash;</Typography>,
       },
       { field: 'phone_number', headerName: 'លេខទូរស័ព្ទ', flex: 1, minWidth: 130 },
       {
@@ -103,9 +103,9 @@ const Patient = () => {
          flex: 1,
          minWidth: 90,
          renderCell: (params: GridRenderCellParams<IPatient>) => (
-            <span className={`capitalize ${params.value === 'male' ? 'text-blue-600' : 'text-pink-600'}`}>
+            <Typography sx={{ textTransform: 'capitalize', color: params.value === 'male' ? 'info.main' : 'secondary.main' }}>
                {params.value}
-            </span>
+            </Typography>
          ),
       },
       {
@@ -121,7 +121,7 @@ const Patient = () => {
          flex: 1,
          minWidth: 110,
          renderCell: (params: GridRenderCellParams<IPatient>) =>
-            params.value ?? <span className="text-gray-300">&mdash;</span>,
+            params.value ?? <Typography component="span" color="text.disabled">&mdash;</Typography>,
       },
       {
          field: 'actions',
@@ -131,21 +131,21 @@ const Patient = () => {
          getActions: (params) => [
             <GridActionsCellItem
                key={`view-${params.id}`}
-               icon={<Eye size={16} className="text-gray-500" />}
+               icon={<Eye size={16} color="#64748b" />}
                label={`View ${params.row.khmer_first_name}`}
                onClick={() => router.visit(`/patients/${params.id}`)}
                showInMenu={false}
             />,
             <GridActionsCellItem
                key={`edit-${params.id}`}
-               icon={<Pencil size={16} className="text-blue-500" />}
+               icon={<Pencil size={16} color="#2563eb" />}
                label={`Edit ${params.row.khmer_first_name}`}
                onClick={() => handleEdit(params.row as IPatient)}
                showInMenu={false}
             />,
             <GridActionsCellItem
                key={`delete-${params.id}`}
-               icon={<Trash2 size={16} className="text-red-500" />}
+               icon={<Trash2 size={16} color="#dc2626" />}
                label={`Delete ${params.row.khmer_first_name}`}
                onClick={() => handleDelete(params.row as IPatient)}
                showInMenu={false}

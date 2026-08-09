@@ -1,23 +1,33 @@
-import { Link } from '@inertiajs/react'
+import { Link as InertiaLink } from '@inertiajs/react'
+import { styled } from '@mui/material/styles'
+import type { ComponentPropsWithoutRef } from 'react'
 
-export default function NavLink({
-   active = false,
-   className = '',
-   children,
-   ...props
-}: { active?: boolean } & React.ComponentPropsWithoutRef<typeof Link>) {
-   return (
-      <Link
-         {...props}
-         className={
-            'inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium leading-5 transition duration-150 ease-in-out focus:outline-none ' +
-                (active
-                   ? 'border-primary-400 text-gray-900 focus:border-primary-700'
-                   : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 focus:border-gray-300 focus:text-gray-700') +
-                className
-         }
-      >
-         {children}
-      </Link>
-   )
-}
+type Props = {
+   active?: boolean
+} & ComponentPropsWithoutRef<typeof InertiaLink>
+
+const StyledLink = styled(InertiaLink, {
+   shouldForwardProp: (prop) => prop !== 'active',
+})<{ active?: boolean }>(({ theme, active }) => ({
+   display: 'inline-flex',
+   alignItems: 'center',
+   borderBottom: `2px solid ${active ? theme.palette.primary.light : 'transparent'}`,
+   padding: theme.spacing(0.5, 0.5, 0),
+   fontSize: '0.875rem',
+   fontWeight: 500,
+   lineHeight: 1.25,
+   color: active ? theme.palette.text.primary : theme.palette.text.secondary,
+   textDecoration: 'none',
+   '&:hover': {
+      color: theme.palette.text.primary,
+      borderColor: active ? theme.palette.primary.dark : theme.palette.divider,
+   },
+}))
+
+const NavLink = ({ active = false, children, ...props }: Props) => (
+   <StyledLink {...props} active={active}>
+      {children}
+   </StyledLink>
+)
+
+export default NavLink

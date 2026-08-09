@@ -1,12 +1,11 @@
-import type { InputHTMLAttributes } from 'react'
+import { FormHelperText, type FormHelperTextProps } from '@mui/material'
 
-export default function InputError({ message, className = '', ...props }: { message?: string } & InputHTMLAttributes<HTMLParagraphElement>) {
-   return message ? (
-      <p
-         {...props}
-         className={'text-sm text-red-600 ' + className}
-      >
-         {message}
-      </p>
-   ) : null
+type Props = FormHelperTextProps & {
+   message?: string
 }
+
+const InputError = ({ message, children, ...props }: Props) => (
+   message ? <FormHelperText {...props} error>{message ?? children}</FormHelperText> : null
+)
+
+export default InputError

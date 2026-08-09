@@ -6,6 +6,7 @@ import {
    useCallback,
    type ReactNode,
 } from 'react'
+import { Box } from '@mui/material'
 import Toast, { type ToastVariant, type ToastData } from '@/components/toast/toast'
 
 interface ToastOptions {
@@ -56,14 +57,25 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
       <ToastContext.Provider value={{ toast, dismiss }}>
          {children}
 
-         <div
+         <Box
             aria-live="polite"
-            className="pointer-events-none fixed bottom-4 right-4 z-50 flex flex-col gap-2"
+            sx={{
+               position: 'fixed',
+               right: 16,
+               bottom: 16,
+               zIndex: (theme) => theme.zIndex.snackbar,
+               display: 'flex',
+               flexDirection: 'column',
+               gap: 1,
+               pointerEvents: 'none',
+            }}
          >
             {toasts.map((t) => (
-               <Toast key={t.id} {...t} onClose={dismiss} />
+               <Box key={t.id} sx={{ pointerEvents: 'auto' }}>
+                  <Toast {...t} onClose={dismiss} />
+               </Box>
             ))}
-         </div>
+         </Box>
       </ToastContext.Provider>
    )
 }

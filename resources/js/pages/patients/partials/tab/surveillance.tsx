@@ -1,3 +1,4 @@
+import { Box } from '@mui/material'
 import { usePage, router } from '@inertiajs/react'
 import { useModal } from '@/components/modal'
 import { Pencil, Trash2, Plus } from 'lucide-react'
@@ -30,10 +31,10 @@ const SurveillanceTab = ({ patientId, selectedVisit }: Props) => {
 
    if (!selectedVisit) {
       return (
-         <div className="flex flex-col items-center justify-center py-16 text-center">
-            <h3 className="text-lg font-semibold text-gray-900 mb-1">Surveillance</h3>
-            <p className="text-sm text-gray-500">Select a visit to view surveillance records.</p>
-         </div>
+         <Box sx={{}}>
+            <Box sx={{}}>Surveillance</Box>
+            <Box sx={{}}>Select a visit to view surveillance records.</Box>
+         </Box>
       )
    }
 
@@ -117,20 +118,20 @@ const SurveillanceTab = ({ patientId, selectedVisit }: Props) => {
       {
          header: 'អ្នកកត់ត្រា',
          classNames: { header: 'font-khmer tracking-wide' },
-         cell: (s) => s.recorded_by ?? <span className="text-gray-300">&mdash;</span>,
+         cell: (s) => s.recorded_by ?? <Box sx={{}}>&mdash;</Box>,
       },
       {
          header: 'សកម្មភាព',
          classNames: { header: 'font-khmer text-end tracking-wide' },
          cell: (s) => (
-            <div className="flex items-center justify-end">
+            <Box sx={{}}>
                <IconButton onClick={() => handleEdit(s)} aria-label="Edit surveillance">
                   <Pencil size={16} />
                </IconButton>
                <IconButton color="error" onClick={() => handleDelete(s)} aria-label="Delete surveillance">
                   <Trash2 size={16} />
                </IconButton>
-            </div>
+            </Box>
          ),
       },
    ]
@@ -139,13 +140,13 @@ const SurveillanceTab = ({ patientId, selectedVisit }: Props) => {
    const baseUrl = `/patients/${patientId}`
 
    return (
-      <div>
-         <div className="mb-4 flex items-center justify-between">
-            <p className="text-sm text-gray-500">Vital signs and surveillance records</p>
+      <Box>
+         <Box sx={{}}>
+            <Box sx={{}}>Vital signs and surveillance records</Box>
             <Button onClick={handleCreate}>
                <Plus size={18} /> New Record
             </Button>
-         </div>
+         </Box>
 
          <DataTable
             data={data}
@@ -156,7 +157,7 @@ const SurveillanceTab = ({ patientId, selectedVisit }: Props) => {
             pagination={pagination}
             baseUrl={baseUrl}
          />
-      </div>
+      </Box>
    )
 }
 

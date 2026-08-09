@@ -1,8 +1,9 @@
+import { Box } from '@mui/material'
 import { useForm, useFieldArray } from 'react-hook-form'
 import Select from '@/components/form/select-deprecated'
 import Input from '@/components/form/input-deprecated'
 import Textarea from '@/components/form/textarea'
-import { IPrescription, IPrescriptionFormData } from '@/interfaces/IPrescription'
+import { IPrescription } from '@/interfaces/IPrescription'
 import { useState } from 'react'
 import { router } from '@inertiajs/react'
 import { Button } from '@/components/ui/button'
@@ -40,6 +41,8 @@ interface PrescriptionFormProps {
     onClose: () => void
 }
 
+type PrescriptionFormValues = { visit_id: number; notes: string | null; items: { medicine_id: number | null; route: string; dosage: number | null; unit: string; frequency: string; duration_days: number | null; quantity: number | null; notes: string | null }[] }
+
 const emptyItem = () => ({
    medicine_id: null,
    route: 'PO',
@@ -51,23 +54,11 @@ const emptyItem = () => ({
    notes: null,
 })
 
-const COL_WIDTHS = {
-   medicine: 'min-w-[160px]',
-   route: 'w-[80px]',
-   frequency: 'w-[76px]',
-   dosage: 'w-[90px]',
-   unit: 'w-[80px]',
-   duration: 'w-[85px]',
-   quantity: 'w-[90px]',
-   notes: 'min-w-[120px]',
-   actions: 'w-[44px]',
-}
-
 const PrescriptionForm = ({ patientId, activeVisits, medicines, prescription, selectedVisitId, onClose }: PrescriptionFormProps) => {
    const [isProcessing, setIsProcessing] = useState(false)
    const { toast } = useToast()
 
-   const { control, handleSubmit } = useForm<IPrescriptionFormData>({
+   const { control, handleSubmit } = useForm<PrescriptionFormValues>({
       defaultValues: prescription
          ? {
             visit_id: selectedVisitId ?? activeVisits[0]?.id ?? 0,
@@ -102,7 +93,6 @@ const PrescriptionForm = ({ patientId, activeVisits, medicines, prescription, se
    const onSubmit = handleSubmit((data) => {
       setIsProcessing(true)
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const payload = data as any
 
       if (prescription) {
@@ -125,10 +115,10 @@ const PrescriptionForm = ({ patientId, activeVisits, medicines, prescription, se
    })
 
    return (
-      <form onSubmit={onSubmit} className="flex flex-col max-h-[calc(100vh-12rem)]" noValidate>
-         <div className="p-6 pb-0 space-y-5 flex-1 overflow-auto">
+      <form onSubmit={onSubmit} noValidate>
+         <Box>
             {visitOptions.length > 1 && (
-               <div className="max-w-xs">
+               <Box>
                   <Select
                      label="Visit"
                      control={control}
@@ -136,12 +126,12 @@ const PrescriptionForm = ({ patientId, activeVisits, medicines, prescription, se
                      options={visitOptions}
                      rules={{ required: 'This field is required' }}
                   />
-               </div>
+               </Box>
             )}
 
-            <div>
-               <div className="flex items-center justify-between mb-3">
-                  <h4 className="text-sm font-semibold text-gray-700">Medicines</h4>
+            <Box>
+               <Box>
+                  <Box>Medicines</Box>
                   <Button
                      type="button"
                      variant="outline"
@@ -150,27 +140,27 @@ const PrescriptionForm = ({ patientId, activeVisits, medicines, prescription, se
                   >
                      <Plus size={14} /> Add Medicine
                   </Button>
-               </div>
+               </Box>
 
-               <div className="overflow-x-auto rounded-lg border border-gray-200">
-                  <table className="w-full">
+               <Box>
+                  <table>
                      <thead>
-                        <tr className="border-b border-gray-200 bg-gray-50">
-                           <th className={`px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500 ${COL_WIDTHS.medicine}`}>Medicine</th>
-                           <th className={`px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500 ${COL_WIDTHS.route}`}>Route</th>
-                           <th className={`px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500 ${COL_WIDTHS.frequency}`}>Freq</th>
-                           <th className={`px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500 ${COL_WIDTHS.dosage}`}>Dosage</th>
-                           <th className={`px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500 ${COL_WIDTHS.unit}`}>Unit</th>
-                           <th className={`px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500 ${COL_WIDTHS.duration}`}>Duration</th>
-                           <th className={`px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500 ${COL_WIDTHS.quantity}`}>Qty</th>
-                           <th className={`px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500 ${COL_WIDTHS.notes}`}>Notes</th>
-                           <th className={`px-3 py-2.5 ${COL_WIDTHS.actions}`}></th>
+                        <tr>
+                           <th>Medicine</th>
+                           <th>Route</th>
+                           <th>Freq</th>
+                           <th>Dosage</th>
+                           <th>Unit</th>
+                           <th>Duration</th>
+                           <th>Qty</th>
+                           <th>Notes</th>
+                           <th></th>
                         </tr>
                      </thead>
-                     <tbody className="divide-y divide-gray-100 bg-white">
+                     <tbody>
                         {fields.map((field, index) => (
-                           <tr key={field.id} className="group">
-                              <td className={`px-3 py-2 ${COL_WIDTHS.medicine}`}>
+                           <tr key={field.id}>
+                              <td>
                                  <Select
                                     control={control}
                                     name={`items.${index}.medicine_id`}
@@ -179,7 +169,7 @@ const PrescriptionForm = ({ patientId, activeVisits, medicines, prescription, se
                                     placeholder="Select medicine..."
                                  />
                               </td>
-                              <td className={`px-3 py-2 ${COL_WIDTHS.route}`}>
+                              <td>
                                  <Select
                                     control={control}
                                     name={`items.${index}.route`}
@@ -187,7 +177,7 @@ const PrescriptionForm = ({ patientId, activeVisits, medicines, prescription, se
                                     rules={{ required: true }}
                                  />
                               </td>
-                              <td className={`px-3 py-2 ${COL_WIDTHS.frequency}`}>
+                              <td>
                                  <Select
                                     control={control}
                                     name={`items.${index}.frequency`}
@@ -196,18 +186,18 @@ const PrescriptionForm = ({ patientId, activeVisits, medicines, prescription, se
                                     compact
                                  />
                               </td>
-                              <td className={`px-3 py-2 ${COL_WIDTHS.dosage}`}>
+                              <td>
                                  <Input
                                     control={control}
                                     type="number"
-                                    step="0.01"
-                                    min={0}
+
+
                                     name={`items.${index}.dosage`}
                                     rules={{ required: true }}
                                     placeholder="0"
                                  />
                               </td>
-                              <td className={`px-3 py-2 ${COL_WIDTHS.unit}`}>
+                              <td>
                                  <Input
                                     control={control}
                                     type="text"
@@ -216,26 +206,26 @@ const PrescriptionForm = ({ patientId, activeVisits, medicines, prescription, se
                                     placeholder="mg"
                                  />
                               </td>
-                              <td className={`px-3 py-2 ${COL_WIDTHS.duration}`}>
+                              <td>
                                  <Input
                                     control={control}
                                     type="number"
-                                    min={1}
+
                                     name={`items.${index}.duration_days`}
                                     placeholder="7"
                                  />
                               </td>
-                              <td className={`px-3 py-2 ${COL_WIDTHS.quantity}`}>
+                              <td>
                                  <Input
                                     control={control}
                                     type="number"
-                                    step="0.01"
-                                    min={0}
+
+
                                     name={`items.${index}.quantity`}
                                     placeholder="0"
                                  />
                               </td>
-                              <td className={`px-3 py-2 ${COL_WIDTHS.notes}`}>
+                              <td>
                                  <Input
                                     control={control}
                                     type="text"
@@ -243,12 +233,11 @@ const PrescriptionForm = ({ patientId, activeVisits, medicines, prescription, se
                                     placeholder="..."
                                  />
                               </td>
-                              <td className={`px-3 py-2 ${COL_WIDTHS.actions}`}>
+                              <td>
                                  {fields.length > 1 && (
                                     <button
                                        type="button"
                                        onClick={() => remove(index)}
-                                       className="inline-flex items-center justify-center size-7 rounded-md text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
                                     >
                                        <Trash2 size={14} />
                                     </button>
@@ -258,14 +247,14 @@ const PrescriptionForm = ({ patientId, activeVisits, medicines, prescription, se
                         ))}
                      </tbody>
                   </table>
-               </div>
+               </Box>
 
                {fields.length === 0 && (
-                  <div className="text-center py-6 text-sm text-gray-400 border border-dashed border-gray-200 rounded-lg mt-3">
+                  <Box>
                             No medicines added. Click &quot;Add Medicine&quot; to begin.
-                  </div>
+                  </Box>
                )}
-            </div>
+            </Box>
 
             <Textarea
                label="General Notes"
@@ -273,14 +262,14 @@ const PrescriptionForm = ({ patientId, activeVisits, medicines, prescription, se
                name="notes"
                placeholder="Optional general notes for this prescription..."
             />
-         </div>
+         </Box>
 
-         <div className="flex justify-end gap-2 px-6 py-4 border-t border-gray-200 bg-white shrink-0">
+         <Box>
             <Button type="button" onClick={onClose} variant="outline">Cancel</Button>
             <Button type="submit" disabled={isProcessing}>
                {prescription ? 'Update' : 'Create Prescription'}
             </Button>
-         </div>
+         </Box>
       </form>
    )
 }

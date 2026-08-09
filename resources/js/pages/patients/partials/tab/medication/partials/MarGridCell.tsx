@@ -1,3 +1,4 @@
+import { Box } from '@mui/material'
 import { router } from '@inertiajs/react'
 import type { IMedicationDose } from '@/interfaces/IMedicationDose'
 import { getEffectiveStatus } from '../../DoseStatusBadge'
@@ -7,16 +8,6 @@ interface MarGridCellProps {
    dose: IMedicationDose | null
    visitId: number
    orderStatus: string
-}
-
-const CELL_STYLES: Record<string, string> = {
-   pending: 'bg-gray-50 text-gray-400 hover:bg-blue-50 hover:text-blue-600 cursor-pointer',
-   overdue: 'bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-700 cursor-pointer',
-   provided: 'bg-green-100 text-green-700',
-   missed: 'bg-orange-100 text-orange-600',
-   refused: 'bg-purple-100 text-purple-600',
-   cancelled: 'bg-gray-100 text-gray-300',
-   empty: 'bg-gray-50/30 text-transparent',
 }
 
 const CELL_LABELS: Record<string, string> = {
@@ -31,14 +22,13 @@ const CELL_LABELS: Record<string, string> = {
 const MarGridCell = ({ dose, visitId, orderStatus }: MarGridCellProps) => {
    if (!dose) {
       return (
-         <div className={`flex items-center justify-center size-8 rounded text-[11px] font-medium ${CELL_STYLES.empty}`}>
+         <Box>
             &mdash;
-         </div>
+         </Box>
       )
    }
 
    const effective = getEffectiveStatus(dose)
-   const style = CELL_STYLES[effective] ?? CELL_STYLES.empty
    const label = CELL_LABELS[effective] ?? '?'
    const isActionable = orderStatus === 'active' && (effective === 'pending' || effective === 'overdue')
 
@@ -64,14 +54,14 @@ const MarGridCell = ({ dose, visitId, orderStatus }: MarGridCellProps) => {
    }
 
    return (
-      <div
+      <Box
          title={tooltipParts.join(' | ')}
          onClick={handleClick}
          onContextMenu={handleContextMenu}
-         className={`flex items-center justify-center size-8 rounded text-[11px] font-medium ${style}`}
+
       >
          {label}
-      </div>
+      </Box>
    )
 }
 
