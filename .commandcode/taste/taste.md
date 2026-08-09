@@ -19,6 +19,9 @@ See [styling/taste.md](styling/taste.md)
 
 # architecture
 See [architecture/taste.md](architecture/taste.md)
+
+# typescript
+- Prefer placing shared TypeScript interfaces in dedicated files under the `interfaces` folder rather than declaring them inside feature/config modules. Confidence: 0.90
 # components
 - Keep the reusable form input component scoped to `<input>` elements only — do not add textarea support. Confidence: 0.60
 - Use `@base-ui/react` Select component instead of native HTML `<select>` for form select inputs. Confidence: 0.75

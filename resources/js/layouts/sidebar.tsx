@@ -1,22 +1,14 @@
 import React, { useState } from 'react'
 import { Link as InertiaLink, usePage, router } from '@inertiajs/react'
+import { sidebarSections } from '@/config/sidebar'
+import type { ISidebarOption } from '@/interfaces/ISidebar'
 import {
-   LayoutDashboard,
-   Users,
    Stethoscope,
-   Pill,
-   Syringe,
-   ClipboardList,
-   Settings,
-   HelpCircle,
    LogOut,
    ChevronDown,
    ChevronRight,
-   Tags,
-   Calendar,
    PanelLeft,
    PanelRight,
-   type LucideIcon,
 } from 'lucide-react'
 import {
    Avatar,
@@ -31,19 +23,6 @@ import {
    Tooltip,
    Typography,
 } from '@mui/material'
-
-interface SidebarOption {
-   label: string
-   icon?: LucideIcon
-   path?: string
-   badge?: number
-   children?: SidebarOption[]
-}
-
-interface SidebarSection {
-   title: string
-   items: SidebarOption[]
-}
 
 const SidebarLink = React.forwardRef<HTMLAnchorElement, React.ComponentProps<typeof InertiaLink>>(
    ({ children, ...props }, ref) => (
@@ -100,39 +79,6 @@ const Sidebar = () => {
       setExpandedSections((prev) => ({ ...prev, [label]: !prev[label] }))
    }
 
-   const sections: SidebarSection[] = [
-      {
-         title: 'Menu',
-         items: [
-            { label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
-            { label: 'Patients', icon: Users, path: '/patients' },
-            { label: 'Appointments', icon: Calendar, path: '/appointments' },
-         ],
-      },
-      {
-         title: 'Clinic',
-         items: [
-            { label: 'Medicines', icon: Pill, path: '/medicines' },
-            { label: 'Vaccines', icon: Syringe, path: '/vaccines' },
-            { label: 'Paraclinic', icon: ClipboardList, path: '/paraclinic-requests' },
-         ],
-      },
-      {
-         title: 'Other',
-         items: [
-            {
-               label: 'Settings',
-               icon: Settings,
-               children: [
-                  { label: 'Category', icon: Tags, path: '/settings/categories' },
-                  { label: 'Units', icon: Tags, path: '/settings/units' },
-               ],
-            },
-            { label: 'Help', icon: HelpCircle, path: '/help' },
-         ],
-      },
-   ]
-
    const handleLogout = () => {
       router.post('/logout')
    }
@@ -157,6 +103,132 @@ const Sidebar = () => {
             {badge}
          </Box>
       ) : null
+
+   const renderSidebarItem = (item: ISidebarOption, nested = false): React.ReactNode => {
+      const Icon = item.icon
+      const isExpanded = expandedSections[item.label]
+
+      if (item.children) {
+         if (collapsed && !nested) {
+            return (
+               <ListItem key={item.label} disablePadding sx={{ display: 'flex', justifyContent: 'center', mb: 0.5 }}>
+                  <Tooltip title={item.label} placement="right">
+                     <ListItemButton
+                        onClick={() => { setCollapsed(false); toggleSection(item.label) }}
+                        aria-label={item.label}
+                        sx={{
+                           justifyContent: 'center',
+                           width: 40,
+                           height: 40,
+                           borderRadius: 1,
+                           ...inactiveItemSx,
+                        }}
+                     >
+                        {Icon && <Icon size={20} />}
+                     </ListItemButton>
+                  </Tooltip>
+               </ListItem>
+            )
+         }
+
+         return (
+            <Box key={item.label}>
+               <ListItem disablePadding>
+                  <ListItemButton
+                     onClick={() => toggleSection(item.label)}
+                     sx={{
+                        borderRadius: 1,
+                        p: 3,
+                        gap: 1.5,
+                        ...inactiveItemSx,
+                     }}
+                  >
+                     <ListItemIcon sx={{ minWidth: 0, color: 'inherit' }}>
+                        {Icon && <Icon size={18} />}
+                     </ListItemIcon>
+                     <ListItemText
+                        primary={item.label}
+                        sx={{ my: 0 }}
+                        slotProps={{ primary: { sx: { fontSize: 14, fontWeight: 500 } } }}
+                     />
+                     {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                  </ListItemButton>
+               </ListItem>
+               <Collapse in={isExpanded} timeout="auto" unmountOnExit>
+                  <List disablePadding sx={{ pl: 3, mt: 0.25 }}>
+                     {item.children.map((child) => renderSidebarItem(child, true))}
+                  </List>
+               </Collapse>
+            </Box>
+         )
+      }
+
+      const isActive = item.path === url
+      if (collapsed && !nested) {
+         return (
+            <ListItem key={item.path ?? item.label} disablePadding sx={{ display: 'flex', justifyContent: 'center', mb: 0.5 }}>
+               <Tooltip title={item.label} placement="right">
+                  <ListItemButton
+                     component={SidebarLink as React.ElementType}
+                     href={item.path!}
+                     aria-label={item.label}
+                     sx={{
+                        position: 'relative',
+                        justifyContent: 'center',
+                        width: 40,
+                        height: 40,
+                        borderRadius: 1,
+                        ...(isActive ? activeItemSx : inactiveItemSx),
+                        borderRight: 'none',
+                        ...(isActive
+                           ? {
+                              '&::after': {
+                                 content: '""',
+                                 position: 'absolute',
+                                 left: 0,
+                                 top: '50%',
+                                 transform: 'translateY(-50%)',
+                                 height: 20,
+                                 width: 2,
+                                 borderRadius: '9999px',
+                                 bgcolor: '#ffffff',
+                              },
+                           }
+                           : {}),
+                     }}
+                  >
+                     {Icon && <Icon size={20} />}
+                  </ListItemButton>
+               </Tooltip>
+            </ListItem>
+         )
+      }
+
+      return (
+         <ListItem key={item.path ?? item.label} disablePadding sx={{ mb: 0.5 }}>
+            <ListItemButton
+               component={SidebarLink as React.ElementType}
+               href={item.path!}
+               sx={{
+                  borderRadius: 1,
+                  p: 2,
+                  gap: 1.5,
+                  ...(isActive ? activeItemSx : inactiveItemSx),
+               }}
+            >
+               <ListItemIcon sx={{ minWidth: 0, color: 'inherit' }}>
+                  {Icon && <Icon size={18} />}
+               </ListItemIcon>
+               <ListItemText
+                  primary={item.label}
+                  sx={{ my: 0 }}
+                  slotProps={{ primary: { sx: { fontSize: 14, fontWeight: 500 } } }}
+               />
+               {renderBadge(item.badge, isActive)}
+            </ListItemButton>
+         </ListItem>
+      )
+   }
 
    return (
       <Box
@@ -245,8 +317,8 @@ const Sidebar = () => {
          </Box>
 
          {/* Navigation */}
-         <Box component="nav" sx={{ flex: 1, overflowY: 'auto', px: 2, py: 2.5 }}>
-            {sections.map((section) => (
+         <Box component="nav" sx={{ flex: 1, overflowY: 'auto', px: 4, py: 2.5 }}>
+            {sidebarSections.map((section) => (
                <Box key={section.title} sx={{ mb: 4 }}>
                   {!collapsed && (
                      <Typography
@@ -263,157 +335,8 @@ const Sidebar = () => {
                         {section.title}
                      </Typography>
                   )}
-                  <List disablePadding>
-                     {section.items.map((item) => {
-                        const Icon = item.icon
-                        const isExpanded = expandedSections[item.label]
-
-                        if (item.children) {
-                           if (collapsed) {
-                              return (
-                                 <ListItem key={item.label} disablePadding sx={{ display: 'flex', justifyContent: 'center', mb: 0.5 }}>
-                                    <Tooltip title={item.label} placement="right">
-                                       <ListItemButton
-                                          onClick={() => { setCollapsed(false); toggleSection(item.label) }}
-                                          aria-label={item.label}
-                                          sx={{
-                                             justifyContent: 'center',
-                                             width: 40,
-                                             height: 40,
-                                             borderRadius: 1,
-                                             ...inactiveItemSx,
-                                          }}
-                                       >
-                                          {Icon && <Icon size={20} />}
-                                       </ListItemButton>
-                                    </Tooltip>
-                                 </ListItem>
-                              )
-                           }
-                           return (
-                              <Box key={item.label}>
-                                 <ListItem disablePadding>
-                                    <ListItemButton
-                                       onClick={() => toggleSection(item.label)}
-                                       sx={{
-                                          borderRadius: 1,
-                                          px: 1.5,
-                                          py: 1.25,
-                                          gap: 1.5,
-                                          ...inactiveItemSx,
-                                       }}
-                                    >
-                                       <ListItemIcon sx={{ minWidth: 0, color: 'inherit' }}>
-                                          {Icon && <Icon size={18} />}
-                                       </ListItemIcon>
-                                       <ListItemText
-                                          primary={item.label}
-                                          sx={{ my: 0 }}
-                                          slotProps={{ primary: { sx: { fontSize: 14, fontWeight: 500 } } }}
-                                       />
-                                       {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-                                    </ListItemButton>
-                                 </ListItem>
-                                 <Collapse in={isExpanded} timeout="auto" unmountOnExit>
-                                    <List disablePadding sx={{ pl: 3, mt: 0.25 }}>
-                                       {item.children.map((child) => {
-                                          const isChildActive = child.path === url
-                                          return (
-                                             <ListItem key={child.path} disablePadding sx={{ mb: 0.5 }}>
-                                                <ListItemButton
-                                                   component={SidebarLink as React.ElementType}
-                                                   href={child.path!}
-                                                   sx={{
-                                                      borderRadius: 1,
-                                                      px: 1.5,
-                                                      py: 1,
-                                                      gap: 1.5,
-                                                      ...(isChildActive ? activeItemSx : inactiveItemSx),
-                                                   }}
-                                                >
-                                                   <ListItemText
-                                                      primary={child.label}
-                                                      sx={{ my: 0 }}
-                                                      slotProps={{ primary: { sx: { fontSize: 14, fontWeight: 500 } } }}
-                                                   />
-                                                   {renderBadge(child.badge, isChildActive)}
-                                                </ListItemButton>
-                                             </ListItem>
-                                          )
-                                       })}
-                                    </List>
-                                 </Collapse>
-                              </Box>
-                           )
-                        }
-
-                        const isActive = item.path === url
-                        if (collapsed) {
-                           return (
-                              <ListItem key={item.path} disablePadding sx={{ display: 'flex', justifyContent: 'center', mb: 0.5 }}>
-                                 <Tooltip title={item.label} placement="right">
-                                    <ListItemButton
-                                       component={SidebarLink as React.ElementType}
-                                       href={item.path!}
-                                       aria-label={item.label}
-                                       sx={{
-                                          position: 'relative',
-                                          justifyContent: 'center',
-                                          width: 40,
-                                          height: 40,
-                                          borderRadius: 1,
-                                          ...(isActive ? activeItemSx : inactiveItemSx),
-                                          borderRight: 'none',
-                                          ...(isActive
-                                             ? {
-                                                '&::after': {
-                                                   content: '""',
-                                                   position: 'absolute',
-                                                   left: 0,
-                                                   top: '50%',
-                                                   transform: 'translateY(-50%)',
-                                                   height: 20,
-                                                   width: 2,
-                                                   borderRadius: '9999px',
-                                                   bgcolor: '#ffffff',
-                                                },
-                                             }
-                                             : {}),
-                                       }}
-                                    >
-                                       {Icon && <Icon size={20} />}
-                                    </ListItemButton>
-                                 </Tooltip>
-                              </ListItem>
-                           )
-                        }
-
-                        return (
-                           <ListItem key={item.path} disablePadding sx={{ mb: 0.5 }}>
-                              <ListItemButton
-                                 component={SidebarLink as React.ElementType}
-                                 href={item.path!}
-                                 sx={{
-                                    borderRadius: 1,
-                                    px: 1.5,
-                                    py: 1.25,
-                                    gap: 1.5,
-                                    ...(isActive ? activeItemSx : inactiveItemSx),
-                                 }}
-                              >
-                                 <ListItemIcon sx={{ minWidth: 0, color: 'inherit' }}>
-                                    {Icon && <Icon size={18} />}
-                                 </ListItemIcon>
-                                 <ListItemText
-                                    primary={item.label}
-                                    sx={{ my: 0 }}
-                                    slotProps={{ primary: { sx: { fontSize: 14, fontWeight: 500 } } }}
-                                 />
-                                 {renderBadge(item.badge, isActive)}
-                              </ListItemButton>
-                           </ListItem>
-                        )
-                     })}
+                  <List disablePadding sx={{ mt: 3 }}>
+                     {section.items.map((item) => renderSidebarItem(item))}
                   </List>
                </Box>
             ))}
