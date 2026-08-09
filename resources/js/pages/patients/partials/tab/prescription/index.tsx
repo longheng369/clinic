@@ -20,14 +20,7 @@ import {
    TableRow,
    Typography,
 } from '@mui/material'
-
-interface SelectedVisit {
-   id: number
-   type: string
-   visit_date: string
-   status: string
-   recorded_by?: string
-}
+import { IVisitWithMetaData } from '@/interfaces/IVisit'
 
 const getFrequency = (item: IPrescriptionFormData['items'][number]) => {
    const doseCount = [item.morning, item.afternoon, item.evening, item.night]
@@ -37,15 +30,17 @@ const getFrequency = (item: IPrescriptionFormData['items'][number]) => {
    return (['QD', 'BID', 'TID', 'QID'][Math.min(doseCount, 4) - 1] ?? 'QD')
 }
 
+type Props = {
+   patient: IPatient;
+   selectedVisit: IVisitWithMetaData | null;
+   prescription: IPrescription | null;
+}
+
 const PrescriptionTab = ({
    patient,
    selectedVisit,
    prescription,
-}: {
-   patient: IPatient
-   selectedVisit: SelectedVisit | null
-   prescription: IPrescription | null
-}) => {
+}: Props) => {
    const { openModal, closeModal } = useModal()
    const { toast } = useToast()
    const [isSaving, setIsSaving] = useState(false)

@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Medicine;
-use App\Models\Category;
-use App\Models\Unit;
 use App\Http\Requests\StoreMedicineRequest;
 use App\Http\Requests\UpdateMedicineRequest;
+use App\Models\Category;
+use App\Models\Medicine;
+use App\Models\Unit;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 

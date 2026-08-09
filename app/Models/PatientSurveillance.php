@@ -32,7 +32,7 @@ class PatientSurveillance extends Model
         return $this->belongsTo(Visit::class);
     }
 
-    public function recordedBy(): BelongsTo
+    public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'recorded_by');
     }

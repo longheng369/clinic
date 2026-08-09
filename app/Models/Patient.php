@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use App\Models\Vaccine;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -35,37 +35,37 @@ class Patient extends Model
         ];
     }
 
-    public function registerBy(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function registerBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'register_by');
     }
 
-    public function lastModifier(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function lastModifier(): BelongsTo
     {
         return $this->belongsTo(User::class, 'last_modifier');
     }
 
-    public function attachments(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function attachments(): HasMany
     {
         return $this->hasMany(PatientAttachment::class);
     }
 
-    public function surveillances(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function surveillances(): HasMany
     {
         return $this->hasMany(PatientSurveillance::class);
     }
 
-    public function consultations(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function consultations(): HasMany
     {
         return $this->hasMany(Consultation::class);
     }
 
-    public function paraclinicRequests(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function paraclinicRequests(): HasMany
     {
         return $this->hasMany(ParaclinicRequest::class);
     }
 
-    public function visits(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function visits(): HasMany
     {
         return $this->hasMany(Visit::class);
     }

@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreMedicationAdministrationRequest;
 use App\Models\MedicationAdministration;
 use App\Models\MedicationAudit;
 use App\Models\Patient;
 use App\Models\Visit;
-use App\Http\Requests\StoreMedicationAdministrationRequest;
 use Carbon\Carbon;
 
 class MedicationAdministrationController extends Controller

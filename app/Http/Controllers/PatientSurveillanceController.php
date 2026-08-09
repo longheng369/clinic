@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Patient;
-use App\Models\PatientSurveillance;
 use App\Http\Requests\StorePatientSurveillanceRequest;
 use App\Http\Requests\UpdatePatientSurveillanceRequest;
+use App\Models\Patient;
+use App\Models\PatientSurveillance;
 
 class PatientSurveillanceController extends Controller
 {
     public function index(Patient $patient)
     {
         return $patient->surveillances()
-            ->with('recordedBy')
+            ->with('createdBy')
             ->latest()
             ->paginate(10)
             ->through(fn ($s) => [
@@ -24,7 +24,7 @@ class PatientSurveillanceController extends Controller
                 'rr' => $s->rr,
                 'spo2' => $s->spo2,
                 'o2_supply' => $s->o2_supply,
-                'recorded_by' => $s->recordedBy?->name,
+                'recorded_by' => $s->createdBy?->name,
                 'created_at' => $s->created_at,
             ]);
     }

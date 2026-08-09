@@ -7,26 +7,24 @@ import { Button } from '@/components/ui/button'
 import IconButton from '@/components/button/iconButton'
 import DataTable, { type Column } from '@/components/table/DataTable'
 import { formatCreatedDateTime } from '@/utils/date'
+import { IVisitWithMetaData } from '@/interfaces/IVisit'
 
 interface PaginatedData<T> {
-    data: T[]
-    current_page: number
-    last_page: number
-    per_page: number
-    total: number
-    from: number
-    to: number
+   data: T[]
+   current_page: number
+   last_page: number
+   per_page: number
+   total: number
+   from: number
+   to: number
 }
 
-interface SelectedVisit {
-    id: number
-    type: string
-    visit_date: string
-    status: string
-    recorded_by?: string
+type Props = {
+   patientId: number;
+   selectedVisit: IVisitWithMetaData | null;
 }
 
-const SurveillanceTab = ({ patientId, selectedVisit }: { patientId: number; selectedVisit: SelectedVisit | null }) => {
+const SurveillanceTab = ({ patientId, selectedVisit }: Props) => {
    const { openModal, closeModal, openAlert } = useModal()
    const { surveillances, allVisits } = usePage<{ surveillances: PaginatedData<ISurveillance>; allVisits: { id: number; type: string; visit_date: string; status: string }[] }>().props
 

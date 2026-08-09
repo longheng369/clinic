@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\MissedDoseRequest;
+use App\Http\Requests\RefusedDoseRequest;
 use App\Models\MedicationAudit;
 use App\Models\MedicationDose;
 use App\Models\Visit;
-use App\Http\Requests\MissedDoseRequest;
-use App\Http\Requests\RefusedDoseRequest;
-use Illuminate\Http\Request;
 
 class MedicationDoseController extends Controller
 {
@@ -21,10 +20,10 @@ class MedicationDoseController extends Controller
 
         if ($dose->status !== 'pending') {
             if ($dose->status === 'provided') {
-                $msg = 'Dose already provided by ' . ($dose->administeredBy?->name ?? 'unknown')
-                    . ' at ' . $dose->administered_at->format('H:i');
+                $msg = 'Dose already provided by '.($dose->administeredBy?->name ?? 'unknown')
+                    .' at '.$dose->administered_at->format('H:i');
             } else {
-                $msg = 'Dose already handled (status: ' . $dose->status . ').';
+                $msg = 'Dose already handled (status: '.$dose->status.').';
             }
             abort(409, $msg);
         }

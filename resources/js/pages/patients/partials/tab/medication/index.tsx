@@ -8,6 +8,7 @@ import { IPatient } from '@/interfaces/IPatient'
 import { Button } from '@/components/ui/button'
 import Pagination from '@/components/table/Pagination'
 import { useState, useMemo } from 'react'
+import { IVisitWithMetaData } from '@/interfaces/IVisit'
 
 interface PaginatedData<T> {
    data: T[]
@@ -19,15 +20,13 @@ interface PaginatedData<T> {
    to: number
 }
 
-interface SelectedVisit {
-   id: number
-   type: string
-   visit_date: string
-   status: string
-   recorded_by?: string
+type Props = {
+   patientId: number;
+   patient: IPatient;
+   selectedVisit: IVisitWithMetaData | null
 }
 
-const MedicationTab = ({ patientId, patient, selectedVisit }: { patientId: number; patient: IPatient; selectedVisit: SelectedVisit | null }) => {
+const MedicationTab = ({ patientId, patient, selectedVisit }: Props) => {
    const { openModal, closeModal } = useModal()
    const { medicationAdministrations, activeVisits, medicines } = usePage<{
       medicationAdministrations: PaginatedData<IMedicationAdministration>

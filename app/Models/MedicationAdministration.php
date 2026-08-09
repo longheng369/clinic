@@ -45,7 +45,7 @@ class MedicationAdministration extends Model
         return $this->belongsTo(Medicine::class);
     }
 
-    public function recordedBy(): BelongsTo
+    public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
     }

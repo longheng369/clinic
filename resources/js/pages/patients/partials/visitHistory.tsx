@@ -1,26 +1,16 @@
+import { IVisit, IVisitWithMetaData } from '@/interfaces/IVisit';
 import { formatCreatedDateTime } from '@/utils/date'
 import { Chip, List, ListItemButton, Typography } from '@mui/material'
-import React from 'react'
-
-interface Visit {
-   id: number
-   type: 'IPD' | 'OPD';
-   status: string
-   visit_date: string
-   recorded_by?: string
-   closed_at?: string | null
-}
 
 type Props = {
-   allVisits: Visit[]
-   selectedVisit: Visit | null
-   formatVisitDate: (date: string) => string
+   allVisits: IVisit[]
+   selectedVisit: IVisitWithMetaData | null
    onVisitSelect: (visitId: number) => void
    onAdmit: (visitId: number) => void
    onClose: (visitId: number) => void
 };
 
-const TYPE_COLORS: Record<Visit['type'], { main: string; soft: string }> = {
+const TYPE_COLORS: Record<IVisit['type'], { main: string; soft: string }> = {
    IPD: { main: '#f59e0b', soft: 'rgba(245, 158, 11, 0.14)' },
    OPD: { main: '#1e90ff', soft: 'rgba(30, 144, 255, 0.14)' },
 }
@@ -28,7 +18,6 @@ const TYPE_COLORS: Record<Visit['type'], { main: string; soft: string }> = {
 const VisitHistory = ({
    allVisits,
    selectedVisit,
-   formatVisitDate,
    onVisitSelect,
    onAdmit,
    onClose,
@@ -69,7 +58,7 @@ const VisitHistory = ({
                   }}
                >
                   <Typography sx={{ fontSize: 14, fontWeight: isSelected ? 600 : 400 }}>
-                     {formatCreatedDateTime(v.visit_date)}
+                     {formatCreatedDateTime(v.created_at)}
                   </Typography>
                   <Chip label={v.type} size='small' color={v.type === 'IPD' ? 'warning' : 'info'} />
                </ListItemButton>

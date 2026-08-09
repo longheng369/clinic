@@ -21,9 +21,9 @@ class Visit extends Model
         return $this->belongsTo(Patient::class);
     }
 
-    public function recordedBy(): BelongsTo
+    public function createdBy(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'recorded_by');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function consultations(): HasMany

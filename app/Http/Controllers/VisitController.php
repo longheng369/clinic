@@ -11,13 +11,13 @@ class VisitController extends Controller
     {
         $visit->load([
             'patient',
-            'recordedBy',
-            'consultations.recordedBy',
+            'createdBy',
+            'consultations.createdBy',
             'medicationAdministrations.medicine',
-            'medicationAdministrations.recordedBy',
+            'medicationAdministrations.createdBy',
             'prescriptions.items.medicine',
             'prescriptions.createdBy',
-            'surveillances.recordedBy',
+            'surveillances.createdBy',
             'paraclinicRequests' => fn ($q) => $q->with(['doctor', 'tests']),
         ]);
 
@@ -28,7 +28,7 @@ class VisitController extends Controller
                 'type' => $visit->type,
                 'status' => $visit->status,
                 'visit_date' => $visit->visit_date,
-                'recorded_by' => $visit->recordedBy?->name,
+                'recorded_by' => $visit->createdBy?->name,
                 'created_at' => $visit->created_at,
                 'updated_at' => $visit->updated_at,
             ],
@@ -46,7 +46,7 @@ class VisitController extends Controller
                 'chief_complaint' => $c->chief_complaint,
                 'diagnosis' => $c->diagnosis,
                 'fee' => (float) $c->fee,
-                'recorded_by' => $c->recordedBy?->name,
+                'recorded_by' => $c->createdBy?->name,
                 'created_at' => $c->created_at,
             ]),
             'medicationAdministrations' => $visit->medicationAdministrations->map(fn ($m) => [
@@ -59,7 +59,7 @@ class VisitController extends Controller
                 'duration' => $m->duration,
                 'cycle_no' => $m->cycle_no,
                 'status' => $m->status,
-                'recorded_by' => $m->recordedBy?->name,
+                'recorded_by' => $m->createdBy?->name,
                 'created_at' => $m->created_at,
             ]),
             'prescriptions' => $visit->prescriptions->map(fn ($p) => [
@@ -88,7 +88,7 @@ class VisitController extends Controller
                 'rr' => $s->rr,
                 'spo2' => $s->spo2,
                 'o2_supply' => $s->o2_supply,
-                'recorded_by' => $s->recordedBy?->name,
+                'recorded_by' => $s->createdBy?->name,
                 'created_at' => $s->created_at,
             ]),
             'paraclinicRequests' => $visit->paraclinicRequests->map(fn ($r) => [

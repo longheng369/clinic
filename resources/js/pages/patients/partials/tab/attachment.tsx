@@ -5,23 +5,16 @@ import { useModal } from '@/components/modal'
 import Modal from '@/components/modal/modal'
 import { Upload, Trash2, FileText, Image, File, Eye } from 'lucide-react'
 import { usePage } from '@inertiajs/react'
+import { IVisitWithMetaData } from '@/interfaces/IVisit'
 
 interface Attachment {
-    id: number
-    file_name: string
-    file_path: string
-    file_type: string
-    file_size: number
-    uploaded_by: { id: number; name: string } | null
-    created_at: string
-}
-
-interface SelectedVisit {
-    id: number
-    type: string
-    visit_date: string
-    status: string
-    recorded_by?: string
+   id: number
+   file_name: string
+   file_path: string
+   file_type: string
+   file_size: number
+   uploaded_by: { id: number; name: string } | null
+   created_at: string
 }
 
 const fileIcon = (type: string) => {
@@ -36,7 +29,12 @@ const formatSize = (bytes: number) => {
    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
-const AttachmentsTab = ({ patientId, selectedVisit }: { patientId: number; selectedVisit: SelectedVisit | null }) => {
+type Props = {
+   patientId: number;
+   selectedVisit: IVisitWithMetaData | null
+}
+
+const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
    const [isUploading, setIsUploading] = useState(false)
    const [preview, setPreview] = useState<Attachment | null>(null)
    const { toast } = useToast()
@@ -88,7 +86,7 @@ const AttachmentsTab = ({ patientId, selectedVisit }: { patientId: number; selec
                )}
                <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary-500 text-white text-sm font-medium hover:bg-primary-600 transition-colors">
                   <Upload size={18} />
-                        Upload File
+                  Upload File
                   <input
                      type="file"
                      className="hidden"
@@ -162,7 +160,7 @@ const AttachmentsTab = ({ patientId, selectedVisit }: { patientId: number; selec
                         rel="noopener noreferrer"
                         className="inline-block mt-3 text-sm text-primary-600 underline"
                      >
-                                Download instead
+                        Download instead
                      </a>
                   </div>
                )}

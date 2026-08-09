@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePatientVaccinationRequest;
 use App\Models\Appointment;
 use App\Models\Patient;
 use App\Models\PatientVaccination;
 use App\Models\Vaccine;
-use App\Http\Requests\StorePatientVaccinationRequest;
 use Illuminate\Http\Request;
 
 class PatientVaccinationController extends Controller

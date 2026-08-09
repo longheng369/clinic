@@ -1,7 +1,7 @@
 import { Head, usePage, router } from '@inertiajs/react'
 import { IPatient } from '@/interfaces/IPatient'
 import { IPrescription } from '@/interfaces/IPrescription'
-import { History } from 'lucide-react'
+import { History, Play } from 'lucide-react'
 import { useState } from 'react'
 import { useModal } from '@/components/modal'
 import PatientInfo from '@/components/patient/patientInfo'
@@ -12,8 +12,9 @@ import MedicationTab from './partials/tab/medication/index'
 import PrescriptionTab from './partials/tab/prescription'
 import ParaclinicByPatientTab from '../paraclinic-requests/partials/tab/byPatient'
 import VaccinationTab from './partials/tab/vaccination'
-import { Box, Button, Divider, Drawer, IconButton, List, ListItem, ListItemButton, Paper, Tab, Tabs, Typography } from '@mui/material'
+import { Box, Button, Divider, Drawer, Paper, Tab, Tabs, Typography } from '@mui/material'
 import VisitHistory from './partials/visitHistory'
+import { IVisit, IVisitWithMetaData } from '@/interfaces/IVisit'
 
 type Tab = 'consultation' | 'medication' | 'prescription' | 'admission' | 'paraclinic' | 'vaccination' | 'attachment' | 'surveillance'
 
@@ -29,23 +30,6 @@ const ALL_TABS: { key: Tab; label: string; requiresIpd?: boolean }[] = [
 
 const DRAWER_WIDTH = '380px'
 
-interface VisitSummary {
-   id: number
-   type: string
-   status: string
-   visit_date: string
-   recorded_by?: string
-   closed_at?: string | null
-}
-
-interface SelectedVisit {
-   id: number
-   type: string
-   visit_date: string
-   status: string
-   recorded_by?: string
-}
-
 type Props = {
    patient: IPatient
 };
@@ -54,8 +38,8 @@ const PatientShow = ({ patient }: Props) => {
    const params = new URLSearchParams(window.location.search)
    const tabFromUrl = params.get('tab')
    const { selectedVisit, allVisits, prescription } = usePage<{
-      selectedVisit: SelectedVisit | null
-      allVisits: VisitSummary[]
+      selectedVisit: IVisitWithMetaData | null
+      allVisits: IVisit[]
       prescription: IPrescription | null
    }>().props
 
@@ -148,13 +132,13 @@ const PatientShow = ({ patient }: Props) => {
                   </Typography>
                   <Divider orientation="vertical" flexItem sx={{ borderColor: '#e2e8f0' }} />
                   <Typography component="span" sx={{ fontSize: 14 }}>
-                     {formatVisitDate(selectedVisit.visit_date)}
+                     {formatVisitDate(selectedVisit.created_at)}
                   </Typography>
-                  {selectedVisit.recorded_by && (
+                  {selectedVisit.created_by && (
                      <>
                         <Divider orientation="vertical" flexItem sx={{ borderColor: '#e2e8f0' }} />
                         <Typography component="span" sx={{ color: 'text.secondary', fontSize: 14 }}>
-                           by {selectedVisit.recorded_by}
+                           by {selectedVisit.created_by.name}
                         </Typography>
                      </>
                   )}
@@ -167,34 +151,41 @@ const PatientShow = ({ patient }: Props) => {
                </Paper>
             )}
 
-            <Box sx={{ borderRadius: 1, border: '1px solid #cbd5e1', bgcolor: '#fff' }}>
-               <Box sx={{ borderBottom: '1px solid #cbd5e1' }}>
-                  <Tabs
-                     value={activeTab}
-                     onChange={(_, value) => handleTabChange(value as Tab)}
-                     variant="scrollable"
-                     scrollButtons="auto"
-                     sx={{
-                        px: 2,
-                        '& .MuiTab-root': {
-                           textTransform: 'none',
-                           fontWeight: 500,
-                           py: 1.5,
-                           color: '#64748b',
-                           '&.Mui-selected': { color: '#4a7a4a' },
-                        },
-                        '& .MuiTabs-indicator': { bgcolor: '#5a8f5a' },
-                     }}
-                  >
-                     {visibleTabs.map((tab) => (
-                        <Tab key={tab.key} value={tab.key} label={tab.label} />
-                     ))}
-                  </Tabs>
+            {selectedVisit ? (
+               <Box sx={{ borderRadius: 1, border: '1px solid #cbd5e1', bgcolor: '#fff' }}>
+                  <Box sx={{ borderBottom: '1px solid #cbd5e1' }}>
+                     <Tabs
+                        value={activeTab}
+                        onChange={(_, value) => handleTabChange(value as Tab)}
+                        variant="scrollable"
+                        scrollButtons="auto"
+                        sx={{
+                           px: 2,
+                           '& .MuiTab-root': {
+                              textTransform: 'none',
+                              fontWeight: 500,
+                              py: 1.5,
+                              color: '#64748b',
+                              '&.Mui-selected': { color: '#4a7a4a' },
+                           },
+                           '& .MuiTabs-indicator': { bgcolor: '#5a8f5a' },
+                        }}
+                     >
+                        {visibleTabs.map((tab) => (
+                           <Tab key={tab.key} value={tab.key} label={tab.label} />
+                        ))}
+                     </Tabs>
+                  </Box>
+                  <Box sx={{ p: 3 }}>
+                     <TabContent tab={activeTab} patientId={patient.id} patient={patient} selectedVisit={selectedVisit} prescription={prescription} />
+                  </Box>
                </Box>
-               <Box sx={{ p: 3 }}>
-                  <TabContent tab={activeTab} patientId={patient.id} patient={patient} selectedVisit={selectedVisit} prescription={prescription} />
+            ) : (
+               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <Typography>No active visit</Typography>
+                  <Button variant='contained' sx={{ mt: 1 }} startIcon={<Play size={16} />}>Start New Visit</Button>
                </Box>
-            </Box>
+            )}
          </div>
 
          <Button
@@ -233,12 +224,12 @@ const PatientShow = ({ patient }: Props) => {
             open={isVisitDrawerOpen}
             onClose={() => setVisitDrawerOpen(false)}
             slotProps={{
-            paper: {
-               sx: {
-               width: 380,
+               paper: {
+                  sx: {
+                     width: 380,
+                  },
                },
-            },
-         }}
+            }}
          >
             <Box sx={{ display: 'flex', height: '100%', flexDirection: 'column' }}>
                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
@@ -252,7 +243,6 @@ const PatientShow = ({ patient }: Props) => {
                   <VisitHistory
                      allVisits={allVisits}
                      selectedVisit={selectedVisit}
-                     formatVisitDate={formatVisitDate}
                      onVisitSelect={handleVisitSelect}
                      onAdmit={handleAdmit}
                      onClose={handleClose}
@@ -264,7 +254,7 @@ const PatientShow = ({ patient }: Props) => {
    )
 }
 
-const TabContent = ({ tab, patientId, patient, selectedVisit, prescription }: { tab: Tab; patientId: number; patient: IPatient; selectedVisit: SelectedVisit | null; prescription: IPrescription | null }) => {
+const TabContent = ({ tab, patientId, patient, selectedVisit, prescription }: { tab: Tab; patientId: number; patient: IPatient; selectedVisit: IVisitWithMetaData | null; prescription: IPrescription | null }) => {
    switch (tab) {
       case 'consultation':
          return <ConsultationTab patientId={patientId} />

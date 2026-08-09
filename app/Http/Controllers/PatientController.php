@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePatientRequest;
+use App\Http\Requests\UpdatePatientRequest;
 use App\Models\Medicine;
-use App\Models\ParaclinicRequest;
 use App\Models\Patient;
 use App\Models\PatientAttachment;
 use App\Models\Unit;
 use App\Models\Vaccine;
 use App\Models\Visit;
 use Carbon\Carbon;
-use App\Http\Requests\StorePatientRequest;
-use App\Http\Requests\UpdatePatientRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -23,7 +22,8 @@ class PatientController extends Controller
         $search = $request->query('search');
 
         return Inertia::render('patients/index', [
-            'patients' => Patient::latest()
+            'patients' => Patient::query()
+                ->latest()
                 ->when($search, fn ($query) => $query
                     ->where('khmer_first_name', 'like', "%{$search}%")
                     ->orWhere('khmer_last_name', 'like', "%{$search}%")
@@ -58,24 +58,16 @@ class PatientController extends Controller
     {
         $selectedVisitId = $request->query('visit');
 
-        $allVisits = $patient->visits()->with('recordedBy')->latest()->get()
-            ->map(fn ($v) => [
-                'id' => $v->id,
-                'type' => $v->type,
-                'status' => $v->status,
-                'visit_date' => $v->visit_date,
-                'recorded_by' => $v->recordedBy?->name,
-                'closed_at' => $v->status === 'closed' ? $v->updated_at : null,
-            ]);
+        $allVisits = $patient->visits()->with('createdBy')->latest()->get();
 
         if (! $selectedVisitId && $allVisits->isNotEmpty()) {
             $selectedVisitId = $allVisits->first()['id'];
         }
 
-        $selectedVisit = $selectedVisitId ? Visit::find($selectedVisitId) : null;
+        $selectedVisit = $selectedVisitId ? Visit::query()->with('createdBy')->find($selectedVisitId) : $patient->visits()->with('createdBy')->where('status', 'active')->latest()->first();
 
-        $consultationsQuery = $patient->consultations()->with('recordedBy');
-        $surveillancesQuery = $patient->surveillances()->with('recordedBy');
+        $consultationsQuery = $patient->consultations()->with('createdBy');
+        $surveillancesQuery = $patient->surveillances()->with('createdBy');
         $paraclinicRequestsQuery = $patient->paraclinicRequests()->with(['doctor', 'tests']);
 
         if ($selectedVisitId) {
@@ -100,7 +92,7 @@ class PatientController extends Controller
 
         $medicationAdministrations = $selectedVisit
             ? $selectedVisit->medicationAdministrations()
-                ->with(['medicine', 'recordedBy', 'doses' => fn ($q) => $q->orderBy('scheduled_at')])
+                ->with(['medicine', 'createdBy', 'doses' => fn ($q) => $q->orderBy('scheduled_at')])
                 ->latest()
                 ->paginate(10)
                 ->through(fn ($m) => [
@@ -115,7 +107,7 @@ class PatientController extends Controller
                     'status' => $m->status,
                     'starts_at' => $m->starts_at?->toISOString(),
                     'notes' => $m->notes,
-                    'recorded_by' => $m->recordedBy?->name,
+                    'recorded_by' => $m->createdBy?->name,
                     'created_at' => $m->created_at,
                     'doses' => $m->doses->map(fn ($d) => [
                         'id' => $d->id,
@@ -142,13 +134,7 @@ class PatientController extends Controller
 
         return Inertia::render('patients/show', [
             'patient' => $patient,
-            'selectedVisit' => $selectedVisit ? [
-                'id' => $selectedVisit->id,
-                'type' => $selectedVisit->type,
-                'visit_date' => $selectedVisit->visit_date,
-                'status' => $selectedVisit->status,
-                'recorded_by' => $selectedVisit->recordedBy?->name,
-            ] : null,
+            'selectedVisit' => $selectedVisit,
             'allVisits' => $allVisits,
             'consultations' => $consultations->through(fn ($c) => [
                 'id' => $c->id,
@@ -156,7 +142,7 @@ class PatientController extends Controller
                 'chief_complaint' => $c->chief_complaint,
                 'diagnosis' => $c->diagnosis,
                 'fee' => $c->fee ? (float) $c->fee : null,
-                'recorded_by' => $c->recordedBy?->name,
+                'recorded_by' => $c->createdBy?->name,
                 'created_at' => $c->created_at,
             ]),
             'surveillances' => $surveillances->through(fn ($s) => [
@@ -168,7 +154,7 @@ class PatientController extends Controller
                 'rr' => $s->rr,
                 'spo2' => $s->spo2,
                 'o2_supply' => $s->o2_supply,
-                'recorded_by' => $s->recordedBy?->name,
+                'recorded_by' => $s->createdBy?->name,
                 'created_at' => $s->created_at,
             ]),
             'paraclinicRequests' => $paraclinicRequests,
@@ -220,14 +206,14 @@ class PatientController extends Controller
                 : $patient->attachments()->with('uploadedBy')->latest()->get(),
             'activeVisits' => Visit::where('patient_id', $patient->id)
                 ->where('status', 'active')
-                ->with('recordedBy')
+                ->with('createdBy')
                 ->latest()
                 ->get()
                 ->map(fn ($v) => [
                     'id' => $v->id,
                     'type' => $v->type,
                     'visit_date' => $v->visit_date,
-                    'recorded_by' => $v->recordedBy?->name,
+                    'recorded_by' => $v->createdBy?->name,
                 ]),
         ]);
     }
@@ -283,7 +269,7 @@ class PatientController extends Controller
 
     public function viewAttachment(PatientAttachment $attachment)
     {
-        abort_if(!Storage::exists($attachment->file_path), 404);
+        abort_if(! Storage::exists($attachment->file_path), 404);
 
         return response()->stream(function () use ($attachment) {
             echo Storage::get($attachment->file_path);

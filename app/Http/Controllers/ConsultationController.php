@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Consultation;
-use App\Models\Patient;
 use App\Http\Requests\StoreConsultationRequest;
 use App\Http\Requests\UpdateConsultationRequest;
+use App\Models\Consultation;
+use App\Models\Patient;
 use Inertia\Inertia;
 
 class ConsultationController extends Controller
@@ -13,7 +13,7 @@ class ConsultationController extends Controller
     public function index(Patient $patient)
     {
         $consultations = $patient->consultations()
-            ->with('recordedBy')
+            ->with('createdBy')
             ->latest()
             ->paginate(10)
             ->withQueryString()
@@ -23,7 +23,7 @@ class ConsultationController extends Controller
                 'chief_complaint' => $c->chief_complaint,
                 'diagnosis' => $c->diagnosis,
                 'fee' => $c->fee ? (float) $c->fee : null,
-                'recorded_by' => $c->recordedBy?->name,
+                'recorded_by' => $c->createdBy?->name,
                 'created_at' => $c->created_at,
             ]);
 
@@ -65,7 +65,7 @@ class ConsultationController extends Controller
 
     public function show(Patient $patient, Consultation $consultation)
     {
-        $consultation->load('recordedBy');
+        $consultation->load('createdBy');
 
         return Inertia::render('patients/partials/tab/consultation/show', [
             'patient' => $patient,
@@ -101,7 +101,7 @@ class ConsultationController extends Controller
                 'diagnosis' => $consultation->diagnosis,
                 'note' => $consultation->note,
                 'fee' => $consultation->fee ? (float) $consultation->fee : null,
-                'recorded_by' => $consultation->recordedBy?->name,
+                'recorded_by' => $consultation->createdBy?->name,
                 'created_at' => $consultation->created_at,
             ],
         ]);
@@ -109,7 +109,7 @@ class ConsultationController extends Controller
 
     public function edit(Patient $patient, Consultation $consultation)
     {
-        $consultation->load('recordedBy');
+        $consultation->load('createdBy');
 
         return Inertia::render('patients/partials/tab/consultation/edit', [
             'patient' => $patient,
@@ -145,7 +145,7 @@ class ConsultationController extends Controller
                 'diagnosis' => $consultation->diagnosis,
                 'note' => $consultation->note,
                 'fee' => $consultation->fee ? (float) $consultation->fee : null,
-                'recorded_by' => $consultation->recordedBy?->name,
+                'recorded_by' => $consultation->createdBy?->name,
                 'created_at' => $consultation->created_at,
             ],
         ]);

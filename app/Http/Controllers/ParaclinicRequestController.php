@@ -73,7 +73,7 @@ class ParaclinicRequestController extends Controller
     {
         $today = now();
         $count = ParaclinicRequest::whereDate('created_at', $today)->count() + 1;
-        $requestNumber = 'PARA-' . $today->format('Ymd') . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
+        $requestNumber = 'PARA-'.$today->format('Ymd').'-'.str_pad($count, 4, '0', STR_PAD_LEFT);
 
         $data = $request->safe()->except(['tests']);
         $data['subtotal'] = (float) ($data['subtotal'] ?? 0);
@@ -226,7 +226,7 @@ class ParaclinicRequestController extends Controller
 
     public function viewAttachment(ParaclinicAttachment $attachment)
     {
-        abort_if(!Storage::exists($attachment->file_path), 404);
+        abort_if(! Storage::exists($attachment->file_path), 404);
 
         return response()->stream(function () use ($attachment) {
             echo Storage::get($attachment->file_path);
@@ -247,7 +247,7 @@ class ParaclinicRequestController extends Controller
             'updated_by' => auth()->id(),
         ]);
 
-        return back()->with('success', 'Status updated to ' . $request->status . '.');
+        return back()->with('success', 'Status updated to '.$request->status.'.');
     }
 
     public function storeResult(Request $request, ParaclinicRequest $paraclinicRequest)
