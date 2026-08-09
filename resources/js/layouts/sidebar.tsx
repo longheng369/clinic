@@ -169,7 +169,7 @@ const Sidebar = () => {
          component="aside"
          sx={{
             position: 'relative',
-            height: '100vh',
+            height: '100%',
             flexShrink: 0,
             display: 'flex',
             flexDirection: 'column',
@@ -210,7 +210,7 @@ const Sidebar = () => {
 
          <Box component="nav" sx={{ flex: 1, overflowY: 'auto', px: 2 }}>
             {sidebarSections.map((section) => (
-               <Box key={section.title} sx={{ mb: 4 }}>
+               <Box key={section.title}>
                   <Typography
                      sx={{
                         fontSize: 11,

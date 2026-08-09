@@ -6,6 +6,7 @@ const SearchBar = (props: TextFieldProps) => {
    return (
       <TextField
          {...props}
+         autoComplete='off'
          size='small'
          slotProps={{
             input: {

@@ -46,6 +46,7 @@ See [workflow/taste.md](workflow/taste.md)
 
 # components
 - Use the SearchBar component for search inputs instead of TextInput or native inputs. Confidence: 0.65
+- Set `autoComplete="off"` by default on the reusable SearchBar input to prevent browser autocomplete suggestions. Confidence: 0.85
 - For medication/medicine name fields, use a dropdown/select populated from the medicines list rather than a free-text input. Confidence: 0.65
 
 # workflow

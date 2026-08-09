@@ -1,7 +1,7 @@
 import { usePage } from '@inertiajs/react'
 import { router } from '@inertiajs/react'
 import { useModal } from '@/components/modal'
-import { Plus, Save, Stethoscope } from 'lucide-react'
+import { Pencil, Plus, Save, Stethoscope, X } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { IPrescription, IPrescriptionFormData } from '@/interfaces/IPrescription'
 import { IPatient } from '@/interfaces/IPatient'
@@ -22,12 +22,29 @@ import {
 } from '@mui/material'
 import { IVisitWithMetaData } from '@/interfaces/IVisit'
 
-const getFrequency = (item: IPrescriptionFormData['items'][number]) => {
-   const doseCount = [item.morning, item.afternoon, item.evening, item.night]
-      .filter((dose) => Number(dose) > 0)
-      .length
+type DoseSlot = 'morning' | 'afternoon' | 'evening' | 'night'
 
-   return (['QD', 'BID', 'TID', 'QID'][Math.min(doseCount, 4) - 1] ?? 'QD')
+const doseSlots: DoseSlot[] = ['morning', 'afternoon', 'evening', 'night']
+
+const frequencySlots: Record<string, DoseSlot[]> = {
+   QD: ['morning'],
+   BID: ['morning', 'afternoon'],
+   TID: ['morning', 'afternoon', 'evening'],
+   QID: ['morning', 'afternoon', 'evening', 'night'],
+   QHS: ['night'],
+   PRN: ['morning'],
+}
+
+const getFrequency = (item: IPrescriptionFormData['items'][number]) => {
+   const currentFrequency = item.frequency?.toUpperCase()
+   const expectedSlots = currentFrequency ? frequencySlots[currentFrequency] : undefined
+   const activeSlots = doseSlots.filter((slot) => Number(item[slot]) > 0)
+
+   if (expectedSlots && activeSlots.length === expectedSlots.length && expectedSlots.every((slot) => activeSlots.includes(slot))) {
+      return currentFrequency
+   }
+
+   return (['QD', 'BID', 'TID', 'QID'][Math.min(activeSlots.length, 4) - 1] ?? 'QD')
 }
 
 type Props = {
@@ -44,23 +61,30 @@ const PrescriptionTab = ({
    const { openModal, closeModal } = useModal()
    const { toast } = useToast()
    const [isSaving, setIsSaving] = useState(false)
+   const [isEditing, setIsEditing] = useState(!prescription)
    const { medicines, units } = usePage<{
       medicines: { id: number; name: string }[]
       units: { id: number; name: string }[]
    }>().props
    const prescriptionItems = useMemo<IPrescriptionFormData['items']>(() => (
-      prescription?.items.map((item) => ({
-         medicine: medicines.find((medicine) => medicine.id === item.medicine?.id) ?? item.medicine ?? { id: 0, name: '' },
-         quantity: item.quantity ?? 0,
-         unit: units.find((unit) => unit.name === item.unit) ?? { id: 0, name: item.unit },
-         route: item.route,
-         morning: null,
-         afternoon: null,
-         evening: null,
-         night: null,
-         numberOfDay: item.duration_days ?? 0,
-         notes: item.notes,
-      })) ?? []
+      prescription?.items.map((item) => {
+         const slots = frequencySlots[item.frequency?.toUpperCase()] ?? ['morning']
+         const dose = Number(item.dosage) || 0
+
+         return {
+            medicine: medicines.find((medicine) => medicine.id === item.medicine?.id) ?? item.medicine ?? { id: 0, name: '' },
+            quantity: item.quantity ?? 0,
+            unit: units.find((unit) => unit.name === item.unit) ?? { id: 0, name: item.unit },
+            route: item.route,
+            morning: slots.includes('morning') ? dose : null,
+            afternoon: slots.includes('afternoon') ? dose : null,
+            evening: slots.includes('evening') ? dose : null,
+            night: slots.includes('night') ? dose : null,
+            numberOfDay: item.duration_days ?? 0,
+            frequency: item.frequency,
+            notes: item.notes,
+         }
+      }) ?? []
    ), [medicines, prescription, units]);
 
    const { control, reset } = useForm<IPrescriptionFormData>({
@@ -75,12 +99,18 @@ const PrescriptionTab = ({
       reset({ items: prescriptionItems });
    }, [prescriptionItems, reset]);
 
+   useEffect(() => {
+      setIsEditing(!prescription)
+   }, [prescription?.id, selectedVisit?.id])
+
    const availableMedicineOptions = useMemo(() => {
       const existingMedicineIds = new Set(fields.map((field) => field.medicine?.id));
       return medicines.filter((medicine) => !existingMedicineIds.has(medicine.id));
    }, [medicines, fields]);
 
    const openAddModal = () => {
+      if (!isEditing) return
+
       openModal({
          title: 'Add Medicine',
          content: (
@@ -98,6 +128,8 @@ const PrescriptionTab = ({
    }
 
    const openEditModal = (index: number) => {
+      if (!isEditing) return
+
       const item = fields[index];
       openModal({
          title: 'Edit Medicine',
@@ -114,6 +146,11 @@ const PrescriptionTab = ({
          ),
          config: { preventClickAway: true, maxWidth: '2xl' },
       })
+   }
+
+   const cancelEditing = () => {
+      reset({ items: prescriptionItems })
+      setIsEditing(false)
    }
 
    const savePrescription = () => {
@@ -141,7 +178,7 @@ const PrescriptionTab = ({
             ),
             unit: item.unit.name,
             frequency: getFrequency(item),
-            duration_days: item.numberOfDay > 0 ? item.numberOfDay : null,
+            duration_days: item.numberOfDay && item.numberOfDay > 0 ? item.numberOfDay : null,
             quantity: item.quantity ?? null,
             notes: item.notes ?? null,
          })),
@@ -150,6 +187,7 @@ const PrescriptionTab = ({
       setIsSaving(true)
       const options = {
          onSuccess: () => {
+            setIsEditing(false)
             toast(prescription ? 'Prescription updated.' : 'Prescription saved.', { variant: 'success' })
          },
          onError: () => {
@@ -167,8 +205,8 @@ const PrescriptionTab = ({
 
    if (!selectedVisit) {
       return (
-         <Box sx={{}}>
-            <Typography component="h3" sx={{}}>
+         <Box>
+            <Typography component="h3">
                Prescriptions
             </Typography>
             <Typography component="p" sx={{ mt: 0.5 }}>
@@ -225,8 +263,8 @@ const PrescriptionTab = ({
             p: 4
          }}
       >
-         <Typography sx={{ fontFamily: 'var(--font-khmer-moul)', color: 'blue', textAlign: 'center', letterSpacing: 1 }}>ព្រះរាជាណាចក្រកម្ពុជា</Typography>
-         <Typography sx={{ fontFamily: 'var(--font-khmer-moul)', color: 'blue', textAlign: 'center', letterSpacing: 1, mt: 0.5 }}>ជាតិ សាសនា ព្រះមហាក្សត្រ</Typography>
+         <Typography sx={{ fontFamily: 'Moul', color: 'info.main', textAlign: 'center', letterSpacing: 1 }}>ព្រះរាជាណាចក្រកម្ពុជា</Typography>
+         <Typography sx={{ fontFamily: 'Moul', color: 'info.main', textAlign: 'center', letterSpacing: 1, mt: 0.5 }}>ជាតិ សាសនា ព្រះមហាក្សត្រ</Typography>
 
          <Box
             sx={{
@@ -256,61 +294,28 @@ const PrescriptionTab = ({
                       វេជ្ជបណ្ឌិត <Typography component='span'>: {prescription?.recorded_by ?? '—'}</Typography>
                   </Typography>
                </Box>
-               <Box sx={{ display: 'flex', gap: 1 }}>
-                  <Button variant='contained' startIcon={<Save size={16} />} onClick={savePrescription} disabled={isSaving}>
-                     Save
+               {!isEditing ? (
+                  <Button variant='contained' startIcon={<Pencil size={16} />} onClick={() => setIsEditing(true)}>
+                     Edit
                   </Button>
-                  <Button onClick={openAddModal} variant='contained' color='info' startIcon={<Plus size={16} />}>
-                     Add Medicine
-                  </Button>
-               </Box>
-            </Box>
-         </Box>
-
-         {/* Patient Info */}
-         <Box sx={{ mt: 3, display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 2 }}>
-            <Box>
-               <Box>
-                  <Typography sx={{ fontFamily: 'var(--font-khmer)', color: 'gray' }}>
-                     ឈ្មោះ
-                  </Typography>
-                  <Typography component="p" sx={{ fontFamily: 'var(--font-khmer)' }}>
-                     {patient.khmer_first_name} {patient.khmer_last_name}
-                     {patient.first_name && (
-                        <Typography component="span" sx={{ ml: 0.5 }}>
-                           ({patient.last_name ? `${patient.last_name} ` : ''}{patient.first_name})
-                        </Typography>
+               ) : (
+                  <Box sx={{ display: 'flex', gap: 1 }}>
+                     {prescription && (
+                        <Button variant='outlined' startIcon={<X size={16} />} onClick={cancelEditing} disabled={isSaving}>
+                           Cancel
+                        </Button>
                      )}
-                  </Typography>
-               </Box>
-               <Box>
-                  <Typography sx={{ fontFamily: 'var(--font-khmer)', color: 'gray' }}>
-                     អាយុ
-                  </Typography>
-                  <Typography component="p" sx={{ mt: 0.5 }}>
-                     {formatDob(patient.date_of_birth)}
-                  </Typography>
-               </Box>
-               <Box>
-                  <Typography sx={{ fontFamily: 'var(--font-khmer)', color: 'gray' }}>
-                     ភេទ
-                  </Typography>
-                  <Typography component="p" sx={{ mt: 0.5 }}>
-                     {patient.gender}
-                  </Typography>
-               </Box>
-               <Box>
-                  <Typography sx={{ fontFamily: 'var(--font-khmer)', color: 'gray' }}>
-                     ទូរស័ព្ទ
-                  </Typography>
-                  <Typography component="p" sx={{ mt: 0.5 }}>
-                     {patient.phone_number}
-                  </Typography>
-               </Box>
+                     <Button variant='contained' startIcon={<Save size={16} />} onClick={savePrescription} disabled={isSaving}>
+                        Save
+                     </Button>
+                     <Button onClick={openAddModal} variant='contained' color='info' startIcon={<Plus size={16} />} disabled={isSaving}>
+                        Add Medicine
+                     </Button>
+                  </Box>
+               )}
             </Box>
          </Box>
 
-         {/* Medicine Table */}
          <Box>
             {fields.length === 0 ? (
                <Box sx={{ py: 4, textAlign: 'center', color: 'text.secondary' }}>
@@ -369,18 +374,18 @@ const PrescriptionTab = ({
                         {fields.map((field, index) => (
                            <TableRow
                               key={field.id}
-                              sx={{
-                                 cursor: 'pointer', transition: 'background-color 0.2s ease',
+                              sx={isEditing ? {
+                                 cursor: 'pointer',
                                  '&:hover': {
                                     bgcolor: 'action.hover',
                                  },
-                              }}
-                              onClick={() => openEditModal(index)}
+                              } : undefined}
+                              onClick={isEditing ? () => openEditModal(index) : undefined}
                            >
                               <TableCell align='center'>{index + 1}</TableCell>
                               <TableCell>{field.medicine?.name}</TableCell>
                               <TableCell>{field.quantity} {field.unit?.name}</TableCell>
-                              <TableCell>{field.route} {field.morning && `ព្រឹក ${field.morning}គ្រាប់`} {field.morning && `រសៀល ${field.afternoon}គ្រាប់`} {field.morning && `ល្ងាច ${field.evening}គ្រាប់`} {field.morning && `យប់ ${field.night}គ្រាប់`}</TableCell>
+                              <TableCell>{field.route} {field.morning && `ព្រឹក ${field.morning} ${field.unit.name}`} {field.afternoon && `រសៀល ${field.afternoon} ${field.unit.name}`} {field.evening && `ល្ងាច ${field.evening} ${field.unit.name}`} {field.night && `យប់ ${field.night} ${field.unit.name}`}</TableCell>
                               <TableCell>{field.numberOfDay}</TableCell>
                               <TableCell>{field.notes}</TableCell>
                            </TableRow>

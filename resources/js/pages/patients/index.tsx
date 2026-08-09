@@ -101,7 +101,7 @@ const Patient = () => {
          flex: 1,
          minWidth: 90,
          renderCell: (params: GridRenderCellParams<IPatient>) => (
-            <Typography component="span" sx={{ textTransform: 'capitalize', color: params.value === 'male' ? 'info.main' : 'secondary.main' }}>
+            <Typography component="span" sx={{ textTransform: 'capitalize', color: params.value === 'male' ? 'info.main' : 'error.main' }}>
                {params.value}
             </Typography>
          ),
@@ -155,18 +155,17 @@ const Patient = () => {
    return (
       <>
          <Head title="Patients" />
-         <Box sx={{ p: 6 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', bgcolor: 'Background', p: 4, borderRadius: 1 }}>
+         <Box sx={{ p: 4 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                <Box>
                   <Typography variant='h5' sx={{ fontWeight: 'bold' }}>Patients</Typography>
                   <Typography variant='body2' sx={{ color: 'gray' }}>Manage your clinic patients</Typography>
                </Box>
-               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 3 }}>
+               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
                   <SearchBar value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder='Search patient' />
                   <Button
                      onClick={handleCreate}
                      variant='contained'
-                     size='small'
                      startIcon={<Plus size={16} />}
                   >
                      New Patient

@@ -109,10 +109,10 @@ const PatientShow = ({ patient }: Props) => {
    }
 
    return (
-      <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-         <Head title={`Patient - ${patient.khmer_last_name} ${patient.khmer_first_name}`} />
+      <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+         <Head title={`Patient - ${patient.khmer_first_name} ${patient.khmer_last_name}`} />
 
-         <Box sx={{ flex: 1, overflowY: 'auto', p: 4 }}>
+         <Box sx={{ flex: 1, minWidth: 0, minHeight: 0, overflowY: 'auto', overflowX: 'hidden', p: 4 }}>
             <Box sx={{ mb: 3 }}>
                <PatientInfo patient={patient} />
             </Box>
@@ -192,7 +192,7 @@ const PatientShow = ({ patient }: Props) => {
                         ))}
                      </Tabs>
                   </Box>
-                  <Box sx={{ p: 3 }}>
+                  <Box sx={{ p: 3, minWidth: 0, overflowX: 'auto' }}>
                      <TabContent tab={activeTab} patientId={patient.id} patient={patient} selectedVisit={selectedVisit} prescription={prescription} />
                   </Box>
                </Box>
@@ -240,7 +240,7 @@ const PatientShow = ({ patient }: Props) => {
                },
             }}
          >
-            <Box sx={{}}>Visit History</Box>
+            <Box component="span" className="visit-history-label">Visit History</Box>
          </Button>
 
          <Drawer

@@ -12,7 +12,7 @@ type Props<T extends FieldValues = FieldValues> = {
    name: Path<T>;
    rules?: Omit<
       RegisterOptions<T, Path<T>>,
-      "valueAsNumber" | "valueAsDate" | "setValueAs" | "disabled"
+      "valueAsDate" | "setValueAs" | "disabled"
    >;
 } & TextFieldProps;
 

@@ -17,6 +17,13 @@ type PrescriptionItemFormValues = Omit<IPrescriptionItemFormData, 'medicine' | '
    unit: number | '';
 };
 
+const toNullableNumber = (value: unknown): number | null => {
+   if (value === null || value === undefined || value === '') return null
+
+   const number = Number(value)
+   return Number.isFinite(number) ? number : null
+}
+
 const routeOptions = [
    { label: 'Oral (PO)', value: 'PO' },
    { label: 'Intravenous (IV)', value: 'IV' },
@@ -44,12 +51,12 @@ const PrescriptionItemForm: FC<Props> = ({
             unit: '',
             route: '',
             notes: null,
-            quantity: 0,
-            morning: 0,
-            afternoon: 0,
-            evening: 0,
-            night: 0,
-            numberOfDay: 0,
+            quantity: null,
+            morning: null,
+            afternoon: null,
+            evening: null,
+            night: null,
+            numberOfDay: null,
          },
    });
 
@@ -61,7 +68,17 @@ const PrescriptionItemForm: FC<Props> = ({
          return;
       }
 
-      onSave({ ...values, medicine, unit });
+      onSave({
+         ...values,
+         medicine,
+         unit,
+         quantity: toNullableNumber(values.quantity),
+         morning: toNullableNumber(values.morning),
+         afternoon: toNullableNumber(values.afternoon),
+         evening: toNullableNumber(values.evening),
+         night: toNullableNumber(values.night),
+         numberOfDay: toNullableNumber(values.numberOfDay),
+      });
    };
 
    return (
@@ -84,22 +101,22 @@ const PrescriptionItemForm: FC<Props> = ({
                   />
                </Grid>
                <Grid size={{ md: 6 }}>
-                  <Input control={control} name="quantity" label="Quantity" type="number" rules={{ required: 'Quantity is required', min: { value: 1, message: 'Min 1' } }} />
+                  <Input control={control} name="quantity" label="Quantity" type="number" rules={{ required: 'Quantity is required', min: { value: 1, message: 'Min 1' }, valueAsNumber: true }} />
                </Grid>
                <Grid size={{ md: 6 }}>
-                  <Input control={control} name="morning" label="Morning" type="number" />
+                  <Input control={control} name="morning" label="Morning" type="number" rules={{ valueAsNumber: true }} />
                </Grid>
                <Grid size={{ md: 6 }}>
-                  <Input control={control} name="afternoon" label="Afternoon" type="number" />
+                  <Input control={control} name="afternoon" label="Afternoon" type="number" rules={{ valueAsNumber: true }} />
                </Grid>
                <Grid size={{ md: 6 }}>
-                  <Input control={control} name="evening" label="Evening" type="number" />
+                  <Input control={control} name="evening" label="Evening" type="number" rules={{ valueAsNumber: true }} />
                </Grid>
                <Grid size={{ md: 6 }}>
-                  <Input control={control} name="night" label="Night" type="number" />
+                  <Input control={control} name="night" label="Night" type="number" rules={{ valueAsNumber: true }} />
                </Grid>
                <Grid size={{ md: 6 }}>
-                  <Input control={control} name="numberOfDay" label="Number of Days" type="number" />
+                  <Input control={control} name="numberOfDay" label="Number of Days" type="number" rules={{ valueAsNumber: true }} />
                </Grid>
                <Grid size={{ md: 12 }}>
                   <Input control={control} name="notes" label="Notes" />
@@ -107,7 +124,9 @@ const PrescriptionItemForm: FC<Props> = ({
             </Grid>
          </DialogContent>
          <DialogActions>
-            <Button type="submit" variant="contained">Add Medicine</Button>
+            <Button type="submit" variant="contained">
+               {defaultValues ? "Save" : "Add"}
+            </Button>
          </DialogActions>
       </Box>
    )

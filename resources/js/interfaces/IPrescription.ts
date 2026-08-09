@@ -25,7 +25,7 @@ export interface IPrescriptionItemFormData {
       id: number;
       name: string;
    };
-   quantity: number;
+   quantity: number | null;
    unit: {
       id: number;
       name: string;
@@ -35,7 +35,8 @@ export interface IPrescriptionItemFormData {
    afternoon: number | null;
    evening: number | null;
    night: number | null;
-   numberOfDay: number;
+   numberOfDay: number | null;
+   frequency?: string;
    notes: string | null;
 }
 

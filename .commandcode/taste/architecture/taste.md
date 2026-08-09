@@ -4,6 +4,7 @@
 - For complex forms with multi-line item tables (e.g., prescriptions with medicine rows), prefer dedicated full pages over modals. Confidence: 0.55
 - Within multi-item form pages, prefer accordion-style cards (collapsible, one card per item with header summary and expandable 2-column grid body) over dense horizontal-scrolling item tables. Confidence: 0.50
 - For multi-item forms (e.g., prescriptions with medicine rows), prefer a read-only summary table with modal dialogs for individual item add/edit — table for scannable overview, pop-up form for focused detail entry. Confidence: 0.85
+- Existing prescription records should remain read-only by default; require an explicit prescription-level Edit action before enabling item changes, while keeping item rows non-editable outside edit mode. Confidence: 0.95
 - Patient sub-entities (attachments, medications, prescriptions, surveillances, consultations, paraclinic requests) should be scoped to a specific visit, not just owned by the patient. Confidence: 0.80
 - Prescriptions have a one-to-one relationship with visits: each visit has exactly one prescription (use `firstOrCreate` on `visit_id`, not `HasMany`). Confidence: 0.85
 - When a separate update endpoint/path exists, keep the `store` action create-only — no delete-then-recreate (upsert) or conditional item-creation guards in `store`; enforce the uniqueness/existence rule via FormRequest validation (e.g., `Rule::unique('prescriptions', 'visit_id')`) so `store` is a plain create. Confidence: 0.80
