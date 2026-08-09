@@ -51,7 +51,7 @@ class ConsultationController extends Controller
     {
         $visit = $patient->visits()->create([
             'type' => 'OPD',
-            'recorded_by' => auth()->id(),
+            'created_by' => auth()->id(),
         ]);
 
         $patient->consultations()->create(array_merge(

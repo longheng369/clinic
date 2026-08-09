@@ -11,8 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'patient_id',
     'type',
     'status',
-    'visit_date',
-    'recorded_by',
+    'created_by',
 ])]
 class Visit extends Model
 {

@@ -15,6 +15,7 @@ import VaccinationTab from './partials/tab/vaccination'
 import { Box, Button, Divider, Drawer, Paper, Tab, Tabs, Typography } from '@mui/material'
 import VisitHistory from './partials/visitHistory'
 import { IVisit, IVisitWithMetaData } from '@/interfaces/IVisit'
+import { useToast } from '@/components/toast'
 
 type Tab = 'consultation' | 'medication' | 'prescription' | 'admission' | 'paraclinic' | 'vaccination' | 'attachment' | 'surveillance'
 
@@ -52,7 +53,9 @@ const PatientShow = ({ patient }: Props) => {
       return visibleTabs[0]?.key as Tab ?? 'consultation'
    })
    const { openAlert } = useModal()
+   const { toast } = useToast()
    const [isVisitDrawerOpen, setVisitDrawerOpen] = useState(false)
+   const [isStartingVisit, setIsStartingVisit] = useState(false)
 
    const handleAdmit = (visitId: number) => {
       openAlert({
@@ -86,6 +89,19 @@ const PatientShow = ({ patient }: Props) => {
       const url = new URL(window.location.href)
       url.searchParams.set('visit', String(visitId))
       router.visit(url.pathname + url.search)
+   }
+
+   const handleStartNewVisit = () => {
+      setIsStartingVisit(true)
+      router.post(`/patients/${patient.id}/visits`, {}, {
+         onSuccess: () => {
+            toast('New visit started!', { variant: 'success' })
+         },
+         onError: () => {
+            toast('Unable to start a new visit.', { variant: 'error' })
+         },
+         onFinish: () => setIsStartingVisit(false),
+      })
    }
 
    const formatVisitDate = (dateStr: string) => {
@@ -183,7 +199,15 @@ const PatientShow = ({ patient }: Props) => {
             ) : (
                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                   <Typography>No active visit</Typography>
-                  <Button variant='contained' sx={{ mt: 1 }} startIcon={<Play size={16} />}>Start New Visit</Button>
+                  <Button
+                     variant='contained'
+                     sx={{ mt: 1 }}
+                     startIcon={<Play size={16} />}
+                     onClick={handleStartNewVisit}
+                     disabled={isStartingVisit}
+                  >
+                     Start New Visit
+                  </Button>
                </Box>
             )}
          </div>

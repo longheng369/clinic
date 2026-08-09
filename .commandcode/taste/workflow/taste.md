@@ -7,6 +7,7 @@
 - Use `php artisan ide-helper:generate` and `php artisan ide-helper:models` to give the IDE exact Laravel model signatures and eliminate Intelephense false-positive warnings on Eloquent magic methods. Confidence: 0.55
 - Run eslint on modified files after a refactor to confirm they pass lint before declaring completion. Confidence: 0.55
 - For feature changes or significant refactors, write a detailed plan and get explicit approval before writing implementation code. Confidence: 0.60
+- Do not create test cases when implementing features unless the user explicitly requests them. Confidence: 1.00
 - Use Composer scripts (`composer.json` "scripts" section) as the task runner for project utility commands like db:dump / db:restore. Confidence: 0.55
 - In medication administration tracking, each "Provide" action marks a single individual dose as administered (do not batch multiple doses under one click based on interval like TID). Confidence: 0.70
 - For the MAR (medication administration record) tab, display medication orders as separate table rows rather than inside accordion/collapsible cards. Confidence: 0.70

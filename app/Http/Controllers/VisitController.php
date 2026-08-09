@@ -2,11 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Patient;
 use App\Models\Visit;
 use Inertia\Inertia;
 
 class VisitController extends Controller
 {
+    public function store(Patient $patient)
+    {
+        $visit = $patient->visits()->create([
+            'type' => 'OPD',
+            'status' => 'active',
+            'created_by' => auth()->id(),
+        ]);
+
+        return redirect()->route('patients.show', [
+            'patient' => $patient,
+            'visit' => $visit->id,
+        ])->with('success', 'New visit started.');
+    }
+
     public function show(Visit $visit)
     {
         $visit->load([
