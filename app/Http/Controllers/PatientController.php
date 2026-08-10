@@ -53,7 +53,6 @@ class PatientController extends Controller
         $selectedVisit = $selectedVisitId
             ? $patient->visits()
                 ->with('createdBy')
-                ->where('status', 'active')
                 ->whereKey($selectedVisitId)
                 ->first()
             : null;
