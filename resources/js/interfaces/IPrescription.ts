@@ -1,3 +1,5 @@
+import { IOption } from "./IOption";
+
 export interface IPrescriptionItem {
    id: number;
    medicine: { id: number; name: string } | null;
@@ -8,6 +10,7 @@ export interface IPrescriptionItem {
    duration_days: number | null;
    quantity: number | null;
    notes: string | null;
+   instruction: string;
 }
 
 export interface IPrescription {
@@ -37,6 +40,7 @@ export interface IPrescriptionItemFormData {
    night: number | null;
    numberOfDay: number | null;
    frequency?: string;
+   instruction: IOption<string> | null;
    notes: string | null;
 }
 

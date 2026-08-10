@@ -185,6 +185,7 @@ class PatientController extends Controller
                     'duration_days' => $i->duration_days,
                     'quantity' => $i->quantity ? (float) $i->quantity : null,
                     'notes' => $i->notes,
+                    'instruction' => $i->instruction,
                 ])->values(),
             ] : null,
             'vaccinations' => $patient->vaccinations()

@@ -4,6 +4,8 @@ import { useForm } from 'react-hook-form';
 import Input from '@/components/form/input';
 import { Box, DialogActions, DialogContent, Grid, Button } from '@mui/material';
 import Select from '@/components/form/select';
+import { MEDICINE_INSTRUCTION } from '@/config/prescription';
+import Autocomplete from '@/components/form/autocomplete';
 
 interface Props {
    onSave: (data: IPrescriptionItemFormData) => void;
@@ -12,9 +14,10 @@ interface Props {
    defaultValues?: IPrescriptionItemFormData;
 }
 
-type PrescriptionItemFormValues = Omit<IPrescriptionItemFormData, 'medicine' | 'unit'> & {
+type PrescriptionItemFormValues = Omit<IPrescriptionItemFormData, 'medicine' | 'unit' | 'instruction'> & {
    medicine: number | '';
    unit: number | '';
+   instruction: string | null;
 };
 
 const toNullableNumber = (value: unknown): number | null => {
@@ -45,6 +48,7 @@ const PrescriptionItemForm: FC<Props> = ({
             ...defaultValues,
             medicine: defaultValues.medicine?.id ?? '',
             unit: defaultValues.unit?.id ?? '',
+            instruction: defaultValues.instruction?.value ?? null,
          }
          : {
             medicine: '',
@@ -57,12 +61,14 @@ const PrescriptionItemForm: FC<Props> = ({
             evening: null,
             night: null,
             numberOfDay: null,
+            instruction: null,
          },
    });
 
    const onSubmit = (values: PrescriptionItemFormValues) => {
       const medicine = medicines.find((option) => option.id === values.medicine);
       const unit = units.find((option) => option.id === values.unit);
+      const instruction = MEDICINE_INSTRUCTION.find((opt) => opt.value === values.instruction) ?? null;
 
       if (!medicine || !unit) {
          return;
@@ -72,6 +78,7 @@ const PrescriptionItemForm: FC<Props> = ({
          ...values,
          medicine,
          unit,
+         instruction,
          quantity: toNullableNumber(values.quantity),
          morning: toNullableNumber(values.morning),
          afternoon: toNullableNumber(values.afternoon),
@@ -117,6 +124,15 @@ const PrescriptionItemForm: FC<Props> = ({
                </Grid>
                <Grid size={{ md: 6 }}>
                   <Input control={control} name="numberOfDay" label="Number of Days" type="number" rules={{ valueAsNumber: true }} />
+               </Grid>
+               <Grid size={{ md: 6 }}>
+                  <Autocomplete
+                     control={control}
+                     name="instruction"
+                     label="Instruction"
+                     options={MEDICINE_INSTRUCTION}
+                     rules={{ required: 'This field is required' }}
+                  />
                </Grid>
                <Grid size={{ md: 12 }}>
                   <Input control={control} name="notes" label="Notes" />

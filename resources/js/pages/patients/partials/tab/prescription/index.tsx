@@ -21,6 +21,7 @@ import {
    Typography,
 } from '@mui/material'
 import { IVisitWithMetaData } from '@/interfaces/IVisit'
+import { MEDICINE_INSTRUCTION } from '@/config/prescription'
 
 type DoseSlot = 'morning' | 'afternoon' | 'evening' | 'night'
 
@@ -83,6 +84,7 @@ const PrescriptionTab = ({
             numberOfDay: item.duration_days ?? 0,
             frequency: item.frequency,
             notes: item.notes,
+            instruction: MEDICINE_INSTRUCTION.find((opt) => opt.value === item.instruction) ?? null
          }
       }) ?? []
    ), [medicines, prescription, units]);
@@ -181,6 +183,7 @@ const PrescriptionTab = ({
             duration_days: item.numberOfDay && item.numberOfDay > 0 ? item.numberOfDay : null,
             quantity: item.quantity ?? null,
             notes: item.notes ?? null,
+            instruction: item.instruction?.value ?? null,
          })),
       }
 
@@ -288,10 +291,10 @@ const PrescriptionTab = ({
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end' }}>
                <Box>
                   <Typography sx={{ fontFamily: 'var(--font-khmer)' }}>
-                      កាលបរិច្ឆេទ <Typography component='span'>: {formatDob(prescription?.created_at ?? new Date().toISOString())}</Typography>
+                     កាលបរិច្ឆេទ <Typography component='span'>: {formatDob(prescription?.created_at ?? new Date().toISOString())}</Typography>
                   </Typography>
                   <Typography sx={{ fontFamily: 'var(--font-khmer)' }}>
-                      វេជ្ជបណ្ឌិត <Typography component='span'>: {prescription?.recorded_by ?? '—'}</Typography>
+                     វេជ្ជបណ្ឌិត <Typography component='span'>: {prescription?.recorded_by ?? '—'}</Typography>
                   </Typography>
                </Box>
                {!isEditing ? (
@@ -385,7 +388,7 @@ const PrescriptionTab = ({
                               <TableCell align='center'>{index + 1}</TableCell>
                               <TableCell>{field.medicine?.name}</TableCell>
                               <TableCell>{field.quantity} {field.unit?.name}</TableCell>
-                              <TableCell>{field.route} {field.morning && `ព្រឹក ${field.morning} ${field.unit.name}`} {field.afternoon && `រសៀល ${field.afternoon} ${field.unit.name}`} {field.evening && `ល្ងាច ${field.evening} ${field.unit.name}`} {field.night && `យប់ ${field.night} ${field.unit.name}`}</TableCell>
+                              <TableCell>{field.instruction?.label} {field.morning && `ព្រឹក ${field.morning} ${field.unit.name}`} {field.afternoon && `រសៀល ${field.afternoon} ${field.unit.name}`} {field.evening && `ល្ងាច ${field.evening} ${field.unit.name}`} {field.night && `យប់ ${field.night} ${field.unit.name}`}</TableCell>
                               <TableCell>{field.numberOfDay}</TableCell>
                               <TableCell>{field.notes}</TableCell>
                            </TableRow>

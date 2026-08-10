@@ -1,4 +1,5 @@
-import { Autocomplete, TextField } from '@mui/material'
+import { IOption } from '@/interfaces/IOption'
+import { Autocomplete as MuiAutoComplete, TextField } from '@mui/material'
 import {
    useController,
    type Control,
@@ -7,21 +8,16 @@ import {
    type RegisterOptions,
 } from 'react-hook-form'
 
-type AutocompleteOption = {
-   label: string
-   value: string
-}
-
 type Props<T extends FieldValues = FieldValues> = {
    control: Control<T>
    name: Path<T>
    rules?: Omit<RegisterOptions<T, Path<T>>, 'valueAsDate' | 'setValueAs' | 'disabled'>
    label: string
-   options: AutocompleteOption[]
+   options: IOption<any>[]
    placeholder?: string
 }
 
-const RHFAutocomplete = <T extends FieldValues = FieldValues>({
+const Autocomplete = <T extends FieldValues = FieldValues>({
    control,
    name,
    rules,
@@ -29,20 +25,25 @@ const RHFAutocomplete = <T extends FieldValues = FieldValues>({
    options,
    placeholder = 'Search...',
 }: Props<T>) => {
-   const { field, fieldState } = useController({ control, name, rules })
-   const value = options.find((option) => option.value === field.value) ?? null
+   const { field, fieldState } = useController({ control, name, rules });
+
+   const selectedOption = options.find((option) => option.value === field.value) ?? null
 
    return (
-      <Autocomplete
+      <MuiAutoComplete
          options={options}
-         value={value}
-         onChange={(_, option) => field.onChange(option?.value ?? '')}
+         value={selectedOption}
+         onChange={(_, option) => {
+            field.onChange(option?.value ?? null)
+         }}
          getOptionLabel={(option) => option.label}
          isOptionEqualToValue={(option, selected) => option.value === selected.value}
          noOptionsText="No results found."
+         size='small'
          renderInput={(params) => (
             <TextField
                {...params}
+               variant='standard'
                label={label}
                placeholder={placeholder}
                required={!!rules?.required}
@@ -54,4 +55,4 @@ const RHFAutocomplete = <T extends FieldValues = FieldValues>({
    )
 }
 
-export default RHFAutocomplete
+export default Autocomplete

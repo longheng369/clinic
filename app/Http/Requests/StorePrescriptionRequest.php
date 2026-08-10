@@ -21,6 +21,7 @@ class StorePrescriptionRequest extends FormRequest
             'items.*.duration_days' => ['nullable', 'integer', 'min:1'],
             'items.*.quantity' => ['nullable', 'numeric', 'min:0'],
             'items.*.notes' => ['nullable', 'string', 'max:500'],
+            'items.*.instruction' => ['nullable', 'string', 'max:255'],
         ];
     }
 }
