@@ -10,7 +10,7 @@ export interface IPatient {
    phone_number: string;
    gender: string;
    allergy: string | null;
-   register_by: number | null;
+   created_by: number | null;
    last_modifier: number | null;
    national_id: string | null;
    created_at: string;

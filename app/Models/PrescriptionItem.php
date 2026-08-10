@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'dosage',
     'unit',
     'frequency',
-    'duration_days',
+    'number_of_day',
     'quantity',
     'notes',
     'instruction',
@@ -25,7 +25,7 @@ class PrescriptionItem extends Model
         return [
             'dosage' => 'decimal:2',
             'quantity' => 'decimal:2',
-            'duration_days' => 'integer',
+            'number_of_day' => 'integer',
         ];
     }
 

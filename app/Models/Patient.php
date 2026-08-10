@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 
 #[Fillable([
     'khmer_first_name',
@@ -20,7 +21,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     'phone_number',
     'gender',
     'allergy',
-    'register_by',
+    'created_by',
     'last_modifier',
     'national_id',
 ])]
@@ -35,9 +36,9 @@ class Patient extends Model
         ];
     }
 
-    public function registerBy(): BelongsTo
+    public function createdBy(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'register_by');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function lastModifier(): BelongsTo
@@ -154,5 +155,16 @@ class Patient extends Model
             'next_dose_number' => $nextDoseNumber,
             'next_dose_due_date' => $dueDate->toDateString(),
         ];
+    }
+
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::creating(function (self $patient) {
+            if (! $patient->created_by && Auth::check()) {
+                $patient->created_by = Auth::id();
+            }
+        });
     }
 }

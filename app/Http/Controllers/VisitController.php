@@ -89,7 +89,7 @@ class VisitController extends Controller
                     'dosage' => (float) $i->dosage,
                     'unit' => $i->unit,
                     'frequency' => $i->frequency,
-                    'duration_days' => $i->duration_days,
+                    'number_of_day' => $i->duration_days,
                     'quantity' => $i->quantity ? (float) $i->quantity : null,
                     'notes' => $i->notes,
                 ])->values(),

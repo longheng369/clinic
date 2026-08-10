@@ -59,7 +59,7 @@ interface PrescriptionItemRow {
     dosage: number
     unit: string
     frequency: string
-    duration_days?: number
+    number_of_day?: number
     quantity?: number
     notes?: string
 }
@@ -208,7 +208,7 @@ const VisitShow = ({ visit, patient, consultations, medicationAdministrations, p
                                  <Box>{item.medicine ?? '—'}</Box>
                                  <Box>{item.route}</Box>
                                  <Box>{item.dosage} {item.unit} &middot; {item.frequency}</Box>
-                                 {item.duration_days && <Box>{item.duration_days}d</Box>}
+                                  {item.number_of_day && <Box>{item.number_of_day}d</Box>}
                                  {item.quantity && <Box>Qty: {item.quantity}</Box>}
                               </Box>
                               <Box>

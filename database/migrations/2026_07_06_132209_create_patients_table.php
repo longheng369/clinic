@@ -23,8 +23,7 @@ return new class extends Migration
             $table->string('phone_number');
             $table->string('gender');
             $table->string('allergy')->nullable();
-            $table->unsignedBigInteger('register_by')->nullable();
-            $table->foreign('register_by')->references('id')->on('users')->onDelete('set null');
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->unsignedBigInteger('last_modifier')->nullable();
             $table->foreign('last_modifier')->references('id')->on('users')->onDelete('set null');
             $table->string('national_id')->nullable();

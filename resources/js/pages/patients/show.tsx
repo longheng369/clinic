@@ -44,6 +44,8 @@ const PatientShow = ({ patient }: Props) => {
       prescription: IPrescription | null
    }>().props
 
+   console.log({prescription})
+
    const visibleTabs = selectedVisit?.type === 'IPD'
       ? ALL_TABS
       : ALL_TABS.filter((t) => !t.requiresIpd)

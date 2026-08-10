@@ -99,6 +99,9 @@ const PrescriptionItemForm: FC<Props> = ({
                   <Select control={control} name="route" label="Route" options={routeOptions} rules={{ required: 'Route is required' }} />
                </Grid>
                <Grid size={{ md: 6 }}>
+                  <Input control={control} name="quantity" label="Quantity" type="number" rules={{ required: 'Quantity is required', min: { value: 1, message: 'Min 1' }, valueAsNumber: true }} />
+               </Grid>
+               <Grid size={{ md: 6 }}>
                   <Select
                      control={control}
                      name="unit"
@@ -106,9 +109,6 @@ const PrescriptionItemForm: FC<Props> = ({
                      options={units.map((unit) => ({ label: unit.name, value: unit.id }))}
                      rules={{ required: 'Unit is required' }}
                   />
-               </Grid>
-               <Grid size={{ md: 6 }}>
-                  <Input control={control} name="quantity" label="Quantity" type="number" rules={{ required: 'Quantity is required', min: { value: 1, message: 'Min 1' }, valueAsNumber: true }} />
                </Grid>
                <Grid size={{ md: 6 }}>
                   <Input control={control} name="morning" label="Morning" type="number" rules={{ valueAsNumber: true }} />

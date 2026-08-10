@@ -7,7 +7,7 @@ export interface IPrescriptionItem {
    dosage: number;
    unit: string;
    frequency: string;
-   duration_days: number | null;
+   number_of_day: number | null;
    quantity: number | null;
    notes: string | null;
    instruction: string;

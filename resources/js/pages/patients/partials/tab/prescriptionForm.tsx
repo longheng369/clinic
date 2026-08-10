@@ -41,7 +41,7 @@ interface PrescriptionFormProps {
     onClose: () => void
 }
 
-type PrescriptionFormValues = { visit_id: number; notes: string | null; items: { medicine_id: number | null; route: string; dosage: number | null; unit: string; frequency: string; duration_days: number | null; quantity: number | null; notes: string | null }[] }
+type PrescriptionFormValues = { visit_id: number; notes: string | null; items: { medicine_id: number | null; route: string; dosage: number | null; unit: string; frequency: string; number_of_day: number | null; quantity: number | null; notes: string | null }[] }
 
 const emptyItem = () => ({
    medicine_id: null,
@@ -49,7 +49,7 @@ const emptyItem = () => ({
    dosage: null,
    unit: '',
    frequency: 'QD',
-   duration_days: null,
+   number_of_day: null,
    quantity: null,
    notes: null,
 })
@@ -69,7 +69,7 @@ const PrescriptionForm = ({ patientId, activeVisits, medicines, prescription, se
                dosage: i.dosage,
                unit: i.unit,
                frequency: i.frequency,
-               duration_days: i.duration_days,
+                number_of_day: i.number_of_day,
                quantity: i.quantity,
                notes: i.notes,
             })),
@@ -211,7 +211,7 @@ const PrescriptionForm = ({ patientId, activeVisits, medicines, prescription, se
                                     control={control}
                                     type="number"
 
-                                    name={`items.${index}.duration_days`}
+                                     name={`items.${index}.number_of_day`}
                                     placeholder="7"
                                  />
                               </td>

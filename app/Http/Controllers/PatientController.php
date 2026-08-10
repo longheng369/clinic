@@ -38,20 +38,10 @@ class PatientController extends Controller
 
     public function store(StorePatientRequest $request)
     {
-        Patient::create(array_merge(
-            $request->validated(),
-            ['register_by' => auth()->id()]
-        ));
+        Patient::create($request->validated());
 
         return redirect()->route('patients.index')
             ->with('success', 'Patient created.');
-    }
-
-    public function edit(Patient $patient)
-    {
-        return Inertia::render('patients/edit', [
-            'patient' => $patient,
-        ]);
     }
 
     public function show(Request $request, Patient $patient)
@@ -182,7 +172,7 @@ class PatientController extends Controller
                     'dosage' => (float) $i->dosage,
                     'unit' => $i->unit,
                     'frequency' => $i->frequency,
-                    'duration_days' => $i->duration_days,
+                    'number_of_day' => $i->number_of_day,
                     'quantity' => $i->quantity ? (float) $i->quantity : null,
                     'notes' => $i->notes,
                     'instruction' => $i->instruction,

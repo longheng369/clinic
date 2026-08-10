@@ -59,6 +59,7 @@ const PrescriptionTab = ({
    selectedVisit,
    prescription,
 }: Props) => {
+   console.log(prescription)
    const { openModal, closeModal } = useModal()
    const { toast } = useToast()
    const [isSaving, setIsSaving] = useState(false)
@@ -81,7 +82,7 @@ const PrescriptionTab = ({
             afternoon: slots.includes('afternoon') ? dose : null,
             evening: slots.includes('evening') ? dose : null,
             night: slots.includes('night') ? dose : null,
-            numberOfDay: item.duration_days ?? 0,
+            numberOfDay: item.number_of_day ?? null,
             frequency: item.frequency,
             notes: item.notes,
             instruction: MEDICINE_INSTRUCTION.find((opt) => opt.value === item.instruction) ?? null
@@ -180,7 +181,7 @@ const PrescriptionTab = ({
             ),
             unit: item.unit.name,
             frequency: getFrequency(item),
-            duration_days: item.numberOfDay && item.numberOfDay > 0 ? item.numberOfDay : null,
+            number_of_day: item.numberOfDay && item.numberOfDay > 0 ? item.numberOfDay : null,
             quantity: item.quantity ?? null,
             notes: item.notes ?? null,
             instruction: item.instruction?.value ?? null,

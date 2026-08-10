@@ -24,7 +24,7 @@ return new class extends Migration
             $table->decimal('dosage', 8, 2);
             $table->string('unit');
             $table->string('frequency');
-            $table->integer('duration_days')->nullable();
+            $table->integer('number_of_day')->nullable();
             $table->decimal('quantity', 8, 2)->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();

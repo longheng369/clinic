@@ -17,7 +17,7 @@ class UpdatePrescriptionRequest extends FormRequest
             'items.*.dosage' => ['required', 'numeric', 'min:0'],
             'items.*.unit' => ['required', 'string', 'max:255'],
             'items.*.frequency' => ['required', 'string', 'in:QD,BID,TID,QID,QHS,PRN'],
-            'items.*.duration_days' => ['nullable', 'integer', 'min:1'],
+            'items.*.number_of_day' => ['nullable', 'integer', 'min:1'],
             'items.*.quantity' => ['nullable', 'numeric', 'min:0'],
             'items.*.notes' => ['nullable', 'string', 'max:500'],
             'items.*.instruction' => ['nullable', 'string', 'max:255'],
