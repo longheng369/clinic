@@ -30,7 +30,7 @@ class PatientController extends Controller
                     ->orWhere('first_name', 'like', "%{$search}%")
                     ->orWhere('last_name', 'like', "%{$search}%")
                     ->orWhere('phone_number', 'like', "%{$search}%"))
-                ->paginate(10)
+                ->paginate(20)
                 ->withQueryString(),
             'search' => $search,
         ]);

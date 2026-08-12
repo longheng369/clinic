@@ -155,7 +155,7 @@ const Patient = () => {
    return (
       <>
          <Head title="Patients" />
-         <Box sx={{ p: 4 }}>
+         <Box sx={{ p: 4, height: '100%', display: 'flex', flexDirection: 'column' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                <Box>
                   <Typography variant='h5' sx={{ fontWeight: 'bold' }}>Patients</Typography>
@@ -173,20 +173,19 @@ const Patient = () => {
                </Box>
             </Box>
 
-            <DataGrid
-               rows={patients.data}
-               columns={columns}
-               rowCount={patients.total}
-               paginationMode="server"
-               paginationModel={{ page: patients.current_page - 1, pageSize: patients.per_page }}
-               onPaginationModelChange={handlePaginationModelChange}
-               pageSizeOptions={[10]}
-               disableRowSelectionOnClick
-               autoHeight
-               sx={{
-                  mt: 3,
-               }}
-            />
+            <Box sx={{ flex: 1, mt: 3, minHeight: 0 }}>
+               <DataGrid
+                  rows={patients.data}
+                  columns={columns}
+                  rowCount={patients.total}
+                  paginationMode="server"
+                  paginationModel={{ page: patients.current_page - 1, pageSize: patients.per_page }}
+                  onPaginationModelChange={handlePaginationModelChange}
+                  pageSizeOptions={[10]}
+                  disableRowSelectionOnClick
+                  sx={{ height: '100%' }}
+               />
+            </Box>
          </Box>
       </>
    )

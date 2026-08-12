@@ -38,10 +38,6 @@ const theme = createTheme({
          dark: '#15803d',
          contrastText: '#ffffff',
       },
-      background: {
-         default: '#efefef',
-         paper: '#ffffff',
-      },
       text: {
          primary: '#1e293b',
          secondary: '#64748b',
@@ -55,28 +51,11 @@ const theme = createTheme({
          fontWeight: 500,
       },
    },
-   shape: {
-      borderRadius: 10,
-   },
    components: {
-      MuiCssBaseline: {
-         styleOverrides: {
-            body: {
-               backgroundColor: '#efefef',
-            },
-         },
-      },
       MuiButton: {
          styleOverrides: {
             root: {
                textTransform: 'none',
-            },
-         },
-      },
-      MuiDialog: {
-         styleOverrides: {
-            paper: {
-               borderRadius: 16,
             },
          },
       },
