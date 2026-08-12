@@ -7,20 +7,17 @@ import {
    LogOut,
    ChevronDown,
    ChevronRight,
-   PanelLeft,
-   PanelRight,
 } from 'lucide-react'
+import { alpha, useTheme } from '@mui/material/styles'
 import {
    Avatar,
    Box,
    Collapse,
-   IconButton,
    List,
    ListItem,
    ListItemButton,
    ListItemIcon,
    ListItemText,
-   Tooltip,
    Typography,
 } from '@mui/material'
 
@@ -33,42 +30,11 @@ const SidebarLink = React.forwardRef<HTMLAnchorElement, React.ComponentProps<typ
 )
 SidebarLink.displayName = 'SidebarLink'
 
-const colors = {
-   text: '#1e293b',
-   muted: '#64748b',
-   hover: '#f1f5f9',
-   border: '#cbd5e1',
-   primary50: '#f4f9f4',
-   primary100: '#e3f0e3',
-   primary500: '#5a8f5a',
-   primary600: '#4a7a4a',
-   primary700: '#3d633d',
-}
-
-const activeGradient = `linear-gradient(to bottom right, ${colors.primary500}, ${colors.primary700})`
-
-const activeItemSx = {
-   color: '#ffffff',
-   backgroundImage: activeGradient,
-   boxShadow: '0 4px 6px -1px rgba(90, 143, 90, 0.2)',
-   borderRight: `2px solid ${colors.primary600}`,
-   '&:hover': {
-      color: '#ffffff',
-      backgroundImage: activeGradient,
-   },
-}
-
-const inactiveItemSx = {
-   color: colors.muted,
-   '&:hover': {
-      color: colors.primary600,
-      bgcolor: colors.primary50,
-   },
-}
-
 const Sidebar = () => {
+   const theme = useTheme()
    const { url, props: pageProps } = usePage()
    const user = pageProps.auth?.user
+   const pathname = url.split('?')[0]
 
    const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
       Settings: true,
@@ -80,6 +46,27 @@ const Sidebar = () => {
 
    const handleLogout = () => {
       router.post('/logout')
+   }
+
+   const activeGradient = `linear-gradient(to bottom right, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`
+
+   const activeItemSx = {
+      color: theme.palette.primary.contrastText,
+      backgroundImage: activeGradient,
+      boxShadow: `0 4px 6px -1px ${alpha(theme.palette.primary.main, 0.2)}`,
+      borderRight: `2px solid ${theme.palette.primary.main}`,
+      '&:hover': {
+         color: theme.palette.primary.contrastText,
+         backgroundImage: activeGradient,
+      },
+   }
+
+   const inactiveItemSx = {
+      color: theme.palette.text.secondary,
+      '&:hover': {
+         color: theme.palette.primary.main,
+         bgcolor: alpha(theme.palette.primary.main, 0.08),
+      },
    }
 
    const renderBadge = (badge?: number, isActive?: boolean) =>
@@ -95,15 +82,15 @@ const Sidebar = () => {
                borderRadius: '50%',
                fontSize: 11,
                fontWeight: 600,
-               bgcolor: isActive ? colors.primary600 : colors.primary100,
-               color: isActive ? '#ffffff' : colors.primary700,
+               bgcolor: isActive ? theme.palette.primary.main : alpha(theme.palette.primary.main, 0.12),
+               color: isActive ? theme.palette.primary.contrastText : theme.palette.primary.dark,
             }}
          >
             {badge}
          </Box>
       ) : null
 
-   const renderSidebarItem = (item: ISidebarOption, nested = false): React.ReactNode => {
+   const renderSidebarItem = (item: ISidebarOption): React.ReactNode => {
       const Icon = item.icon
       const isExpanded = expandedSections[item.label]
 
@@ -124,21 +111,21 @@ const Sidebar = () => {
                      <ListItemText
                         primary={item.label}
                         sx={{ my: 0 }}
-                        
+
                      />
                      {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                   </ListItemButton>
                </ListItem>
                <Collapse in={isExpanded} timeout="auto" unmountOnExit>
                   <List disablePadding sx={{ pl: 3, mt: 0.25 }}>
-                     {item.children.map((child) => renderSidebarItem(child, true))}
+                     {item.children.map((child) => renderSidebarItem(child))}
                   </List>
                </Collapse>
             </Box>
          )
       }
 
-      const isActive = item.path === url
+      const isActive = item.path === pathname
 
       return (
          <ListItem key={item.path ?? item.label} disablePadding>
@@ -173,8 +160,8 @@ const Sidebar = () => {
             flexShrink: 0,
             display: 'flex',
             flexDirection: 'column',
-            bgcolor: '#ffffff',
-            borderRight: `1px solid ${colors.border}`,
+            bgcolor: theme.palette.background.paper,
+            borderRight: `1px solid ${theme.palette.divider}`,
             zIndex: 30,
             width: 300,
             transition: 'width 200ms ease',
@@ -199,9 +186,9 @@ const Sidebar = () => {
                   height: 36,
                   flexShrink: 0,
                   borderRadius: 1,
-                  backgroundImage: `linear-gradient(to bottom right, ${colors.primary500}, ${colors.primary700})`,
-                  boxShadow: '0 4px 6px -1px rgba(90, 143, 90, 0.2)',
-                  color: '#ffffff',
+                  backgroundImage: activeGradient,
+                  boxShadow: `0 4px 6px -1px ${alpha(theme.palette.primary.main, 0.2)}`,
+                  color: theme.palette.primary.contrastText,
                }}
             >
                <Stethoscope size={20} />
@@ -217,7 +204,7 @@ const Sidebar = () => {
                         fontWeight: 600,
                         textTransform: 'uppercase',
                         letterSpacing: '0.05em',
-                        color: colors.muted,
+                        color: theme.palette.text.secondary,
                      }}
                   >
                      {section.title}
@@ -229,17 +216,17 @@ const Sidebar = () => {
             ))}
          </Box>
 
-         <Box sx={{ borderTop: `1px solid ${colors.primary100}`, px: 2, py: 2 }}>
+         <Box sx={{ borderTop: `1px solid ${alpha(theme.palette.primary.main, 0.12)}`, px: 2, py: 2 }}>
             <ListItemButton
                onClick={() => router.visit('/profile')}
-               sx={{ borderRadius: 1, px: 1.5, py: 1, '&:hover': { bgcolor: colors.primary50 } }}
+               sx={{ borderRadius: 1, px: 1.5, py: 1, '&:hover': { bgcolor: alpha(theme.palette.primary.main, 0.08) } }}
             >
                <Avatar
                   sx={{
                      width: 36,
                      height: 36,
                      flexShrink: 0,
-                     backgroundImage: `linear-gradient(135deg, #7aab7a, ${colors.primary600})`,
+                     backgroundImage: `linear-gradient(135deg, ${theme.palette.primary.light}, ${theme.palette.primary.main})`,
                      fontSize: 12,
                      fontWeight: 600,
                      mr: 1.5,
@@ -248,10 +235,10 @@ const Sidebar = () => {
                   {(user?.name ?? 'U').charAt(0).toUpperCase()}
                </Avatar>
                <Box sx={{ minWidth: 0 }}>
-                  <Typography sx={{ fontSize: 14, fontWeight: 500, color: colors.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <Typography sx={{ fontSize: 14, fontWeight: 500, color: theme.palette.text.primary, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                      {user?.name ?? 'User'}
                   </Typography>
-                  <Typography sx={{ fontSize: 12, color: colors.muted, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <Typography sx={{ fontSize: 12, color: theme.palette.text.secondary, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                      {user?.email ?? ''}
                   </Typography>
                </Box>
@@ -264,8 +251,8 @@ const Sidebar = () => {
                   px: 1.5,
                   py: 1,
                   gap: 1.5,
-                  color: '#f87171',
-                  '&:hover': { color: '#dc2626', bgcolor: '#fef2f2' },
+                  color: theme.palette.error.light,
+                  '&:hover': { color: theme.palette.error.main, bgcolor: alpha(theme.palette.error.main, 0.08) },
                }}
             >
                <LogOut size={18} />

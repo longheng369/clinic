@@ -159,7 +159,7 @@ const Patient = () => {
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                <Box>
                   <Typography variant='h5' sx={{ fontWeight: 'bold' }}>Patients</Typography>
-                  <Typography variant='body2' sx={{ color: 'gray' }}>Manage your clinic patients</Typography>
+                  <Typography variant='body1' color='textSecondary'>Manage your clinic patients</Typography>
                </Box>
                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
                   <SearchBar value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder='Search patient' />
