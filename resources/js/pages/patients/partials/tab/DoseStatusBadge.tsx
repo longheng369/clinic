@@ -1,5 +1,5 @@
 import { Box } from '@mui/material'
-import type { IMedicationDose } from '@/interfaces/IMedicationDose'
+import type { IMedicationAdministration } from '@/interfaces/IMedicationAdministration'
 
 const DOSE_STATUS: Record<string, { label: string; className: string }> = {
    pending: { label: 'Pending', className: 'bg-blue-100 text-blue-700' },
@@ -10,23 +10,34 @@ const DOSE_STATUS: Record<string, { label: string; className: string }> = {
    overdue: { label: 'Overdue', className: 'bg-red-100 text-red-700' },
 }
 
-function getEffectiveStatus(dose: IMedicationDose): string {
-   if (dose.status === 'pending' && new Date(dose.scheduled_at) < new Date()) {
+function getEffectiveStatus(administration: IMedicationAdministration): string {
+   if (administration.status === 'pending' && new Date(administration.scheduled_at) < new Date()) {
       return 'overdue'
    }
-   return dose.status
+   return administration.status
 }
 
 interface DoseStatusBadgeProps {
-    dose: IMedicationDose
+    administration: IMedicationAdministration
 }
 
-const DoseStatusBadge = ({ dose }: DoseStatusBadgeProps) => {
-   const effective = getEffectiveStatus(dose)
+const DoseStatusBadge = ({ administration }: DoseStatusBadgeProps) => {
+   const effective = getEffectiveStatus(administration)
    const badge = DOSE_STATUS[effective]
 
    return (
-      <Box sx={{}}>
+      <Box
+         className={badge.className}
+         sx={{
+            display: 'inline-block',
+            px: 1.5,
+            py: 0.25,
+            borderRadius: 10,
+            fontSize: 11,
+            fontWeight: 500,
+            whiteSpace: 'nowrap',
+         }}
+      >
          {badge.label}
       </Box>
    )

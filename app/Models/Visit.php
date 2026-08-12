@@ -12,6 +12,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'type',
     'status',
     'created_by',
+    'subtotal',
+    'discount',
+    'total_amount',
+    'paid_amount',
+    'payment_status',
+    'payment_date',
 ])]
 class Visit extends Model
 {
@@ -45,13 +51,44 @@ class Visit extends Model
         return $this->hasMany(PatientAttachment::class);
     }
 
-    public function medicationAdministrations(): HasMany
+    public function medicationOrders(): HasMany
     {
-        return $this->hasMany(MedicationAdministration::class);
+        return $this->hasMany(MedicationOrder::class);
     }
 
     public function prescriptions(): HasMany
     {
         return $this->hasMany(Prescription::class);
+    }
+
+    public function billingSummary(): array
+    {
+        $consultationsTotal = $this->consultations()->sum('fee');
+
+        $medicationsTotal = MedicationAdministration::query()
+            ->whereHas('medicationOrder', fn ($q) => $q->where('visit_id', $this->id))
+            ->where('status', 'provided')
+            ->sum('unit_price');
+
+        $paraclinicTotal = $this->paraclinicRequests()->sum('total_amount');
+
+        $subtotal = $consultationsTotal + $medicationsTotal + $paraclinicTotal;
+        $discount = (float) $this->discount;
+        $total = max(0, $subtotal - $discount);
+        $paidAmount = (float) $this->paid_amount;
+        $balance = $total - $paidAmount;
+
+        return [
+            'consultation_fees' => (float) $consultationsTotal,
+            'medication_costs' => (float) $medicationsTotal,
+            'paraclinic_costs' => (float) $paraclinicTotal,
+            'subtotal' => $subtotal,
+            'discount' => $discount,
+            'total_amount' => $total,
+            'paid_amount' => $paidAmount,
+            'balance' => $balance,
+            'payment_status' => $this->payment_status,
+            'payment_date' => $this->payment_date?->toISOString(),
+        ];
     }
 }

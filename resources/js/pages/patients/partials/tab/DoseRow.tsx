@@ -3,23 +3,23 @@ import { router } from '@inertiajs/react'
 import { useModal } from '@/components/modal'
 import IconButton from '@/components/button/iconButton'
 import { Check, X, AlertTriangle } from 'lucide-react'
-import type { IMedicationDose } from '@/interfaces/IMedicationDose'
+import type { IMedicationAdministration } from '@/interfaces/IMedicationAdministration'
 import DoseStatusBadge, { getEffectiveStatus } from './DoseStatusBadge'
 import { formatCreatedDateTime } from '@/utils/date'
 
 interface DoseRowProps {
-    dose: IMedicationDose
+    administration: IMedicationAdministration
     visitId: number
     orderStatus: string
 }
 
-const DoseRow = ({ dose, visitId, orderStatus }: DoseRowProps) => {
+const DoseRow = ({ administration, visitId, orderStatus }: DoseRowProps) => {
    const { openAlert } = useModal()
-   const effective = getEffectiveStatus(dose)
+   const effective = getEffectiveStatus(administration)
    const actionEnabled = orderStatus === 'active' && (effective === 'pending' || effective === 'overdue')
 
    const handleProvide = () => {
-      router.post(`/visits/${visitId}/doses/${dose.id}/administer`, {})
+      router.post(`/visits/${visitId}/doses/${administration.id}/administer`, {})
    }
 
    const handleMissed = () => {
@@ -28,7 +28,7 @@ const DoseRow = ({ dose, visitId, orderStatus }: DoseRowProps) => {
          description: 'Select a reason for the missed dose.',
          variant: 'warning',
          confirmLabel: 'Patient absent',
-         onConfirm: () => router.post(`/visits/${visitId}/doses/${dose.id}/missed`, { reason: 'Patient absent' }),
+         onConfirm: () => router.post(`/visits/${visitId}/doses/${administration.id}/missed`, { reason: 'Patient absent' }),
       })
    }
 
@@ -38,39 +38,39 @@ const DoseRow = ({ dose, visitId, orderStatus }: DoseRowProps) => {
          description: 'Select a reason the patient refused.',
          variant: 'warning',
          confirmLabel: 'Patient declined',
-         onConfirm: () => router.post(`/visits/${visitId}/doses/${dose.id}/refused`, { reason: 'Patient declined' }),
+         onConfirm: () => router.post(`/visits/${visitId}/doses/${administration.id}/refused`, { reason: 'Patient declined' }),
       })
    }
 
    return (
-      <Box sx={{}}>
-         <Box sx={{}}>
-            <Box sx={{}}>
-               {dose.administration_no != null ? `#${dose.administration_no}` : ''}
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', py: 1.5, px: 2, borderBottom: '1px solid #f1f5f9' }}>
+         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Box sx={{ fontSize: 13, color: '#475569', minWidth: 36 }}>
+               {administration.administration_no != null ? `#${administration.administration_no}` : ''}
             </Box>
-            <Box sx={{}}>
-               {formatCreatedDateTime(dose.scheduled_at)}
+            <Box sx={{ fontSize: 13, color: '#64748b', minWidth: 140 }}>
+               {formatCreatedDateTime(administration.scheduled_at)}
             </Box>
-            <DoseStatusBadge dose={dose} />
-            {dose.status === 'provided' && dose.administered_by && (
-               <Box sx={{}}>
-                        by {dose.administered_by}
-                  {dose.unit_price != null && (
-                     <Box sx={{}}>
-                                ${Number(dose.unit_price).toFixed(2)}
+            <DoseStatusBadge administration={administration} />
+            {administration.status === 'provided' && administration.administered_by && (
+               <Box sx={{ fontSize: 13, color: '#64748b' }}>
+                  by {administration.administered_by}
+                  {administration.unit_price != null && (
+                     <Box component="span" sx={{ color: '#94a3b8' }}>
+                        &nbsp;&mdash;&nbsp;${Number(administration.unit_price).toFixed(2)}
                      </Box>
                   )}
                </Box>
             )}
-            {(dose.status === 'missed' || dose.status === 'refused' || dose.status === 'cancelled') && dose.reason && (
-               <Box sx={{}}>&mdash; {dose.reason}</Box>
+            {(administration.status === 'missed' || administration.status === 'refused' || administration.status === 'cancelled') && administration.reason && (
+               <Box sx={{ fontSize: 13, color: '#94a3b8' }}>&mdash; {administration.reason}</Box>
             )}
-            {dose.note && (
-               <Box sx={{}}>{dose.note}</Box>
+            {administration.note && (
+               <Box sx={{ fontSize: 13, color: '#94a3b8' }}>{administration.note}</Box>
             )}
          </Box>
          {actionEnabled && (
-            <Box sx={{}}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                <IconButton onClick={handleProvide} aria-label="Provide dose" title="Provide">
                   <Check size={16} />
                </IconButton>

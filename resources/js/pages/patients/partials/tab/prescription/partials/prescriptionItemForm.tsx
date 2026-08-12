@@ -6,6 +6,7 @@ import { Box, DialogActions, DialogContent, Grid, Button } from '@mui/material';
 import Select from '@/components/form/select';
 import { MEDICINE_INSTRUCTION } from '@/config/prescription';
 import Autocomplete from '@/components/form/autocomplete';
+import { MEDICINE_ROUTE } from '@/config/mar';
 
 interface Props {
    onSave: (data: IPrescriptionItemFormData) => void;
@@ -26,15 +27,6 @@ const toNullableNumber = (value: unknown): number | null => {
    const number = Number(value)
    return Number.isFinite(number) ? number : null
 }
-
-const routeOptions = [
-   { label: 'Oral (PO)', value: 'PO' },
-   { label: 'Intravenous (IV)', value: 'IV' },
-   { label: 'Intramuscular (IM)', value: 'IM' },
-   { label: 'Subcutaneous (SC)', value: 'SC' },
-   { label: 'Topical', value: 'Topical' },
-   { label: 'Sublingual', value: 'Sublingual' },
-];
 
 const PrescriptionItemForm: FC<Props> = ({
    onSave,
@@ -96,7 +88,7 @@ const PrescriptionItemForm: FC<Props> = ({
                   <Select control={control} name='medicine' label='Medicine' options={medicines.map((medicine) => ({ label: medicine.name, value: medicine.id }))} rules={{ required: 'Medicine is required' }} />
                </Grid>
                <Grid size={{ md: 6 }}>
-                  <Select control={control} name="route" label="Route" options={routeOptions} rules={{ required: 'Route is required' }} />
+                  <Select control={control} name="route" label="Route" options={MEDICINE_ROUTE} rules={{ required: 'Route is required' }} />
                </Grid>
                <Grid size={{ md: 6 }}>
                   <Input control={control} name="quantity" label="Quantity" type="number" rules={{ required: 'Quantity is required', min: { value: 1, message: 'Min 1' }, valueAsNumber: true }} />

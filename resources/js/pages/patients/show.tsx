@@ -8,16 +8,18 @@ import PatientInfo from '@/components/patient/patientInfo'
 import ConsultationTab from './partials/tab/consultation/index'
 import AttachmentsTab from './partials/tab/attachment'
 import SurveillanceTab from './partials/tab/surveillance'
-import MedicationTab from './partials/tab/medication/index'
+import MedicationOrdersTab from './partials/tab/medication-orders/index'
+import MedicationAdministrationTab from './partials/tab/medication-administration/index'
 import PrescriptionTab from './partials/tab/prescription'
 import ParaclinicByPatientTab from '../paraclinic-requests/partials/tab/byPatient'
 import VaccinationTab from './partials/tab/vaccination'
+import BillingTab from './partials/tab/billing/index'
 import { Box, Button, Divider, Drawer, Paper, Tab, Tabs, Typography } from '@mui/material'
 import VisitHistory from './partials/visitHistory'
 import { IVisit, IVisitWithMetaData } from '@/interfaces/IVisit'
 import { useToast } from '@/components/toast'
 
-type Tab = 'consultation' | 'medication' | 'prescription' | 'admission' | 'paraclinic' | 'vaccination' | 'attachment' | 'surveillance'
+type Tab = 'consultation' | 'medication-orders' | 'medication-administration' | 'prescription' | 'admission' | 'paraclinic' | 'vaccination' | 'attachment' | 'surveillance' | 'billing'
 
 const ALL_TABS: { key: Tab; label: string; requiresIpd?: boolean }[] = [
    { key: 'consultation', label: 'Consultation' },
@@ -25,7 +27,9 @@ const ALL_TABS: { key: Tab; label: string; requiresIpd?: boolean }[] = [
    { key: 'paraclinic', label: 'Paraclinic' },
    { key: 'vaccination', label: 'Vaccination' },
    { key: 'attachment', label: 'Attachment' },
-   { key: 'medication', label: 'Medication', requiresIpd: true },
+   { key: 'billing', label: 'Billing' },
+   { key: 'medication-orders', label: 'Medication Orders', requiresIpd: true },
+   { key: 'medication-administration', label: 'Medication Administration', requiresIpd: true },
    { key: 'surveillance', label: 'Surveillance', requiresIpd: true },
 ]
 
@@ -58,6 +62,8 @@ const PatientShow = ({ patient }: Props) => {
    const { toast } = useToast()
    const [isVisitDrawerOpen, setVisitDrawerOpen] = useState(false)
    const [isStartingVisit, setIsStartingVisit] = useState(false)
+
+   const hasActiveVisit = allVisits.some((v) => v.status === 'active')
 
    const handleAdmit = (visitId: number) => {
       openAlert({
@@ -162,16 +168,39 @@ const PatientShow = ({ patient }: Props) => {
                      <>
                         <Divider orientation="vertical" flexItem sx={{ borderColor: '#e2e8f0' }} />
                         <Typography component="span" sx={{ color: 'text.secondary', fontSize: 14 }}>
-                           by {selectedVisit.created_by.name}
+                            by {selectedVisit.created_by.name}
                         </Typography>
                      </>
                   )}
+                  <Box sx={{ flex: 1 }} />
+                  {!hasActiveVisit && (
+                     <Button
+                        variant='contained'
+                        size='small'
+                        startIcon={<Play size={16} />}
+                        onClick={handleStartNewVisit}
+                        disabled={isStartingVisit}
+                     >
+                          Start New Visit
+                     </Button>
+                  )}
                </Paper>
             ) : (
-               <Paper variant="outlined" sx={{ mb: 4, px: 4, py: 2.5 }}>
+               <Paper variant="outlined" sx={{ mb: 4, px: 4, py: 2.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <Typography sx={{ color: 'text.secondary', fontSize: 14 }}>
-                     No visits recorded
+                       No visits recorded
                   </Typography>
+                  {!hasActiveVisit && (
+                     <Button
+                        variant='contained'
+                        size='small'
+                        startIcon={<Play size={16} />}
+                        onClick={handleStartNewVisit}
+                        disabled={isStartingVisit}
+                     >
+                          Start New Visit
+                     </Button>
+                  )}
                </Paper>
             )}
 
@@ -206,16 +235,7 @@ const PatientShow = ({ patient }: Props) => {
                </Box>
             ) : (
                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  <Typography>No active visit</Typography>
-                  <Button
-                     variant='contained'
-                     sx={{ mt: 1 }}
-                     startIcon={<Play size={16} />}
-                     onClick={handleStartNewVisit}
-                     disabled={isStartingVisit}
-                  >
-                     Start New Visit
-                  </Button>
+                  <Typography color="text.secondary">Select a visit or start a new one to begin.</Typography>
                </Box>
             )}
          </Box>
@@ -290,8 +310,10 @@ const TabContent = ({ tab, patientId, patient, selectedVisit, prescription }: { 
    switch (tab) {
       case 'consultation':
          return <ConsultationTab patientId={patientId} visitId={selectedVisit?.id ?? null} />
-      case 'medication':
-         return <MedicationTab patientId={patientId} patient={patient} selectedVisit={selectedVisit} />
+      case 'medication-orders':
+         return <MedicationOrdersTab patientId={patientId} visitId={selectedVisit?.id ?? 0} />
+      case 'medication-administration':
+         return <MedicationAdministrationTab patient={patient} visitId={selectedVisit?.id ?? 0} />
       case 'prescription':
          return <PrescriptionTab patient={patient} selectedVisit={selectedVisit} prescription={prescription} />
       case 'paraclinic':
@@ -302,6 +324,8 @@ const TabContent = ({ tab, patientId, patient, selectedVisit, prescription }: { 
          return <VaccinationTab patient={patient} />
       case 'surveillance':
          return <SurveillanceTab patientId={patientId} selectedVisit={selectedVisit} />
+      case 'billing':
+         return <BillingTab visitId={selectedVisit?.id ?? 0} />
    }
 }
 

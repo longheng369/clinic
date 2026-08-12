@@ -6,7 +6,7 @@ use App\Http\Controllers\ConsultationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HelpController;
 use App\Http\Controllers\MedicationAdministrationController;
-use App\Http\Controllers\MedicationDoseController;
+use App\Http\Controllers\MedicationOrderController;
 use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\ParaclinicRequestController;
 use App\Http\Controllers\PatientController;
@@ -16,6 +16,7 @@ use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\VaccineController;
+use App\Http\Controllers\VisitBillingController;
 use App\Http\Controllers\VisitController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -86,24 +87,27 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('doctors/search', [ParaclinicRequestController::class, 'searchDoctors'])->name('api.doctors.search');
 
-    Route::post('patients/{patient}/medications', [MedicationAdministrationController::class, 'store'])->name('patients.medications.store');
-    Route::put('patients/{patient}/medications/{medicationAdministration}', [MedicationAdministrationController::class, 'update'])->name('patients.medications.update');
+    Route::post('patients/{patient}/medications', [MedicationOrderController::class, 'store'])->name('patients.medications.store');
+    Route::put('patients/{patient}/medications/{medicationOrder}', [MedicationOrderController::class, 'update'])->name('patients.medications.update');
 
     Route::post('patients/{patient}/prescriptions', [PrescriptionController::class, 'store'])->name('patients.prescriptions.store');
     Route::put('patients/{patient}/prescriptions/{prescription}', [PrescriptionController::class, 'update'])->name('patients.prescriptions.update');
     Route::delete('patients/{patient}/prescriptions/{prescription}', [PrescriptionController::class, 'destroy'])->name('patients.prescriptions.destroy');
 
-    Route::post('visits/{visit}/medications/{medicationAdministration}/stop', [MedicationAdministrationController::class, 'stop'])->name('visits.medications.stop');
-    Route::post('visits/{visit}/medications/{medicationAdministration}/continue', [MedicationAdministrationController::class, 'continue'])->name('visits.medications.continue');
-    Route::post('visits/{visit}/medications/{medicationAdministration}/hold', [MedicationAdministrationController::class, 'hold'])->name('visits.medications.hold');
-    Route::post('visits/{visit}/medications/{medicationAdministration}/resume', [MedicationAdministrationController::class, 'resume'])->name('visits.medications.resume');
-    Route::post('visits/{visit}/doses/{dose}/administer', [MedicationDoseController::class, 'administer'])->name('visits.doses.administer');
-    Route::post('visits/{visit}/doses/{dose}/missed', [MedicationDoseController::class, 'missed'])->name('visits.doses.missed');
-    Route::post('visits/{visit}/doses/{dose}/refused', [MedicationDoseController::class, 'refused'])->name('visits.doses.refused');
+    Route::post('visits/{visit}/medications/{medicationOrder}/stop', [MedicationOrderController::class, 'stop'])->name('visits.medications.stop');
+    Route::post('visits/{visit}/medications/{medicationOrder}/continue', [MedicationOrderController::class, 'continue'])->name('visits.medications.continue');
+    Route::post('visits/{visit}/medications/{medicationOrder}/hold', [MedicationOrderController::class, 'hold'])->name('visits.medications.hold');
+    Route::post('visits/{visit}/medications/{medicationOrder}/resume', [MedicationOrderController::class, 'resume'])->name('visits.medications.resume');
+    Route::post('visits/{visit}/doses/{medicationAdministration}/administer', [MedicationAdministrationController::class, 'administer'])->name('visits.doses.administer');
+    Route::post('visits/{visit}/doses/{medicationAdministration}/missed', [MedicationAdministrationController::class, 'missed'])->name('visits.doses.missed');
+    Route::post('visits/{visit}/doses/{medicationAdministration}/refused', [MedicationAdministrationController::class, 'refused'])->name('visits.doses.refused');
 
     Route::get('visits/{visit}', [VisitController::class, 'show'])->name('visits.show');
     Route::patch('visits/{visit}/admit', [VisitController::class, 'admit'])->name('visits.admit');
     Route::patch('visits/{visit}/close', [VisitController::class, 'close'])->name('visits.close');
+
+    Route::get('visits/{visit}/billing', [VisitBillingController::class, 'show'])->name('visits.billing.show');
+    Route::patch('visits/{visit}/billing', [VisitBillingController::class, 'update'])->name('visits.billing.update');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

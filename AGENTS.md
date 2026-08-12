@@ -116,3 +116,7 @@ Use the MUI MCP tools whenever a task relates to MUI / MUI X components, props, 
 
 ## Agent Delegation
 - **UX/UI tasks**: Delegate to `.commandcode/agents/premium-eco-design-system.md`
+
+## Obsidian
+
+path prefix `Clinic System` in obsidian vault

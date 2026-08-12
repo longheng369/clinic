@@ -10,6 +10,10 @@ class VisitController extends Controller
 {
     public function store(Patient $patient)
     {
+        if ($patient->visits()->where('status', 'active')->exists()) {
+            return back()->with('error', 'This patient already has an active visit. Close it before starting a new one.');
+        }
+
         $visit = $patient->visits()->create([
             'type' => 'OPD',
             'status' => 'active',
@@ -28,8 +32,8 @@ class VisitController extends Controller
             'patient',
             'createdBy',
             'consultations.createdBy',
-            'medicationAdministrations.medicine',
-            'medicationAdministrations.createdBy',
+            'medicationOrders.medicine',
+            'medicationOrders.createdBy',
             'prescriptions.items.medicine',
             'prescriptions.createdBy',
             'surveillances.createdBy',
@@ -64,7 +68,7 @@ class VisitController extends Controller
                 'recorded_by' => $c->createdBy?->name,
                 'created_at' => $c->created_at,
             ]),
-            'medicationAdministrations' => $visit->medicationAdministrations->map(fn ($m) => [
+            'medicationOrders' => $visit->medicationOrders->map(fn ($m) => [
                 'id' => $m->id,
                 'medicine' => $m->medicine?->name,
                 'route' => $m->route,

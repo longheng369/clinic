@@ -94,11 +94,11 @@ const STATUS_BADGE: Record<string, { label: string; backgroundColor: string; col
    stopped: { label: 'Stopped', backgroundColor: '#f3f4f6', color: '#6b7280' },
 }
 
-const VisitShow = ({ visit, patient, consultations, medicationAdministrations, prescriptions, surveillances, paraclinicRequests }: {
+const VisitShow = ({ visit, patient, consultations, medicationOrders, prescriptions, surveillances, paraclinicRequests }: {
     visit: VisitData
     patient: PatientData
     consultations: ConsultationRow[]
-    medicationAdministrations: MedicationRow[]
+    medicationOrders: MedicationRow[]
     prescriptions: PrescriptionRow[]
     surveillances: SurveillanceRow[]
     paraclinicRequests: ParaclinicRow[]
@@ -159,9 +159,9 @@ const VisitShow = ({ visit, patient, consultations, medicationAdministrations, p
             )}
 
             {/* Medications */}
-            {medicationAdministrations.length > 0 && (
-               <Section title="Medications" count={medicationAdministrations.length}>
-                  {medicationAdministrations.map((m) => {
+            {medicationOrders.length > 0 && (
+               <Section title="Medications" count={medicationOrders.length}>
+                  {medicationOrders.map((m) => {
                      const badge = STATUS_BADGE[m.status] ?? { label: m.status, backgroundColor: '#f3f4f6', color: '#4b5563' }
                      return (
                         <Row key={m.id}>
@@ -267,7 +267,7 @@ const VisitShow = ({ visit, patient, consultations, medicationAdministrations, p
                </Section>
             )}
 
-            {consultations.length === 0 && medicationAdministrations.length === 0 && prescriptions.length === 0 && surveillances.length === 0 && paraclinicRequests.length === 0 && (
+            {consultations.length === 0 && medicationOrders.length === 0 && prescriptions.length === 0 && surveillances.length === 0 && paraclinicRequests.length === 0 && (
                <Box>
                   <Calendar size={40} />
                   <Box>No records</Box>

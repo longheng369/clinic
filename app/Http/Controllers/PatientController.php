@@ -89,9 +89,9 @@ class PatientController extends Controller
                 'total_amount' => (float) $r->total_amount,
             ]);
 
-        $medicationAdministrations = $selectedVisit
-            ? $selectedVisit->medicationAdministrations()
-                ->with(['medicine', 'createdBy', 'doses' => fn ($q) => $q->orderBy('scheduled_at')])
+        $medicationOrders = $selectedVisit
+            ? $selectedVisit->medicationOrders()
+                ->with(['medicine', 'createdBy', 'administrations' => fn ($q) => $q->orderBy('scheduled_at')])
                 ->latest()
                 ->paginate(10)
                 ->through(fn ($m) => [
@@ -108,18 +108,18 @@ class PatientController extends Controller
                     'notes' => $m->notes,
                     'recorded_by' => $m->createdBy?->name,
                     'created_at' => $m->created_at,
-                    'doses' => $m->doses->map(fn ($d) => [
-                        'id' => $d->id,
-                        'cycle_no' => $d->cycle_no,
-                        'administration_no' => $d->administration_no,
-                        'total_administrations' => $d->total_administrations,
-                        'scheduled_at' => $d->scheduled_at->toISOString(),
-                        'administered_at' => $d->administered_at?->toISOString(),
-                        'status' => $d->status,
-                        'administered_by' => $d->administeredBy?->name,
-                        'unit_price' => $d->unit_price ? (float) $d->unit_price : null,
-                        'reason' => $d->reason,
-                        'note' => $d->note,
+                    'administrations' => $m->administrations->map(fn ($a) => [
+                        'id' => $a->id,
+                        'cycle_no' => $a->cycle_no,
+                        'administration_no' => $a->administration_no,
+                        'total_administrations' => $a->total_administrations,
+                        'scheduled_at' => $a->scheduled_at->toISOString(),
+                        'administered_at' => $a->administered_at?->toISOString(),
+                        'status' => $a->status,
+                        'administered_by' => $a->administeredBy?->name,
+                        'unit_price' => $a->unit_price ? (float) $a->unit_price : null,
+                        'reason' => $a->reason,
+                        'note' => $a->note,
                     ])->values(),
                 ])
             : ['data' => [], 'current_page' => 1, 'last_page' => 1, 'per_page' => 10, 'total' => 0, 'from' => 0, 'to' => 0];
@@ -134,6 +134,7 @@ class PatientController extends Controller
         return Inertia::render('patients/show', [
             'patient' => $patient,
             'selectedVisit' => $selectedVisit,
+            'billing' => $selectedVisit?->billingSummary(),
             'allVisits' => $allVisits,
             'consultations' => $consultations->through(fn ($c) => [
                 'id' => $c->id,
@@ -157,7 +158,7 @@ class PatientController extends Controller
                 'created_at' => $s->created_at,
             ]),
             'paraclinicRequests' => $paraclinicRequests,
-            'medicationAdministrations' => $medicationAdministrations,
+            'medicationOrders' => $medicationOrders,
             'prescription' => $prescription ? [
                 'id' => $prescription->id,
                 'visit_id' => $prescription->visit_id,
