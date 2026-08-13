@@ -85,7 +85,7 @@ const PrescriptionItemForm: FC<Props> = ({
          <DialogContent>
             <Grid container spacing={3}>
                <Grid size={{ md: 6 }}>
-                  <Select control={control} name='medicine' label='Medicine' options={medicines.map((medicine) => ({ label: medicine.name, value: medicine.id }))} rules={{ required: 'Medicine is required' }} />
+                  <Autocomplete control={control} name='medicine' label='Medicine' options={medicines.map((medicine) => ({ label: medicine.name, value: medicine.id }))} rules={{ required: 'Medicine is required' }} />
                </Grid>
                <Grid size={{ md: 6 }}>
                   <Select control={control} name="route" label="Route" options={MEDICINE_ROUTE} rules={{ required: 'Route is required' }} />

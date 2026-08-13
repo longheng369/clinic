@@ -14,10 +14,11 @@ import PrescriptionTab from './partials/tab/prescription'
 import ParaclinicByPatientTab from '../paraclinic-requests/partials/tab/byPatient'
 import VaccinationTab from './partials/tab/vaccination'
 import BillingTab from './partials/tab/billing/index'
-import { Box, Button, Divider, Drawer, Paper, Tab, Tabs, Typography } from '@mui/material'
+import { Box, Button, Card, Divider, Drawer, Paper, Tab, Tabs, Typography } from '@mui/material'
 import VisitHistory from './partials/visitHistory'
 import { IVisit, IVisitWithMetaData } from '@/interfaces/IVisit'
 import { useToast } from '@/components/toast'
+import theme from '@/theme'
 
 type Tab = 'consultation' | 'medication-orders' | 'medication-administration' | 'prescription' | 'admission' | 'paraclinic' | 'vaccination' | 'attachment' | 'surveillance' | 'billing'
 
@@ -78,7 +79,7 @@ const PatientShow = ({ patient }: Props) => {
    const handleClose = (visitId: number) => {
       openAlert({
          message: 'Close this visit?',
-         description: 'A prescription with at least one item is required before closing.',
+         description: 'The visit will be marked as closed.',
          variant: 'warning',
          confirmLabel: 'Close',
          onConfirm: () => router.patch(`/visits/${visitId}/close`, {}, {
@@ -135,7 +136,7 @@ const PatientShow = ({ patient }: Props) => {
                <Paper
                   variant="outlined"
                   sx={{
-                     mb: 4,
+                     mb: 3,
                      px: 4,
                      py: 2.5,
                      display: 'flex',
@@ -205,7 +206,7 @@ const PatientShow = ({ patient }: Props) => {
             )}
 
             {selectedVisit ? (
-               <Box sx={{ borderRadius: 1, border: '1px solid #cbd5e1', bgcolor: '#fff' }}>
+               <Card elevation={0} sx={{ border: 1, borderColor: theme.palette.divider }}>
                   <Box sx={{ borderBottom: '1px solid #cbd5e1' }}>
                      <Tabs
                         value={activeTab}
@@ -232,7 +233,7 @@ const PatientShow = ({ patient }: Props) => {
                   <Box sx={{ p: 3, minWidth: 0, overflowX: 'auto' }}>
                      <TabContent tab={activeTab} patientId={patient.id} patient={patient} selectedVisit={selectedVisit} prescription={prescription} />
                   </Box>
-               </Box>
+               </Card>
             ) : (
                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                   <Typography color="text.secondary">Select a visit or start a new one to begin.</Typography>

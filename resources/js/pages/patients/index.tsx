@@ -158,7 +158,7 @@ const Patient = () => {
          <Box sx={{ p: 4, height: '100%', display: 'flex', flexDirection: 'column' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                <Box>
-                  <Typography variant='h5' sx={{ fontWeight: 'bold' }}>Patients</Typography>
+                  <Typography variant='h5'>Patients</Typography>
                   <Typography variant='body1' color='textSecondary'>Manage your clinic patients</Typography>
                </Box>
                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
@@ -181,7 +181,7 @@ const Patient = () => {
                   paginationMode="server"
                   paginationModel={{ page: patients.current_page - 1, pageSize: patients.per_page }}
                   onPaginationModelChange={handlePaginationModelChange}
-                  pageSizeOptions={[10]}
+                  pageSizeOptions={[20]}
                   disableRowSelectionOnClick
                   sx={{ height: '100%' }}
                />

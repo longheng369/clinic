@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Patient;
 use App\Models\Visit;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class VisitController extends Controller
@@ -14,11 +16,19 @@ class VisitController extends Controller
             return back()->with('error', 'This patient already has an active visit. Close it before starting a new one.');
         }
 
-        $visit = $patient->visits()->create([
-            'type' => 'OPD',
-            'status' => 'active',
-            'created_by' => auth()->id(),
-        ]);
+        try {
+            $visit = DB::transaction(fn () => $patient->visits()->create([
+                'type' => 'OPD',
+                'status' => 'active',
+                'created_by' => auth()->id(),
+            ]));
+        } catch (QueryException $exception) {
+            if (str_contains($exception->getMessage(), 'visits_one_active_per_patient')) {
+                return back()->with('error', 'This patient already has an active visit. Close it before starting a new one.');
+            }
+
+            throw $exception;
+        }
 
         return redirect()->route('patients.show', [
             'patient' => $patient,
@@ -134,11 +144,6 @@ class VisitController extends Controller
     public function close(Visit $visit)
     {
         abort_if($visit->status !== 'active', 403, 'Visit is already closed.');
-        abort_unless(
-            $visit->prescriptions()->whereHas('items')->exists(),
-            422,
-            'A prescription with at least one item is required before closing the visit.'
-        );
 
         $visit->update(['status' => 'closed']);
 

@@ -21,6 +21,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 ])]
 class Visit extends Model
 {
+    protected function casts(): array
+    {
+        return [
+            'visit_date' => 'datetime',
+            'payment_date' => 'datetime',
+        ];
+    }
+
     public function patient(): BelongsTo
     {
         return $this->belongsTo(Patient::class);

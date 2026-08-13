@@ -3,7 +3,6 @@ import { Link as InertiaLink, usePage, router } from '@inertiajs/react'
 import { sidebarSections } from '@/config/sidebar'
 import type { ISidebarOption } from '@/interfaces/ISidebar'
 import {
-   Stethoscope,
    LogOut,
    ChevronDown,
    ChevronRight,
@@ -178,21 +177,11 @@ const Sidebar = () => {
             }}
          >
             <Box
-               sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: 36,
-                  height: 36,
-                  flexShrink: 0,
-                  borderRadius: 1,
-                  backgroundImage: activeGradient,
-                  boxShadow: `0 4px 6px -1px ${alpha(theme.palette.primary.main, 0.2)}`,
-                  color: theme.palette.primary.contrastText,
-               }}
-            >
-               <Stethoscope size={20} />
-            </Box>
+               component="img"
+               src="/storage/hospital-logo.jpeg"
+               alt="Hospital logo"
+               sx={{ width: 50, height: 50, objectFit: 'contain', flexShrink: 0 }}
+            />
          </Box>
 
          <Box component="nav" sx={{ flex: 1, overflowY: 'auto', px: 2 }}>

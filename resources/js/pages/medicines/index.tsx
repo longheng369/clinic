@@ -150,13 +150,13 @@ const Medicine = () => {
    return (
       <>
          <Head title="Medicines" />
-         <Box sx={{ p: 4 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', bgcolor: 'Background', p: 2, borderRadius: 1 }}>
+         <Box sx={{ p: 4, height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                <Box>
-                  <Typography variant='h5' sx={{ fontWeight: 'bold' }}>Medicines</Typography>
-                  <Typography variant='body2' sx={{ color: 'gray' }}>Manage your clinic medicines</Typography>
+                  <Typography variant='h5'>Medicines</Typography>
+                  <Typography variant='body1' color='textSecondary'>Manage your clinic medicines</Typography>
                </Box>
-               <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
                   <SearchBar value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder='Search medicine' />
                   <Button
                      onClick={handleCreate}
@@ -168,24 +168,25 @@ const Medicine = () => {
                </Box>
             </Box>
 
-            <DataGrid
-               rows={medicines.data}
-               columns={columns}
-               rowCount={medicines.total}
-               paginationMode="server"
-               paginationModel={{ page: medicines.current_page - 1, pageSize: medicines.per_page }}
-               onPaginationModelChange={handlePaginationModelChange}
-               pageSizeOptions={[10]}
-               disableRowSelectionOnClick
-               autoHeight
-               sx={{
-                  mt: 3,
-                  '& .MuiDataGrid-columnHeaderTitle': {
-                     fontFamily: 'var(--font-khmer)',
-                     fontWeight: 'bold',
-                  },
-               }}
-            />
+            <Box sx={{ flex: 1, mt: 3, minHeight: 0 }}>
+               <DataGrid
+                  rows={medicines.data}
+                  columns={columns}
+                  rowCount={medicines.total}
+                  paginationMode="server"
+                  paginationModel={{ page: medicines.current_page - 1, pageSize: medicines.per_page }}
+                  onPaginationModelChange={handlePaginationModelChange}
+                  pageSizeOptions={[20]}
+                  disableRowSelectionOnClick
+                  sx={{
+                     height: '100%',
+                     '& .MuiDataGrid-columnHeaderTitle': {
+                        fontFamily: 'var(--font-khmer)',
+                        fontWeight: 'bold',
+                     },
+                  }}
+               />
+            </Box>
          </Box>
       </>
    )
