@@ -34,19 +34,13 @@ const GuestLayout = ({ children }: Props) => {
          }}
       >
          <Paper
-            elevation={0}
+            elevation={1}
             sx={{
                position: 'relative',
                zIndex: 1,
                width: '100%',
                maxWidth: 448,
-               px: 4,
-               py: 4,
-               borderRadius: 3,
-               bgcolor: 'rgba(255, 255, 255, 0.95)',
-               boxShadow: '0 20px 25px -5px rgba(90, 143, 90, 0.05)',
-               border: '1px solid rgba(200, 224, 200, 0.5)',
-               backdropFilter: 'blur(8px)',
+               p: 4,
             }}
          >
             {children}
