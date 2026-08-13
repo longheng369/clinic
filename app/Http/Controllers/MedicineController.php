@@ -20,7 +20,7 @@ class MedicineController extends Controller
             'medicines' => Medicine::with(['category', 'unit'])
                 ->latest()
                 ->when($search, fn ($query) => $query->where('name', 'like', "%{$search}%"))
-                ->paginate(10)
+                ->paginate(20)
                 ->withQueryString(),
             'units' => Unit::orderBy('name')->get(),
             'search' => $search,
