@@ -272,8 +272,17 @@ class PatientController extends Controller
     public function uploadAttachment(Request $request, Patient $patient)
     {
         $request->validate([
-            'file' => ['required', 'file', 'max:20480'],
+            'file' => [
+                'required',
+                'file',
+                'max:20480',
+                'mimes:jpg,jpeg,png,gif,webp,bmp,pdf,doc,docx,xls,xlsx,ppt,pptx,csv,txt,zip',
+            ],
             'visit_id' => ['nullable', 'integer', 'exists:visits,id'],
+        ], [
+            'file.required' => 'Please choose a file to upload.',
+            'file.max' => 'The file is too large. Maximum allowed size is 20 MB.',
+            'file.mimes' => 'This file type is not supported. Allowed types: images (JPG, PNG, GIF, WEBP, BMP), PDF, Office documents (Word, Excel, PowerPoint), CSV, TXT, and ZIP.',
         ]);
 
         $file = $request->file('file');

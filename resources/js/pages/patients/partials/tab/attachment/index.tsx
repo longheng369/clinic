@@ -55,6 +55,27 @@ const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
       const file = e.target.files?.[0]
       if (!file) return
 
+      if (file.size > 20 * 1024 * 1024) {
+         toast('The file is too large. Maximum allowed size is 20 MB.', { variant: 'error' })
+         e.target.value = ''
+         return
+      }
+
+      const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'csv', 'txt', 'zip']
+
+      if (!file.type && !file.name.includes('.')) {
+         toast('Unrecognized file. Please choose a file with a known extension.', { variant: 'error' })
+         e.target.value = ''
+         return
+      }
+
+      const ext = file.name.split('.').pop()?.toLowerCase() ?? ''
+      if (!ALLOWED_EXTENSIONS.includes(ext)) {
+         toast('This file type is not supported. Allowed types: images (JPG, PNG, GIF, WEBP, BMP), PDF, Office documents (Word, Excel, PowerPoint), CSV, TXT, and ZIP.', { variant: 'error' })
+         e.target.value = ''
+         return
+      }
+
       setIsUploading(true)
       const formData = new FormData()
       formData.append('file', file)
@@ -254,7 +275,7 @@ const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
                   <Box sx={{ display: 'flex', justifyContent: 'center', bgcolor: '#f8fafc', borderRadius: 2 }}>
                      <Box
                         component="img"
-                  src={`/patients/attachments/${preview.id}/view#view=FitH`}
+                        src={`/patients/attachments/${preview.id}/view#view=FitH`}
                         alt={preview.file_name}
                         sx={{ maxWidth: '100%', maxHeight: '70vh', objectFit: 'contain', borderRadius: 2 }}
                      />
