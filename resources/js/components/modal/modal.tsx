@@ -1,4 +1,5 @@
 import { Dialog, DialogTitle, DialogContent, IconButton } from '@mui/material'
+import type { SxProps, Theme } from '@mui/material'
 import { X } from 'lucide-react'
 import type { ReactNode } from 'react'
 
@@ -12,6 +13,7 @@ interface ModalProps {
    preventClickAway?: boolean
    preventEscape?: boolean
    scrollable?: boolean
+   contentSx?: SxProps<Theme>
 }
 
 const extendedMaxWidths: Record<string, string> = {
@@ -31,6 +33,7 @@ const Modal = ({
    preventClickAway = false,
    preventEscape = false,
    scrollable = false,
+   contentSx,
 }: ModalProps) => {
    const defaultSizes = ['sm', 'md', 'lg', 'xl']
    const muiMaxWidth = (defaultSizes.includes(maxWidth) ? maxWidth : 'md') as 'sm' | 'md' | 'lg' | 'xl'
@@ -56,7 +59,17 @@ const Modal = ({
                <X size={20} />
             </IconButton>
          </DialogTitle>
-         <DialogContent>{children}</DialogContent>
+         <DialogContent
+            sx={{
+               display: 'flex',
+               flexDirection: 'column',
+               height: '100%',
+               ...(fullScreen && { p: 0 }),
+               ...contentSx,
+            }}
+         >
+            {children}
+         </DialogContent>
       </Dialog>
    )
 }

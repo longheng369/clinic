@@ -6,7 +6,7 @@ import { useState } from 'react'
 import { useModal } from '@/components/modal'
 import PatientInfo from '@/components/patient/patientInfo'
 import ConsultationTab from './partials/tab/consultation/index'
-import AttachmentsTab from './partials/tab/attachment'
+import AttachmentsTab from './partials/tab/attachment/index'
 import SurveillanceTab from './partials/tab/surveillance'
 import MedicationOrdersTab from './partials/tab/medication-orders/index'
 import MedicationAdministrationTab from './partials/tab/medication-administration/index'
@@ -255,7 +255,7 @@ const PatientShow = ({ patient }: Props) => {
                transform: 'translateY(-50%)',
                right: isVisitDrawerOpen ? DRAWER_WIDTH : 0,
                transition: 'right 200ms cubic-bezier(0, 0, 0.2, 1)',
-               zIndex: (theme) => theme.zIndex.modal + 1,
+               zIndex: (theme) => theme.zIndex.drawer,
                borderRadius: '12px 0 0 12px',
                border: '1px solid #cbd5e1',
                borderRight: 0,
