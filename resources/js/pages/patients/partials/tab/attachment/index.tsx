@@ -226,24 +226,18 @@ const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
                               <IconButton
                                  size="small"
                                  onClick={() => setPreview(a)}
-                                 sx={{
-                                    color: '#64748b',
-                                    '&:hover': { color: '#2563eb', bgcolor: '#eff6ff' },
-                                 }}
+                                 sx={{ color: '#64748b' }}
                               >
-                                 <Eye size={18} />
+                                 <Eye size={18} color="#64748b" />
                               </IconButton>
                            </Tooltip>
                            <Tooltip title="Delete" placement="top">
                               <IconButton
                                  size="small"
                                  onClick={() => handleDelete(a)}
-                                 sx={{
-                                    color: '#64748b',
-                                    '&:hover': { color: '#dc2626', bgcolor: '#fef2f2' },
-                                 }}
+                                 sx={{ color: '#dc2626' }}
                               >
-                                 <Trash2 size={18} />
+                                 <Trash2 size={18} color="#dc2626" />
                               </IconButton>
                            </Tooltip>
                         </Box>
@@ -285,7 +279,6 @@ const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
                      <Box
                         sx={{
                            alignItems: 'center',
-                           bgcolor: '#f1f5f9',
                            borderRadius: 2,
                            color: '#64748b',
                            display: 'flex',
@@ -297,7 +290,7 @@ const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
                         <File size={32} />
                      </Box>
                      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                        Preview not available for this file type.
+                        Preview not available for this file type, please download file instead.
                      </Typography>
                      <Button
                         variant="outlined"
