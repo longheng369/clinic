@@ -77,7 +77,6 @@ class ParaclinicRequestController extends Controller
 
         $data = $request->safe()->except(['tests']);
         $data['subtotal'] = (float) ($data['subtotal'] ?? 0);
-        $data['discount'] = (float) ($data['discount'] ?? 0);
         $data['total_amount'] = (float) ($data['total_amount'] ?? 0);
 
         $paraclinicRequest = ParaclinicRequest::create(array_merge(
@@ -132,7 +131,6 @@ class ParaclinicRequestController extends Controller
                 'notes' => $paraclinicRequest->notes,
                 'status' => $paraclinicRequest->status,
                 'subtotal' => (float) $paraclinicRequest->subtotal,
-                'discount' => (float) $paraclinicRequest->discount,
                 'total_amount' => (float) $paraclinicRequest->total_amount,
                 'payment_status' => $paraclinicRequest->payment_status,
                 'payment_date' => $paraclinicRequest->payment_date,
@@ -172,7 +170,6 @@ class ParaclinicRequestController extends Controller
     {
         $data = $request->safe()->except(['tests']);
         $data['subtotal'] = (float) ($data['subtotal'] ?? 0);
-        $data['discount'] = (float) ($data['discount'] ?? 0);
         $data['total_amount'] = (float) ($data['total_amount'] ?? 0);
 
         $paraclinicRequest->update(array_merge(

@@ -30,7 +30,7 @@ export interface IConsultation {
     diagnosis: string | null;
     note: string | null;
     fee: number | null;
-    recorded_by: string | null;
+    created_by: string | null;
     created_at: string;
 }
 

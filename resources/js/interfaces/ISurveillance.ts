@@ -1,6 +1,7 @@
 export interface ISurveillance {
     id: number;
     patient_id: number;
+    visit_id: number | null;
     systolic: number;
     diastolic: number;
     pulse: number;
@@ -8,8 +9,9 @@ export interface ISurveillance {
     rr: number;
     spo2: number;
     o2_supply: string;
-    recorded_by?: string;
+    created_by?: string;
     created_at: string;
+    updated_at: string;
 }
 
 export interface ISurveillanceFormData {

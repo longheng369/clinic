@@ -27,7 +27,7 @@ const MedicationOrdersTab = ({ patientId, visitId }: Props) => {
    const { openModal, closeModal } = useModal()
    const { medicationOrders, activeVisits, medicines } = usePage<{
       medicationOrders: PaginatedData<IMedicationOrder>
-      activeVisits: { id: number; type: string; visit_date: string; recorded_by?: string }[]
+      activeVisits: { id: number; type: string; visit_date: string; created_by?: string }[]
       medicines: { id: number; name: string }[]
    }>().props
 

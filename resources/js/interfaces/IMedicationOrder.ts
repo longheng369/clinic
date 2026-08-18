@@ -12,7 +12,7 @@ export interface IMedicationOrder {
    status: 'active' | 'on_hold' | 'stopped' | 'completed';
    starts_at: string | null;
    notes: string | null;
-   recorded_by?: string | null;
+   created_by?: string | null;
    created_at: string;
    administrations: IMedicationAdministration[];
 }

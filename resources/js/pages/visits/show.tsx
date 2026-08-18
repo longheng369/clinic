@@ -8,7 +8,7 @@ interface VisitData {
     type: string
     status: string
     visit_date: string
-    recorded_by?: string
+    created_by?: string
     created_at: string
     updated_at: string
 }
@@ -28,7 +28,7 @@ interface ConsultationRow {
     chief_complaint: string
     diagnosis?: string
     fee?: number
-    recorded_by?: string
+    created_by?: string
     created_at: string
 }
 
@@ -40,14 +40,14 @@ interface MedicationRow {
     unit: string
     interval: string
     status: string
-    recorded_by?: string
+    created_by?: string
     created_at: string
 }
 
 interface PrescriptionRow {
     id: number
     notes?: string
-    recorded_by?: string
+    created_by?: string
     created_at: string
     items: PrescriptionItemRow[]
 }
@@ -73,7 +73,7 @@ interface SurveillanceRow {
     rr: number
     spo2: number
     o2_supply: string
-    recorded_by?: string
+    created_by?: string
     created_at: string
 }
 
@@ -94,13 +94,13 @@ const STATUS_BADGE: Record<string, { label: string; backgroundColor: string; col
    stopped: { label: 'Stopped', backgroundColor: '#f3f4f6', color: '#6b7280' },
 }
 
-const VisitShow = ({ visit, patient, consultations, medicationOrders, prescriptions, surveillances, paraclinicRequests }: {
+const VisitShow = ({ visit, patient, consultations, medicationOrders, prescriptions, surveillance, paraclinicRequests }: {
     visit: VisitData
     patient: PatientData
     consultations: ConsultationRow[]
     medicationOrders: MedicationRow[]
     prescriptions: PrescriptionRow[]
-    surveillances: SurveillanceRow[]
+    surveillance: SurveillanceRow[]
     paraclinicRequests: ParaclinicRow[]
 }) => {
    return (
@@ -151,7 +151,7 @@ const VisitShow = ({ visit, patient, consultations, medicationOrders, prescripti
                         <Box>
                            {c.fee ? <Box>${c.fee.toFixed(2)}</Box> : null}
                            <Box>{new Date(c.created_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}</Box>
-                           {c.recorded_by && <Box>by {c.recorded_by}</Box>}
+                           {c.created_by && <Box>by {c.created_by}</Box>}
                         </Box>
                      </Row>
                   ))}
@@ -177,7 +177,7 @@ const VisitShow = ({ visit, patient, consultations, medicationOrders, prescripti
                               <Box>
                                  {new Date(m.created_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}
                               </Box>
-                              {m.recorded_by && <Box>by {m.recorded_by}</Box>}
+                              {m.created_by && <Box>by {m.created_by}</Box>}
                            </Box>
                         </Row>
                      )
@@ -199,7 +199,7 @@ const VisitShow = ({ visit, patient, consultations, medicationOrders, prescripti
                            </Box>
                            <Box>
                               <Box>{new Date(p.created_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}</Box>
-                              {p.recorded_by && <Box>by {p.recorded_by}</Box>}
+                              {p.created_by && <Box>by {p.created_by}</Box>}
                            </Box>
                         </Box>
                         {p.items.map((item) => (
@@ -208,7 +208,7 @@ const VisitShow = ({ visit, patient, consultations, medicationOrders, prescripti
                                  <Box>{item.medicine ?? '—'}</Box>
                                  <Box>{item.route}</Box>
                                  <Box>{item.dosage} {item.unit} &middot; {item.frequency}</Box>
-                                  {item.number_of_day && <Box>{item.number_of_day}d</Box>}
+                                 {item.number_of_day && <Box>{item.number_of_day}d</Box>}
                                  {item.quantity && <Box>Qty: {item.quantity}</Box>}
                               </Box>
                               <Box>
@@ -226,10 +226,10 @@ const VisitShow = ({ visit, patient, consultations, medicationOrders, prescripti
                </Section>
             )}
 
-            {/* Surveillances */}
-            {surveillances.length > 0 && (
-               <Section title="Vital Signs" count={surveillances.length}>
-                  {surveillances.map((s) => (
+            {/* Surveillance */}
+            {surveillance.length > 0 && (
+               <Section title="Vital Signs" count={surveillance.length}>
+                  {surveillance.map((s) => (
                      <Row key={s.id}>
                         <Box>
                            <Box>{s.systolic}/{s.diastolic}</Box>
@@ -241,7 +241,7 @@ const VisitShow = ({ visit, patient, consultations, medicationOrders, prescripti
                         </Box>
                         <Box>
                            <Box>{new Date(s.created_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}</Box>
-                           {s.recorded_by && <Box>by {s.recorded_by}</Box>}
+                           {s.created_by && <Box>by {s.created_by}</Box>}
                         </Box>
                      </Row>
                   ))}
@@ -267,7 +267,7 @@ const VisitShow = ({ visit, patient, consultations, medicationOrders, prescripti
                </Section>
             )}
 
-            {consultations.length === 0 && medicationOrders.length === 0 && prescriptions.length === 0 && surveillances.length === 0 && paraclinicRequests.length === 0 && (
+            {consultations.length === 0 && medicationOrders.length === 0 && prescriptions.length === 0 && surveillance.length === 0 && paraclinicRequests.length === 0 && (
                <Box>
                   <Calendar size={40} />
                   <Box>No records</Box>

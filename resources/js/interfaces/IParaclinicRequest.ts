@@ -41,7 +41,6 @@ export interface IParaclinicRequest {
     notes: string | null
     status: string
     subtotal: number
-    discount: number
     total_amount: number
     payment_status: string
     payment_date: string | null
@@ -64,7 +63,6 @@ export interface IParaclinicRequestFormData {
     notes: string | null
     status?: string
     subtotal: number
-    discount: number
     total_amount: number
     payment_status: string
     payment_date: string | null

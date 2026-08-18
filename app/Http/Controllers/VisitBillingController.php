@@ -19,15 +19,13 @@ class VisitBillingController extends Controller
     public function update(Request $request, Visit $visit)
     {
         $validated = $request->validate([
-            'discount' => ['nullable', 'numeric', 'min:0'],
             'paid_amount' => ['nullable', 'numeric', 'min:0'],
             'payment_status' => ['nullable', 'string', 'in:Unpaid,Partial,Paid'],
         ]);
 
         $summary = $visit->billingSummary();
         $subtotal = $summary['subtotal'];
-        $discount = $validated['discount'] ?? $visit->discount;
-        $total = max(0, $subtotal - $discount);
+        $total = $subtotal;
         $paidAmount = $validated['paid_amount'] ?? $visit->paid_amount;
 
         if ($paidAmount >= $total && $total > 0) {
@@ -40,7 +38,6 @@ class VisitBillingController extends Controller
 
         $visit->update([
             'subtotal' => $subtotal,
-            'discount' => $discount,
             'total_amount' => $total,
             'paid_amount' => $paidAmount,
             'payment_status' => $validated['payment_status'] ?? $visit->payment_status,

@@ -24,7 +24,7 @@ class ConsultationController extends Controller
                 'chief_complaint' => $c->chief_complaint,
                 'diagnosis' => $c->diagnosis,
                 'fee' => $c->fee ? (float) $c->fee : null,
-                'recorded_by' => $c->createdBy?->name,
+                'created_by' => $c->createdBy?->name,
                 'created_at' => $c->created_at,
             ]);
 
@@ -56,7 +56,7 @@ class ConsultationController extends Controller
 
         $patient->consultations()->create(array_merge(
             $request->validated(),
-            ['visit_id' => $visit->id, 'recorded_by' => auth()->id()]
+            ['visit_id' => $visit->id, 'created_by' => auth()->id()]
         ));
 
         return redirect()->route('patients.show', [
@@ -104,7 +104,7 @@ class ConsultationController extends Controller
                 'diagnosis' => $consultation->diagnosis,
                 'note' => $consultation->note,
                 'fee' => $consultation->fee ? (float) $consultation->fee : null,
-                'recorded_by' => $consultation->createdBy?->name,
+                'created_by' => $consultation->createdBy?->name,
                 'created_at' => $consultation->created_at,
             ],
         ]);
@@ -148,7 +148,7 @@ class ConsultationController extends Controller
                 'diagnosis' => $consultation->diagnosis,
                 'note' => $consultation->note,
                 'fee' => $consultation->fee ? (float) $consultation->fee : null,
-                'recorded_by' => $consultation->createdBy?->name,
+                'created_by' => $consultation->createdBy?->name,
                 'created_at' => $consultation->created_at,
             ],
         ]);

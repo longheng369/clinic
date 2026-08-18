@@ -313,7 +313,7 @@ const PrescriptionTab = ({
                      កាលបរិច្ឆេទ <Typography component='span'>: {formatDob(prescription?.created_at ?? new Date().toISOString())}</Typography>
                   </Typography>
                   <Typography sx={{ fontFamily: 'var(--font-khmer)' }}>
-                     វេជ្ជបណ្ឌិត <Typography component='span'>: {prescription?.recorded_by ?? '—'}</Typography>
+                     វេជ្ជបណ្ឌិត <Typography component='span'>: {prescription?.created_by ?? '—'}</Typography>
                   </Typography>
                </Box>
                {!isEditing ? (

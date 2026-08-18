@@ -288,8 +288,8 @@ const MarTable = ({ patient, orders, visitId, onEdit, showActions = true }: MarG
                                           </>
                                        )}
                                     </Box>
-                                    {order.recorded_by && (
-                                       <Box sx={{ fontSize: 11, color: '#94a3b8', mt: 0.25 }}>Dr. {order.recorded_by}</Box>
+                                    {order.created_by && (
+                                       <Box sx={{ fontSize: 11, color: '#94a3b8', mt: 0.25 }}>Dr. {order.created_by}</Box>
                                     )}
                                     {order.notes && (
                                        <Box sx={{ fontSize: 11, color: '#94a3b8', mt: 0.25 }}>{order.notes}</Box>

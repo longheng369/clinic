@@ -7,7 +7,7 @@ import { useModal } from '@/components/modal'
 import PatientInfo from '@/components/patient/patientInfo'
 import ConsultationTab from './partials/tab/consultation/index'
 import AttachmentsTab from './partials/tab/attachment/index'
-import SurveillanceTab from './partials/tab/surveillance'
+import SurveillanceTab from './partials/tab/surveillance/index'
 import MedicationOrdersTab from './partials/tab/medication-orders/index'
 import MedicationAdministrationTab from './partials/tab/medication-administration/index'
 import PrescriptionTab from './partials/tab/prescription'
@@ -357,8 +357,8 @@ const TabContent = ({ tab, patientId, patient, selectedVisit, prescription }: { 
          )
       case 'surveillance':
          return (
-            <Deferred data="surveillances" fallback={<TabLoading />}>
-               <SurveillanceTab patientId={patientId} selectedVisit={selectedVisit} />
+            <Deferred data="surveillance" fallback={<TabLoading />}>
+               <SurveillanceTab patientId={patientId} visitId={selectedVisit?.id ?? null} />
             </Deferred>
          )
       case 'billing':

@@ -51,7 +51,7 @@ class Patient extends Model
         return $this->hasMany(PatientAttachment::class);
     }
 
-    public function surveillances(): HasMany
+    public function surveillance(): HasMany
     {
         return $this->hasMany(PatientSurveillance::class);
     }

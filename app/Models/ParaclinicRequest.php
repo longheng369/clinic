@@ -20,7 +20,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     'notes',
     'status',
     'subtotal',
-    'discount',
     'total_amount',
     'payment_status',
     'payment_date',

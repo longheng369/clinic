@@ -47,7 +47,7 @@ The `interval` field (QD/BID/TID/QID/QHS/PRN) is informational — it tells the 
 
 **Columns:** `id`, `patient_id` (FK → patients, cascade), `type` (OPD/IPD, default OPD), `status` (active/closed, default active), `visit_date` (default now()), `recorded_by` (FK → users, nullOnDelete), timestamps.
 
-**Model:** `app/Models/Visit.php` — relationships: `patient()`, `recordedBy()`, `consultations()`, `paraclinicRequests()`, `surveillances()`, `attachments()`, `medicationAdministrations()`
+**Model:** `app/Models/Visit.php` — relationships: `patient()`, `recordedBy()`, `consultations()`, `paraclinicRequests()`, `surveillance()`, `attachments()`, `medicationAdministrations()`
 
 ### 2. Add `visit_id` to all scoped tables (4 migrations)
 

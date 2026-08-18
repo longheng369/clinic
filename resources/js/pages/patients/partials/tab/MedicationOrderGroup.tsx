@@ -125,8 +125,8 @@ const MedicationOrderGroup = ({ order, visitId, onEdit }: MedicationOrderGroupPr
                      </>
                   )}
                </Box>
-               {order.recorded_by && (
-                  <Box sx={{ fontSize: 12, color: '#94a3b8', mt: 0.5 }}>Dr. {order.recorded_by}</Box>
+               {order.created_by && (
+                  <Box sx={{ fontSize: 12, color: '#94a3b8', mt: 0.5 }}>Dr. {order.created_by}</Box>
                )}
                {order.notes && (
                   <Box sx={{ fontSize: 12, color: '#94a3b8', mt: 0.5 }}>{order.notes}</Box>

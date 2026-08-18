@@ -9,7 +9,6 @@ interface BillingData {
    medication_costs: number
    paraclinic_costs: number
    subtotal: number
-   discount: number
    total_amount: number
    paid_amount: number
    balance: number
@@ -33,7 +32,6 @@ const BillingTab = ({ visitId }: Props) => {
    const { billing } = usePage<{ billing: BillingData | null }>().props
    const { toast } = useToast()
 
-   const [discount, setDiscount] = useState(billing?.discount ?? 0)
    const [paidAmount, setPaidAmount] = useState(billing?.paid_amount ?? 0)
    const [isSaving, setIsSaving] = useState(false)
 
@@ -47,14 +45,13 @@ const BillingTab = ({ visitId }: Props) => {
       )
    }
 
-   const computedTotal = Math.max(0, billing.subtotal - discount)
+   const computedTotal = billing.subtotal
    const balance = computedTotal - paidAmount
    const statusBadge = PAYMENT_STATUS[billing.payment_status] ?? PAYMENT_STATUS.Unpaid
 
    const handleSave = () => {
       setIsSaving(true)
       router.patch(`/visits/${visitId}/billing`, {
-         discount,
          paid_amount: paidAmount,
       }, {
          onSuccess: () => {
@@ -65,11 +62,10 @@ const BillingTab = ({ visitId }: Props) => {
    }
 
    const handleMarkPaid = () => {
-      const total = Math.max(0, billing.subtotal - discount)
+      const total = billing.subtotal
       setPaidAmount(total)
       setIsSaving(true)
       router.patch(`/visits/${visitId}/billing`, {
-         discount,
          paid_amount: total,
          payment_status: 'Paid',
       }, {
@@ -157,21 +153,6 @@ const BillingTab = ({ visitId }: Props) => {
                      <Typography sx={{ fontSize: 14, fontWeight: 600, color: '#1e293b' }}>
                         {formatCurrency(billing.subtotal)}
                      </Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                     <Typography sx={{ fontSize: 13, color: '#64748b' }}>Discount</Typography>
-                     <TextField
-                        size="small"
-                        type="number"
-                        value={discount || ''}
-                        onChange={(e) => setDiscount(parseFloat(e.target.value) || 0)}
-                        slotProps={{
-                           input: {
-                              startAdornment: <Typography sx={{ mr: 0.5, color: '#94a3b8', fontSize: 14 }}>$</Typography>,
-                              sx: { fontSize: 14, width: 120 },
-                           },
-                        }}
-                     />
                   </Box>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', pt: 1.5, borderTop: '2px solid #e2e8f0' }}>
                      <Typography sx={{ fontSize: 14, fontWeight: 600, color: '#1e293b' }}>Total</Typography>

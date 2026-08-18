@@ -82,12 +82,12 @@ class PatientController extends Controller
                         'chief_complaint' => $c->chief_complaint,
                         'diagnosis' => $c->diagnosis,
                         'fee' => $c->fee ? (float) $c->fee : null,
-                        'recorded_by' => $c->createdBy?->name,
+                        'created_by' => $c->createdBy?->name,
                         'created_at' => $c->created_at,
                     ]);
             }, 'consultations'),
-            'surveillances' => Inertia::defer(function () use ($patient, $selectedVisitId) {
-                return $patient->surveillances()
+            'surveillance' => Inertia::defer(function () use ($patient, $selectedVisitId) {
+                return $patient->surveillance()
                     ->with('createdBy')
                     ->when($selectedVisitId, fn ($q) => $q->where('visit_id', $selectedVisitId))
                     ->latest()
@@ -102,10 +102,10 @@ class PatientController extends Controller
                         'rr' => $s->rr,
                         'spo2' => $s->spo2,
                         'o2_supply' => $s->o2_supply,
-                        'recorded_by' => $s->createdBy?->name,
+                        'created_by' => $s->createdBy?->name,
                         'created_at' => $s->created_at,
                     ]);
-            }, 'surveillances'),
+            }, 'surveillance'),
             'paraclinicRequests' => Inertia::defer(function () use ($patient, $selectedVisitId) {
                 return $patient->paraclinicRequests()
                     ->with(['doctor', 'tests'])
@@ -146,7 +146,7 @@ class PatientController extends Controller
                         'status' => $m->status,
                         'starts_at' => $m->starts_at?->toISOString(),
                         'notes' => $m->notes,
-                        'recorded_by' => $m->createdBy?->name,
+                        'created_by' => $m->createdBy?->name,
                         'created_at' => $m->created_at,
                         'administrations' => $m->administrations->map(fn ($a) => [
                             'id' => $a->id,
@@ -173,7 +173,7 @@ class PatientController extends Controller
                         'id' => $v->id,
                         'type' => $v->type,
                         'visit_date' => $v->visit_date,
-                        'recorded_by' => $v->createdBy?->name,
+                        'created_by' => $v->createdBy?->name,
                     ]);
             }, 'medication'),
             'medicines' => Inertia::defer(fn () => Medicine::orderBy('name')->get(['id', 'name']), 'medicines'),
@@ -196,7 +196,7 @@ class PatientController extends Controller
                     'id' => $prescription->id,
                     'visit_id' => $prescription->visit_id,
                     'notes' => $prescription->notes,
-                    'recorded_by' => $prescription->createdBy?->name,
+                    'created_by' => $prescription->createdBy?->name,
                     'created_at' => $prescription->created_at,
                     'items' => $prescription->items->map(fn ($i) => [
                         'id' => $i->id,

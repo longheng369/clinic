@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'status',
     'created_by',
     'subtotal',
-    'discount',
     'total_amount',
     'paid_amount',
     'payment_status',
@@ -49,7 +48,7 @@ class Visit extends Model
         return $this->hasMany(ParaclinicRequest::class);
     }
 
-    public function surveillances(): HasMany
+    public function surveillance(): HasMany
     {
         return $this->hasMany(PatientSurveillance::class);
     }
@@ -81,8 +80,7 @@ class Visit extends Model
         $paraclinicTotal = $this->paraclinicRequests()->sum('total_amount');
 
         $subtotal = $consultationsTotal + $medicationsTotal + $paraclinicTotal;
-        $discount = (float) $this->discount;
-        $total = max(0, $subtotal - $discount);
+        $total = $subtotal;
         $paidAmount = (float) $this->paid_amount;
         $balance = $total - $paidAmount;
 
@@ -91,7 +89,6 @@ class Visit extends Model
             'medication_costs' => (float) $medicationsTotal,
             'paraclinic_costs' => (float) $paraclinicTotal,
             'subtotal' => $subtotal,
-            'discount' => $discount,
             'total_amount' => $total,
             'paid_amount' => $paidAmount,
             'balance' => $balance,

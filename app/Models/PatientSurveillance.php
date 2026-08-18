@@ -16,11 +16,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'rr',
     'spo2',
     'o2_supply',
-    'recorded_by',
+    'created_by',
 ])]
 class PatientSurveillance extends Model
 {
-    protected $table = 'patient_surveillances';
+    protected $table = 'patient_surveillance';
 
     public function patient(): BelongsTo
     {
@@ -34,6 +34,6 @@ class PatientSurveillance extends Model
 
     public function createdBy(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'recorded_by');
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

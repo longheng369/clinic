@@ -20,7 +20,7 @@ const INTERVAL_OPTIONS = [
 
 interface MedicationFormProps {
    patientId: number
-   activeVisits: { id: number; type: string; visit_date: string; recorded_by?: string }[]
+   activeVisits: { id: number; type: string; visit_date: string; created_by?: string }[]
    medicines: { id: number; name: string }[]
    order?: IMedicationOrder
    selectedVisitId?: number

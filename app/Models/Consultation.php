@@ -38,7 +38,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'diagnosis',
     'note',
     'fee',
-    'recorded_by',
+    'created_by',
 ])]
 class Consultation extends Model
 {
@@ -74,6 +74,6 @@ class Consultation extends Model
 
     public function createdBy(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'recorded_by');
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

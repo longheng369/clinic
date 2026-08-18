@@ -18,7 +18,7 @@ export interface IPrescription {
    visit_id: number;
    visit_type?: string;
    notes: string | null;
-   recorded_by?: string | null;
+   created_by?: string | null;
    created_at: string;
    items: IPrescriptionItem[];
 }

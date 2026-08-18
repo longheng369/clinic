@@ -56,10 +56,10 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('patients/{patient}/attachments/{attachment}', [PatientController::class, 'deleteAttachment'])->name('patients.attachments.destroy');
     Route::get('patients/attachments/{attachment}/view', [PatientController::class, 'viewAttachment'])->name('patients.attachments.view');
 
-    Route::get('patients/{patient}/surveillances', [PatientSurveillanceController::class, 'index'])->name('patients.surveillances.index');
-    Route::post('patients/{patient}/surveillances', [PatientSurveillanceController::class, 'store'])->name('patients.surveillances.store');
-    Route::put('patients/{patient}/surveillances/{surveillance}', [PatientSurveillanceController::class, 'update'])->name('patients.surveillances.update');
-    Route::delete('patients/{patient}/surveillances/{surveillance}', [PatientSurveillanceController::class, 'destroy'])->name('patients.surveillances.destroy');
+    Route::get('patients/{patient}/surveillance', [PatientSurveillanceController::class, 'index'])->name('patients.surveillance.index');
+    Route::post('patients/{patient}/surveillance', [PatientSurveillanceController::class, 'store'])->name('patients.surveillance.store');
+    Route::put('patients/{patient}/surveillance/{surveillance}', [PatientSurveillanceController::class, 'update'])->name('patients.surveillance.update');
+    Route::delete('patients/{patient}/surveillance/{surveillance}', [PatientSurveillanceController::class, 'destroy'])->name('patients.surveillance.destroy');
 
     Route::get('patients/{patient}/vaccinations', [PatientVaccinationController::class, 'index'])->name('patients.vaccinations.index');
     Route::post('patients/{patient}/vaccinations', [PatientVaccinationController::class, 'store'])->name('patients.vaccinations.store');

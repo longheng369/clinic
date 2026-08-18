@@ -19,7 +19,6 @@ class UpdateParaclinicRequest extends FormRequest
             'notes' => ['nullable', 'string'],
             'status' => ['nullable', 'in:Draft,Requested,Waiting Result,Result Received,Reviewed,Completed,Cancelled'],
             'subtotal' => ['nullable', 'numeric', 'min:0'],
-            'discount' => ['nullable', 'numeric', 'min:0'],
             'total_amount' => ['nullable', 'numeric', 'min:0'],
             'payment_status' => ['nullable', 'in:Unpaid,Partial,Paid'],
             'payment_date' => ['nullable', 'date'],

@@ -82,7 +82,7 @@ const ConsultationTab = ({ patientId, visitId }: { patientId: number; visitId: n
             params.value ?? <Box sx={{}}>&mdash;</Box>,
       },
       {
-         field: 'recorded_by',
+         field: 'created_by',
          headerName: 'អ្នកកត់ត្រា',
          flex: 1,
          minWidth: 130,
