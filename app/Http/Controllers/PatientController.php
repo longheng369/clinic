@@ -65,157 +65,188 @@ class PatientController extends Controller
 
         $selectedVisitId = $selectedVisit?->id;
 
-        $consultationsQuery = $patient->consultations()->with('createdBy');
-        $surveillancesQuery = $patient->surveillances()->with('createdBy');
-        $paraclinicRequestsQuery = $patient->paraclinicRequests()->with(['doctor', 'tests']);
-
-        if ($selectedVisitId) {
-            $consultationsQuery->where('visit_id', $selectedVisitId);
-            $surveillancesQuery->where('visit_id', $selectedVisitId);
-            $paraclinicRequestsQuery->where('visit_id', $selectedVisitId);
-        }
-
-        $consultations = $consultationsQuery->latest()->paginate(10)->withQueryString();
-        $surveillances = $surveillancesQuery->latest()->paginate(10)->withQueryString();
-        $paraclinicRequests = $paraclinicRequestsQuery->latest()->paginate(10)->withQueryString()
-            ->through(fn ($r) => [
-                'id' => $r->id,
-                'request_number' => $r->request_number,
-                'doctor' => $r->doctor ? ['id' => $r->doctor->id, 'name' => $r->doctor->name] : null,
-                'external_facility_name' => $r->external_facility_name,
-                'request_date' => $r->request_date,
-                'status' => $r->status,
-                'payment_status' => $r->payment_status,
-                'total_amount' => (float) $r->total_amount,
-            ]);
-
-        $medicationOrders = $selectedVisit
-            ? $selectedVisit->medicationOrders()
-                ->with(['medicine', 'createdBy', 'administrations' => fn ($q) => $q->orderBy('scheduled_at')])
-                ->latest()
-                ->paginate(10)
-                ->through(fn ($m) => [
-                    'id' => $m->id,
-                    'medicine' => $m->medicine ? ['id' => $m->medicine->id, 'name' => $m->medicine->name, 'unit_price' => $m->medicine->unit_price ? (float) $m->medicine->unit_price : null] : null,
-                    'route' => $m->route,
-                    'dosage' => (float) $m->dosage,
-                    'unit' => $m->unit,
-                    'interval' => $m->interval,
-                    'duration' => $m->duration,
-                    'cycle_no' => $m->cycle_no,
-                    'status' => $m->status,
-                    'starts_at' => $m->starts_at?->toISOString(),
-                    'notes' => $m->notes,
-                    'recorded_by' => $m->createdBy?->name,
-                    'created_at' => $m->created_at,
-                    'administrations' => $m->administrations->map(fn ($a) => [
-                        'id' => $a->id,
-                        'cycle_no' => $a->cycle_no,
-                        'administration_no' => $a->administration_no,
-                        'total_administrations' => $a->total_administrations,
-                        'scheduled_at' => $a->scheduled_at->toISOString(),
-                        'administered_at' => $a->administered_at?->toISOString(),
-                        'status' => $a->status,
-                        'administered_by' => $a->administeredBy?->name,
-                        'unit_price' => $a->unit_price ? (float) $a->unit_price : null,
-                        'reason' => $a->reason,
-                        'note' => $a->note,
-                    ])->values(),
-                ])
-            : ['data' => [], 'current_page' => 1, 'last_page' => 1, 'per_page' => 10, 'total' => 0, 'from' => 0, 'to' => 0];
-
-        $prescription = $selectedVisit
-            ? $selectedVisit->prescriptions()
-                ->with(['items.medicine', 'createdBy'])
-                ->latest()
-                ->first()
-            : null;
-
         return Inertia::render('patients/show', [
             'patient' => $patient,
             'selectedVisit' => $selectedVisit,
-            'billing' => $selectedVisit?->billingSummary(),
             'allVisits' => $allVisits,
-            'consultations' => $consultations->through(fn ($c) => [
-                'id' => $c->id,
-                'weight' => $c->weight ? (float) $c->weight : null,
-                'chief_complaint' => $c->chief_complaint,
-                'diagnosis' => $c->diagnosis,
-                'fee' => $c->fee ? (float) $c->fee : null,
-                'recorded_by' => $c->createdBy?->name,
-                'created_at' => $c->created_at,
-            ]),
-            'surveillances' => $surveillances->through(fn ($s) => [
-                'id' => $s->id,
-                'systolic' => $s->systolic,
-                'diastolic' => $s->diastolic,
-                'pulse' => $s->pulse,
-                'temperature' => (float) $s->temperature,
-                'rr' => $s->rr,
-                'spo2' => $s->spo2,
-                'o2_supply' => $s->o2_supply,
-                'recorded_by' => $s->createdBy?->name,
-                'created_at' => $s->created_at,
-            ]),
-            'paraclinicRequests' => $paraclinicRequests,
-            'medicationOrders' => $medicationOrders,
-            'prescription' => $prescription ? [
-                'id' => $prescription->id,
-                'visit_id' => $prescription->visit_id,
-                'notes' => $prescription->notes,
-                'recorded_by' => $prescription->createdBy?->name,
-                'created_at' => $prescription->created_at,
-                'items' => $prescription->items->map(fn ($i) => [
-                    'id' => $i->id,
-                    'medicine' => $i->medicine ? ['id' => $i->medicine->id, 'name' => $i->medicine->name] : null,
-                    'route' => $i->route,
-                    'dosage' => (float) $i->dosage,
-                    'unit' => $i->unit,
-                    'frequency' => $i->frequency,
-                    'number_of_day' => $i->number_of_day,
-                    'quantity' => $i->quantity ? (float) $i->quantity : null,
-                    'notes' => $i->notes,
-                    'instruction' => $i->instruction,
-                ])->values(),
-            ] : null,
-            'vaccinations' => $patient->vaccinations()
-                ->with(['vaccine', 'administeredBy'])
-                ->latest()
-                ->paginate(10)
-                ->through(fn ($v) => [
-                    'id' => $v->id,
-                    'vaccine' => $v->vaccine ? ['id' => $v->vaccine->id, 'name' => $v->vaccine->name] : null,
-                    'dose_number' => $v->dose_number,
-                    'administered_date' => $v->administered_date,
-                    'notes' => $v->notes,
-                    'administered_by' => $v->administeredBy?->name,
-                    'created_at' => $v->created_at,
-                ]),
-            'vaccines' => Vaccine::orderBy('name')->get(['id', 'name']),
-            'vaccineCard' => Vaccine::orderBy('name')->get(['id', 'name', 'rules'])->map(fn ($v) => array_merge(
-                ['vaccine' => ['id' => $v->id, 'name' => $v->name]],
-                $patient->nextDoseForVaccine($v),
-            )),
-            'vaccinationAlerts' => Vaccine::orderBy('name')->get(['id', 'name', 'rules'])->map(fn ($v) => array_merge(
-                ['vaccine' => ['id' => $v->id, 'name' => $v->name]],
-                $patient->nextDoseForVaccine($v),
-            ))->filter(fn ($item) => $item['next_dose_due_date'] !== null && Carbon::parse($item['next_dose_due_date'])->lte(Carbon::now()->addDays(7)))->values(),
-            'medicines' => Medicine::orderBy('name')->get(['id', 'name']),
-            'units' => Unit::orderBy('name')->get(['id', 'name']),
-            'attachments' => $selectedVisit
-                ? $selectedVisit->attachments()->with('uploadedBy')->latest()->get()
-                : $patient->attachments()->with('uploadedBy')->latest()->get(),
-            'activeVisits' => Visit::where('patient_id', $patient->id)
-                ->where('status', 'active')
-                ->with('createdBy')
-                ->latest()
-                ->get()
-                ->map(fn ($v) => [
-                    'id' => $v->id,
-                    'type' => $v->type,
-                    'visit_date' => $v->visit_date,
-                    'recorded_by' => $v->createdBy?->name,
-                ]),
+            'consultations' => Inertia::defer(function () use ($patient, $selectedVisitId) {
+                return $patient->consultations()
+                    ->with('createdBy')
+                    ->when($selectedVisitId, fn ($q) => $q->where('visit_id', $selectedVisitId))
+                    ->latest()
+                    ->paginate(10)
+                    ->withQueryString()
+                    ->through(fn ($c) => [
+                        'id' => $c->id,
+                        'weight' => $c->weight ? (float) $c->weight : null,
+                        'chief_complaint' => $c->chief_complaint,
+                        'diagnosis' => $c->diagnosis,
+                        'fee' => $c->fee ? (float) $c->fee : null,
+                        'recorded_by' => $c->createdBy?->name,
+                        'created_at' => $c->created_at,
+                    ]);
+            }, 'consultations'),
+            'surveillances' => Inertia::defer(function () use ($patient, $selectedVisitId) {
+                return $patient->surveillances()
+                    ->with('createdBy')
+                    ->when($selectedVisitId, fn ($q) => $q->where('visit_id', $selectedVisitId))
+                    ->latest()
+                    ->paginate(10)
+                    ->withQueryString()
+                    ->through(fn ($s) => [
+                        'id' => $s->id,
+                        'systolic' => $s->systolic,
+                        'diastolic' => $s->diastolic,
+                        'pulse' => $s->pulse,
+                        'temperature' => (float) $s->temperature,
+                        'rr' => $s->rr,
+                        'spo2' => $s->spo2,
+                        'o2_supply' => $s->o2_supply,
+                        'recorded_by' => $s->createdBy?->name,
+                        'created_at' => $s->created_at,
+                    ]);
+            }, 'surveillances'),
+            'paraclinicRequests' => Inertia::defer(function () use ($patient, $selectedVisitId) {
+                return $patient->paraclinicRequests()
+                    ->with(['doctor', 'tests'])
+                    ->when($selectedVisitId, fn ($q) => $q->where('visit_id', $selectedVisitId))
+                    ->latest()
+                    ->paginate(10)
+                    ->withQueryString()
+                    ->through(fn ($r) => [
+                        'id' => $r->id,
+                        'request_number' => $r->request_number,
+                        'doctor' => $r->doctor ? ['id' => $r->doctor->id, 'name' => $r->doctor->name] : null,
+                        'external_facility_name' => $r->external_facility_name,
+                        'request_date' => $r->request_date,
+                        'status' => $r->status,
+                        'payment_status' => $r->payment_status,
+                        'total_amount' => (float) $r->total_amount,
+                    ]);
+            }, 'paraclinic'),
+            'medicationOrders' => Inertia::defer(function () use ($selectedVisit) {
+                if (! $selectedVisit) {
+                    return ['data' => [], 'current_page' => 1, 'last_page' => 1, 'per_page' => 10, 'total' => 0, 'from' => 0, 'to' => 0];
+                }
+
+                return $selectedVisit->medicationOrders()
+                    ->with(['medicine', 'createdBy', 'administrations' => fn ($q) => $q->orderBy('scheduled_at')])
+                    ->latest()
+                    ->paginate(10)
+                    ->withQueryString()
+                    ->through(fn ($m) => [
+                        'id' => $m->id,
+                        'medicine' => $m->medicine ? ['id' => $m->medicine->id, 'name' => $m->medicine->name, 'unit_price' => $m->medicine->unit_price ? (float) $m->medicine->unit_price : null] : null,
+                        'route' => $m->route,
+                        'dosage' => (float) $m->dosage,
+                        'unit' => $m->unit,
+                        'interval' => $m->interval,
+                        'duration' => $m->duration,
+                        'cycle_no' => $m->cycle_no,
+                        'status' => $m->status,
+                        'starts_at' => $m->starts_at?->toISOString(),
+                        'notes' => $m->notes,
+                        'recorded_by' => $m->createdBy?->name,
+                        'created_at' => $m->created_at,
+                        'administrations' => $m->administrations->map(fn ($a) => [
+                            'id' => $a->id,
+                            'cycle_no' => $a->cycle_no,
+                            'administration_no' => $a->administration_no,
+                            'total_administrations' => $a->total_administrations,
+                            'scheduled_at' => $a->scheduled_at->toISOString(),
+                            'administered_at' => $a->administered_at?->toISOString(),
+                            'status' => $a->status,
+                            'administered_by' => $a->administeredBy?->name,
+                            'unit_price' => $a->unit_price ? (float) $a->unit_price : null,
+                            'reason' => $a->reason,
+                            'note' => $a->note,
+                        ])->values(),
+                    ]);
+            }, 'medication'),
+            'activeVisits' => Inertia::defer(function () use ($patient) {
+                return Visit::where('patient_id', $patient->id)
+                    ->where('status', 'active')
+                    ->with('createdBy')
+                    ->latest()
+                    ->get()
+                    ->map(fn ($v) => [
+                        'id' => $v->id,
+                        'type' => $v->type,
+                        'visit_date' => $v->visit_date,
+                        'recorded_by' => $v->createdBy?->name,
+                    ]);
+            }, 'medication'),
+            'medicines' => Inertia::defer(fn () => Medicine::orderBy('name')->get(['id', 'name']), 'medicines'),
+            'units' => Inertia::defer(fn () => Unit::orderBy('name')->get(['id', 'name']), 'medicines'),
+            'prescription' => Inertia::defer(function () use ($selectedVisit) {
+                if (! $selectedVisit) {
+                    return null;
+                }
+
+                $prescription = $selectedVisit->prescriptions()
+                    ->with(['items.medicine', 'createdBy'])
+                    ->latest()
+                    ->first();
+
+                if (! $prescription) {
+                    return null;
+                }
+
+                return [
+                    'id' => $prescription->id,
+                    'visit_id' => $prescription->visit_id,
+                    'notes' => $prescription->notes,
+                    'recorded_by' => $prescription->createdBy?->name,
+                    'created_at' => $prescription->created_at,
+                    'items' => $prescription->items->map(fn ($i) => [
+                        'id' => $i->id,
+                        'medicine' => $i->medicine ? ['id' => $i->medicine->id, 'name' => $i->medicine->name] : null,
+                        'route' => $i->route,
+                        'dosage' => (float) $i->dosage,
+                        'unit' => $i->unit,
+                        'frequency' => $i->frequency,
+                        'number_of_day' => $i->number_of_day,
+                        'quantity' => $i->quantity ? (float) $i->quantity : null,
+                        'notes' => $i->notes,
+                        'instruction' => $i->instruction,
+                    ])->values(),
+                ];
+            }, 'prescription'),
+            'vaccinations' => Inertia::defer(function () use ($patient) {
+                return $patient->vaccinations()
+                    ->with(['vaccine', 'administeredBy'])
+                    ->latest()
+                    ->paginate(10)
+                    ->withQueryString()
+                    ->through(fn ($v) => [
+                        'id' => $v->id,
+                        'vaccine' => $v->vaccine ? ['id' => $v->vaccine->id, 'name' => $v->vaccine->name] : null,
+                        'dose_number' => $v->dose_number,
+                        'administered_date' => $v->administered_date,
+                        'notes' => $v->notes,
+                        'administered_by' => $v->administeredBy?->name,
+                        'created_at' => $v->created_at,
+                    ]);
+            }, 'vaccination'),
+            'vaccines' => Inertia::defer(fn () => Vaccine::orderBy('name')->get(['id', 'name']), 'vaccination'),
+            'vaccineCard' => Inertia::defer(function () use ($patient) {
+                return Vaccine::orderBy('name')->get(['id', 'name', 'rules'])->map(fn ($v) => array_merge(
+                    ['vaccine' => ['id' => $v->id, 'name' => $v->name]],
+                    $patient->nextDoseForVaccine($v),
+                ));
+            }, 'vaccination'),
+            'vaccinationAlerts' => Inertia::defer(function () use ($patient) {
+                return Vaccine::orderBy('name')->get(['id', 'name', 'rules'])->map(fn ($v) => array_merge(
+                    ['vaccine' => ['id' => $v->id, 'name' => $v->name]],
+                    $patient->nextDoseForVaccine($v),
+                ))->filter(fn ($item) => $item['next_dose_due_date'] !== null && Carbon::parse($item['next_dose_due_date'])->lte(Carbon::now()->addDays(7)))->values();
+            }, 'vaccination'),
+            'attachments' => Inertia::defer(function () use ($patient, $selectedVisit) {
+                return $selectedVisit
+                    ? $selectedVisit->attachments()->with('uploadedBy')->latest()->get()
+                    : $patient->attachments()->with('uploadedBy')->latest()->get();
+            }, 'attachment'),
+            'billing' => Inertia::defer(fn () => $selectedVisit?->billingSummary(), 'billing'),
         ]);
     }
 

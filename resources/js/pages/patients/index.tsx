@@ -86,7 +86,7 @@ const Patient = () => {
       },
       {
          field: 'english_name',
-         headerName: 'ឈ្មោះ​ជា​ភាសា​អង់គ្លេស',
+         headerName: 'ឈ្មោះជាភាសាអង់គ្លេស',
          flex: 1,
          minWidth: 180,
          valueGetter: (_value, row: IPatient) =>

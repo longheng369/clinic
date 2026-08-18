@@ -142,6 +142,7 @@ const MedicationOrdersTab = ({ patientId, visitId }: Props) => {
                      to: pagination.to,
                   }}
                   baseUrl={window.location.pathname + window.location.search}
+                  only={['medicationOrders']}
                />
             </Box>
          )}

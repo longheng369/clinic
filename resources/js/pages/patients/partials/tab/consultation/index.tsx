@@ -34,7 +34,7 @@ const ConsultationTab = ({ patientId, visitId }: { patientId: number; visitId: n
    }
 
    const handlePaginationModelChange = useCallback((model: GridPaginationModel) => {
-      router.get(`/patients/${patientId}`, { page: String(model.page + 1), tab: 'consultation' }, { preserveState: true, replace: true })
+      router.get(`/patients/${patientId}`, { page: String(model.page + 1), tab: 'consultation' }, { preserveState: true, replace: true, only: ['consultations'] })
    }, [patientId])
 
    const columns: GridColDef[] = [
@@ -97,21 +97,21 @@ const ConsultationTab = ({ patientId, visitId }: { patientId: number; visitId: n
          getActions: (params) => [
             <GridActionsCellItem
                key={`view-${params.id}`}
-               icon={<Eye size={16} />}
+               icon={<Eye size={16} color="#64748b" />}
                label="View consultation"
                onClick={() => router.visit(`/patients/${patientId}/consultations/${params.row.id}`)}
                showInMenu={false}
             />,
             <GridActionsCellItem
                key={`edit-${params.id}`}
-               icon={<Pencil size={16} />}
+               icon={<Pencil size={16} color="#2563eb" />}
                label="Edit consultation"
                onClick={() => router.visit(`/patients/${patientId}/consultations/${params.row.id}/edit`)}
                showInMenu={false}
             />,
             <GridActionsCellItem
                key={`delete-${params.id}`}
-               icon={<Trash2 size={16} />}
+               icon={<Trash2 size={16} color="#dc2626" />}
                label="Delete consultation"
                onClick={() => handleDelete(params.row as IConsultation)}
                showInMenu={false}

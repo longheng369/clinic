@@ -24,6 +24,53 @@ body {
     color: #1e293b;
 }
 
+@media print {
+    body * {
+        visibility: hidden !important;
+    }
+
+    body > #app {
+        visibility: hidden !important;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+
+    .prescription-printable,
+    .prescription-printable * {
+        visibility: visible !important;
+        font-size: 12px !important;
+    }
+
+    .prescription-printable {
+        position: fixed !important;
+        inset: 0 !important;
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 12mm !important;
+        border: 0 !important;
+        overflow: visible !important;
+    }
+
+    .prescription-printable table {
+        width: 100% !important;
+        table-layout: auto !important;
+    }
+
+    .prescription-printable th,
+    .prescription-printable td {
+        overflow-wrap: break-word !important;
+        word-break: normal !important;
+    }
+
+    .prescription-printable tr {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+    }
+}
+
 *,
 *::before,
 *::after {

@@ -9,9 +9,10 @@ const InertiaLinkComponent = Link as unknown as ElementType
 type Props = {
    meta: PaginationMeta
    baseUrl: string
+   only?: string[]
 }
 
-const Pagination = ({ meta, baseUrl }: Props) => {
+const Pagination = ({ meta, baseUrl, only }: Props) => {
    const separator = baseUrl.includes('?') ? '&' : '?'
    const link = (page: number) => `${baseUrl}${separator}page=${page}`
 
@@ -23,6 +24,7 @@ const Pagination = ({ meta, baseUrl }: Props) => {
                component={InertiaLinkComponent}
                href={link(meta.current_page - 1)}
                preserveScroll
+               only={only}
                disabled={meta.current_page === 1}
                size="small"
                startIcon={<ChevronLeft size={16} />}
@@ -35,6 +37,7 @@ const Pagination = ({ meta, baseUrl }: Props) => {
                   component={InertiaLinkComponent}
                   href={link(page)}
                   preserveScroll
+                  only={only}
                   size="small"
                   variant={page === meta.current_page ? 'contained' : 'text'}
                   color={page === meta.current_page ? 'primary' : 'inherit'}
@@ -47,6 +50,7 @@ const Pagination = ({ meta, baseUrl }: Props) => {
                component={InertiaLinkComponent}
                href={link(meta.current_page + 1)}
                preserveScroll
+               only={only}
                disabled={meta.current_page === meta.last_page}
                size="small"
                endIcon={<ChevronRight size={16} />}

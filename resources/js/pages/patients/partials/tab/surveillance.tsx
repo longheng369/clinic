@@ -156,6 +156,7 @@ const SurveillanceTab = ({ patientId, selectedVisit }: Props) => {
             emptyDescription="Record vital signs for this patient."
             pagination={pagination}
             baseUrl={baseUrl}
+            only={['surveillances']}
          />
       </Box>
    )

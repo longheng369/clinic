@@ -1,4 +1,4 @@
-import { Head, usePage, router } from '@inertiajs/react'
+import { Deferred, Head, usePage, router } from '@inertiajs/react'
 import { IPatient } from '@/interfaces/IPatient'
 import { IPrescription } from '@/interfaces/IPrescription'
 import { History, Play } from 'lucide-react'
@@ -14,7 +14,7 @@ import PrescriptionTab from './partials/tab/prescription'
 import ParaclinicByPatientTab from '../paraclinic-requests/partials/tab/byPatient'
 import VaccinationTab from './partials/tab/vaccination'
 import BillingTab from './partials/tab/billing/index'
-import { Box, Button, Card, Divider, Drawer, Paper, Tab, Tabs, Typography } from '@mui/material'
+import { Box, Button, CircularProgress, Divider, Drawer, Paper, Tab, Tabs, Typography } from '@mui/material'
 import VisitHistory from './partials/visitHistory'
 import { IVisit, IVisitWithMetaData } from '@/interfaces/IVisit'
 import { useToast } from '@/components/toast'
@@ -48,8 +48,6 @@ const PatientShow = ({ patient }: Props) => {
       allVisits: IVisit[]
       prescription: IPrescription | null
    }>().props
-
-   console.log({prescription})
 
    const visibleTabs = selectedVisit?.type === 'IPD'
       ? ALL_TABS
@@ -169,7 +167,7 @@ const PatientShow = ({ patient }: Props) => {
                      <>
                         <Divider orientation="vertical" flexItem sx={{ borderColor: '#e2e8f0' }} />
                         <Typography component="span" sx={{ color: 'text.secondary', fontSize: 14 }}>
-                            by {selectedVisit.created_by.name}
+                           by {selectedVisit.created_by.name}
                         </Typography>
                      </>
                   )}
@@ -182,14 +180,14 @@ const PatientShow = ({ patient }: Props) => {
                         onClick={handleStartNewVisit}
                         disabled={isStartingVisit}
                      >
-                          Start New Visit
+                        Start New Visit
                      </Button>
                   )}
                </Paper>
             ) : (
-               <Paper variant="outlined" sx={{ mb: 4, px: 4, py: 2.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+               <Paper className="no-print" variant="outlined" sx={{ mb: 4, px: 4, py: 2.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <Typography sx={{ color: 'text.secondary', fontSize: 14 }}>
-                       No visits recorded
+                     No visits recorded
                   </Typography>
                   {!hasActiveVisit && (
                      <Button
@@ -199,15 +197,15 @@ const PatientShow = ({ patient }: Props) => {
                         onClick={handleStartNewVisit}
                         disabled={isStartingVisit}
                      >
-                          Start New Visit
+                        Start New Visit
                      </Button>
                   )}
                </Paper>
             )}
 
             {selectedVisit ? (
-               <Card elevation={0} sx={{ border: 1, borderColor: theme.palette.divider }}>
-                  <Box sx={{ borderBottom: '1px solid #cbd5e1' }}>
+               <Paper variant='outlined'>
+                  <Box sx={{ borderBottom: 1, borderColor: theme.palette.divider }}>
                      <Tabs
                         value={activeTab}
                         onChange={(_, value) => handleTabChange(value as Tab)}
@@ -233,7 +231,7 @@ const PatientShow = ({ patient }: Props) => {
                   <Box sx={{ p: 3, minWidth: 0, overflowX: 'auto' }}>
                      <TabContent tab={activeTab} patientId={patient.id} patient={patient} selectedVisit={selectedVisit} prescription={prescription} />
                   </Box>
-               </Card>
+               </Paper>
             ) : (
                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                   <Typography color="text.secondary">Select a visit or start a new one to begin.</Typography>
@@ -307,26 +305,68 @@ const PatientShow = ({ patient }: Props) => {
    )
 }
 
+const TabLoading = () => (
+   <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 8 }}>
+      <CircularProgress size={28} />
+   </Box>
+)
+
 const TabContent = ({ tab, patientId, patient, selectedVisit, prescription }: { tab: Tab; patientId: number; patient: IPatient; selectedVisit: IVisitWithMetaData | null; prescription: IPrescription | null }) => {
    switch (tab) {
       case 'consultation':
-         return <ConsultationTab patientId={patientId} visitId={selectedVisit?.id ?? null} />
+         return (
+            <Deferred data="consultations" fallback={<TabLoading />}>
+               <ConsultationTab patientId={patientId} visitId={selectedVisit?.id ?? null} />
+            </Deferred>
+         )
       case 'medication-orders':
-         return <MedicationOrdersTab patientId={patientId} visitId={selectedVisit?.id ?? 0} />
+         return (
+            <Deferred data={['medicationOrders', 'activeVisits', 'medicines']} fallback={<TabLoading />}>
+               <MedicationOrdersTab patientId={patientId} visitId={selectedVisit?.id ?? 0} />
+            </Deferred>
+         )
       case 'medication-administration':
-         return <MedicationAdministrationTab patient={patient} visitId={selectedVisit?.id ?? 0} />
+         return (
+            <Deferred data="medicationOrders" fallback={<TabLoading />}>
+               <MedicationAdministrationTab patient={patient} visitId={selectedVisit?.id ?? 0} />
+            </Deferred>
+         )
       case 'prescription':
-         return <PrescriptionTab patient={patient} selectedVisit={selectedVisit} prescription={prescription} />
+         return (
+            <Deferred data={['prescription', 'medicines', 'units']} fallback={<TabLoading />}>
+               <PrescriptionTab patient={patient} selectedVisit={selectedVisit} prescription={prescription} />
+            </Deferred>
+         )
       case 'paraclinic':
-         return <ParaclinicByPatientTab patientId={patientId} />
+         return (
+            <Deferred data="paraclinicRequests" fallback={<TabLoading />}>
+               <ParaclinicByPatientTab patientId={patientId} />
+            </Deferred>
+         )
       case 'attachment':
-         return <AttachmentsTab patientId={patientId} selectedVisit={selectedVisit} />
+         return (
+            <Deferred data="attachments" fallback={<TabLoading />}>
+               <AttachmentsTab patientId={patientId} selectedVisit={selectedVisit} />
+            </Deferred>
+         )
       case 'vaccination':
-         return <VaccinationTab patient={patient} />
+         return (
+            <Deferred data={['vaccinations', 'vaccines', 'vaccineCard', 'vaccinationAlerts']} fallback={<TabLoading />}>
+               <VaccinationTab patient={patient} />
+            </Deferred>
+         )
       case 'surveillance':
-         return <SurveillanceTab patientId={patientId} selectedVisit={selectedVisit} />
+         return (
+            <Deferred data="surveillances" fallback={<TabLoading />}>
+               <SurveillanceTab patientId={patientId} selectedVisit={selectedVisit} />
+            </Deferred>
+         )
       case 'billing':
-         return <BillingTab visitId={selectedVisit?.id ?? 0} />
+         return (
+            <Deferred data="billing" fallback={<TabLoading />}>
+               <BillingTab visitId={selectedVisit?.id ?? 0} />
+            </Deferred>
+         )
    }
 }
 

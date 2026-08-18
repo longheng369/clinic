@@ -19,9 +19,10 @@ type Props<T> = {
    columns: Column<T>[]
    emptyMessage?: string
    emptyDescription?: string
-   pagination?: PaginationMeta
-   baseUrl?: string
-   onRowClick?: (row: T) => void
+pagination?: PaginationMeta
+    baseUrl?: string
+    only?: string[]
+    onRowClick?: (row: T) => void
 }
 
 const DataTable = <T,>({
@@ -32,6 +33,7 @@ const DataTable = <T,>({
    emptyDescription = 'Get started by creating a new entry.',
    pagination,
    baseUrl = '',
+   only,
    onRowClick,
 }: Props<T>) => (
       <>
@@ -74,7 +76,7 @@ const DataTable = <T,>({
                </TableBody>
             </Table>
          </TableContainer>
-         {pagination && pagination.last_page > 1 && <Pagination meta={pagination} baseUrl={baseUrl} />}
+         {pagination && pagination.last_page > 1 && <Pagination meta={pagination} baseUrl={baseUrl} only={only} />}
       </>
    )
 

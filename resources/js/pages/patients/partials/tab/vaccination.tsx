@@ -136,6 +136,7 @@ const VaccinationTab = ({ patient }: VaccinationTabProps) => {
                emptyDescription="Record a vaccination for this patient."
                pagination={pagination}
                baseUrl={baseUrl}
+               only={['vaccinations']}
             />
          </Box>
       </Box>

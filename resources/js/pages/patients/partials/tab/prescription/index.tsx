@@ -1,7 +1,7 @@
 import { usePage } from '@inertiajs/react'
 import { router } from '@inertiajs/react'
 import { useModal } from '@/components/modal'
-import { Pencil, Plus, Save, Stethoscope, X } from 'lucide-react'
+import { Pencil, Plus, Printer, Save, Stethoscope, X } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { IPrescription, IPrescriptionFormData } from '@/interfaces/IPrescription'
 import { IPatient } from '@/interfaces/IPatient'
@@ -12,6 +12,7 @@ import { useToast } from '@/components/toast'
 import {
    Box,
    Button,
+   Grid,
    Table,
    TableBody,
    TableCell,
@@ -22,6 +23,7 @@ import {
 } from '@mui/material'
 import { IVisitWithMetaData } from '@/interfaces/IVisit'
 import { MEDICINE_INSTRUCTION } from '@/config/prescription'
+import GridItemInfo from './partials/gridItemInfo'
 
 type DoseSlot = 'morning' | 'afternoon' | 'evening' | 'night'
 
@@ -59,7 +61,6 @@ const PrescriptionTab = ({
    selectedVisit,
    prescription,
 }: Props) => {
-   console.log(prescription)
    const { openModal, closeModal } = useModal()
    const { toast } = useToast()
    const [isSaving, setIsSaving] = useState(false)
@@ -260,6 +261,7 @@ const PrescriptionTab = ({
 
    return (
       <Box
+         className="prescription-printable"
          sx={{
             border: 1,
             borderColor: 'divider',
@@ -267,7 +269,7 @@ const PrescriptionTab = ({
             p: 4
          }}
       >
-         <Typography sx={{ fontFamily: 'Moul', color: 'info.main', textAlign: 'center', letterSpacing: 1 }}>ព្រះរាជាណាចក្រកម្ពុជា</Typography>
+         <Typography sx={{ fontFamily: 'Moul', color: 'info.main', textAlign: 'center', letterSpacing: 1, fontSize: '1.3rem' }}>ព្រះរាជាណាចក្រកម្ពុជា</Typography>
          <Typography sx={{ fontFamily: 'Moul', color: 'info.main', textAlign: 'center', letterSpacing: 1, mt: 0.5 }}>ជាតិ សាសនា ព្រះមហាក្សត្រ</Typography>
 
          <Box
@@ -288,7 +290,23 @@ const PrescriptionTab = ({
             <Stethoscope size={30} color="#fff" />
          </Box>
 
-         <Box sx={{ mt: 5 }}>
+         <Grid container spacing={1} sx={{ mt: 5 }}>
+            {[
+               { label: 'ឈ្មោះខ្មែរ', value: `${patient.khmer_first_name} ${patient.khmer_last_name}`, fontFamily: 'var(--font-khmer)' },
+               { label: 'ឈ្មោះអង់គ្លេស', value: patient.first_name ? `${patient.last_name ?? ''} ${patient.first_name}`.trim() : '—', fontFamily: 'var(--font-khmer)' },
+               { label: 'ភេទ', value: patient.gender, fontFamily: 'var(--font-khmer)' },
+               { label: 'ថ្ងៃខែឆ្នាំកំណើត', value: formatDob(patient.date_of_birth), fontFamily: 'var(--font-khmer)' },
+               { label: 'ទូរស័ព្ទ', value: patient.phone_number, fontFamily: 'var(--font-khmer)' },
+               { label: 'ក្រុមឈាម', value: patient.blood_group ?? '—', fontFamily: 'var(--font-khmer)' },
+               { label: 'អត្តសញ្ញាណប័ណ្ណ', value: patient.national_id ?? '—', fontFamily: 'var(--font-khmer)' },
+            ].map((info) => (
+               <Grid size={{ md: 4 }}>
+                  <GridItemInfo key={info.label} label={info.label} value={info.value} />
+               </Grid>
+            ))}
+         </Grid>
+
+         <Box sx={{ mt: 2 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end' }}>
                <Box>
                   <Typography sx={{ fontFamily: 'var(--font-khmer)' }}>
@@ -299,11 +317,16 @@ const PrescriptionTab = ({
                   </Typography>
                </Box>
                {!isEditing ? (
-                  <Button variant='contained' startIcon={<Pencil size={16} />} onClick={() => setIsEditing(true)}>
-                     Edit
-                  </Button>
+                  <Box className="no-print" sx={{ display: 'flex', gap: 1 }}>
+                     <Button variant='outlined' startIcon={<Printer size={16} />} onClick={() => window.print()}>
+                        Print
+                     </Button>
+                     <Button variant='contained' startIcon={<Pencil size={16} />} onClick={() => setIsEditing(true)}>
+                        Edit
+                     </Button>
+                  </Box>
                ) : (
-                  <Box sx={{ display: 'flex', gap: 1 }}>
+                  <Box className="no-print" sx={{ display: 'flex', gap: 1 }}>
                      {prescription && (
                         <Button variant='outlined' startIcon={<X size={16} />} onClick={cancelEditing} disabled={isSaving}>
                            Cancel
@@ -357,20 +380,17 @@ const PrescriptionTab = ({
                            <TableCell width='5%' align='center'>
                               ល.រ
                            </TableCell>
-                           <TableCell width='20%'>
+                           <TableCell width='30%'>
                               ឈ្មោះថ្នាំ
                            </TableCell>
                            <TableCell width='10%'>
                               ចំនួន
                            </TableCell>
-                           <TableCell width='30%'>
+                           <TableCell width='40%'>
                               ការប្រើប្រាស់
                            </TableCell>
                            <TableCell width='10%'>
                               ចំនួនថ្ងៃ
-                           </TableCell>
-                           <TableCell width='25%'>
-                              កំណត់ចំណាំ
                            </TableCell>
                         </TableRow>
                      </TableHead>
@@ -391,7 +411,6 @@ const PrescriptionTab = ({
                               <TableCell>{field.quantity} {field.unit?.name}</TableCell>
                               <TableCell>{field.instruction?.label} {field.morning && `ព្រឹក ${field.morning} ${field.unit.name}`} {field.afternoon && `រសៀល ${field.afternoon} ${field.unit.name}`} {field.evening && `ល្ងាច ${field.evening} ${field.unit.name}`} {field.night && `យប់ ${field.night} ${field.unit.name}`}</TableCell>
                               <TableCell>{field.numberOfDay}</TableCell>
-                              <TableCell>{field.notes}</TableCell>
                            </TableRow>
                         ))}
                      </TableBody>
