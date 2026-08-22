@@ -25,8 +25,8 @@ export interface IConsultation {
     nose_others_note: string | null;
     throat_symptoms: string[];
     throat_others_note: string | null;
-    psycology_symptoms: string[];
-    psycology_others_note: string | null;
+    psychology_symptoms: string[];
+    psychology_others_note: string | null;
     diagnosis: string | null;
     note: string | null;
     fee: number | null;
@@ -59,8 +59,8 @@ export interface IConsultationFormData {
     nose_others_note: string;
     throat_symptoms: string[];
     throat_others_note: string;
-    psycology_symptoms: string[];
-    psycology_others_note: string;
+    psychology_symptoms: string[];
+    psychology_others_note: string;
     diagnosis: string;
     note: string;
     fee: number | null;

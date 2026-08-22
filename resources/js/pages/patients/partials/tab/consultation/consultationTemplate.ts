@@ -243,7 +243,7 @@ export const throatSymptoms: OptionType[] = [
    { value: 'DENTAL_CARIES', label: 'ពុកធ្មេញ', colSpan: 3 },
 ];
 
-export const psycologySymptoms: OptionType[] = [
+export const psychologySymptoms: OptionType[] = [
    { value: 'LETHARGY', label: 'ស្លូត', colSpan: 3 },
    { value: 'AGITATION', label: 'ឆេវឆាវ', colSpan: 3 },
    { value: 'ISOLATION', label: 'Isolation', colSpan: 3 },

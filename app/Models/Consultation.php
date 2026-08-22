@@ -33,8 +33,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'nose_others_note',
     'throat_symptoms',
     'throat_others_note',
-    'psycology_symptoms',
-    'psycology_others_note',
+    'psychology_symptoms',
+    'psychology_others_note',
     'diagnosis',
     'note',
     'fee',
@@ -58,7 +58,7 @@ class Consultation extends Model
             'ear_symptoms' => 'array',
             'nose_symptoms' => 'array',
             'throat_symptoms' => 'array',
-            'psycology_symptoms' => 'array',
+            'psychology_symptoms' => 'array',
         ];
     }
 

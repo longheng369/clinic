@@ -26,7 +26,7 @@ const OTHER_FIELD_MAP: Record<string, string> = {
    ear_symptoms: 'ear_others_note',
    nose_symptoms: 'nose_others_note',
    throat_symptoms: 'throat_others_note',
-   psycology_symptoms: 'psycology_others_note',
+   psychology_symptoms: 'psychology_others_note',
 }
 
 const ConsultationSection = ({ title, name, options, control, disabled }: SectionProps) => {

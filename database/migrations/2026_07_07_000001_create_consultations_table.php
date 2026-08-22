@@ -35,8 +35,8 @@ return new class extends Migration
             $table->string('nose_others_note')->nullable();
             $table->json('throat_symptoms')->nullable();
             $table->string('throat_others_note')->nullable();
-            $table->json('psycology_symptoms')->nullable();
-            $table->string('psycology_others_note')->nullable();
+            $table->json('psychology_symptoms')->nullable();
+            $table->string('psychology_others_note')->nullable();
             $table->string('diagnosis')->nullable();
             $table->text('note')->nullable();
             $table->decimal('fee', 10, 2)->nullable();

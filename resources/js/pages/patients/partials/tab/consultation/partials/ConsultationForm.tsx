@@ -13,7 +13,7 @@ import {
    earSymptoms,
    noseSymptoms,
    throatSymptoms,
-   psycologySymptoms,
+   psychologySymptoms,
 } from '../consultationTemplate'
 import { IConsultationFormData } from '@/interfaces/IConsultation'
 import { Grid, Typography } from '@mui/material'
@@ -145,9 +145,9 @@ const ConsultationForm = ({ control, viewOnly }: Props) => {
 
          <ConsultationSection
             control={control}
-            name="psycology_symptoms"
-            options={psycologySymptoms}
-            title="PSYCOLOGY"
+            name="psychology_symptoms"
+            options={psychologySymptoms}
+            title="PSYCHOLOGY"
             disabled={viewOnly}
          />
 
