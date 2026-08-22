@@ -1,15 +1,15 @@
-import { Box } from '@mui/material'
-import { useState } from 'react'
-import { ChevronDown } from 'lucide-react'
-import type { IMedicationAdministration } from '@/interfaces/IMedicationAdministration'
-import DoseRow from './DoseRow'
+import { Box } from '@mui/material';
+import { useState } from 'react';
+import { ChevronDown } from 'lucide-react';
+import type { IMedicationAdministration } from '@/interfaces/IMedicationAdministration';
+import DoseRow from './DoseRow';
 
 interface CycleRowProps {
-    cycleNo: number
-    administrations: IMedicationAdministration[]
-    totalDoses: number
-    visitId: number
-    orderStatus: string
+  cycleNo: number;
+  administrations: IMedicationAdministration[];
+  totalDoses: number;
+  visitId: number;
+  orderStatus: string;
 }
 
 const DOSE_INDICATOR_COLORS: Record<string, string> = {
@@ -19,21 +19,33 @@ const DOSE_INDICATOR_COLORS: Record<string, string> = {
   missed: '#fdba74',
   refused: '#c4b5fd',
   cancelled: '#d1d5db',
-}
+};
 
-const CycleRow = ({ cycleNo, administrations, totalDoses, visitId, orderStatus }: CycleRowProps) => {
+const CycleRow = ({
+  cycleNo,
+  administrations,
+  totalDoses,
+  visitId,
+  orderStatus,
+}: CycleRowProps) => {
   const [expanded, setExpanded] = useState(() => {
-    return administrations.some((d) => d.status === 'pending')
-  })
+    return administrations.some((d) => d.status === 'pending');
+  });
 
   const actioned = administrations.filter(
-    (d) => d.status === 'provided' || d.status === 'missed' || d.status === 'refused'
-  ).length
+    (d) =>
+      d.status === 'provided' ||
+      d.status === 'missed' ||
+      d.status === 'refused',
+  ).length;
 
-  const cycleTotal = totalDoses > 0 ? totalDoses : administrations.length
-  const progressPercent = cycleTotal > 0 ? Math.min(100, Math.round((actioned / cycleTotal) * 100)) : 0
+  const cycleTotal = totalDoses > 0 ? totalDoses : administrations.length;
+  const progressPercent =
+    cycleTotal > 0
+      ? Math.min(100, Math.round((actioned / cycleTotal) * 100))
+      : 0;
 
-  const hasPending = administrations.some((d) => d.status === 'pending')
+  const hasPending = administrations.some((d) => d.status === 'pending');
 
   return (
     <Box>
@@ -50,9 +62,16 @@ const CycleRow = ({ cycleNo, administrations, totalDoses, visitId, orderStatus }
           borderBottom: '1px solid #f1f5f9',
         }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, minWidth: 120 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1.5,
+            minWidth: 120,
+          }}
+        >
           <Box sx={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>
-                  Cycle {cycleNo}
+            Cycle {cycleNo}
           </Box>
           {hasPending && (
             <Box
@@ -80,10 +99,14 @@ const CycleRow = ({ cycleNo, administrations, totalDoses, visitId, orderStatus }
               missed: 'M',
               refused: 'R',
               cancelled: 'X',
-            }
-            const l = labels[admin.status] ?? '?'
-            const isOverdue = admin.status === 'pending' && new Date(admin.scheduled_at) < new Date()
-            const color = isOverdue ? DOSE_INDICATOR_COLORS.overdue : (DOSE_INDICATOR_COLORS[admin.status] ?? '#d1d5db')
+            };
+            const l = labels[admin.status] ?? '?';
+            const isOverdue =
+              admin.status === 'pending' &&
+              new Date(admin.scheduled_at) < new Date();
+            const color = isOverdue
+              ? DOSE_INDICATOR_COLORS.overdue
+              : (DOSE_INDICATOR_COLORS[admin.status] ?? '#d1d5db');
 
             return (
               <Box
@@ -104,13 +127,23 @@ const CycleRow = ({ cycleNo, administrations, totalDoses, visitId, orderStatus }
               >
                 {l}
               </Box>
-            )
+            );
           })}
         </Box>
 
         {/* Progress */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, ml: 'auto' }}>
-          <Box sx={{ width: 80, height: 6, borderRadius: 10, bgcolor: '#e2e8f0', overflow: 'hidden' }}>
+        <Box
+          sx={{ display: 'flex', alignItems: 'center', gap: 1.5, ml: 'auto' }}
+        >
+          <Box
+            sx={{
+              width: 80,
+              height: 6,
+              borderRadius: 10,
+              bgcolor: '#e2e8f0',
+              overflow: 'hidden',
+            }}
+          >
             <Box
               sx={{
                 width: `${progressPercent}%`,
@@ -140,13 +173,18 @@ const CycleRow = ({ cycleNo, administrations, totalDoses, visitId, orderStatus }
         <Box sx={{ bgcolor: '#f8fafc' }}>
           <Box>
             {administrations.map((admin) => (
-              <DoseRow key={admin.id} administration={admin} visitId={visitId} orderStatus={orderStatus} />
+              <DoseRow
+                key={admin.id}
+                administration={admin}
+                visitId={visitId}
+                orderStatus={orderStatus}
+              />
             ))}
           </Box>
         </Box>
       )}
     </Box>
-  )
-}
+  );
+};
 
-export default CycleRow
+export default CycleRow;

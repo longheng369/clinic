@@ -1,99 +1,159 @@
-import {Box, Button, IconButton, Paper, Tooltip, Typography} from '@mui/material'
-import React, {useRef, useState} from 'react'
-import {router} from '@inertiajs/react'
-import { useToast } from '@/components/toast'
-import { useModal } from '@/components/modal'
-import Modal from '@/components/modal/modal'
-import {Trash2, FileText, Image, File, Eye, Plus, Loader2, Download} from 'lucide-react'
-import { usePage } from '@inertiajs/react'
-import { IVisitWithMetaData } from '@/interfaces/IVisit'
+import {
+  Box,
+  Button,
+  IconButton,
+  Paper,
+  Tooltip,
+  Typography,
+} from '@mui/material';
+import React, { useRef, useState } from 'react';
+import { router } from '@inertiajs/react';
+import { useToast } from '@/components/toast';
+import { useModal } from '@/components/modal';
+import Modal from '@/components/modal/modal';
+import {
+  Trash2,
+  FileText,
+  Image,
+  File,
+  Eye,
+  Plus,
+  Loader2,
+  Download,
+} from 'lucide-react';
+import { usePage } from '@inertiajs/react';
+import { IVisitWithMetaData } from '@/interfaces/IVisit';
 
 interface Attachment {
-   id: number
-   file_name: string
-   file_path: string
-   file_type: string
-   file_size: number
-   uploaded_by: { id: number; name: string } | null
-   created_at: string
+  id: number;
+  file_name: string;
+  file_path: string;
+  file_type: string;
+  file_size: number;
+  uploaded_by: { id: number; name: string } | null;
+  created_at: string;
 }
 
 const fileMeta = (type: string) => {
   if (type.startsWith('image/')) {
-    return { icon: <Image size={22} />, bg: '#eff6ff', color: '#2563eb', label: 'Image' }
+    return {
+      icon: <Image size={22} />,
+      bg: '#eff6ff',
+      color: '#2563eb',
+      label: 'Image',
+    };
   }
   if (type.includes('pdf')) {
-    return { icon: <FileText size={22} />, bg: '#fef2f2', color: '#dc2626', label: 'PDF' }
+    return {
+      icon: <FileText size={22} />,
+      bg: '#fef2f2',
+      color: '#dc2626',
+      label: 'PDF',
+    };
   }
-  return { icon: <File size={22} />, bg: '#f1f5f9', color: '#64748b', label: 'File' }
-}
+  return {
+    icon: <File size={22} />,
+    bg: '#f1f5f9',
+    color: '#64748b',
+    label: 'File',
+  };
+};
 
 const formatSize = (bytes: number) => {
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
-}
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+};
 
 const formatDate = (date: string) => {
-  return new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-}
+  return new Date(date).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+};
 
 type Props = {
-   patientId: number;
-   selectedVisit: IVisitWithMetaData | null
-}
+  patientId: number;
+  selectedVisit: IVisitWithMetaData | null;
+};
 
 const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
-  const { toast } = useToast()
-  const { openAlert } = useModal()
-  const [isUploading, setIsUploading] = useState(false)
-  const [preview, setPreview] = useState<Attachment | null>(null)
-  const { attachments } = usePage<{ attachments: Attachment[] }>().props
+  const { toast } = useToast();
+  const { openAlert } = useModal();
+  const [isUploading, setIsUploading] = useState(false);
+  const [preview, setPreview] = useState<Attachment | null>(null);
+  const { attachments } = usePage<{ attachments: Attachment[] }>().props;
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+    const file = e.target.files?.[0];
+    if (!file) return;
 
     if (file.size > 20 * 1024 * 1024) {
-      toast('The file is too large. Maximum allowed size is 20 MB.', { variant: 'error' })
-      e.target.value = ''
-      return
+      toast('The file is too large. Maximum allowed size is 20 MB.', {
+        variant: 'error',
+      });
+      e.target.value = '';
+      return;
     }
 
-    const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'csv', 'txt', 'zip']
+    const ALLOWED_EXTENSIONS = [
+      'jpg',
+      'jpeg',
+      'png',
+      'gif',
+      'webp',
+      'bmp',
+      'pdf',
+      'doc',
+      'docx',
+      'xls',
+      'xlsx',
+      'ppt',
+      'pptx',
+      'csv',
+      'txt',
+      'zip',
+    ];
 
     if (!file.type && !file.name.includes('.')) {
-      toast('Unrecognized file. Please choose a file with a known extension.', { variant: 'error' })
-      e.target.value = ''
-      return
+      toast('Unrecognized file. Please choose a file with a known extension.', {
+        variant: 'error',
+      });
+      e.target.value = '';
+      return;
     }
 
-    const ext = file.name.split('.').pop()?.toLowerCase() ?? ''
+    const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
     if (!ALLOWED_EXTENSIONS.includes(ext)) {
-      toast('This file type is not supported. Allowed types: images (JPG, PNG, GIF, WEBP, BMP), PDF, Office documents (Word, Excel, PowerPoint), CSV, TXT, and ZIP.', { variant: 'error' })
-      e.target.value = ''
-      return
+      toast(
+        'This file type is not supported. Allowed types: images (JPG, PNG, GIF, WEBP, BMP), PDF, Office documents (Word, Excel, PowerPoint), CSV, TXT, and ZIP.',
+        { variant: 'error' },
+      );
+      e.target.value = '';
+      return;
     }
 
-    setIsUploading(true)
-    const formData = new FormData()
-    formData.append('file', file)
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append('file', file);
     if (selectedVisit?.id) {
-      formData.append('visit_id', String(selectedVisit.id))
+      formData.append('visit_id', String(selectedVisit.id));
     }
 
     router.post(`/patients/${patientId}/attachments`, formData, {
-      onSuccess: () => toast('File uploaded successfully!', { variant: 'success' }),
+      onSuccess: () =>
+        toast('File uploaded successfully!', { variant: 'success' }),
       onError: (errors) => {
-        const msg = Object.values(errors).join(', ') || 'Failed to upload file'
-        toast(msg, { variant: 'error' })
+        const msg = Object.values(errors).join(', ') || 'Failed to upload file';
+        toast(msg, { variant: 'error' });
       },
       onFinish: () => setIsUploading(false),
-    })
+    });
 
-    e.target.value = ''
-  }
+    e.target.value = '';
+  };
 
   const handleDelete = (attachment: Attachment) => {
     openAlert({
@@ -101,19 +161,33 @@ const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
       description: 'This action cannot be undone.',
       variant: 'danger',
       confirmLabel: 'Delete',
-      onConfirm: () => router.delete(`/patients/${patientId}/attachments/${attachment.id}`),
-    })
-  }
+      onConfirm: () =>
+        router.delete(`/patients/${patientId}/attachments/${attachment.id}`),
+    });
+  };
 
   return (
     <Box>
-      <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <Box
+        sx={{
+          mb: 2,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-               Attachments for this patient belong to selected visit
+          Attachments for this patient belong to selected visit
         </Typography>
         <Button
           variant="contained"
-          startIcon={isUploading ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
+          startIcon={
+            isUploading ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : (
+              <Plus size={16} />
+            )
+          }
           onClick={() => inputRef.current?.click()}
           disabled={isUploading}
         >
@@ -157,13 +231,13 @@ const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
             <File size={24} />
           </Box>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                  No files uploaded yet.
+            No files uploaded yet.
           </Typography>
         </Paper>
       ) : (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
           {attachments.map((a) => {
-            const meta = fileMeta(a.file_type)
+            const meta = fileMeta(a.file_type);
             return (
               <Paper
                 key={a.id}
@@ -214,14 +288,25 @@ const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
                       {a.file_name}
                     </Typography>
                   </Tooltip>
-                  <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mt: 0.25 }}>
+                  <Typography
+                    variant="caption"
+                    sx={{ color: 'text.secondary', display: 'block', mt: 0.25 }}
+                  >
                     {meta.label} • {formatSize(a.file_size)}
                     {a.uploaded_by && ` • by ${a.uploaded_by.name}`}
-                    {' • '}{formatDate(a.created_at)}
+                    {' • '}
+                    {formatDate(a.created_at)}
                   </Typography>
                 </Box>
 
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, flexShrink: 0 }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.5,
+                    flexShrink: 0,
+                  }}
+                >
                   <Tooltip title="Preview" placement="top">
                     <IconButton
                       size="small"
@@ -242,7 +327,7 @@ const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
                   </Tooltip>
                 </Box>
               </Paper>
-            )
+            );
           })}
         </Box>
       )}
@@ -264,18 +349,43 @@ const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
       )}
 
       {preview && !preview.file_type.includes('pdf') && (
-        <Modal open={!!preview} onClose={() => setPreview(null)} title={preview.file_name} maxWidth="4xl">
+        <Modal
+          open={!!preview}
+          onClose={() => setPreview(null)}
+          title={preview.file_name}
+          maxWidth="4xl"
+        >
           {preview.file_type.startsWith('image/') ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', bgcolor: '#f8fafc', borderRadius: 2 }}>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                bgcolor: '#f8fafc',
+                borderRadius: 2,
+              }}
+            >
               <Box
                 component="img"
                 src={`/patients/attachments/${preview.id}/view#view=FitH`}
                 alt={preview.file_name}
-                sx={{ maxWidth: '100%', maxHeight: '70vh', objectFit: 'contain', borderRadius: 2 }}
+                sx={{
+                  maxWidth: '100%',
+                  maxHeight: '70vh',
+                  objectFit: 'contain',
+                  borderRadius: 2,
+                }}
               />
             </Box>
           ) : (
-            <Box sx={{ py: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+            <Box
+              sx={{
+                py: 4,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 2,
+              }}
+            >
               <Box
                 sx={{
                   alignItems: 'center',
@@ -290,7 +400,8 @@ const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
                 <File size={32} />
               </Box>
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                        Preview not available for this file type, please download file instead.
+                Preview not available for this file type, please download file
+                instead.
               </Typography>
               <Button
                 variant="outlined"
@@ -300,14 +411,14 @@ const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                        Download file
+                Download file
               </Button>
             </Box>
           )}
         </Modal>
       )}
     </Box>
-  )
-}
+  );
+};
 
-export default AttachmentsTab
+export default AttachmentsTab;

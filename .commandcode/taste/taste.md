@@ -22,6 +22,9 @@ See [architecture/taste.md](architecture/taste.md)
 
 # typescript
 - Prefer placing shared TypeScript interfaces in dedicated files under the `interfaces` folder rather than declaring them inside feature/config modules. Confidence: 0.90
+
+# language
+- Use correct English spellings consistently across code identifiers, labels, and user-facing text — whenever a misspelling is discovered, correct it throughout the whole module (backend models/controllers/requests/migrations and frontend interfaces/components/templates) while keeping functionality identical. Confidence: 0.80
 # components
 - Keep the reusable form input component scoped to `<input>` elements only — do not add textarea support. Confidence: 0.60
 - Use `@base-ui/react` Select component instead of native HTML `<select>` for form select inputs. Confidence: 0.75

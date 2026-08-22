@@ -1,39 +1,48 @@
-import { Box } from '@mui/material'
-import { router } from '@inertiajs/react'
-import { useModal } from '@/components/modal'
-import { Pencil, StopCircle, Play, Pause, RotateCcw } from 'lucide-react'
-import type { IMedicationOrder } from '@/interfaces/IMedicationOrder'
-import type { IMedicationAdministration } from '@/interfaces/IMedicationAdministration'
-import CycleRow from './CycleRow'
-import { Button } from '@/components/ui/button'
-import IconButton from '@/components/button/iconButton'
+import { Box } from '@mui/material';
+import { router } from '@inertiajs/react';
+import { useModal } from '@/components/modal';
+import { Pencil, StopCircle, Play, Pause, RotateCcw } from 'lucide-react';
+import type { IMedicationOrder } from '@/interfaces/IMedicationOrder';
+import type { IMedicationAdministration } from '@/interfaces/IMedicationAdministration';
+import CycleRow from './CycleRow';
+import { Button } from '@/components/ui/button';
+import IconButton from '@/components/button/iconButton';
 
 const ORDER_STATUS: Record<string, { label: string; className: string }> = {
   active: { label: 'Active', className: 'bg-green-100 text-green-700' },
   on_hold: { label: 'On Hold', className: 'bg-amber-100 text-amber-700' },
   stopped: { label: 'Stopped', className: 'bg-red-100 text-red-700' },
   completed: { label: 'Completed', className: 'bg-blue-100 text-blue-700' },
-}
+};
 
 interface MedicationOrderGroupProps {
-    order: IMedicationOrder
-    visitId: number
-    onEdit: (order: IMedicationOrder) => void
+  order: IMedicationOrder;
+  visitId: number;
+  onEdit: (order: IMedicationOrder) => void;
 }
 
-const MedicationOrderGroup = ({ order, visitId, onEdit }: MedicationOrderGroupProps) => {
-  const { openAlert } = useModal()
+const MedicationOrderGroup = ({
+  order,
+  visitId,
+  onEdit,
+}: MedicationOrderGroupProps) => {
+  const { openAlert } = useModal();
 
-  const statusBadge = ORDER_STATUS[order.status] ?? ORDER_STATUS.active
-  const medicineName = order.medicine?.name ?? 'Unknown'
-  const unitPrice = order.medicine?.unit_price
+  const statusBadge = ORDER_STATUS[order.status] ?? ORDER_STATUS.active;
+  const medicineName = order.medicine?.name ?? 'Unknown';
+  const unitPrice = order.medicine?.unit_price;
 
   const hasAdministrationActivity = order.administrations.some(
-    (d) => d.status === 'provided' || d.status === 'missed' || d.status === 'refused'
-  )
-  const canEdit = !hasAdministrationActivity && (order.status === 'active' || order.status === 'on_hold')
+    (d) =>
+      d.status === 'provided' ||
+      d.status === 'missed' ||
+      d.status === 'refused',
+  );
+  const canEdit =
+    !hasAdministrationActivity &&
+    (order.status === 'active' || order.status === 'on_hold');
 
-  const totalDoses = order.duration ?? 0
+  const totalDoses = order.duration ?? 0;
 
   const handleStop = () => {
     openAlert({
@@ -41,9 +50,10 @@ const MedicationOrderGroup = ({ order, visitId, onEdit }: MedicationOrderGroupPr
       description: 'All pending doses will be cancelled.',
       variant: 'danger',
       confirmLabel: 'Stop',
-      onConfirm: () => router.post(`/visits/${visitId}/medications/${order.id}/stop`, {}),
-    })
-  }
+      onConfirm: () =>
+        router.post(`/visits/${visitId}/medications/${order.id}/stop`, {}),
+    });
+  };
 
   const handleContinue = () => {
     openAlert({
@@ -51,9 +61,10 @@ const MedicationOrderGroup = ({ order, visitId, onEdit }: MedicationOrderGroupPr
       description: `A new treatment cycle will begin (Cycle ${order.cycle_no + 1}).`,
       variant: 'info',
       confirmLabel: 'Continue',
-      onConfirm: () => router.post(`/visits/${visitId}/medications/${order.id}/continue`, {}),
-    })
-  }
+      onConfirm: () =>
+        router.post(`/visits/${visitId}/medications/${order.id}/continue`, {}),
+    });
+  };
 
   const handleHold = () => {
     openAlert({
@@ -61,27 +72,37 @@ const MedicationOrderGroup = ({ order, visitId, onEdit }: MedicationOrderGroupPr
       description: 'Doses cannot be administered while on hold.',
       variant: 'warning',
       confirmLabel: 'Hold',
-      onConfirm: () => router.post(`/visits/${visitId}/medications/${order.id}/hold`, {}),
-    })
-  }
+      onConfirm: () =>
+        router.post(`/visits/${visitId}/medications/${order.id}/hold`, {}),
+    });
+  };
 
   const handleResume = () => {
-    router.post(`/visits/${visitId}/medications/${order.id}/resume`, {})
-  }
+    router.post(`/visits/${visitId}/medications/${order.id}/resume`, {});
+  };
 
-  const administrationsByCycle = order.administrations.reduce<Record<number, IMedicationAdministration[]>>((acc, admin) => {
-    const c = admin.cycle_no ?? 1
-    if (!acc[c]) acc[c] = []
-    acc[c].push(admin)
-    return acc
-  }, {})
+  const administrationsByCycle = order.administrations.reduce<
+    Record<number, IMedicationAdministration[]>
+  >((acc, admin) => {
+    const c = admin.cycle_no ?? 1;
+    if (!acc[c]) acc[c] = [];
+    acc[c].push(admin);
+    return acc;
+  }, {});
 
   const cycles = Object.keys(administrationsByCycle)
     .map(Number)
-    .sort((a, b) => a - b)
+    .sort((a, b) => a - b);
 
   return (
-    <Box sx={{ border: '1px solid #e2e8f0', borderRadius: 2, bgcolor: '#fff', overflow: 'hidden' }}>
+    <Box
+      sx={{
+        border: '1px solid #e2e8f0',
+        borderRadius: 2,
+        bgcolor: '#fff',
+        overflow: 'hidden',
+      }}
+    >
       {/* Order Header */}
       <Box
         sx={{
@@ -96,7 +117,9 @@ const MedicationOrderGroup = ({ order, visitId, onEdit }: MedicationOrderGroupPr
         <Box>
           {/* Medicine name + status badge */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 0.5 }}>
-            <Box sx={{ fontWeight: 600, fontSize: 16, color: '#1e293b' }}>{medicineName}</Box>
+            <Box sx={{ fontWeight: 600, fontSize: 16, color: '#1e293b' }}>
+              {medicineName}
+            </Box>
             <Box
               className={statusBadge.className}
               sx={{
@@ -112,8 +135,19 @@ const MedicationOrderGroup = ({ order, visitId, onEdit }: MedicationOrderGroupPr
             </Box>
           </Box>
           {/* Dosage / Route / Interval */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#64748b', fontSize: 13, flexWrap: 'wrap' }}>
-            <Box>{order.dosage} {order.unit}</Box>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              color: '#64748b',
+              fontSize: 13,
+              flexWrap: 'wrap',
+            }}
+          >
+            <Box>
+              {order.dosage} {order.unit}
+            </Box>
             <Box>&middot;</Box>
             <Box>{order.route}</Box>
             <Box>&middot;</Box>
@@ -126,17 +160,27 @@ const MedicationOrderGroup = ({ order, visitId, onEdit }: MedicationOrderGroupPr
             )}
           </Box>
           {order.created_by && (
-            <Box sx={{ fontSize: 12, color: '#94a3b8', mt: 0.5 }}>Dr. {order.created_by}</Box>
+            <Box sx={{ fontSize: 12, color: '#94a3b8', mt: 0.5 }}>
+              Dr. {order.created_by}
+            </Box>
           )}
           {order.notes && (
-            <Box sx={{ fontSize: 12, color: '#94a3b8', mt: 0.5 }}>{order.notes}</Box>
+            <Box sx={{ fontSize: 12, color: '#94a3b8', mt: 0.5 }}>
+              {order.notes}
+            </Box>
           )}
         </Box>
 
         {/* Action Buttons */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexShrink: 0 }}>
+        <Box
+          sx={{ display: 'flex', alignItems: 'center', gap: 1, flexShrink: 0 }}
+        >
           {canEdit && (
-            <IconButton onClick={() => onEdit(order)} aria-label="Edit order" title="Edit">
+            <IconButton
+              onClick={() => onEdit(order)}
+              aria-label="Edit order"
+              title="Edit"
+            >
               <Pencil size={14} />
             </IconButton>
           )}
@@ -201,9 +245,13 @@ const MedicationOrderGroup = ({ order, visitId, onEdit }: MedicationOrderGroupPr
           </Box>
 
           {cycles.map((cycleNo) => {
-            const cycleAdministrations = (administrationsByCycle[cycleNo] ?? []).sort(
-              (a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime()
-            )
+            const cycleAdministrations = (
+              administrationsByCycle[cycleNo] ?? []
+            ).sort(
+              (a, b) =>
+                new Date(a.scheduled_at).getTime() -
+                new Date(b.scheduled_at).getTime(),
+            );
             return (
               <CycleRow
                 key={cycleNo}
@@ -213,16 +261,24 @@ const MedicationOrderGroup = ({ order, visitId, onEdit }: MedicationOrderGroupPr
                 visitId={visitId}
                 orderStatus={order.status}
               />
-            )
+            );
           })}
         </Box>
       ) : (
-        <Box sx={{ px: 3, py: 4, textAlign: 'center', color: '#94a3b8', fontSize: 13 }}>
-               No doses recorded yet
+        <Box
+          sx={{
+            px: 3,
+            py: 4,
+            textAlign: 'center',
+            color: '#94a3b8',
+            fontSize: 13,
+          }}
+        >
+          No doses recorded yet
         </Box>
       )}
     </Box>
-  )
-}
+  );
+};
 
-export default MedicationOrderGroup
+export default MedicationOrderGroup;

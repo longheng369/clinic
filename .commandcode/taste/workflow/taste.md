@@ -6,6 +6,8 @@
 - Run `npx tsc --noEmit` after TypeScript/TSX changes to verify no type errors before declaring completion. Confidence: 0.75
 - Use `php artisan ide-helper:generate` and `php artisan ide-helper:models` to give the IDE exact Laravel model signatures and eliminate Intelephense false-positive warnings on Eloquent magic methods. Confidence: 0.55
 - Run eslint on modified files after a refactor to confirm they pass lint before declaring completion. Confidence: 0.55
+- Fix lint issues by running the project's `lint:fix` script (`eslint ./resources/js --fix`) and then manually resolving any remaining errors, so the final lint output is clean. Confidence: 0.65
+- Configure project ESLint so `npm run lint:fix` auto-fixes all formatting across `resources/js` (via `@stylistic/eslint-plugin` in the ESLint 9 flat config) rather than expecting manual style correction. Confidence: 0.80
 - For feature changes or significant refactors, write a detailed plan and get explicit approval before writing implementation code. Confidence: 0.60
 - When the user explicitly provides a todo checklist and says to implement it, proceed directly with the listed work rather than requesting another approval step. Confidence: 0.85
 - Do not create test cases when implementing features unless the user explicitly requests them. Confidence: 1.00
@@ -13,3 +15,7 @@
 - In medication administration tracking, each "Provide" action marks a single individual dose as administered (do not batch multiple doses under one click based on interval like TID). Confidence: 0.70
 - For the MAR (medication administration record) tab, display medication orders as separate table rows rather than inside accordion/collapsible cards. Confidence: 0.70
 - Show a success toast after successful create and edit mutations, using distinct feedback messages for created versus updated records. Confidence: 0.70
+- For suspected business-logic problems, audit the complete end-to-end flow and report cases that do not make business sense before implementing fixes. Confidence: 0.75
+- Favor scoped, focused commits: when committing, stage only the files relevant to the single requested change and leave unrelated in-progress work (e.g., other features) uncommitted in the working tree. In particular, group all code-formatting/lint (e.g., ESLint) changes into their own dedicated commit, separate from functional feature work. Confidence: 0.75
+- Include a `Co-authored-by: CommandCodeBot <noreply@commandcode.ai>` trailer in commit messages. Confidence: 0.60
+- Before pushing an unpushed commit, amend the message to fix typos (especially awkward ones for a spelling-fix commit) rather than leaving them in history. Confidence: 0.55

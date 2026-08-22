@@ -26,3 +26,4 @@
 - Use MUI as the sole UI and styling system: eliminate Tailwind CSS and its utility classes/directives rather than mixing Tailwind with MUI. Confidence: 0.95
 - For tabular pages that should match the Patients feature, prefer the Patients-style MUI X `DataGrid` pattern over the reusable `DataTable` component. Confidence: 0.85
 - Prefer table components to have a visible border style around the table, with visually collapsed internal vertical and horizontal dividers (one border per shared edge, avoiding doubled lines); keep the final column’s outer edge clean when appropriate. Confidence: 0.95
+- Standardize TypeScript/JavaScript formatting on 2-space indentation, single quotes, and no semicolons (`@stylistic/eslint-plugin`), overriding the consultation module's original 3-space style. Confidence: 0.65

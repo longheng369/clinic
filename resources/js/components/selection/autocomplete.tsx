@@ -1,18 +1,18 @@
-import { Autocomplete as MuiAutocomplete, TextField } from '@mui/material'
+import { Autocomplete as MuiAutocomplete, TextField } from '@mui/material';
 
 type Option<T> = {
-   value: T
-   label: string
-}
+  value: T;
+  label: string;
+};
 
 type Props<T> = {
-   options: Option<T>[]
-   value?: T
-   onChange?: (value: T) => void
-   placeholder?: string
-   searchPlaceholder?: string
-   notFoundText?: string
-}
+  options: Option<T>[];
+  value?: T;
+  onChange?: (value: T) => void;
+  placeholder?: string;
+  searchPlaceholder?: string;
+  notFoundText?: string;
+};
 
 const Autocomplete = <T extends string | number>({
   options,
@@ -22,17 +22,20 @@ const Autocomplete = <T extends string | number>({
   searchPlaceholder = 'Search...',
   notFoundText = 'No results found',
 }: Props<T>) => {
-  const selectedOption = options.find((option) => option.value === value) ?? null
+  const selectedOption =
+    options.find((option) => option.value === value) ?? null;
 
   return (
     <MuiAutocomplete
       options={options}
       value={selectedOption}
       onChange={(_, option) => {
-        if (option) onChange?.(option.value)
+        if (option) onChange?.(option.value);
       }}
       getOptionLabel={(option) => option.label}
-      isOptionEqualToValue={(option, selected) => option.value === selected.value}
+      isOptionEqualToValue={(option, selected) =>
+        option.value === selected.value
+      }
       noOptionsText={notFoundText}
       renderInput={(params) => (
         <TextField
@@ -41,7 +44,7 @@ const Autocomplete = <T extends string | number>({
         />
       )}
     />
-  )
-}
+  );
+};
 
-export default Autocomplete
+export default Autocomplete;

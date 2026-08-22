@@ -4,34 +4,41 @@ import {
   FormControlLabel,
   FormHelperText,
   type CheckboxProps as MuiCheckboxProps,
-} from '@mui/material'
+} from '@mui/material';
 import {
   useController,
   type Control,
   type FieldValues,
   type Path,
   type RegisterOptions,
-} from 'react-hook-form'
-import type { ReactNode } from 'react'
+} from 'react-hook-form';
+import type { ReactNode } from 'react';
 
 type Props<T extends FieldValues = FieldValues> = {
-   control: Control<T>
-   name: Path<T>
-   rules?: Omit<
-      RegisterOptions<T, Path<T>>,
-      'valueAsNumber' | 'valueAsDate' | 'setValueAs' | 'disabled'
-   >
-   label?: ReactNode
-   ariaLabel?: string
-   disabled?: boolean
-   value?: string | number
-   exclusive?: boolean
-   exclusiveValue?: string | number
-   onCheckedChange?: (checked: boolean) => void
+  control: Control<T>;
+  name: Path<T>;
+  rules?: Omit<
+    RegisterOptions<T, Path<T>>,
+    'valueAsNumber' | 'valueAsDate' | 'setValueAs' | 'disabled'
+  >;
+  label?: ReactNode;
+  ariaLabel?: string;
+  disabled?: boolean;
+  value?: string | number;
+  exclusive?: boolean;
+  exclusiveValue?: string | number;
+  onCheckedChange?: (checked: boolean) => void;
 } & Omit<
-   MuiCheckboxProps,
-   'checked' | 'defaultChecked' | 'disabled' | 'name' | 'onChange' | 'required' | 'slotProps' | 'value'
->
+  MuiCheckboxProps,
+  | 'checked'
+  | 'defaultChecked'
+  | 'disabled'
+  | 'name'
+  | 'onChange'
+  | 'required'
+  | 'slotProps'
+  | 'value'
+>;
 
 const Checkbox = <T extends FieldValues = FieldValues>({
   control,
@@ -46,33 +53,43 @@ const Checkbox = <T extends FieldValues = FieldValues>({
   onCheckedChange,
   ...rest
 }: Props<T>) => {
-  const { field, fieldState: { error } } = useController({ control, name, rules })
-  const helperTextId = `${String(name)}-helper-text`
-  const required = !!rules?.required
-  const fieldValues: Array<string | number> | null = value !== undefined
-    ? Array.isArray(field.value)
-      ? field.value as Array<string | number>
-      : []
-    : null
+  const {
+    field,
+    fieldState: { error },
+  } = useController({ control, name, rules });
+  const helperTextId = `${String(name)}-helper-text`;
+  const required = !!rules?.required;
+  const fieldValues: Array<string | number> | null =
+    value !== undefined
+      ? Array.isArray(field.value)
+        ? (field.value as Array<string | number>)
+        : []
+      : null;
   const checked = fieldValues
     ? value !== undefined && fieldValues.includes(value)
-    : field.value === true
+    : field.value === true;
 
   const handleChange = (nextChecked: boolean) => {
     if (fieldValues && value !== undefined) {
       const nextValues = nextChecked
         ? exclusive
           ? [value]
-          : [...fieldValues.filter((fieldValue) => fieldValue !== exclusiveValue && fieldValue !== value), value]
-        : fieldValues.filter((fieldValue) => fieldValue !== value)
+          : [
+              ...fieldValues.filter(
+                (fieldValue) =>
+                  fieldValue !== exclusiveValue && fieldValue !== value,
+              ),
+              value,
+            ]
+        : fieldValues.filter((fieldValue) => fieldValue !== value);
 
-      field.onChange(nextValues)
+      field.onChange(nextValues);
     } else {
-      field.onChange(nextChecked)
+      field.onChange(nextChecked);
     }
 
-    onCheckedChange?.(nextChecked)
-  }
+    onCheckedChange?.(nextChecked);
+  };
 
   const checkbox = (
     <MuiCheckbox
@@ -92,7 +109,7 @@ const Checkbox = <T extends FieldValues = FieldValues>({
         },
       }}
     />
-  )
+  );
 
   return (
     <FormControl error={!!error} required={required} disabled={disabled}>
@@ -103,10 +120,14 @@ const Checkbox = <T extends FieldValues = FieldValues>({
           label={label}
           required={required}
         />
-      ) : checkbox}
-      {error?.message && <FormHelperText id={helperTextId}>{error.message}</FormHelperText>}
+      ) : (
+        checkbox
+      )}
+      {error?.message && (
+        <FormHelperText id={helperTextId}>{error.message}</FormHelperText>
+      )}
     </FormControl>
-  )
-}
+  );
+};
 
-export default Checkbox
+export default Checkbox;

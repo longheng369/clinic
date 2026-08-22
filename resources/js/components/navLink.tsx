@@ -1,10 +1,10 @@
-import { Link as InertiaLink } from '@inertiajs/react'
-import { styled } from '@mui/material/styles'
-import type { ComponentPropsWithoutRef } from 'react'
+import { Link as InertiaLink } from '@inertiajs/react';
+import { styled } from '@mui/material/styles';
+import type { ComponentPropsWithoutRef } from 'react';
 
 type Props = {
-   active?: boolean
-} & ComponentPropsWithoutRef<typeof InertiaLink>
+  active?: boolean;
+} & ComponentPropsWithoutRef<typeof InertiaLink>;
 
 const StyledLink = styled(InertiaLink, {
   shouldForwardProp: (prop) => prop !== 'active',
@@ -22,12 +22,12 @@ const StyledLink = styled(InertiaLink, {
     color: theme.palette.text.primary,
     borderColor: active ? theme.palette.primary.dark : theme.palette.divider,
   },
-}))
+}));
 
 const NavLink = ({ active = false, children, ...props }: Props) => (
   <StyledLink {...props} active={active}>
     {children}
   </StyledLink>
-)
+);
 
-export default NavLink
+export default NavLink;

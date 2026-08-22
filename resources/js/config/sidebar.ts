@@ -9,8 +9,8 @@ import {
   Settings,
   Syringe,
   Users,
-} from 'lucide-react'
-import type { ISidebarSection } from '@/interfaces/ISidebar'
+} from 'lucide-react';
+import type { ISidebarSection } from '@/interfaces/ISidebar';
 
 export const sidebarSections: ISidebarSection[] = [
   {
@@ -18,7 +18,12 @@ export const sidebarSections: ISidebarSection[] = [
     items: [
       { label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
       { label: 'Patients', icon: Users, path: '/patients' },
-      { label: 'Appointments', icon: Calendar, path: '/appointments', badge: 3 },
+      {
+        label: 'Appointments',
+        icon: Calendar,
+        path: '/appointments',
+        badge: 3,
+      },
     ],
   },
   {
@@ -26,7 +31,11 @@ export const sidebarSections: ISidebarSection[] = [
     items: [
       { label: 'Medicines', icon: Pill, path: '/medicines' },
       { label: 'Vaccines', icon: Syringe, path: '/vaccines' },
-      { label: 'Paraclinic', icon: ClipboardList, path: '/paraclinic-requests' },
+      {
+        label: 'Paraclinic',
+        icon: ClipboardList,
+        path: '/paraclinic-requests',
+      },
     ],
   },
   {
@@ -43,4 +52,4 @@ export const sidebarSections: ISidebarSection[] = [
       { label: 'Help', icon: HelpCircle, path: '/help' },
     ],
   },
-]
+];

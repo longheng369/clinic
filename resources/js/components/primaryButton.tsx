@@ -1,11 +1,11 @@
-import { Button, type ButtonProps } from '@mui/material'
+import { Button, type ButtonProps } from '@mui/material';
 
-type Props = ButtonProps
+type Props = ButtonProps;
 
 const PrimaryButton = ({ children, ...props }: Props) => (
   <Button {...props} variant="contained" color="primary">
     {children}
   </Button>
-)
+);
 
-export default PrimaryButton
+export default PrimaryButton;

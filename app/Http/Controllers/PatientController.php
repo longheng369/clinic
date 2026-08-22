@@ -106,8 +106,8 @@ class PatientController extends Controller
                         'created_at' => $s->created_at,
                     ]);
             }, 'surveillance'),
-            'paraclinicRequests' => Inertia::defer(function () use ($patient, $selectedVisitId) {
-                return $patient->paraclinicRequests()
+            'paraClinicRequests' => Inertia::defer(function () use ($patient, $selectedVisitId) {
+                return $patient->paraClinicRequests()
                     ->with(['doctor', 'tests'])
                     ->when($selectedVisitId, fn ($q) => $q->where('visit_id', $selectedVisitId))
                     ->latest()
@@ -123,7 +123,7 @@ class PatientController extends Controller
                         'payment_status' => $r->payment_status,
                         'total_amount' => (float) $r->total_amount,
                     ]);
-            }, 'paraclinic'),
+            }, 'paraClinic'),
             'medicationOrders' => Inertia::defer(function () use ($selectedVisit) {
                 if (! $selectedVisit) {
                     return ['data' => [], 'current_page' => 1, 'last_page' => 1, 'per_page' => 10, 'total' => 0, 'from' => 0, 'to' => 0];

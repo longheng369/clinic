@@ -1,4 +1,4 @@
-import { IOption } from "@/interfaces/IOption";
+import { IOption } from '@/interfaces/IOption';
 
 export const MEDICINE_ROUTE: IOption<string>[] = [
   { value: 'PO', label: 'PO (Oral)' },

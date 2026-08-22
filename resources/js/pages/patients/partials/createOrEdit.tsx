@@ -1,12 +1,12 @@
-import { useForm } from 'react-hook-form'
-import Input from '@/components/form/input'
-import Select from '@/components/form/select'
-import DateInput from '@/components/form/date'
+import { useForm } from 'react-hook-form';
+import Input from '@/components/form/input';
+import Select from '@/components/form/select';
+import DateInput from '@/components/form/date';
 import { IPatient, IPatientFormData } from '@/interfaces/IPatient';
 import { useState } from 'react';
 import { router } from '@inertiajs/react';
-import { useToast } from '@/components/toast'
-import { DialogActions, DialogContent, Grid, Box, Button } from '@mui/material'
+import { useToast } from '@/components/toast';
+import { DialogActions, DialogContent, Grid, Box, Button } from '@mui/material';
 import { useModal } from '@/components/modal';
 
 const BLOOD_GROUPS = [
@@ -18,16 +18,16 @@ const BLOOD_GROUPS = [
   { value: 'AB-', label: 'AB-' },
   { value: 'O+', label: 'O+' },
   { value: 'O-', label: 'O-' },
-]
+];
 
 interface PatientFormProps {
-   patient?: IPatient;
+  patient?: IPatient;
 }
 
 const PatientForm = ({ patient }: PatientFormProps) => {
-  const { closeModal } = useModal()
+  const { closeModal } = useModal();
   const [isProcessing, setIsProcessing] = useState(false);
-  const { toast } = useToast()
+  const { toast } = useToast();
   const { control, handleSubmit } = useForm<IPatientFormData>({
     defaultValues: patient ?? {
       khmer_first_name: '',
@@ -41,35 +41,49 @@ const PatientForm = ({ patient }: PatientFormProps) => {
       gender: 'male',
       allergy: '',
       national_id: '',
-    }
+    },
   });
 
   const onSubmit = handleSubmit((data) => {
     setIsProcessing(true);
     if (patient) {
-      router.put(`/patients/${patient.id}`, { ...data }, {
-        onSuccess: () => {
-          closeModal();
-          toast('Patient updated successfully!', { variant: 'success', description: 'The patient has been updated.' });
+      router.put(
+        `/patients/${patient.id}`,
+        { ...data },
+        {
+          onSuccess: () => {
+            closeModal();
+            toast('Patient updated successfully!', {
+              variant: 'success',
+              description: 'The patient has been updated.',
+            });
+          },
+          onFinish: () => {
+            setIsProcessing(false);
+          },
         },
-        onFinish: () => {
-          setIsProcessing(false);
-        },
-      });
+      );
 
       return;
     }
 
-    router.post('/patients', { ...data }, {
-      onSuccess: () => {
-        closeModal();
-        toast('Patient created successfully!', { variant: 'success', description: 'The patient has been created.' })
+    router.post(
+      '/patients',
+      { ...data },
+      {
+        onSuccess: () => {
+          closeModal();
+          toast('Patient created successfully!', {
+            variant: 'success',
+            description: 'The patient has been created.',
+          });
+        },
+        onFinish: () => {
+          setIsProcessing(false);
+        },
       },
-      onFinish: () => {
-        setIsProcessing(false);
-      },
-    })
-  })
+    );
+  });
 
   return (
     <Box component="form" onSubmit={onSubmit} noValidate>
@@ -80,13 +94,15 @@ const PatientForm = ({ patient }: PatientFormProps) => {
               control={control}
               name="khmer_first_name"
               label="Khmer First Name"
-              sx={{ '& .MuiInputBase-input': { fontFamily: 'var(--font-khmer)' } }}
+              sx={{
+                '& .MuiInputBase-input': { fontFamily: 'var(--font-khmer)' },
+              }}
               slotProps={{ htmlInput: { spellCheck: false } }}
               rules={{
                 required: 'This field is required',
                 pattern: {
                   value: /^[\u1780-\u17FF\s]+$/,
-                  message: "Only Khmer characters are allowed",
+                  message: 'Only Khmer characters are allowed',
                 },
               }}
             />
@@ -96,13 +112,15 @@ const PatientForm = ({ patient }: PatientFormProps) => {
               control={control}
               name="khmer_last_name"
               label="Khmer Last Name"
-              sx={{ '& .MuiInputBase-input': { fontFamily: 'var(--font-khmer)' } }}
+              sx={{
+                '& .MuiInputBase-input': { fontFamily: 'var(--font-khmer)' },
+              }}
               slotProps={{ htmlInput: { spellCheck: false } }}
               rules={{
                 required: 'This field is required',
                 pattern: {
                   value: /^[\u1780-\u17FF\s]+$/,
-                  message: "Only Khmer characters are allowed",
+                  message: 'Only Khmer characters are allowed',
                 },
               }}
             />
@@ -160,46 +178,26 @@ const PatientForm = ({ patient }: PatientFormProps) => {
             />
           </Grid>
           <Grid size={{ md: 6 }}>
-            <Input
-              control={control}
-              name="national_id"
-              label="National ID"
-            />
+            <Input control={control} name="national_id" label="National ID" />
           </Grid>
           <Grid size={{ md: 6 }}>
-            <Input
-              control={control}
-              name="address"
-              label="Address"
-            />
+            <Input control={control} name="address" label="Address" />
           </Grid>
           <Grid size={{ md: 12 }}>
-            <Input
-              control={control}
-              name="allergy"
-              label="Allergy"
-            />
+            <Input control={control} name="allergy" label="Allergy" />
           </Grid>
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button
-          type="button"
-          onClick={() => closeModal()}
-          variant="outlined"
-        >
-               Cancel
+        <Button type="button" onClick={() => closeModal()} variant="outlined">
+          Cancel
         </Button>
-        <Button
-          type="submit"
-          disabled={isProcessing}
-          variant='contained'
-        >
-          {patient ? "Save" : "Create"}
+        <Button type="submit" disabled={isProcessing} variant="contained">
+          {patient ? 'Save' : 'Create'}
         </Button>
       </DialogActions>
     </Box>
-  )
-}
+  );
+};
 
-export default PatientForm
+export default PatientForm;

@@ -61,7 +61,7 @@ class Patient extends Model
         return $this->hasMany(Consultation::class);
     }
 
-    public function paraclinicRequests(): HasMany
+    public function paraClinicRequests(): HasMany
     {
         return $this->hasMany(ParaclinicRequest::class);
     }

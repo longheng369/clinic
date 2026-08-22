@@ -7,10 +7,11 @@ use App\Http\Requests\RefusedDoseRequest;
 use App\Models\MedicationAdministration;
 use App\Models\MedicationAudit;
 use App\Models\Visit;
+use Illuminate\Http\Request;
 
 class MedicationAdministrationController extends Controller
 {
-    public function administer(Visit $visit, MedicationAdministration $medicationAdministration)
+    public function administer(Visit $visit, MedicationAdministration $medicationAdministration, Request $request)
     {
         abort_unless($medicationAdministration->medicationOrder->visit_id === $visit->id, 404);
 
@@ -35,6 +36,7 @@ class MedicationAdministrationController extends Controller
             'administered_at' => now(),
             'administered_by' => auth()->id(),
             'unit_price' => $medicine?->unit_price,
+            'note' => $request->input('note'),
         ]);
 
         MedicationAudit::log(auth()->user(), 'dose_provided', $medicationAdministration);

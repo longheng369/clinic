@@ -1,13 +1,11 @@
-import { FormLabel, type FormLabelProps } from '@mui/material'
+import { FormLabel, type FormLabelProps } from '@mui/material';
 
 type Props = FormLabelProps & {
-   value?: string
-}
+  value?: string;
+};
 
 const InputLabel = ({ value, children, ...props }: Props) => (
-  <FormLabel {...props}>
-    {value ?? children}
-  </FormLabel>
-)
+  <FormLabel {...props}>{value ?? children}</FormLabel>
+);
 
-export default InputLabel
+export default InputLabel;

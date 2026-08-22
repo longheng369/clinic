@@ -1,14 +1,17 @@
-import { usePage } from '@inertiajs/react'
-import { router } from '@inertiajs/react'
-import { useModal } from '@/components/modal'
-import { Pencil, Plus, Printer, Save, Stethoscope, X } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
-import { IPrescription, IPrescriptionFormData } from '@/interfaces/IPrescription'
-import { IPatient } from '@/interfaces/IPatient'
-import MedicineItemForm from './partials/prescriptionItemForm'
-import { formatDob } from '@/utils/date'
-import { useFieldArray, useForm } from 'react-hook-form'
-import { useToast } from '@/components/toast'
+import { usePage } from '@inertiajs/react';
+import { router } from '@inertiajs/react';
+import { useModal } from '@/components/modal';
+import { Pencil, Plus, Printer, Save, Stethoscope, X } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import {
+  IPrescription,
+  IPrescriptionFormData,
+} from '@/interfaces/IPrescription';
+import { IPatient } from '@/interfaces/IPatient';
+import MedicineItemForm from './partials/prescriptionItemForm';
+import { formatDob } from '@/utils/date';
+import { useFieldArray, useForm } from 'react-hook-form';
+import { useToast } from '@/components/toast';
 import {
   Box,
   Button,
@@ -20,14 +23,14 @@ import {
   TableHead,
   TableRow,
   Typography,
-} from '@mui/material'
-import { IVisitWithMetaData } from '@/interfaces/IVisit'
-import { MEDICINE_INSTRUCTION } from '@/config/prescription'
-import GridItemInfo from './partials/gridItemInfo'
+} from '@mui/material';
+import { IVisitWithMetaData } from '@/interfaces/IVisit';
+import { MEDICINE_INSTRUCTION } from '@/config/prescription';
+import GridItemInfo from './partials/gridItemInfo';
 
-type DoseSlot = 'morning' | 'afternoon' | 'evening' | 'night'
+type DoseSlot = 'morning' | 'afternoon' | 'evening' | 'night';
 
-const doseSlots: DoseSlot[] = ['morning', 'afternoon', 'evening', 'night']
+const doseSlots: DoseSlot[] = ['morning', 'afternoon', 'evening', 'night'];
 
 const frequencySlots: Record<string, DoseSlot[]> = {
   QD: ['morning'],
@@ -36,67 +39,84 @@ const frequencySlots: Record<string, DoseSlot[]> = {
   QID: ['morning', 'afternoon', 'evening', 'night'],
   QHS: ['night'],
   PRN: ['morning'],
-}
+};
 
 const getFrequency = (item: IPrescriptionFormData['items'][number]) => {
-  const currentFrequency = item.frequency?.toUpperCase()
-  const expectedSlots = currentFrequency ? frequencySlots[currentFrequency] : undefined
-  const activeSlots = doseSlots.filter((slot) => Number(item[slot]) > 0)
+  const currentFrequency = item.frequency?.toUpperCase();
+  const expectedSlots = currentFrequency
+    ? frequencySlots[currentFrequency]
+    : undefined;
+  const activeSlots = doseSlots.filter((slot) => Number(item[slot]) > 0);
 
-  if (expectedSlots && activeSlots.length === expectedSlots.length && expectedSlots.every((slot) => activeSlots.includes(slot))) {
-    return currentFrequency
+  if (
+    expectedSlots &&
+    activeSlots.length === expectedSlots.length &&
+    expectedSlots.every((slot) => activeSlots.includes(slot))
+  ) {
+    return currentFrequency;
   }
 
-  return (['QD', 'BID', 'TID', 'QID'][Math.min(activeSlots.length, 4) - 1] ?? 'QD')
-}
+  return (
+    ['QD', 'BID', 'TID', 'QID'][Math.min(activeSlots.length, 4) - 1] ?? 'QD'
+  );
+};
 
 type Props = {
-   patient: IPatient;
-   selectedVisit: IVisitWithMetaData | null;
-   prescription: IPrescription | null;
-}
+  patient: IPatient;
+  selectedVisit: IVisitWithMetaData | null;
+  prescription: IPrescription | null;
+};
 
-const PrescriptionTab = ({
-  patient,
-  selectedVisit,
-  prescription,
-}: Props) => {
-  const { openModal, closeModal } = useModal()
-  const { toast } = useToast()
-  const [isSaving, setIsSaving] = useState(false)
-  const [isEditing, setIsEditing] = useState(!prescription)
+const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
+  const { openModal, closeModal } = useModal();
+  const { toast } = useToast();
+  const [isSaving, setIsSaving] = useState(false);
+  const [isEditing, setIsEditing] = useState(!prescription);
   const { medicines, units } = usePage<{
-      medicines: { id: number; name: string }[]
-      units: { id: number; name: string }[]
-   }>().props
-  const prescriptionItems = useMemo<IPrescriptionFormData['items']>(() => (
-    prescription?.items.map((item) => {
-      const slots = frequencySlots[item.frequency?.toUpperCase()] ?? ['morning']
-      const dose = Number(item.dosage) || 0
+    medicines: { id: number; name: string }[];
+    units: { id: number; name: string }[];
+  }>().props;
+  const prescriptionItems = useMemo<IPrescriptionFormData['items']>(
+    () =>
+      prescription?.items.map((item) => {
+        const slots = frequencySlots[item.frequency?.toUpperCase()] ?? [
+          'morning',
+        ];
+        const dose = Number(item.dosage) || 0;
 
-      return {
-        medicine: medicines.find((medicine) => medicine.id === item.medicine?.id) ?? item.medicine ?? { id: 0, name: '' },
-        quantity: item.quantity ?? 0,
-        unit: units.find((unit) => unit.name === item.unit) ?? { id: 0, name: item.unit },
-        route: item.route,
-        morning: slots.includes('morning') ? dose : null,
-        afternoon: slots.includes('afternoon') ? dose : null,
-        evening: slots.includes('evening') ? dose : null,
-        night: slots.includes('night') ? dose : null,
-        numberOfDay: item.number_of_day ?? null,
-        frequency: item.frequency,
-        notes: item.notes,
-        instruction: MEDICINE_INSTRUCTION.find((opt) => opt.value === item.instruction) ?? null
-      }
-    }) ?? []
-  ), [medicines, prescription, units]);
+        return {
+          medicine: medicines.find(
+            (medicine) => medicine.id === item.medicine?.id,
+          ) ??
+            item.medicine ?? { id: 0, name: '' },
+          quantity: item.quantity ?? 0,
+          unit: units.find((unit) => unit.name === item.unit) ?? {
+            id: 0,
+            name: item.unit,
+          },
+          route: item.route,
+          morning: slots.includes('morning') ? dose : null,
+          afternoon: slots.includes('afternoon') ? dose : null,
+          evening: slots.includes('evening') ? dose : null,
+          night: slots.includes('night') ? dose : null,
+          numberOfDay: item.number_of_day ?? null,
+          frequency: item.frequency,
+          notes: item.notes,
+          instruction:
+            MEDICINE_INSTRUCTION.find(
+              (opt) => opt.value === item.instruction,
+            ) ?? null,
+        };
+      }) ?? [],
+    [medicines, prescription, units],
+  );
 
   const { control, reset } = useForm<IPrescriptionFormData>({
     defaultValues: { items: prescriptionItems },
   });
   const { fields, append, update } = useFieldArray({
     control,
-    name: 'items'
+    name: 'items',
   });
 
   useEffect(() => {
@@ -104,16 +124,20 @@ const PrescriptionTab = ({
   }, [prescriptionItems, reset]);
 
   useEffect(() => {
-    setIsEditing(!prescription)
-  }, [prescription?.id, selectedVisit?.id])
+    setIsEditing(!prescription);
+  }, [prescription?.id, selectedVisit?.id]);
 
   const availableMedicineOptions = useMemo(() => {
-    const existingMedicineIds = new Set(fields.map((field) => field.medicine?.id));
-    return medicines.filter((medicine) => !existingMedicineIds.has(medicine.id));
+    const existingMedicineIds = new Set(
+      fields.map((field) => field.medicine?.id),
+    );
+    return medicines.filter(
+      (medicine) => !existingMedicineIds.has(medicine.id),
+    );
   }, [medicines, fields]);
 
   const openAddModal = () => {
-    if (!isEditing) return
+    if (!isEditing) return;
 
     openModal({
       title: 'Add Medicine',
@@ -128,11 +152,11 @@ const PrescriptionTab = ({
         />
       ),
       config: { preventClickAway: true, maxWidth: '2xl' },
-    })
-  }
+    });
+  };
 
   const openEditModal = (index: number) => {
-    if (!isEditing) return
+    if (!isEditing) return;
 
     const item = fields[index];
     openModal({
@@ -149,23 +173,27 @@ const PrescriptionTab = ({
         />
       ),
       config: { preventClickAway: true, maxWidth: '2xl' },
-    })
-  }
+    });
+  };
 
   const cancelEditing = () => {
-    reset({ items: prescriptionItems })
-    setIsEditing(false)
-  }
+    reset({ items: prescriptionItems });
+    setIsEditing(false);
+  };
 
   const savePrescription = () => {
     if (!selectedVisit || fields.length === 0) {
-      return
+      return;
     }
 
-    const hasInvalidItem = fields.some((item) => !item.medicine?.id || !item.unit?.name)
+    const hasInvalidItem = fields.some(
+      (item) => !item.medicine?.id || !item.unit?.name,
+    );
     if (hasInvalidItem) {
-      toast('Each medicine must have a medicine and unit selected.', { variant: 'error' })
-      return
+      toast('Each medicine must have a medicine and unit selected.', {
+        variant: 'error',
+      });
+      return;
     }
 
     const payload = {
@@ -182,43 +210,48 @@ const PrescriptionTab = ({
         ),
         unit: item.unit.name,
         frequency: getFrequency(item),
-        number_of_day: item.numberOfDay && item.numberOfDay > 0 ? item.numberOfDay : null,
+        number_of_day:
+          item.numberOfDay && item.numberOfDay > 0 ? item.numberOfDay : null,
         quantity: item.quantity ?? null,
         notes: item.notes ?? null,
         instruction: item.instruction?.value ?? null,
       })),
-    }
+    };
 
-    setIsSaving(true)
+    setIsSaving(true);
     const options = {
       onSuccess: () => {
-        setIsEditing(false)
-        toast(prescription ? 'Prescription updated.' : 'Prescription saved.', { variant: 'success' })
+        setIsEditing(false);
+        toast(prescription ? 'Prescription updated.' : 'Prescription saved.', {
+          variant: 'success',
+        });
       },
       onError: () => {
-        toast('Unable to save prescription.', { variant: 'error' })
+        toast('Unable to save prescription.', { variant: 'error' });
       },
       onFinish: () => setIsSaving(false),
-    }
+    };
 
     if (prescription) {
-      router.put(`/patients/${patient.id}/prescriptions/${prescription.id}`, payload, options)
+      router.put(
+        `/patients/${patient.id}/prescriptions/${prescription.id}`,
+        payload,
+        options,
+      );
     } else {
-      router.post(`/patients/${patient.id}/prescriptions`, payload, options)
+      router.post(`/patients/${patient.id}/prescriptions`, payload, options);
     }
-  }
+  };
 
   if (!selectedVisit) {
     return (
       <Box>
-        <Typography component="h3">
-               Prescriptions
-        </Typography>
+        <Typography component="h3">Prescriptions</Typography>
         <Typography component="p" sx={{ mt: 0.5 }}>
-               Select a visit to manage prescriptions.
+          Select a visit to manage prescriptions.
         </Typography>
       </Box>
-    )
+    );
   }
 
   if (!prescription && fields.length === 0) {
@@ -233,9 +266,7 @@ const PrescriptionTab = ({
           textAlign: 'center',
         }}
       >
-        <Typography>
-               No Prescription
-        </Typography>
+        <Typography>No Prescription</Typography>
 
         <Typography
           component="p"
@@ -245,7 +276,7 @@ const PrescriptionTab = ({
             mb: 3,
           }}
         >
-               This visit doesn&apos;t have a prescription yet.
+          This visit doesn&apos;t have a prescription yet.
         </Typography>
 
         <Button
@@ -253,7 +284,7 @@ const PrescriptionTab = ({
           onClick={openAddModal}
           startIcon={<Plus size={16} />}
         >
-               Start Prescription
+          Start Prescription
         </Button>
       </Box>
     );
@@ -266,11 +297,31 @@ const PrescriptionTab = ({
         border: 1,
         borderColor: 'divider',
         position: 'relative',
-        p: 4
+        p: 4,
       }}
     >
-      <Typography sx={{ fontFamily: 'Moul', color: 'info.main', textAlign: 'center', letterSpacing: 1, fontSize: '1.3rem' }}>ព្រះរាជាណាចក្រកម្ពុជា</Typography>
-      <Typography sx={{ fontFamily: 'Moul', color: 'info.main', textAlign: 'center', letterSpacing: 1, mt: 0.5 }}>ជាតិ សាសនា ព្រះមហាក្សត្រ</Typography>
+      <Typography
+        sx={{
+          fontFamily: 'Moul',
+          color: 'info.main',
+          textAlign: 'center',
+          letterSpacing: 1,
+          fontSize: '1.3rem',
+        }}
+      >
+        ព្រះរាជាណាចក្រកម្ពុជា
+      </Typography>
+      <Typography
+        sx={{
+          fontFamily: 'Moul',
+          color: 'info.main',
+          textAlign: 'center',
+          letterSpacing: 1,
+          mt: 0.5,
+        }}
+      >
+        ជាតិ សាសនា ព្រះមហាក្សត្រ
+      </Typography>
 
       <Box
         sx={{
@@ -292,13 +343,43 @@ const PrescriptionTab = ({
 
       <Grid container spacing={1} sx={{ mt: 5 }}>
         {[
-          { label: 'ឈ្មោះខ្មែរ', value: `${patient.khmer_first_name} ${patient.khmer_last_name}`, fontFamily: 'var(--font-khmer)' },
-          { label: 'ឈ្មោះអង់គ្លេស', value: patient.first_name ? `${patient.last_name ?? ''} ${patient.first_name}`.trim() : '—', fontFamily: 'var(--font-khmer)' },
-          { label: 'ភេទ', value: patient.gender, fontFamily: 'var(--font-khmer)' },
-          { label: 'ថ្ងៃខែឆ្នាំកំណើត', value: formatDob(patient.date_of_birth), fontFamily: 'var(--font-khmer)' },
-          { label: 'ទូរស័ព្ទ', value: patient.phone_number, fontFamily: 'var(--font-khmer)' },
-          { label: 'ក្រុមឈាម', value: patient.blood_group ?? '—', fontFamily: 'var(--font-khmer)' },
-          { label: 'អត្តសញ្ញាណប័ណ្ណ', value: patient.national_id ?? '—', fontFamily: 'var(--font-khmer)' },
+          {
+            label: 'ឈ្មោះខ្មែរ',
+            value: `${patient.khmer_first_name} ${patient.khmer_last_name}`,
+            fontFamily: 'var(--font-khmer)',
+          },
+          {
+            label: 'ឈ្មោះអង់គ្លេស',
+            value: patient.first_name
+              ? `${patient.last_name ?? ''} ${patient.first_name}`.trim()
+              : '—',
+            fontFamily: 'var(--font-khmer)',
+          },
+          {
+            label: 'ភេទ',
+            value: patient.gender,
+            fontFamily: 'var(--font-khmer)',
+          },
+          {
+            label: 'ថ្ងៃខែឆ្នាំកំណើត',
+            value: formatDob(patient.date_of_birth),
+            fontFamily: 'var(--font-khmer)',
+          },
+          {
+            label: 'ទូរស័ព្ទ',
+            value: patient.phone_number,
+            fontFamily: 'var(--font-khmer)',
+          },
+          {
+            label: 'ក្រុមឈាម',
+            value: patient.blood_group ?? '—',
+            fontFamily: 'var(--font-khmer)',
+          },
+          {
+            label: 'អត្តសញ្ញាណប័ណ្ណ',
+            value: patient.national_id ?? '—',
+            fontFamily: 'var(--font-khmer)',
+          },
         ].map((info) => (
           <Grid key={info.label} size={{ md: 4 }}>
             <GridItemInfo label={info.label} value={info.value} />
@@ -307,36 +388,75 @@ const PrescriptionTab = ({
       </Grid>
 
       <Box sx={{ mt: 2 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'end',
+          }}
+        >
           <Box>
             <Typography sx={{ fontFamily: 'var(--font-khmer)' }}>
-                     កាលបរិច្ឆេទ <Typography component='span'>: {formatDob(prescription?.created_at ?? new Date().toISOString())}</Typography>
+              កាលបរិច្ឆេទ{' '}
+              <Typography component="span">
+                :{' '}
+                {formatDob(
+                  prescription?.created_at ?? new Date().toISOString(),
+                )}
+              </Typography>
             </Typography>
             <Typography sx={{ fontFamily: 'var(--font-khmer)' }}>
-                     វេជ្ជបណ្ឌិត <Typography component='span'>: {prescription?.created_by ?? '—'}</Typography>
+              វេជ្ជបណ្ឌិត{' '}
+              <Typography component="span">
+                : {prescription?.created_by ?? '—'}
+              </Typography>
             </Typography>
           </Box>
           {!isEditing ? (
             <Box className="no-print" sx={{ display: 'flex', gap: 1 }}>
-              <Button variant='outlined' startIcon={<Printer size={16} />} onClick={() => window.print()}>
-                        Print
+              <Button
+                variant="outlined"
+                startIcon={<Printer size={16} />}
+                onClick={() => window.print()}
+              >
+                Print
               </Button>
-              <Button variant='contained' startIcon={<Pencil size={16} />} onClick={() => setIsEditing(true)}>
-                        Edit
+              <Button
+                variant="contained"
+                startIcon={<Pencil size={16} />}
+                onClick={() => setIsEditing(true)}
+              >
+                Edit
               </Button>
             </Box>
           ) : (
             <Box className="no-print" sx={{ display: 'flex', gap: 1 }}>
               {prescription && (
-                <Button variant='outlined' startIcon={<X size={16} />} onClick={cancelEditing} disabled={isSaving}>
-                           Cancel
+                <Button
+                  variant="outlined"
+                  startIcon={<X size={16} />}
+                  onClick={cancelEditing}
+                  disabled={isSaving}
+                >
+                  Cancel
                 </Button>
               )}
-              <Button variant='contained' startIcon={<Save size={16} />} onClick={savePrescription} disabled={isSaving}>
-                        Save
+              <Button
+                variant="contained"
+                startIcon={<Save size={16} />}
+                onClick={savePrescription}
+                disabled={isSaving}
+              >
+                Save
               </Button>
-              <Button onClick={openAddModal} variant='contained' color='info' startIcon={<Plus size={16} />} disabled={isSaving}>
-                        Add Medicine
+              <Button
+                onClick={openAddModal}
+                variant="contained"
+                color="info"
+                startIcon={<Plus size={16} />}
+                disabled={isSaving}
+              >
+                Add Medicine
               </Button>
             </Box>
           )}
@@ -346,7 +466,7 @@ const PrescriptionTab = ({
       <Box>
         {fields.length === 0 ? (
           <Box sx={{ py: 4, textAlign: 'center', color: 'text.secondary' }}>
-                  No medicines in this prescription.
+            No medicines in this prescription.
           </Box>
         ) : (
           <TableContainer sx={{ mt: 2 }}>
@@ -356,7 +476,7 @@ const PrescriptionTab = ({
                 '& .MuiTableCell-root': {
                   border: 1,
                   borderColor: 'divider',
-                }
+                },
               }}
             >
               <TableHead
@@ -365,7 +485,7 @@ const PrescriptionTab = ({
                     fontFamily: 'var(--font-khmer)',
                     border: 1,
                     borderColor: 'divider',
-                  }
+                  },
                 }}
               >
                 <TableRow
@@ -374,42 +494,49 @@ const PrescriptionTab = ({
                     borderColor: 'divider',
                     '& .MuiTableCell-root': {
                       fontWeight: 'bold',
-                    }
+                    },
                   }}
                 >
-                  <TableCell width='5%' align='center'>
-                              ល.រ
+                  <TableCell width="5%" align="center">
+                    ល.រ
                   </TableCell>
-                  <TableCell width='30%'>
-                              ឈ្មោះថ្នាំ
-                  </TableCell>
-                  <TableCell width='10%'>
-                              ចំនួន
-                  </TableCell>
-                  <TableCell width='40%'>
-                              ការប្រើប្រាស់
-                  </TableCell>
-                  <TableCell width='10%'>
-                              ចំនួនថ្ងៃ
-                  </TableCell>
+                  <TableCell width="30%">ឈ្មោះថ្នាំ</TableCell>
+                  <TableCell width="10%">ចំនួន</TableCell>
+                  <TableCell width="40%">ការប្រើប្រាស់</TableCell>
+                  <TableCell width="10%">ចំនួនថ្ងៃ</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {fields.map((field, index) => (
                   <TableRow
                     key={field.id}
-                    sx={isEditing ? {
-                      cursor: 'pointer',
-                      '&:hover': {
-                        bgcolor: 'action.hover',
-                      },
-                    } : undefined}
+                    sx={
+                      isEditing
+                        ? {
+                            cursor: 'pointer',
+                            '&:hover': {
+                              bgcolor: 'action.hover',
+                            },
+                          }
+                        : undefined
+                    }
                     onClick={isEditing ? () => openEditModal(index) : undefined}
                   >
-                    <TableCell align='center'>{index + 1}</TableCell>
+                    <TableCell align="center">{index + 1}</TableCell>
                     <TableCell>{field.medicine?.name}</TableCell>
-                    <TableCell>{field.quantity} {field.unit?.name}</TableCell>
-                    <TableCell>{field.instruction?.label} {field.morning && `ព្រឹក ${field.morning} ${field.unit.name}`} {field.afternoon && `រសៀល ${field.afternoon} ${field.unit.name}`} {field.evening && `ល្ងាច ${field.evening} ${field.unit.name}`} {field.night && `យប់ ${field.night} ${field.unit.name}`}</TableCell>
+                    <TableCell>
+                      {field.quantity} {field.unit?.name}
+                    </TableCell>
+                    <TableCell>
+                      {field.instruction?.label}{' '}
+                      {field.morning &&
+                        `ព្រឹក ${field.morning} ${field.unit.name}`}{' '}
+                      {field.afternoon &&
+                        `រសៀល ${field.afternoon} ${field.unit.name}`}{' '}
+                      {field.evening &&
+                        `ល្ងាច ${field.evening} ${field.unit.name}`}{' '}
+                      {field.night && `យប់ ${field.night} ${field.unit.name}`}
+                    </TableCell>
                     <TableCell>{field.numberOfDay}</TableCell>
                   </TableRow>
                 ))}
@@ -419,7 +546,7 @@ const PrescriptionTab = ({
         )}
       </Box>
     </Box>
-  )
-}
+  );
+};
 
-export default PrescriptionTab
+export default PrescriptionTab;

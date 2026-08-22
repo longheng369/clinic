@@ -1,22 +1,25 @@
-import dayjs, { type Dayjs } from 'dayjs'
-import { DatePicker, type DatePickerProps } from '@mui/x-date-pickers/DatePicker'
+import dayjs, { type Dayjs } from 'dayjs';
+import {
+  DatePicker,
+  type DatePickerProps,
+} from '@mui/x-date-pickers/DatePicker';
 import {
   useController,
   type Control,
   type FieldValues,
   type Path,
   type RegisterOptions,
-} from "react-hook-form";
+} from 'react-hook-form';
 
 type Props<T extends FieldValues = FieldValues> = {
-   control: Control<T>;
-   name: Path<T>;
-   label?: string;
-   format?: string;
-   rules?: Omit<
-      RegisterOptions<T, Path<T>>,
-      "valueAsNumber" | "valueAsDate" | "setValueAs" | "disabled"
-   >;
+  control: Control<T>;
+  name: Path<T>;
+  label?: string;
+  format?: string;
+  rules?: Omit<
+    RegisterOptions<T, Path<T>>,
+    'valueAsNumber' | 'valueAsDate' | 'setValueAs' | 'disabled'
+  >;
 } & Omit<DatePickerProps, 'value' | 'onChange' | 'slotProps'>;
 
 const DateInput = <T extends FieldValues = FieldValues>({
@@ -30,12 +33,12 @@ const DateInput = <T extends FieldValues = FieldValues>({
   const { field, fieldState } = useController({
     control,
     name,
-    rules
+    rules,
   });
 
   const handleChange = (value: Dayjs | null) => {
-    field.onChange(value ? value.format(format) : '')
-  }
+    field.onChange(value ? value.format(format) : '');
+  };
 
   return (
     <DatePicker
@@ -55,7 +58,7 @@ const DateInput = <T extends FieldValues = FieldValues>({
         },
       }}
     />
-  )
-}
+  );
+};
 
-export default DateInput
+export default DateInput;

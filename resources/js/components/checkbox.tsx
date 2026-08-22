@@ -1,5 +1,5 @@
-import { Checkbox as MuiCheckbox, type CheckboxProps } from '@mui/material'
+import { Checkbox as MuiCheckbox, type CheckboxProps } from '@mui/material';
 
-const Checkbox = (props: CheckboxProps) => <MuiCheckbox {...props} />
+const Checkbox = (props: CheckboxProps) => <MuiCheckbox {...props} />;
 
-export default Checkbox
+export default Checkbox;

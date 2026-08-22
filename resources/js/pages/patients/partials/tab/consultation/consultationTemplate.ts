@@ -1,9 +1,9 @@
 export interface OptionType {
-    value?: string;
-    label?: string;
-    colSpan?: number;
-    exclusive?: boolean;
-    text?: string;
+  value?: string;
+  label?: string;
+  colSpan?: number;
+  exclusive?: boolean;
+  text?: string;
 }
 
 export const respiratorySymptoms: OptionType[] = [
@@ -20,7 +20,11 @@ export const respiratorySymptoms: OptionType[] = [
   { value: 'STRIDOR', label: 'Stridor', colSpan: 3 },
   { value: 'CYANOSIS', label: 'Cyanosis', colSpan: 3 },
   { value: 'THORAX_ASYMMETRICAL', label: 'Thorax asymmetrical', colSpan: 3 },
-  { value: 'INSUFFICIENT_RESPIRATORY_EFFORT', label: 'Insufficient respiratory effort', colSpan: 12 },
+  {
+    value: 'INSUFFICIENT_RESPIRATORY_EFFORT',
+    label: 'Insufficient respiratory effort',
+    colSpan: 12,
+  },
   { text: 'Chest retraction' },
   { value: 'SUPRASTERNAL', label: 'Suprasternal', colSpan: 3 },
   { value: 'SUPRACLAVICULAR', label: 'Supraclavicular', colSpan: 3 },
@@ -88,7 +92,11 @@ export const neurologicalSymptoms: OptionType[] = [
   { text: 'Extremities Movement' },
   { value: 'WEAK', label: 'Weak', colSpan: 3 },
   { value: 'ABSENCE', label: 'Absence', colSpan: 3 },
-  { value: 'LIMIT_RANGE_OF_MOVEMENT', label: 'Limit range of movement', colSpan: 3 },
+  {
+    value: 'LIMIT_RANGE_OF_MOVEMENT',
+    label: 'Limit range of movement',
+    colSpan: 3,
+  },
 ];
 
 export const musculoskeletalSymptoms: OptionType[] = [
@@ -115,7 +123,11 @@ export const digestiveSymptoms: OptionType[] = [
   { value: 'NAUSEA', label: 'Nausea', colSpan: 3 },
   { value: 'ABDOMINAL_PAIN', label: 'Abdominal pain', colSpan: 3 },
   { value: 'ABDOMINAL_DISTENSION', label: 'Abdominal distension', colSpan: 3 },
-  { value: 'SWALLOWING_DIFFICULTY', label: 'Swallowing difficulty', colSpan: 3 },
+  {
+    value: 'SWALLOWING_DIFFICULTY',
+    label: 'Swallowing difficulty',
+    colSpan: 3,
+  },
   { value: 'VOMITING', label: 'Vomiting', colSpan: 3 },
   { value: 'HEMATEMESIS', label: 'Hematemesis', colSpan: 3 },
   { value: 'POOR_APPETITE', label: 'Poor appetite', colSpan: 3 },
@@ -144,8 +156,16 @@ export const renalReproductiveSymptoms: OptionType[] = [
   { value: 'HEMATURIA', label: 'Hematuria', colSpan: 3 },
   { value: 'POLYURIA', label: 'Polyuria', colSpan: 3 },
   { value: 'URINARY_OBSTRUCTION', label: 'Urinary obstruction', colSpan: 3 },
-  { value: 'ANURIA_NO_URINE_LESS_THAN_24_HS', label: 'Anuria (No urine > 24 hs)', colSpan: 3 },
-  { value: 'OILGURIA_LESS_THAN_24H', label: 'Oilguria < 400ml / 24h', colSpan: 3 },
+  {
+    value: 'ANURIA_NO_URINE_LESS_THAN_24_HS',
+    label: 'Anuria (No urine > 24 hs)',
+    colSpan: 3,
+  },
+  {
+    value: 'OILGURIA_LESS_THAN_24H',
+    label: 'Oilguria < 400ml / 24h',
+    colSpan: 3,
+  },
   { value: 'URINARY_INCONTINENCE', label: 'Urinary incontinence', colSpan: 3 },
   { value: 'ABNORMAL_URINARY_COLOR_ODOR', label: 'Odor', colSpan: 3 },
   { value: 'ABNORMAL_URINARY_COLOR_PYURIA', label: 'Pyuria', colSpan: 3 },
@@ -184,7 +204,11 @@ export const eyeSymptoms: OptionType[] = [
   { value: 'OCULAR_PAIN', label: 'ឈឺភ្នែក', colSpan: 3 },
   { value: 'RED_EYE', label: 'Red eye', colSpan: 3 },
   { value: 'YELLOW_EYE', label: 'Yellow eye', colSpan: 3 },
-  { value: 'SUB_CONJUNCTIVAL_HEMORRHAGE', label: 'Sub conjunctival hemorrhage', colSpan: 3 },
+  {
+    value: 'SUB_CONJUNCTIVAL_HEMORRHAGE',
+    label: 'Sub conjunctival hemorrhage',
+    colSpan: 3,
+  },
   { value: 'BLURRY_VISION', label: 'Blurry vision', colSpan: 3 },
   { value: 'OCULAR_PRURITUS', label: 'រកាំភ្នែក', colSpan: 3 },
   { value: 'ITCHING', label: 'Itching', colSpan: 3 },

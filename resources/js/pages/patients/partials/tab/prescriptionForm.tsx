@@ -1,14 +1,14 @@
-import { Box } from '@mui/material'
-import { useForm, useFieldArray } from 'react-hook-form'
-import Select from '@/components/form/select-deprecated'
-import Input from '@/components/form/input-deprecated'
-import Textarea from '@/components/form/textarea'
-import { IPrescription } from '@/interfaces/IPrescription'
-import { useState } from 'react'
-import { router } from '@inertiajs/react'
-import { Button } from '@/components/ui/button'
-import { useToast } from '@/components/toast'
-import { Plus, Trash2 } from 'lucide-react'
+import { Box } from '@mui/material';
+import { useForm, useFieldArray } from 'react-hook-form';
+import Select from '@/components/form/select-deprecated';
+import Input from '@/components/form/input-deprecated';
+import Textarea from '@/components/form/textarea';
+import { IPrescription } from '@/interfaces/IPrescription';
+import { useState } from 'react';
+import { router } from '@inertiajs/react';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/toast';
+import { Plus, Trash2 } from 'lucide-react';
 
 const ROUTE_OPTIONS = [
   { value: 'PO', label: 'PO' },
@@ -21,7 +21,7 @@ const ROUTE_OPTIONS = [
   { value: 'Inhalation', label: 'Inhale' },
   { value: 'Otic', label: 'Otic' },
   { value: 'Ophthalmic', label: 'Ophth' },
-]
+];
 
 const FREQUENCY_OPTIONS = [
   { value: 'QD', label: 'QD' },
@@ -30,18 +30,36 @@ const FREQUENCY_OPTIONS = [
   { value: 'QID', label: 'QID' },
   { value: 'QHS', label: 'QHS' },
   { value: 'PRN', label: 'PRN' },
-]
+];
 
 interface PrescriptionFormProps {
-    patientId: number
-    activeVisits: { id: number; type: string; visit_date: string; created_by?: string }[]
-    medicines: { id: number; name: string }[]
-    prescription?: IPrescription
-    selectedVisitId?: number
-    onClose: () => void
+  patientId: number;
+  activeVisits: {
+    id: number;
+    type: string;
+    visit_date: string;
+    created_by?: string;
+  }[];
+  medicines: { id: number; name: string }[];
+  prescription?: IPrescription;
+  selectedVisitId?: number;
+  onClose: () => void;
 }
 
-type PrescriptionFormValues = { visit_id: number; notes: string | null; items: { medicine_id: number | null; route: string; dosage: number | null; unit: string; frequency: string; number_of_day: number | null; quantity: number | null; notes: string | null }[] }
+type PrescriptionFormValues = {
+  visit_id: number;
+  notes: string | null;
+  items: {
+    medicine_id: number | null;
+    route: string;
+    dosage: number | null;
+    unit: string;
+    frequency: string;
+    number_of_day: number | null;
+    quantity: number | null;
+    notes: string | null;
+  }[];
+};
 
 const emptyItem = () => ({
   medicine_id: null,
@@ -52,67 +70,81 @@ const emptyItem = () => ({
   number_of_day: null,
   quantity: null,
   notes: null,
-})
+});
 
-const PrescriptionForm = ({ patientId, activeVisits, medicines, prescription, selectedVisitId, onClose }: PrescriptionFormProps) => {
-  const [isProcessing, setIsProcessing] = useState(false)
-  const { toast } = useToast()
+const PrescriptionForm = ({
+  patientId,
+  activeVisits,
+  medicines,
+  prescription,
+  selectedVisitId,
+  onClose,
+}: PrescriptionFormProps) => {
+  const [isProcessing, setIsProcessing] = useState(false);
+  const { toast } = useToast();
 
   const { control, handleSubmit } = useForm<PrescriptionFormValues>({
     defaultValues: prescription
       ? {
-        visit_id: selectedVisitId ?? activeVisits[0]?.id ?? 0,
-        notes: prescription.notes ?? '',
-        items: prescription.items.map((i) => ({
-          medicine_id: i.medicine?.id ?? null,
-          route: i.route,
-          dosage: i.dosage,
-          unit: i.unit,
-          frequency: i.frequency,
-          number_of_day: i.number_of_day,
-          quantity: i.quantity,
-          notes: i.notes,
-        })),
-      }
+          visit_id: selectedVisitId ?? activeVisits[0]?.id ?? 0,
+          notes: prescription.notes ?? '',
+          items: prescription.items.map((i) => ({
+            medicine_id: i.medicine?.id ?? null,
+            route: i.route,
+            dosage: i.dosage,
+            unit: i.unit,
+            frequency: i.frequency,
+            number_of_day: i.number_of_day,
+            quantity: i.quantity,
+            notes: i.notes,
+          })),
+        }
       : {
-        visit_id: selectedVisitId ?? activeVisits[0]?.id ?? 0,
-        notes: '',
-        items: [emptyItem()],
-      },
-  })
+          visit_id: selectedVisitId ?? activeVisits[0]?.id ?? 0,
+          notes: '',
+          items: [emptyItem()],
+        },
+  });
 
-  const { fields, append, remove } = useFieldArray({ control, name: 'items' })
+  const { fields, append, remove } = useFieldArray({ control, name: 'items' });
 
-  const medicineOptions = medicines.map((m) => ({ value: m.id, label: m.name }))
+  const medicineOptions = medicines.map((m) => ({
+    value: m.id,
+    label: m.name,
+  }));
 
   const visitOptions = activeVisits.map((v) => ({
     value: v.id,
     label: `${v.type} — ${new Date(v.visit_date).toLocaleDateString()}`,
-  }))
+  }));
 
   const onSubmit = handleSubmit((data) => {
-    setIsProcessing(true)
+    setIsProcessing(true);
 
-    const payload = data as any
+    const payload = data as any;
 
     if (prescription) {
-      router.put(`/patients/${patientId}/prescriptions/${prescription.id}`, payload, {
-        onSuccess: () => {
-          onClose()
-          toast('Prescription updated!', { variant: 'success' })
+      router.put(
+        `/patients/${patientId}/prescriptions/${prescription.id}`,
+        payload,
+        {
+          onSuccess: () => {
+            onClose();
+            toast('Prescription updated!', { variant: 'success' });
+          },
+          onFinish: () => setIsProcessing(false),
         },
-        onFinish: () => setIsProcessing(false),
-      })
+      );
     } else {
       router.post(`/patients/${patientId}/prescriptions`, payload, {
         onSuccess: () => {
-          onClose()
-          toast('Prescription created!', { variant: 'success' })
+          onClose();
+          toast('Prescription created!', { variant: 'success' });
         },
         onFinish: () => setIsProcessing(false),
-      })
+      });
     }
-  })
+  });
 
   return (
     <form onSubmit={onSubmit} noValidate>
@@ -191,7 +223,6 @@ const PrescriptionForm = ({ patientId, activeVisits, medicines, prescription, se
                         control={control}
                         type="number"
 
-
                         name={`items.${index}.dosage`}
                         rules={{ required: true }}
                         placeholder="0"
@@ -220,7 +251,6 @@ const PrescriptionForm = ({ patientId, activeVisits, medicines, prescription, se
                         control={control}
                         type="number"
 
-
                         name={`items.${index}.quantity`}
                         placeholder="0"
                       />
@@ -235,10 +265,7 @@ const PrescriptionForm = ({ patientId, activeVisits, medicines, prescription, se
                     </td>
                     <td>
                       {fields.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => remove(index)}
-                        >
+                        <button type="button" onClick={() => remove(index)}>
                           <Trash2 size={14} />
                         </button>
                       )}
@@ -251,7 +278,7 @@ const PrescriptionForm = ({ patientId, activeVisits, medicines, prescription, se
 
           {fields.length === 0 && (
             <Box>
-                            No medicines added. Click &quot;Add Medicine&quot; to begin.
+              No medicines added. Click &quot;Add Medicine&quot; to begin.
             </Box>
           )}
         </Box>
@@ -265,13 +292,15 @@ const PrescriptionForm = ({ patientId, activeVisits, medicines, prescription, se
       </Box>
 
       <Box>
-        <Button type="button" onClick={onClose} variant="outline">Cancel</Button>
+        <Button type="button" onClick={onClose} variant="outline">
+          Cancel
+        </Button>
         <Button type="submit" disabled={isProcessing}>
           {prescription ? 'Update' : 'Create Prescription'}
         </Button>
       </Box>
     </form>
-  )
-}
+  );
+};
 
-export default PrescriptionForm
+export default PrescriptionForm;

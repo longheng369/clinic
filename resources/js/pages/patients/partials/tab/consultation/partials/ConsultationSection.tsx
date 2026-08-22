@@ -1,18 +1,18 @@
-import { useController, type Control, type Path } from 'react-hook-form'
-import Input from '@/components/form/input'
-import Checkbox from '@/components/form/checkbox'
-import CheckboxGroup from '@/components/form/checkboxGroup'
-import { type OptionType } from '../consultationTemplate'
-import { IConsultationFormData } from '@/interfaces/IConsultation'
-import { Box, Grid, Typography } from '@mui/material'
+import { useController, type Control, type Path } from 'react-hook-form';
+import Input from '@/components/form/input';
+import Checkbox from '@/components/form/checkbox';
+import CheckboxGroup from '@/components/form/checkboxGroup';
+import { type OptionType } from '../consultationTemplate';
+import { IConsultationFormData } from '@/interfaces/IConsultation';
+import { Box, Grid, Typography } from '@mui/material';
 
 type SectionProps = {
-   title: string
-   name: keyof IConsultationFormData & string
-   options: OptionType[]
-   control: Control<IConsultationFormData>
-   disabled?: boolean
-}
+  title: string;
+  name: keyof IConsultationFormData & string;
+  options: OptionType[];
+  control: Control<IConsultationFormData>;
+  disabled?: boolean;
+};
 
 const OTHER_FIELD_MAP: Record<string, string> = {
   respiratory_system_symptoms: 'respiratory_system_others_note',
@@ -27,34 +27,43 @@ const OTHER_FIELD_MAP: Record<string, string> = {
   nose_symptoms: 'nose_others_note',
   throat_symptoms: 'throat_others_note',
   psychology_symptoms: 'psychology_others_note',
-}
+};
 
-const ConsultationSection = ({ title, name, options, control, disabled }: SectionProps) => {
-  const hasNormalOption = options.some((option) => option.value === 'NORMAL')
+const ConsultationSection = ({
+  title,
+  name,
+  options,
+  control,
+  disabled,
+}: SectionProps) => {
+  const hasNormalOption = options.some((option) => option.value === 'NORMAL');
   const checkboxOptions = options
     .filter((option) => option.value !== 'NORMAL')
     .map((option) => ({
       value: option.value,
       colSpan: option.colSpan,
-      text: option.text && (
-        <Box sx={{}}>
-          {option.text}
-        </Box>
-      ),
-      label: option.label && (
-        <Box sx={{}}>
-          {option.label}
-        </Box>
-      ),
-    }))
-  const othersName = OTHER_FIELD_MAP[name] as Path<IConsultationFormData>
-  const { field: othersField } = useController({ control, name: othersName })
+      text: option.text && <Box sx={{}}>{option.text}</Box>,
+      label: option.label && <Box sx={{}}>{option.label}</Box>,
+    }));
+  const othersName = OTHER_FIELD_MAP[name] as Path<IConsultationFormData>;
+  const { field: othersField } = useController({ control, name: othersName });
 
   return (
     <Grid size={12}>
       <Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: hasNormalOption ? 'space-between' : 'flex-start' }}>
-          <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'text.primary' }}>{title}</Typography>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: hasNormalOption ? 'space-between' : 'flex-start',
+          }}
+        >
+          <Typography
+            variant="subtitle1"
+            sx={{ fontWeight: 600, color: 'text.primary' }}
+          >
+            {title}
+          </Typography>
           {hasNormalOption && (
             <Checkbox
               control={control}
@@ -66,7 +75,7 @@ const ConsultationSection = ({ title, name, options, control, disabled }: Sectio
               size="small"
               sx={{ p: 0.5 }}
               onCheckedChange={(checked) => {
-                if (checked) othersField.onChange('')
+                if (checked) othersField.onChange('');
               }}
             />
           )}
@@ -89,7 +98,7 @@ const ConsultationSection = ({ title, name, options, control, disabled }: Sectio
         />
       </Box>
     </Grid>
-  )
-}
+  );
+};
 
-export default ConsultationSection
+export default ConsultationSection;

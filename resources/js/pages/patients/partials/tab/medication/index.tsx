@@ -1,48 +1,53 @@
-import { Box, Button } from '@mui/material'
-import { usePage } from '@inertiajs/react'
-import { useModal } from '@/components/modal'
-import { Plus } from 'lucide-react'
-import MarForm from './partials/MarForm'
-import MarGrid from './partials/MarGrid'
-import { IMedicationOrder } from '@/interfaces/IMedicationOrder'
-import { IPatient } from '@/interfaces/IPatient'
-import Pagination from '@/components/table/Pagination'
-import { useState, useMemo } from 'react'
-import { IVisitWithMetaData } from '@/interfaces/IVisit'
+import { Box, Button } from '@mui/material';
+import { usePage } from '@inertiajs/react';
+import { useModal } from '@/components/modal';
+import { Plus } from 'lucide-react';
+import MarForm from './partials/MarForm';
+import MarGrid from './partials/MarGrid';
+import { IMedicationOrder } from '@/interfaces/IMedicationOrder';
+import { IPatient } from '@/interfaces/IPatient';
+import Pagination from '@/components/table/Pagination';
+import { useState, useMemo } from 'react';
+import { IVisitWithMetaData } from '@/interfaces/IVisit';
 
 interface PaginatedData<T> {
-   data: T[]
-   current_page: number
-   last_page: number
-   per_page: number
-   total: number
-   from: number
-   to: number
+  data: T[];
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+  from: number;
+  to: number;
 }
 
 type Props = {
-   patientId: number;
-   patient: IPatient;
-   selectedVisit: IVisitWithMetaData | null
-}
+  patientId: number;
+  patient: IPatient;
+  selectedVisit: IVisitWithMetaData | null;
+};
 
 const MedicationTab = ({ patientId, patient, selectedVisit }: Props) => {
-  const { openModal, closeModal } = useModal()
+  const { openModal, closeModal } = useModal();
   const { medicationOrders, activeVisits, medicines } = usePage<{
-      medicationOrders: PaginatedData<IMedicationOrder>
-      activeVisits: { id: number; type: string; visit_date: string; created_by?: string }[]
-      medicines: { id: number; name: string }[]
-   }>().props
+    medicationOrders: PaginatedData<IMedicationOrder>;
+    activeVisits: {
+      id: number;
+      type: string;
+      visit_date: string;
+      created_by?: string;
+    }[];
+    medicines: { id: number; name: string }[];
+  }>().props;
 
-  const [searchTerm] = useState('')
+  const [searchTerm] = useState('');
 
   const filteredData = useMemo(() => {
-    if (!searchTerm.trim()) return medicationOrders.data
-    const q = searchTerm.toLowerCase()
+    if (!searchTerm.trim()) return medicationOrders.data;
+    const q = searchTerm.toLowerCase();
     return medicationOrders.data.filter(
-      (m) => m.medicine?.name.toLowerCase().includes(q) ?? false
-    )
-  }, [medicationOrders.data, searchTerm])
+      (m) => m.medicine?.name.toLowerCase().includes(q) ?? false,
+    );
+  }, [medicationOrders.data, searchTerm]);
 
   if (!selectedVisit) {
     return (
@@ -50,7 +55,7 @@ const MedicationTab = ({ patientId, patient, selectedVisit }: Props) => {
         <Box>Medication</Box>
         <Box>Select a visit to view medications.</Box>
       </Box>
-    )
+    );
   }
 
   const handleCreate = () => {
@@ -66,8 +71,8 @@ const MedicationTab = ({ patientId, patient, selectedVisit }: Props) => {
         />
       ),
       config: { preventClickAway: true, maxWidth: '2xl' },
-    })
-  }
+    });
+  };
 
   const handleEdit = (order: IMedicationOrder) => {
     openModal({
@@ -83,22 +88,28 @@ const MedicationTab = ({ patientId, patient, selectedVisit }: Props) => {
         />
       ),
       config: { preventClickAway: true, maxWidth: '2xl' },
-    })
-  }
+    });
+  };
 
-  const { data, ...pagination } = medicationOrders
+  const { data, ...pagination } = medicationOrders;
 
   return (
     <Box>
-      <Button onClick={handleCreate} startIcon={<Plus size={16} />} variant='contained'>
-            Add Medicine
+      <Button
+        onClick={handleCreate}
+        startIcon={<Plus size={16} />}
+        variant="contained"
+      >
+        Add Medicine
       </Button>
 
       {filteredData.length === 0 ? (
         <Box>
           <Box>No prescriptions found</Box>
           <Box>
-            {searchTerm ? 'Try a different search term.' : 'Add medication to the drug chart for this patient.'}
+            {searchTerm
+              ? 'Try a different search term.'
+              : 'Add medication to the drug chart for this patient.'}
           </Box>
         </Box>
       ) : (
@@ -126,7 +137,7 @@ const MedicationTab = ({ patientId, patient, selectedVisit }: Props) => {
         </Box>
       )}
     </Box>
-  )
-}
+  );
+};
 
-export default MedicationTab
+export default MedicationTab;

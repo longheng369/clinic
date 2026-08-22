@@ -1,23 +1,27 @@
-import { Box } from '@mui/material'
-import { useForm } from 'react-hook-form'
-import Input from '@/components/form/input-deprecated'
-import Textarea from '@/components/form/textarea'
-import Select from '@/components/form/select-deprecated'
-import { IPatientVaccinationFormData } from '@/interfaces/IPatientVaccination'
-import { router } from '@inertiajs/react'
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { useToast } from '@/components/toast'
+import { Box } from '@mui/material';
+import { useForm } from 'react-hook-form';
+import Input from '@/components/form/input-deprecated';
+import Textarea from '@/components/form/textarea';
+import Select from '@/components/form/select-deprecated';
+import { IPatientVaccinationFormData } from '@/interfaces/IPatientVaccination';
+import { router } from '@inertiajs/react';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/toast';
 
 interface VaccinationFormProps {
-    patientId: number
-    vaccines: { id: number; name: string }[]
-    onClose: () => void
+  patientId: number;
+  vaccines: { id: number; name: string }[];
+  onClose: () => void;
 }
 
-const VaccinationForm = ({ patientId, vaccines, onClose }: VaccinationFormProps) => {
-  const [isProcessing, setIsProcessing] = useState(false)
-  const { toast } = useToast()
+const VaccinationForm = ({
+  patientId,
+  vaccines,
+  onClose,
+}: VaccinationFormProps) => {
+  const [isProcessing, setIsProcessing] = useState(false);
+  const { toast } = useToast();
   const { control, handleSubmit } = useForm<IPatientVaccinationFormData>({
     defaultValues: {
       vaccine_id: null,
@@ -25,26 +29,33 @@ const VaccinationForm = ({ patientId, vaccines, onClose }: VaccinationFormProps)
       administered_date: new Date().toISOString().split('T')[0],
       notes: '',
     },
-  })
+  });
 
   const onSubmit = handleSubmit((data) => {
-    setIsProcessing(true)
-    router.post(`/patients/${patientId}/vaccinations`, { ...data }, {
-      onSuccess: () => {
-        onClose()
-        toast('Vaccination recorded!', { variant: 'success', description: 'The vaccination has been recorded.' })
+    setIsProcessing(true);
+    router.post(
+      `/patients/${patientId}/vaccinations`,
+      { ...data },
+      {
+        onSuccess: () => {
+          onClose();
+          toast('Vaccination recorded!', {
+            variant: 'success',
+            description: 'The vaccination has been recorded.',
+          });
+        },
+        onError: (errors) => {
+          if (errors.vaccine_id) {
+            toast('Unable to record vaccination', {
+              variant: 'error',
+              description: errors.vaccine_id,
+            });
+          }
+        },
+        onFinish: () => setIsProcessing(false),
       },
-      onError: (errors) => {
-        if (errors.vaccine_id) {
-          toast('Unable to record vaccination', {
-            variant: 'error',
-            description: errors.vaccine_id,
-          })
-        }
-      },
-      onFinish: () => setIsProcessing(false),
-    })
-  })
+    );
+  });
 
   return (
     <form onSubmit={onSubmit} noValidate>
@@ -75,23 +86,19 @@ const VaccinationForm = ({ patientId, vaccines, onClose }: VaccinationFormProps)
           rules={{ required: 'This field is required' }}
         />
 
-        <Textarea
-          label="Notes"
-          control={control}
-          name="notes"
-        />
+        <Textarea label="Notes" control={control} name="notes" />
       </Box>
 
       <Box>
         <Button type="button" onClick={onClose} variant="outline">
-                    Cancel
+          Cancel
         </Button>
         <Button type="submit" disabled={isProcessing}>
-                    Record
+          Record
         </Button>
       </Box>
     </form>
-  )
-}
+  );
+};
 
-export default VaccinationForm
+export default VaccinationForm;

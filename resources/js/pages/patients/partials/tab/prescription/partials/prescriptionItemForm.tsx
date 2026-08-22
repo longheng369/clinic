@@ -1,5 +1,5 @@
 import { IPrescriptionItemFormData } from '@/interfaces/IPrescription';
-import { FC } from 'react'
+import { FC } from 'react';
 import { useForm } from 'react-hook-form';
 import Input from '@/components/form/input';
 import { Box, DialogActions, DialogContent, Grid, Button } from '@mui/material';
@@ -9,24 +9,27 @@ import Autocomplete from '@/components/form/autocomplete';
 import { MEDICINE_ROUTE } from '@/config/mar';
 
 interface Props {
-   onSave: (data: IPrescriptionItemFormData) => void;
-   medicines: { id: number; name: string }[];
-   units: { id: number; name: string }[];
-   defaultValues?: IPrescriptionItemFormData;
+  onSave: (data: IPrescriptionItemFormData) => void;
+  medicines: { id: number; name: string }[];
+  units: { id: number; name: string }[];
+  defaultValues?: IPrescriptionItemFormData;
 }
 
-type PrescriptionItemFormValues = Omit<IPrescriptionItemFormData, 'medicine' | 'unit' | 'instruction'> & {
-   medicine: number | '';
-   unit: number | '';
-   instruction: string | null;
+type PrescriptionItemFormValues = Omit<
+  IPrescriptionItemFormData,
+  'medicine' | 'unit' | 'instruction'
+> & {
+  medicine: number | '';
+  unit: number | '';
+  instruction: string | null;
 };
 
 const toNullableNumber = (value: unknown): number | null => {
-  if (value === null || value === undefined || value === '') return null
+  if (value === null || value === undefined || value === '') return null;
 
-  const number = Number(value)
-  return Number.isFinite(number) ? number : null
-}
+  const number = Number(value);
+  return Number.isFinite(number) ? number : null;
+};
 
 const PrescriptionItemForm: FC<Props> = ({
   onSave,
@@ -37,30 +40,32 @@ const PrescriptionItemForm: FC<Props> = ({
   const { control, handleSubmit } = useForm<PrescriptionItemFormValues>({
     defaultValues: defaultValues
       ? {
-        ...defaultValues,
-        medicine: defaultValues.medicine?.id ?? '',
-        unit: defaultValues.unit?.id ?? '',
-        instruction: defaultValues.instruction?.value ?? null,
-      }
+          ...defaultValues,
+          medicine: defaultValues.medicine?.id ?? '',
+          unit: defaultValues.unit?.id ?? '',
+          instruction: defaultValues.instruction?.value ?? null,
+        }
       : {
-        medicine: '',
-        unit: '',
-        route: '',
-        notes: null,
-        quantity: null,
-        morning: null,
-        afternoon: null,
-        evening: null,
-        night: null,
-        numberOfDay: null,
-        instruction: null,
-      },
+          medicine: '',
+          unit: '',
+          route: '',
+          notes: null,
+          quantity: null,
+          morning: null,
+          afternoon: null,
+          evening: null,
+          night: null,
+          numberOfDay: null,
+          instruction: null,
+        },
   });
 
   const onSubmit = (values: PrescriptionItemFormValues) => {
     const medicine = medicines.find((option) => option.id === values.medicine);
     const unit = units.find((option) => option.id === values.unit);
-    const instruction = MEDICINE_INSTRUCTION.find((opt) => opt.value === values.instruction) ?? null;
+    const instruction =
+      MEDICINE_INSTRUCTION.find((opt) => opt.value === values.instruction) ??
+      null;
 
     if (!medicine || !unit) {
       return;
@@ -81,41 +86,104 @@ const PrescriptionItemForm: FC<Props> = ({
   };
 
   return (
-    <Box component='form' onSubmit={handleSubmit(onSubmit)} noValidate sx={{ borderTop: 1, borderColor: 'divider' }}>
+    <Box
+      component="form"
+      onSubmit={handleSubmit(onSubmit)}
+      noValidate
+      sx={{ borderTop: 1, borderColor: 'divider' }}
+    >
       <DialogContent>
         <Grid container spacing={3}>
           <Grid size={{ md: 6 }}>
-            <Autocomplete control={control} name='medicine' label='Medicine' options={medicines.map((medicine) => ({ label: medicine.name, value: medicine.id }))} rules={{ required: 'Medicine is required' }} />
+            <Autocomplete
+              control={control}
+              name="medicine"
+              label="Medicine"
+              options={medicines.map((medicine) => ({
+                label: medicine.name,
+                value: medicine.id,
+              }))}
+              rules={{ required: 'Medicine is required' }}
+            />
           </Grid>
           <Grid size={{ md: 6 }}>
-            <Select control={control} name="route" label="Route" options={MEDICINE_ROUTE} rules={{ required: 'Route is required' }} />
+            <Select
+              control={control}
+              name="route"
+              label="Route"
+              options={MEDICINE_ROUTE}
+              rules={{ required: 'Route is required' }}
+            />
           </Grid>
           <Grid size={{ md: 6 }}>
-            <Input control={control} name="quantity" label="Quantity" type="number" rules={{ required: 'Quantity is required', min: { value: 1, message: 'Min 1' }, valueAsNumber: true }} />
+            <Input
+              control={control}
+              name="quantity"
+              label="Quantity"
+              type="number"
+              rules={{
+                required: 'Quantity is required',
+                min: { value: 1, message: 'Min 1' },
+                valueAsNumber: true,
+              }}
+            />
           </Grid>
           <Grid size={{ md: 6 }}>
             <Select
               control={control}
               name="unit"
               label="Unit"
-              options={units.map((unit) => ({ label: unit.name, value: unit.id }))}
+              options={units.map((unit) => ({
+                label: unit.name,
+                value: unit.id,
+              }))}
               rules={{ required: 'Unit is required' }}
             />
           </Grid>
           <Grid size={{ md: 6 }}>
-            <Input control={control} name="morning" label="Morning" type="number" rules={{ valueAsNumber: true }} />
+            <Input
+              control={control}
+              name="morning"
+              label="Morning"
+              type="number"
+              rules={{ valueAsNumber: true }}
+            />
           </Grid>
           <Grid size={{ md: 6 }}>
-            <Input control={control} name="afternoon" label="Afternoon" type="number" rules={{ valueAsNumber: true }} />
+            <Input
+              control={control}
+              name="afternoon"
+              label="Afternoon"
+              type="number"
+              rules={{ valueAsNumber: true }}
+            />
           </Grid>
           <Grid size={{ md: 6 }}>
-            <Input control={control} name="evening" label="Evening" type="number" rules={{ valueAsNumber: true }} />
+            <Input
+              control={control}
+              name="evening"
+              label="Evening"
+              type="number"
+              rules={{ valueAsNumber: true }}
+            />
           </Grid>
           <Grid size={{ md: 6 }}>
-            <Input control={control} name="night" label="Night" type="number" rules={{ valueAsNumber: true }} />
+            <Input
+              control={control}
+              name="night"
+              label="Night"
+              type="number"
+              rules={{ valueAsNumber: true }}
+            />
           </Grid>
           <Grid size={{ md: 6 }}>
-            <Input control={control} name="numberOfDay" label="Number of Days" type="number" rules={{ valueAsNumber: true }} />
+            <Input
+              control={control}
+              name="numberOfDay"
+              label="Number of Days"
+              type="number"
+              rules={{ valueAsNumber: true }}
+            />
           </Grid>
           <Grid size={{ md: 6 }}>
             <Autocomplete
@@ -133,11 +201,11 @@ const PrescriptionItemForm: FC<Props> = ({
       </DialogContent>
       <DialogActions>
         <Button type="submit" variant="contained">
-          {defaultValues ? "Save" : "Add"}
+          {defaultValues ? 'Save' : 'Add'}
         </Button>
       </DialogActions>
     </Box>
-  )
-}
+  );
+};
 
-export default PrescriptionItemForm
+export default PrescriptionItemForm;

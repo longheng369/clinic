@@ -1,13 +1,13 @@
-import { Box } from '@mui/material'
-import { router } from '@inertiajs/react'
-import type { IMedicationAdministration } from '@/interfaces/IMedicationAdministration'
-import { getEffectiveStatus } from '../../DoseStatusBadge'
-import { formatCreatedDateTime } from '@/utils/date'
+import { Box } from '@mui/material';
+import { router } from '@inertiajs/react';
+import type { IMedicationAdministration } from '@/interfaces/IMedicationAdministration';
+import { getEffectiveStatus } from '../../DoseStatusBadge';
+import { formatCreatedDateTime } from '@/utils/date';
 
 interface MarGridCellProps {
-   administration: IMedicationAdministration | null
-   visitId: number
-   orderStatus: string
+  administration: IMedicationAdministration | null;
+  visitId: number;
+  orderStatus: string;
 }
 
 const CELL_LABELS: Record<string, string> = {
@@ -17,18 +17,25 @@ const CELL_LABELS: Record<string, string> = {
   missed: 'M',
   refused: 'R',
   cancelled: 'X',
-}
+};
 
-const CELL_STYLES: Record<string, { bg: string; color: string; cursor: string }> = {
+const CELL_STYLES: Record<
+  string,
+  { bg: string; color: string; cursor: string }
+> = {
   pending: { bg: '#dbeafe', color: '#2563eb', cursor: 'pointer' },
   overdue: { bg: '#fee2e2', color: '#dc2626', cursor: 'pointer' },
   provided: { bg: '#dcfce7', color: '#16a34a', cursor: 'default' },
   missed: { bg: '#ffedd5', color: '#ea580c', cursor: 'default' },
   refused: { bg: '#f3e8ff', color: '#9333ea', cursor: 'default' },
   cancelled: { bg: '#f1f5f9', color: '#94a3b8', cursor: 'default' },
-}
+};
 
-const MarGridCell = ({ administration, visitId, orderStatus }: MarGridCellProps) => {
+const MarGridCell = ({
+  administration,
+  visitId,
+  orderStatus,
+}: MarGridCellProps) => {
   if (!administration) {
     return (
       <Box
@@ -44,35 +51,44 @@ const MarGridCell = ({ administration, visitId, orderStatus }: MarGridCellProps)
           my: 0.25,
         }}
       >
-            &mdash;
+        &mdash;
       </Box>
-    )
+    );
   }
 
-  const effective = getEffectiveStatus(administration)
-  const label = CELL_LABELS[effective] ?? '?'
-  const style = CELL_STYLES[effective] ?? CELL_STYLES.pending
-  const isActionable = orderStatus === 'active' && (effective === 'pending' || effective === 'overdue')
+  const effective = getEffectiveStatus(administration);
+  const label = CELL_LABELS[effective] ?? '?';
+  const style = CELL_STYLES[effective] ?? CELL_STYLES.pending;
+  const isActionable =
+    orderStatus === 'active' &&
+    (effective === 'pending' || effective === 'overdue');
 
   const handleClick = () => {
-    if (!isActionable) return
-    router.post(`/visits/${visitId}/doses/${administration.id}/administer`, {})
-  }
+    if (!isActionable) return;
+    router.post(`/visits/${visitId}/doses/${administration.id}/administer`, {});
+  };
 
   const handleContextMenu = (e: React.MouseEvent) => {
-    if (!isActionable) return
-    e.preventDefault()
-  }
+    if (!isActionable) return;
+    e.preventDefault();
+  };
 
-  const tooltipParts: string[] = []
-  if (administration.administration_no != null) tooltipParts.push(`#${administration.administration_no}`)
-  tooltipParts.push(formatCreatedDateTime(administration.scheduled_at))
+  const tooltipParts: string[] = [];
+  if (administration.administration_no != null)
+    tooltipParts.push(`#${administration.administration_no}`);
+  tooltipParts.push(formatCreatedDateTime(administration.scheduled_at));
   if (administration.status === 'provided' && administration.administered_by) {
-    tooltipParts.push(`by ${administration.administered_by}`)
-    if (administration.unit_price != null) tooltipParts.push(`$${Number(administration.unit_price).toFixed(2)}`)
+    tooltipParts.push(`by ${administration.administered_by}`);
+    if (administration.unit_price != null)
+      tooltipParts.push(`$${Number(administration.unit_price).toFixed(2)}`);
   }
-  if ((administration.status === 'missed' || administration.status === 'refused' || administration.status === 'cancelled') && administration.reason) {
-    tooltipParts.push(administration.reason)
+  if (
+    (administration.status === 'missed' ||
+      administration.status === 'refused' ||
+      administration.status === 'cancelled') &&
+    administration.reason
+  ) {
+    tooltipParts.push(administration.reason);
   }
 
   return (
@@ -100,7 +116,7 @@ const MarGridCell = ({ administration, visitId, orderStatus }: MarGridCellProps)
     >
       {label}
     </Box>
-  )
-}
+  );
+};
 
-export default MarGridCell
+export default MarGridCell;

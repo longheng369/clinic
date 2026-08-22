@@ -1,12 +1,12 @@
-import { Dialog, DialogContent } from '@mui/material'
+import { Dialog, DialogContent } from '@mui/material';
 
 type Props = {
-   children: React.ReactNode
-   show?: boolean
-   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl'
-   closeable?: boolean
-   onClose?: () => void
-}
+  children: React.ReactNode;
+  show?: boolean;
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  closeable?: boolean;
+  onClose?: () => void;
+};
 
 const maxWidthMap = {
   sm: 'sm',
@@ -14,7 +14,7 @@ const maxWidthMap = {
   lg: 'lg',
   xl: 'xl',
   '2xl': 'xl',
-} as const
+} as const;
 
 const BreezeModal = ({
   children,
@@ -31,6 +31,6 @@ const BreezeModal = ({
   >
     <DialogContent>{children}</DialogContent>
   </Dialog>
-)
+);
 
-export default BreezeModal
+export default BreezeModal;

@@ -1,27 +1,41 @@
-import { router, usePage, Link as InertiaLink } from '@inertiajs/react'
-import { useModal } from '@/components/modal'
-import { Pencil, Trash2, Plus, Eye } from 'lucide-react'
-import { IConsultation } from '@/interfaces/IConsultation'
-import { DataGrid, type GridColDef, type GridPaginationModel, type GridRenderCellParams, GridActionsCellItem } from '@mui/x-data-grid'
-import { useCallback } from 'react'
-import type React from 'react'
-import { formatCreatedDateTime } from '@/utils/date'
-import { Box, Button, Typography } from '@mui/material'
+import { router, usePage, Link as InertiaLink } from '@inertiajs/react';
+import { useModal } from '@/components/modal';
+import { Pencil, Trash2, Plus, Eye } from 'lucide-react';
+import { IConsultation } from '@/interfaces/IConsultation';
+import {
+  DataGrid,
+  type GridColDef,
+  type GridPaginationModel,
+  type GridRenderCellParams,
+  GridActionsCellItem,
+} from '@mui/x-data-grid';
+import { useCallback } from 'react';
+import type React from 'react';
+import { formatCreatedDateTime } from '@/utils/date';
+import { Box, Button, Typography } from '@mui/material';
 
 interface PaginatedData<T> {
-    data: T[]
-    current_page: number
-    last_page: number
-    per_page: number
-    total: number
-    from: number
-    to: number
+  data: T[];
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+  from: number;
+  to: number;
 }
 
-const ConsultationTab = ({ patientId, visitId }: { patientId: number; visitId: number | null }) => {
-  const { openAlert } = useModal()
-  const { consultations } = usePage<{ consultations: PaginatedData<IConsultation> }>().props
-  const { data: rows, total, current_page, per_page } = consultations
+const ConsultationTab = ({
+  patientId,
+  visitId,
+}: {
+  patientId: number;
+  visitId: number | null;
+}) => {
+  const { openAlert } = useModal();
+  const { consultations } = usePage<{
+    consultations: PaginatedData<IConsultation>;
+  }>().props;
+  const { data: rows, total, current_page, per_page } = consultations;
 
   const handleDelete = (consultation: IConsultation) => {
     openAlert({
@@ -29,13 +43,23 @@ const ConsultationTab = ({ patientId, visitId }: { patientId: number; visitId: n
       description: 'This action cannot be undone.',
       variant: 'danger',
       confirmLabel: 'Delete',
-      onConfirm: () => router.delete(`/patients/${patientId}/consultations/${consultation.id}`),
-    })
-  }
+      onConfirm: () =>
+        router.delete(
+          `/patients/${patientId}/consultations/${consultation.id}`,
+        ),
+    });
+  };
 
-  const handlePaginationModelChange = useCallback((model: GridPaginationModel) => {
-    router.get(`/patients/${patientId}`, { page: String(model.page + 1), tab: 'consultation' }, { preserveState: true, replace: true, only: ['consultations'] })
-  }, [patientId])
+  const handlePaginationModelChange = useCallback(
+    (model: GridPaginationModel) => {
+      router.get(
+        `/patients/${patientId}`,
+        { page: String(model.page + 1), tab: 'consultation' },
+        { preserveState: true, replace: true, only: ['consultations'] },
+      );
+    },
+    [patientId],
+  );
 
   const columns: GridColDef[] = [
     {
@@ -43,7 +67,8 @@ const ConsultationTab = ({ patientId, visitId }: { patientId: number; visitId: n
       headerName: 'កាលបរិច្ឆេទ',
       flex: 1,
       minWidth: 150,
-      valueGetter: (_value, row: IConsultation) => formatCreatedDateTime(row.created_at),
+      valueGetter: (_value, row: IConsultation) =>
+        formatCreatedDateTime(row.created_at),
     },
     {
       field: 'chief_complaint',
@@ -51,7 +76,16 @@ const ConsultationTab = ({ patientId, visitId }: { patientId: number; visitId: n
       flex: 2,
       minWidth: 220,
       renderCell: (params: GridRenderCellParams<IConsultation>) => (
-        <Box component="span" sx={{ display: 'block', maxWidth: 260, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        <Box
+          component="span"
+          sx={{
+            display: 'block',
+            maxWidth: 260,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+        >
           {params.value}
         </Box>
       ),
@@ -77,7 +111,8 @@ const ConsultationTab = ({ patientId, visitId }: { patientId: number; visitId: n
       headerName: 'តម្លៃ ($)',
       flex: 1,
       minWidth: 110,
-      valueGetter: (_: never, row: IConsultation) => row.fee != null ? row.fee.toFixed(2) : null,
+      valueGetter: (_: never, row: IConsultation) =>
+        row.fee != null ? row.fee.toFixed(2) : null,
       renderCell: (params: GridRenderCellParams<IConsultation>) =>
         params.value ?? <Box sx={{}}>&mdash;</Box>,
     },
@@ -99,14 +134,22 @@ const ConsultationTab = ({ patientId, visitId }: { patientId: number; visitId: n
           key={`view-${params.id}`}
           icon={<Eye size={16} color="#64748b" />}
           label="View consultation"
-          onClick={() => router.visit(`/patients/${patientId}/consultations/${params.row.id}`)}
+          onClick={() =>
+            router.visit(
+              `/patients/${patientId}/consultations/${params.row.id}`,
+            )
+          }
           showInMenu={false}
         />,
         <GridActionsCellItem
           key={`edit-${params.id}`}
           icon={<Pencil size={16} color="#2563eb" />}
           label="Edit consultation"
-          onClick={() => router.visit(`/patients/${patientId}/consultations/${params.row.id}/edit`)}
+          onClick={() =>
+            router.visit(
+              `/patients/${patientId}/consultations/${params.row.id}/edit`,
+            )
+          }
           showInMenu={false}
         />,
         <GridActionsCellItem
@@ -118,13 +161,20 @@ const ConsultationTab = ({ patientId, visitId }: { patientId: number; visitId: n
         />,
       ],
     },
-  ]
+  ];
 
   return (
     <Box>
-      <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <Box
+        sx={{
+          mb: 2,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    Consultation records for this patient
+          Consultation records for this patient
         </Typography>
         <Button
           component={InertiaLink as React.ElementType}
@@ -132,7 +182,7 @@ const ConsultationTab = ({ patientId, visitId }: { patientId: number; visitId: n
           variant="contained"
           startIcon={<Plus size={16} />}
         >
-                    New Consultation
+          New Consultation
         </Button>
       </Box>
 
@@ -154,7 +204,7 @@ const ConsultationTab = ({ patientId, visitId }: { patientId: number; visitId: n
         }}
       />
     </Box>
-  )
-}
+  );
+};
 
-export default ConsultationTab
+export default ConsultationTab;

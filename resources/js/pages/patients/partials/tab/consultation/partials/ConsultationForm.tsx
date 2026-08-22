@@ -1,6 +1,6 @@
-import { type Control } from 'react-hook-form'
-import Input from '@/components/form/input'
-import ConsultationSection from './ConsultationSection'
+import { type Control } from 'react-hook-form';
+import Input from '@/components/form/input';
+import ConsultationSection from './ConsultationSection';
 import {
   respiratorySymptoms,
   cardiovascularSymptoms,
@@ -14,14 +14,14 @@ import {
   noseSymptoms,
   throatSymptoms,
   psychologySymptoms,
-} from '../consultationTemplate'
-import { IConsultationFormData } from '@/interfaces/IConsultation'
-import { Grid, Typography } from '@mui/material'
+} from '../consultationTemplate';
+import { IConsultationFormData } from '@/interfaces/IConsultation';
+import { Grid, Typography } from '@mui/material';
 
 type Props = {
-    control: Control<IConsultationFormData>
-    viewOnly?: boolean
-}
+  control: Control<IConsultationFormData>;
+  viewOnly?: boolean;
+};
 
 const ConsultationForm = ({ control, viewOnly }: Props) => {
   return (
@@ -106,8 +106,11 @@ const ConsultationForm = ({ control, viewOnly }: Props) => {
       />
 
       <Grid size={12}>
-        <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'text.primary' }}>
-                    8. EYES / EARS / THROAT / MOUTH
+        <Typography
+          variant="subtitle1"
+          sx={{ fontWeight: 600, color: 'text.primary' }}
+        >
+          8. EYES / EARS / THROAT / MOUTH
         </Typography>
       </Grid>
 
@@ -185,7 +188,7 @@ const ConsultationForm = ({ control, viewOnly }: Props) => {
         />
       </Grid>
     </Grid>
-  )
-}
+  );
+};
 
-export default ConsultationForm
+export default ConsultationForm;

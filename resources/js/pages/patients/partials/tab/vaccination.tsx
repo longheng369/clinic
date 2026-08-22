@@ -1,54 +1,64 @@
-import { Box } from '@mui/material'
-import { usePage, router } from '@inertiajs/react'
-import { useModal } from '@/components/modal'
-import { Trash2, Plus, IdCard } from 'lucide-react'
-import VaccinationForm from './vaccinationForm'
-import VaccineCard from './VaccineCard'
-import VaccinationAlertBanner from './VaccinationAlertBanner'
-import { IPatient } from '@/interfaces/IPatient'
-import { IPatientVaccination, IVaccineCardItem, IVaccinationAlert } from '@/interfaces/IPatientVaccination'
-import { Button } from '@/components/ui/button'
-import IconButton from '@/components/button/iconButton'
-import DataTable, { type Column } from '@/components/table/DataTable'
+import { Box } from '@mui/material';
+import { usePage, router } from '@inertiajs/react';
+import { useModal } from '@/components/modal';
+import { Trash2, Plus, IdCard } from 'lucide-react';
+import VaccinationForm from './vaccinationForm';
+import VaccineCard from './VaccineCard';
+import VaccinationAlertBanner from './VaccinationAlertBanner';
+import { IPatient } from '@/interfaces/IPatient';
+import {
+  IPatientVaccination,
+  IVaccineCardItem,
+  IVaccinationAlert,
+} from '@/interfaces/IPatientVaccination';
+import { Button } from '@/components/ui/button';
+import IconButton from '@/components/button/iconButton';
+import DataTable, { type Column } from '@/components/table/DataTable';
 
 interface PaginatedData<T> {
-    data: T[]
-    current_page: number
-    last_page: number
-    per_page: number
-    total: number
-    from: number
-    to: number
+  data: T[];
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+  from: number;
+  to: number;
 }
 
 interface VaccinationTabProps {
-    patient: IPatient
+  patient: IPatient;
 }
 
 const VaccinationTab = ({ patient }: VaccinationTabProps) => {
-  const { openModal, closeModal, openAlert } = useModal()
+  const { openModal, closeModal, openAlert } = useModal();
   const { vaccinations, vaccines, vaccineCard, vaccinationAlerts } = usePage<{
-        vaccinations: PaginatedData<IPatientVaccination>
-        vaccines: { id: number; name: string }[]
-        vaccineCard: IVaccineCardItem[]
-        vaccinationAlerts: IVaccinationAlert[]
-    }>().props
+    vaccinations: PaginatedData<IPatientVaccination>;
+    vaccines: { id: number; name: string }[];
+    vaccineCard: IVaccineCardItem[];
+    vaccinationAlerts: IVaccinationAlert[];
+  }>().props;
 
   const handleCreate = () => {
     openModal({
       title: 'Record Vaccination',
-      content: <VaccinationForm patientId={patient.id} vaccines={vaccines} onClose={() => closeModal()} />,
+      content: (
+        <VaccinationForm
+          patientId={patient.id}
+          vaccines={vaccines}
+          onClose={() => closeModal()}
+        />
+      ),
       config: { preventClickAway: true },
-    })
-  }
+    });
+  };
 
   const handleShowCard = () => {
     openModal({
       title: 'Vaccination Card',
       content: <VaccineCard patient={patient} cardData={vaccineCard} />,
       config: { maxWidth: '3xl' },
-    })
-  }
+    });
+  };
 
   const handleDelete = (v: IPatientVaccination) => {
     openAlert({
@@ -56,9 +66,10 @@ const VaccinationTab = ({ patient }: VaccinationTabProps) => {
       description: 'This action cannot be undone.',
       variant: 'danger',
       confirmLabel: 'Delete',
-      onConfirm: () => router.delete(`/patients/${patient.id}/vaccinations/${v.id}`),
-    })
-  }
+      onConfirm: () =>
+        router.delete(`/patients/${patient.id}/vaccinations/${v.id}`),
+    });
+  };
 
   const columns: Column<IPatientVaccination>[] = [
     {
@@ -97,19 +108,26 @@ const VaccinationTab = ({ patient }: VaccinationTabProps) => {
       classNames: { header: 'font-khmer text-end tracking-wide' },
       cell: (v) => (
         <Box sx={{}}>
-          <IconButton onClick={handleShowCard} aria-label="Show vaccination card">
+          <IconButton
+            onClick={handleShowCard}
+            aria-label="Show vaccination card"
+          >
             <IdCard size={16} />
           </IconButton>
-          <IconButton color="error" onClick={() => handleDelete(v)} aria-label="Delete vaccination">
+          <IconButton
+            color="error"
+            onClick={() => handleDelete(v)}
+            aria-label="Delete vaccination"
+          >
             <Trash2 size={16} />
           </IconButton>
         </Box>
       ),
     },
-  ]
+  ];
 
-  const { data, ...pagination } = vaccinations
-  const baseUrl = `/patients/${patient.id}`
+  const { data, ...pagination } = vaccinations;
+  const baseUrl = `/patients/${patient.id}`;
 
   return (
     <Box sx={{}}>
@@ -140,7 +158,7 @@ const VaccinationTab = ({ patient }: VaccinationTabProps) => {
         />
       </Box>
     </Box>
-  )
-}
+  );
+};
 
-export default VaccinationTab
+export default VaccinationTab;

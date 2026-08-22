@@ -1,13 +1,16 @@
-import { Box, DialogActions, DialogContent, Grid, Button } from '@mui/material'
-import { useForm } from 'react-hook-form'
-import Input from '@/components/form/input'
-import NumberInput from '@/components/form/number'
-import Select from '@/components/form/select'
-import { IMedicationOrder, IMedicationOrderFormData } from '@/interfaces/IMedicationOrder'
-import { useState } from 'react'
-import { router } from '@inertiajs/react'
-import { useToast } from '@/components/toast'
-import { MEDICINE_ROUTE } from '@/config/mar'
+import { Box, DialogActions, DialogContent, Grid, Button } from '@mui/material';
+import { useForm } from 'react-hook-form';
+import Input from '@/components/form/input';
+import NumberInput from '@/components/form/number';
+import Select from '@/components/form/select';
+import {
+  IMedicationOrder,
+  IMedicationOrderFormData,
+} from '@/interfaces/IMedicationOrder';
+import { useState } from 'react';
+import { router } from '@inertiajs/react';
+import { useToast } from '@/components/toast';
+import { MEDICINE_ROUTE } from '@/config/mar';
 
 const INTERVAL_OPTIONS = [
   { value: 'QD', label: 'QD (Once daily)' },
@@ -16,83 +19,106 @@ const INTERVAL_OPTIONS = [
   { value: 'QID', label: 'QID (Four times daily)' },
   { value: 'QHS', label: 'QHS (At bedtime)' },
   { value: 'PRN', label: 'PRN (As needed)' },
-]
+];
 
 interface MedicationFormProps {
-   patientId: number
-   activeVisits: { id: number; type: string; visit_date: string; created_by?: string }[]
-   medicines: { id: number; name: string }[]
-   order?: IMedicationOrder
-   selectedVisitId?: number
-   onClose: () => void
+  patientId: number;
+  activeVisits: {
+    id: number;
+    type: string;
+    visit_date: string;
+    created_by?: string;
+  }[];
+  medicines: { id: number; name: string }[];
+  order?: IMedicationOrder;
+  selectedVisitId?: number;
+  onClose: () => void;
 }
 
-const MarForm = ({ patientId, activeVisits, medicines, order, selectedVisitId, onClose }: MedicationFormProps) => {
-  const [isProcessing, setIsProcessing] = useState(false)
-  const { toast } = useToast()
+const MarForm = ({
+  patientId,
+  activeVisits,
+  medicines,
+  order,
+  selectedVisitId,
+  onClose,
+}: MedicationFormProps) => {
+  const [isProcessing, setIsProcessing] = useState(false);
+  const { toast } = useToast();
 
-  const now = new Date()
-  now.setMinutes(now.getMinutes() - now.getTimezoneOffset())
-  const defaultStartsAt = now.toISOString().slice(0, 16)
+  const now = new Date();
+  now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+  const defaultStartsAt = now.toISOString().slice(0, 16);
 
   const getStartsAtValue = () => {
     if (order?.starts_at) {
-      const d = new Date(order.starts_at)
-      d.setMinutes(d.getMinutes() - d.getTimezoneOffset())
-      return d.toISOString().slice(0, 16)
+      const d = new Date(order.starts_at);
+      d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+      return d.toISOString().slice(0, 16);
     }
-    return defaultStartsAt
-  }
+    return defaultStartsAt;
+  };
 
   const { control, handleSubmit } = useForm<IMedicationOrderFormData>({
     defaultValues: order
       ? {
-        visit_id: selectedVisitId ?? activeVisits[0]?.id ?? 0,
-        medicine_id: order.medicine?.id ?? null,
-        route: order.route,
-        dosage: order.dosage,
-        unit: order.unit,
-        interval: order.interval,
-        duration: order.duration,
-        starts_at: getStartsAtValue(),
-        notes: order.notes ?? '',
-      }
+          visit_id: selectedVisitId ?? activeVisits[0]?.id ?? 0,
+          medicine_id: order.medicine?.id ?? null,
+          route: order.route,
+          dosage: order.dosage,
+          unit: order.unit,
+          interval: order.interval,
+          duration: order.duration,
+          starts_at: getStartsAtValue(),
+          notes: order.notes ?? '',
+        }
       : {
-        visit_id: selectedVisitId ?? activeVisits[0]?.id ?? 0,
-        medicine_id: null,
-        route: '',
-        dosage: null,
-        unit: '',
-        interval: '',
-        duration: null,
-        starts_at: defaultStartsAt,
-        notes: '',
-      },
-  })
+          visit_id: selectedVisitId ?? activeVisits[0]?.id ?? 0,
+          medicine_id: null,
+          route: '',
+          dosage: null,
+          unit: '',
+          interval: '',
+          duration: null,
+          starts_at: defaultStartsAt,
+          notes: '',
+        },
+  });
 
-  const medicineOptions = medicines.map((m) => ({ value: m.id, label: m.name }));
+  const medicineOptions = medicines.map((m) => ({
+    value: m.id,
+    label: m.name,
+  }));
 
   const onSubmit = handleSubmit((data) => {
-    setIsProcessing(true)
+    setIsProcessing(true);
 
     if (order) {
-      router.put(`/patients/${patientId}/medications/${order.id}`, { ...data }, {
-        onSuccess: () => {
-          onClose()
-          toast('Medication updated!', { variant: 'success' })
+      router.put(
+        `/patients/${patientId}/medications/${order.id}`,
+        { ...data },
+        {
+          onSuccess: () => {
+            onClose();
+            toast('Medication updated!', { variant: 'success' });
+          },
+          onFinish: () => setIsProcessing(false),
         },
-        onFinish: () => setIsProcessing(false),
-      })
+      );
     } else {
-      router.post(`/patients/${patientId}/medications`, { ...data }, {
-        onSuccess: () => {
-          onClose()
-          toast('Added to drug chart!', { variant: 'success' })
+      router.post(
+        `/patients/${patientId}/medications`,
+        { ...data },
+        {
+          onSuccess: () => {
+            onClose();
+            toast('Added to drug chart!', { variant: 'success' });
+          },
+          onFinish: () => setIsProcessing(false),
         },
-        onFinish: () => setIsProcessing(false),
-      })
+      );
     }
-  })
+  });
 
   return (
     <Box component="form" onSubmit={onSubmit} noValidate>
@@ -132,7 +158,10 @@ const MarForm = ({ patientId, activeVisits, medicines, order, selectedVisitId, o
               slotProps={{ htmlInput: { min: 0, step: 0.01 } }}
               placeholder="e.g. 500"
               name="dosage"
-              rules={{ required: 'Required', min: { value: 0, message: 'Min 0' } }}
+              rules={{
+                required: 'Required',
+                min: { value: 0, message: 'Min 0' },
+              }}
             />
           </Grid>
           <Grid size={{ md: 6 }}>
@@ -152,7 +181,10 @@ const MarForm = ({ patientId, activeVisits, medicines, order, selectedVisitId, o
               slotProps={{ htmlInput: { min: 1, max: 365 } }}
               placeholder="e.g. 3"
               name="duration"
-              rules={{ required: 'Required', min: { value: 1, message: 'Min 1' } }}
+              rules={{
+                required: 'Required',
+                min: { value: 1, message: 'Min 1' },
+              }}
             />
           </Grid>
           <Grid size={{ md: 6 }}>
@@ -176,24 +208,16 @@ const MarForm = ({ patientId, activeVisits, medicines, order, selectedVisitId, o
           </Grid>
         </Grid>
         <DialogActions>
-          <Button
-            type="button"
-            onClick={() => onClose()}
-            variant="outlined"
-          >
-                  Cancel
+          <Button type="button" onClick={() => onClose()} variant="outlined">
+            Cancel
           </Button>
-          <Button
-            type="submit"
-            disabled={isProcessing}
-            variant='contained'
-          >
-            {order ? "Save" : "Create"}
+          <Button type="submit" disabled={isProcessing} variant="contained">
+            {order ? 'Save' : 'Create'}
           </Button>
         </DialogActions>
       </DialogContent>
     </Box>
-  )
-}
+  );
+};
 
-export default MarForm
+export default MarForm;
