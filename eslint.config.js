@@ -14,8 +14,13 @@ export default defineConfig([
   tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,
   {
+    settings: {
+      react: {
+        version: '19.2',
+      },
+    },
     rules: {
-      indent: ["error", 3, { SwitchCase: 1 }],
+      indent: ["error", 2, { SwitchCase: 1 }],
       "@typescript-eslint/no-explicit-any": "off",
       "react/react-in-jsx-scope": "off",
       "react/jsx-uses-react": "off",

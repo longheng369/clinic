@@ -6,25 +6,25 @@ type Props = Omit<InputHTMLAttributes<HTMLInputElement>, 'color' | 'size' | 'cla
 }
 
 export default forwardRef(function TextInput(
-   { type = 'text', isFocused = false, ...props }: Props,
-   ref: React.Ref<{ focus: () => void }>,
+  { type = 'text', isFocused = false, ...props }: Props,
+  ref: React.Ref<{ focus: () => void }>,
 ) {
-   const localRef = useRef<HTMLInputElement>(null)
+  const localRef = useRef<HTMLInputElement>(null)
 
-   useImperativeHandle(ref, () => ({
-      focus: () => localRef.current?.focus(),
-   }))
+  useImperativeHandle(ref, () => ({
+    focus: () => localRef.current?.focus(),
+  }))
 
-   useEffect(() => {
-      if (isFocused) localRef.current?.focus()
-   }, [isFocused])
+  useEffect(() => {
+    if (isFocused) localRef.current?.focus()
+  }, [isFocused])
 
-   return (
-      <TextField
-         {...props}
-         type={type}
-         inputRef={localRef}
-         variant="standard"
-      />
-   )
+  return (
+    <TextField
+      {...props}
+      type={type}
+      inputRef={localRef}
+      variant="standard"
+    />
+  )
 })

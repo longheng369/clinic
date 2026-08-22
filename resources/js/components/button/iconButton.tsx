@@ -7,9 +7,9 @@ type Props = Omit<MuiIconButtonProps, 'color'> & {
 }
 
 const IconButton = ({ children, ...props }: Props) => (
-   <MuiIconButton {...props}>
-      {children}
-   </MuiIconButton>
+  <MuiIconButton {...props}>
+    {children}
+  </MuiIconButton>
 )
 
 export default IconButton

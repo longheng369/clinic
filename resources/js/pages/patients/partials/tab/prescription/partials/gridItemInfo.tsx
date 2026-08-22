@@ -7,16 +7,16 @@ type Props = {
 }
 
 const GridItemInfo = ({ label, value }: Props) => {
-   return (
-      <Grid container>
-         <Grid size={{ md: 4 }}>
-            {label}
-         </Grid>
-         <Grid size={{ md: 8 }}>
-            : {value}
-         </Grid>
+  return (
+    <Grid container>
+      <Grid size={{ md: 4 }}>
+        {label}
       </Grid>
-   )
+      <Grid size={{ md: 8 }}>
+            : {value}
+      </Grid>
+    </Grid>
+  )
 }
 
 export default GridItemInfo

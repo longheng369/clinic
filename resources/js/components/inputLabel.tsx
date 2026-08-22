@@ -5,9 +5,9 @@ type Props = FormLabelProps & {
 }
 
 const InputLabel = ({ value, children, ...props }: Props) => (
-   <FormLabel {...props}>
-      {value ?? children}
-   </FormLabel>
+  <FormLabel {...props}>
+    {value ?? children}
+  </FormLabel>
 )
 
 export default InputLabel

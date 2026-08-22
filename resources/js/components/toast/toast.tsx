@@ -17,35 +17,35 @@ type Props = ToastData & {
 }
 
 const Toast = ({ id, message, description, variant, duration, onClose }: Props) => {
-   useEffect(() => {
-      if (duration <= 0) return
-      const timer = setTimeout(() => onClose(id), duration)
-      return () => clearTimeout(timer)
-   }, [id, duration, onClose])
+  useEffect(() => {
+    if (duration <= 0) return
+    const timer = setTimeout(() => onClose(id), duration)
+    return () => clearTimeout(timer)
+  }, [id, duration, onClose])
 
-   return (
-      <Snackbar
-         open
-         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-         sx={{ position: 'static', transform: 'none' }}
+  return (
+    <Snackbar
+      open
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      sx={{ position: 'static', transform: 'none' }}
+    >
+      <Alert
+        severity={variant}
+        role="alert"
+        sx={{ width: '100%', minWidth: 320, alignItems: 'flex-start' }}
+        action={(
+          <IconButton size="small" color="inherit" onClick={() => onClose(id)} aria-label="Close notification">
+            <X size={16} />
+          </IconButton>
+        )}
       >
-         <Alert
-            severity={variant}
-            role="alert"
-            sx={{ width: '100%', minWidth: 320, alignItems: 'flex-start' }}
-            action={(
-               <IconButton size="small" color="inherit" onClick={() => onClose(id)} aria-label="Close notification">
-                  <X size={16} />
-               </IconButton>
-            )}
-         >
-            <Stack spacing={0.25}>
-               <Typography variant="body2" sx={{ fontWeight: 600 }}>{message}</Typography>
-               {description && <Typography variant="caption">{description}</Typography>}
-            </Stack>
-         </Alert>
-      </Snackbar>
-   )
+        <Stack spacing={0.25}>
+          <Typography variant="body2" sx={{ fontWeight: 600 }}>{message}</Typography>
+          {description && <Typography variant="caption">{description}</Typography>}
+        </Stack>
+      </Alert>
+    </Snackbar>
+  )
 }
 
 export default Toast

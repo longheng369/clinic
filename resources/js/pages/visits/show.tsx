@@ -87,11 +87,11 @@ interface ParaclinicRow {
 }
 
 const STATUS_BADGE: Record<string, { label: string; backgroundColor: string; color: string }> = {
-   prescribed: { label: 'Prescribed', backgroundColor: '#dbeafe', color: '#1d4ed8' },
-   active: { label: 'Active', backgroundColor: '#dcfce7', color: '#15803d' },
-   provided: { label: 'Provided', backgroundColor: '#dcfce7', color: '#15803d' },
-   continued: { label: 'Continued', backgroundColor: '#fef3c7', color: '#b45309' },
-   stopped: { label: 'Stopped', backgroundColor: '#f3f4f6', color: '#6b7280' },
+  prescribed: { label: 'Prescribed', backgroundColor: '#dbeafe', color: '#1d4ed8' },
+  active: { label: 'Active', backgroundColor: '#dcfce7', color: '#15803d' },
+  provided: { label: 'Provided', backgroundColor: '#dcfce7', color: '#15803d' },
+  continued: { label: 'Continued', backgroundColor: '#fef3c7', color: '#b45309' },
+  stopped: { label: 'Stopped', backgroundColor: '#f3f4f6', color: '#6b7280' },
 }
 
 const VisitShow = ({ visit, patient, consultations, medicationOrders, prescriptions, surveillance, paraclinicRequests }: {
@@ -103,193 +103,193 @@ const VisitShow = ({ visit, patient, consultations, medicationOrders, prescripti
     surveillance: SurveillanceRow[]
     paraclinicRequests: ParaclinicRow[]
 }) => {
-   return (
-      <>
-         <Head title={`Visit - ${patient.khmer_last_name} ${patient.khmer_first_name}`} />
+  return (
+    <>
+      <Head title={`Visit - ${patient.khmer_last_name} ${patient.khmer_first_name}`} />
 
-         <Box>
+      <Box>
+        <Box>
+          <Link
+            href={`/patients/${patient.id}`}
+          >
+            <ArrowLeft size={20} />
+          </Link>
+          <Box>
             <Box>
-               <Link
-                  href={`/patients/${patient.id}`}
-               >
-                  <ArrowLeft size={20} />
-               </Link>
-               <Box>
-                  <Box>
-                     <Calendar size={20} />
-                  </Box>
-                  <Box>
-                     <Box>
-                        <Box>{patient.khmer_last_name} {patient.khmer_first_name}</Box>
-                     </Box>
-                     <Box>
-                        <Box>
-                           {visit.type}
-                        </Box>
-                        <Box>
-                           {new Date(visit.visit_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: '2-digit' })}
-                        </Box>
-                        <Box>
-                                    &middot; {visit.status}
-                        </Box>
-                     </Box>
-                  </Box>
-               </Box>
+              <Calendar size={20} />
             </Box>
-         </Box>
+            <Box>
+              <Box>
+                <Box>{patient.khmer_last_name} {patient.khmer_first_name}</Box>
+              </Box>
+              <Box>
+                <Box>
+                  {visit.type}
+                </Box>
+                <Box>
+                  {new Date(visit.visit_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: '2-digit' })}
+                </Box>
+                <Box>
+                                    &middot; {visit.status}
+                </Box>
+              </Box>
+            </Box>
+          </Box>
+        </Box>
+      </Box>
 
-         <Box>
-            {/* Consultations */}
-            {consultations.length > 0 && (
-               <Section title="Consultations" count={consultations.length}>
-                  {consultations.map((c) => (
-                     <Row key={c.id}>
-                        <Box>
-                           <Box>{c.chief_complaint}</Box>
-                           {c.diagnosis && <Box>{c.diagnosis}</Box>}
-                        </Box>
-                        <Box>
-                           {c.fee ? <Box>${c.fee.toFixed(2)}</Box> : null}
-                           <Box>{new Date(c.created_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}</Box>
-                           {c.created_by && <Box>by {c.created_by}</Box>}
-                        </Box>
-                     </Row>
-                  ))}
-               </Section>
-            )}
+      <Box>
+        {/* Consultations */}
+        {consultations.length > 0 && (
+          <Section title="Consultations" count={consultations.length}>
+            {consultations.map((c) => (
+              <Row key={c.id}>
+                <Box>
+                  <Box>{c.chief_complaint}</Box>
+                  {c.diagnosis && <Box>{c.diagnosis}</Box>}
+                </Box>
+                <Box>
+                  {c.fee ? <Box>${c.fee.toFixed(2)}</Box> : null}
+                  <Box>{new Date(c.created_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}</Box>
+                  {c.created_by && <Box>by {c.created_by}</Box>}
+                </Box>
+              </Row>
+            ))}
+          </Section>
+        )}
 
-            {/* Medications */}
-            {medicationOrders.length > 0 && (
-               <Section title="Medications" count={medicationOrders.length}>
-                  {medicationOrders.map((m) => {
-                     const badge = STATUS_BADGE[m.status] ?? { label: m.status, backgroundColor: '#f3f4f6', color: '#4b5563' }
-                     return (
-                        <Row key={m.id}>
-                           <Box>
-                              <Box>{m.medicine ?? '—'}</Box>
-                              <Box>{m.route}</Box>
-                              <Box>{m.dosage} {m.unit} &middot; {m.interval}</Box>
-                           </Box>
-                           <Box>
-                              <Box sx={{ backgroundColor: badge.backgroundColor, color: badge.color }}>
-                                 {badge.label}
-                              </Box>
-                              <Box>
-                                 {new Date(m.created_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}
-                              </Box>
-                              {m.created_by && <Box>by {m.created_by}</Box>}
-                           </Box>
-                        </Row>
-                     )
-                  })}
-               </Section>
-            )}
+        {/* Medications */}
+        {medicationOrders.length > 0 && (
+          <Section title="Medications" count={medicationOrders.length}>
+            {medicationOrders.map((m) => {
+              const badge = STATUS_BADGE[m.status] ?? { label: m.status, backgroundColor: '#f3f4f6', color: '#4b5563' }
+              return (
+                <Row key={m.id}>
+                  <Box>
+                    <Box>{m.medicine ?? '—'}</Box>
+                    <Box>{m.route}</Box>
+                    <Box>{m.dosage} {m.unit} &middot; {m.interval}</Box>
+                  </Box>
+                  <Box>
+                    <Box sx={{ backgroundColor: badge.backgroundColor, color: badge.color }}>
+                      {badge.label}
+                    </Box>
+                    <Box>
+                      {new Date(m.created_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}
+                    </Box>
+                    {m.created_by && <Box>by {m.created_by}</Box>}
+                  </Box>
+                </Row>
+              )
+            })}
+          </Section>
+        )}
 
-            {/* Prescriptions */}
-            {prescriptions.length > 0 && (
-               <Section title="Prescriptions" count={prescriptions.length}>
-                  {prescriptions.map((p) => (
-                     <Box key={p.id}>
-                        <Box>
-                           <Box>
+        {/* Prescriptions */}
+        {prescriptions.length > 0 && (
+          <Section title="Prescriptions" count={prescriptions.length}>
+            {prescriptions.map((p) => (
+              <Box key={p.id}>
+                <Box>
+                  <Box>
                                         Prescription #{p.id}
-                              <Box>
-                                 {p.items.length} medicine{p.items.length !== 1 ? 's' : ''}
-                              </Box>
-                           </Box>
-                           <Box>
-                              <Box>{new Date(p.created_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}</Box>
-                              {p.created_by && <Box>by {p.created_by}</Box>}
-                           </Box>
-                        </Box>
-                        {p.items.map((item) => (
-                           <Row key={item.id}>
-                              <Box>
-                                 <Box>{item.medicine ?? '—'}</Box>
-                                 <Box>{item.route}</Box>
-                                 <Box>{item.dosage} {item.unit} &middot; {item.frequency}</Box>
-                                 {item.number_of_day && <Box>{item.number_of_day}d</Box>}
-                                 {item.quantity && <Box>Qty: {item.quantity}</Box>}
-                              </Box>
-                              <Box>
-                                 {item.notes && <Box>{item.notes}</Box>}
-                              </Box>
-                           </Row>
-                        ))}
-                        {p.notes && (
-                           <Box>
+                    <Box>
+                      {p.items.length} medicine{p.items.length !== 1 ? 's' : ''}
+                    </Box>
+                  </Box>
+                  <Box>
+                    <Box>{new Date(p.created_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}</Box>
+                    {p.created_by && <Box>by {p.created_by}</Box>}
+                  </Box>
+                </Box>
+                {p.items.map((item) => (
+                  <Row key={item.id}>
+                    <Box>
+                      <Box>{item.medicine ?? '—'}</Box>
+                      <Box>{item.route}</Box>
+                      <Box>{item.dosage} {item.unit} &middot; {item.frequency}</Box>
+                      {item.number_of_day && <Box>{item.number_of_day}d</Box>}
+                      {item.quantity && <Box>Qty: {item.quantity}</Box>}
+                    </Box>
+                    <Box>
+                      {item.notes && <Box>{item.notes}</Box>}
+                    </Box>
+                  </Row>
+                ))}
+                {p.notes && (
+                  <Box>
                                         Note: {p.notes}
-                           </Box>
-                        )}
-                     </Box>
-                  ))}
-               </Section>
-            )}
+                  </Box>
+                )}
+              </Box>
+            ))}
+          </Section>
+        )}
 
-            {/* Surveillance */}
-            {surveillance.length > 0 && (
-               <Section title="Vital Signs" count={surveillance.length}>
-                  {surveillance.map((s) => (
-                     <Row key={s.id}>
-                        <Box>
-                           <Box>{s.systolic}/{s.diastolic}</Box>
-                           <Box>Pulse {s.pulse}</Box>
-                           <Box>Temp {s.temperature.toFixed(1)}°C</Box>
-                           <Box>RR {s.rr}</Box>
-                           <Box>SpO₂ {s.spo2}%</Box>
-                           <Box>{s.o2_supply}</Box>
-                        </Box>
-                        <Box>
-                           <Box>{new Date(s.created_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}</Box>
-                           {s.created_by && <Box>by {s.created_by}</Box>}
-                        </Box>
-                     </Row>
-                  ))}
-               </Section>
-            )}
+        {/* Surveillance */}
+        {surveillance.length > 0 && (
+          <Section title="Vital Signs" count={surveillance.length}>
+            {surveillance.map((s) => (
+              <Row key={s.id}>
+                <Box>
+                  <Box>{s.systolic}/{s.diastolic}</Box>
+                  <Box>Pulse {s.pulse}</Box>
+                  <Box>Temp {s.temperature.toFixed(1)}°C</Box>
+                  <Box>RR {s.rr}</Box>
+                  <Box>SpO₂ {s.spo2}%</Box>
+                  <Box>{s.o2_supply}</Box>
+                </Box>
+                <Box>
+                  <Box>{new Date(s.created_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}</Box>
+                  {s.created_by && <Box>by {s.created_by}</Box>}
+                </Box>
+              </Row>
+            ))}
+          </Section>
+        )}
 
-            {/* Paraclinic Requests */}
-            {paraclinicRequests.length > 0 && (
-               <Section title="Paraclinic Requests" count={paraclinicRequests.length}>
-                  {paraclinicRequests.map((r) => (
-                     <Row key={r.id}>
-                        <Box>
-                           <Box>{r.request_number}</Box>
-                           {r.doctor && <Box>Dr. {r.doctor}</Box>}
-                           <Box>{r.tests_count} test{r.tests_count !== 1 ? 's' : ''}</Box>
-                        </Box>
-                        <Box>
-                           <Box>{r.status}</Box>
-                           <Box>{new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}</Box>
-                        </Box>
-                     </Row>
-                  ))}
-               </Section>
-            )}
+        {/* Paraclinic Requests */}
+        {paraclinicRequests.length > 0 && (
+          <Section title="Paraclinic Requests" count={paraclinicRequests.length}>
+            {paraclinicRequests.map((r) => (
+              <Row key={r.id}>
+                <Box>
+                  <Box>{r.request_number}</Box>
+                  {r.doctor && <Box>Dr. {r.doctor}</Box>}
+                  <Box>{r.tests_count} test{r.tests_count !== 1 ? 's' : ''}</Box>
+                </Box>
+                <Box>
+                  <Box>{r.status}</Box>
+                  <Box>{new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}</Box>
+                </Box>
+              </Row>
+            ))}
+          </Section>
+        )}
 
-            {consultations.length === 0 && medicationOrders.length === 0 && prescriptions.length === 0 && surveillance.length === 0 && paraclinicRequests.length === 0 && (
-               <Box>
-                  <Calendar size={40} />
-                  <Box>No records</Box>
-                  <Box>This visit has no associated records.</Box>
-               </Box>
-            )}
-         </Box>
-      </>
-   )
+        {consultations.length === 0 && medicationOrders.length === 0 && prescriptions.length === 0 && surveillance.length === 0 && paraclinicRequests.length === 0 && (
+          <Box>
+            <Calendar size={40} />
+            <Box>No records</Box>
+            <Box>This visit has no associated records.</Box>
+          </Box>
+        )}
+      </Box>
+    </>
+  )
 }
 
 const Section = ({ title, count, children }: { title: string; count: number; children: React.ReactNode }) => (
-   <Box>
-      <Box>
-         <Box>{title} <Box>({count})</Box></Box>
-      </Box>
-      <Box>{children}</Box>
-   </Box>
+  <Box>
+    <Box>
+      <Box>{title} <Box>({count})</Box></Box>
+    </Box>
+    <Box>{children}</Box>
+  </Box>
 )
 
 const Row = ({ children }: { children: React.ReactNode }) => (
-   <Box>{children}</Box>
+  <Box>{children}</Box>
 )
 
 export default VisitShow

@@ -5,7 +5,7 @@ type Props = FormHelperTextProps & {
 }
 
 const InputError = ({ message, children, ...props }: Props) => (
-   message ? <FormHelperText {...props} error>{message ?? children}</FormHelperText> : null
+  message ? <FormHelperText {...props} error>{message ?? children}</FormHelperText> : null
 )
 
 export default InputError

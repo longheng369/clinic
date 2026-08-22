@@ -13,53 +13,53 @@ type Props = {
 }
 
 const Pagination = ({ meta, baseUrl, only }: Props) => {
-   const separator = baseUrl.includes('?') ? '&' : '?'
-   const link = (page: number) => `${baseUrl}${separator}page=${page}`
+  const separator = baseUrl.includes('?') ? '&' : '?'
+  const link = (page: number) => `${baseUrl}${separator}page=${page}`
 
-   return (
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mt: 1.5, alignItems: { xs: 'stretch', sm: 'center' }, justifyContent: 'space-between' }}>
-         <Typography variant="body2" color="text.secondary">Page {meta.current_page} of {meta.last_page}</Typography>
-         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, justifyContent: { xs: 'flex-start', sm: 'flex-end' } }}>
-            <Button
-               component={InertiaLinkComponent}
-               href={link(meta.current_page - 1)}
-               preserveScroll
-               only={only}
-               disabled={meta.current_page === 1}
-               size="small"
-               startIcon={<ChevronLeft size={16} />}
-            >
+  return (
+    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mt: 1.5, alignItems: { xs: 'stretch', sm: 'center' }, justifyContent: 'space-between' }}>
+      <Typography variant="body2" color="text.secondary">Page {meta.current_page} of {meta.last_page}</Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, justifyContent: { xs: 'flex-start', sm: 'flex-end' } }}>
+        <Button
+          component={InertiaLinkComponent}
+          href={link(meta.current_page - 1)}
+          preserveScroll
+          only={only}
+          disabled={meta.current_page === 1}
+          size="small"
+          startIcon={<ChevronLeft size={16} />}
+        >
                Previous
-            </Button>
-            {Array.from({ length: meta.last_page }, (_, index) => index + 1).map((page) => (
-               <Button
-                  key={page}
-                  component={InertiaLinkComponent}
-                  href={link(page)}
-                  preserveScroll
-                  only={only}
-                  size="small"
-                  variant={page === meta.current_page ? 'contained' : 'text'}
-                  color={page === meta.current_page ? 'primary' : 'inherit'}
-                  sx={{ minWidth: 36 }}
-               >
-                  {page}
-               </Button>
-            ))}
-            <Button
-               component={InertiaLinkComponent}
-               href={link(meta.current_page + 1)}
-               preserveScroll
-               only={only}
-               disabled={meta.current_page === meta.last_page}
-               size="small"
-               endIcon={<ChevronRight size={16} />}
-            >
+        </Button>
+        {Array.from({ length: meta.last_page }, (_, index) => index + 1).map((page) => (
+          <Button
+            key={page}
+            component={InertiaLinkComponent}
+            href={link(page)}
+            preserveScroll
+            only={only}
+            size="small"
+            variant={page === meta.current_page ? 'contained' : 'text'}
+            color={page === meta.current_page ? 'primary' : 'inherit'}
+            sx={{ minWidth: 36 }}
+          >
+            {page}
+          </Button>
+        ))}
+        <Button
+          component={InertiaLinkComponent}
+          href={link(meta.current_page + 1)}
+          preserveScroll
+          only={only}
+          disabled={meta.current_page === meta.last_page}
+          size="small"
+          endIcon={<ChevronRight size={16} />}
+        >
                Next
-            </Button>
-         </Box>
-      </Stack>
-   )
+        </Button>
+      </Box>
+    </Stack>
+  )
 }
 
 export default Pagination

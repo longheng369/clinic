@@ -17,61 +17,61 @@ interface ModalProps {
 }
 
 const extendedMaxWidths: Record<string, string> = {
-   '2xl': '42rem',
-   '3xl': '48rem',
-   '4xl': '56rem',
-   '5xl': '64rem',
+  '2xl': '42rem',
+  '3xl': '48rem',
+  '4xl': '56rem',
+  '5xl': '64rem',
 }
 
 const Modal = ({
-   open,
-   onClose,
-   title,
-   children,
-   maxWidth = 'md',
-   fullScreen = false,
-   preventClickAway = false,
-   preventEscape = false,
-   scrollable = false,
-   contentSx,
+  open,
+  onClose,
+  title,
+  children,
+  maxWidth = 'md',
+  fullScreen = false,
+  preventClickAway = false,
+  preventEscape = false,
+  scrollable = false,
+  contentSx,
 }: ModalProps) => {
-   const defaultSizes = ['sm', 'md', 'lg', 'xl']
-   const muiMaxWidth = (defaultSizes.includes(maxWidth) ? maxWidth : 'md') as 'sm' | 'md' | 'lg' | 'xl'
-   const customWidth = extendedMaxWidths[maxWidth]
+  const defaultSizes = ['sm', 'md', 'lg', 'xl']
+  const muiMaxWidth = (defaultSizes.includes(maxWidth) ? maxWidth : 'md') as 'sm' | 'md' | 'lg' | 'xl'
+  const customWidth = extendedMaxWidths[maxWidth]
 
-   return (
-      <Dialog
-         open={open}
-         fullScreen={fullScreen}
-         fullWidth
-         maxWidth={muiMaxWidth}
-         scroll={scrollable ? 'paper' : 'body'}
-         onClose={(_event, reason) => {
-            if (reason === 'backdropClick' && preventClickAway) return
-            if (reason === 'escapeKeyDown' && preventEscape) return
-            onClose()
-         }}
-         sx={customWidth ? { '& .MuiDialog-paper': { maxWidth: customWidth } } : undefined}
+  return (
+    <Dialog
+      open={open}
+      fullScreen={fullScreen}
+      fullWidth
+      maxWidth={muiMaxWidth}
+      scroll={scrollable ? 'paper' : 'body'}
+      onClose={(_event, reason) => {
+        if (reason === 'backdropClick' && preventClickAway) return
+        if (reason === 'escapeKeyDown' && preventEscape) return
+        onClose()
+      }}
+      sx={customWidth ? { '& .MuiDialog-paper': { maxWidth: customWidth } } : undefined}
+    >
+      <DialogTitle sx={{ pr: 6, borderBottom: 1, borderColor: 'divider' }}>
+        {title}
+        <IconButton aria-label="Close" onClick={onClose} sx={{ position: 'absolute', right: 8, top: 8 }}>
+          <X size={20} />
+        </IconButton>
+      </DialogTitle>
+      <DialogContent
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100%',
+          ...(fullScreen && { p: 0 }),
+          ...contentSx,
+        }}
       >
-         <DialogTitle sx={{ pr: 6, borderBottom: 1, borderColor: 'divider' }}>
-            {title}
-            <IconButton aria-label="Close" onClick={onClose} sx={{ position: 'absolute', right: 8, top: 8 }}>
-               <X size={20} />
-            </IconButton>
-         </DialogTitle>
-         <DialogContent
-            sx={{
-               display: 'flex',
-               flexDirection: 'column',
-               height: '100%',
-               ...(fullScreen && { p: 0 }),
-               ...contentSx,
-            }}
-         >
-            {children}
-         </DialogContent>
-      </Dialog>
-   )
+        {children}
+      </DialogContent>
+    </Dialog>
+  )
 }
 
 export default Modal
