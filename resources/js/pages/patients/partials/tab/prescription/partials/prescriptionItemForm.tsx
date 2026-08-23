@@ -1,17 +1,18 @@
 import { IPrescriptionItemFormData } from '@/interfaces/IPrescription';
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import Input from '@/components/form/input';
-import { Box, DialogActions, DialogContent, Grid, Button } from '@mui/material';
+import { Box, DialogActions, DialogContent, Grid, Button, Typography } from '@mui/material';
 import Select from '@/components/form/select';
 import { MEDICINE_INSTRUCTION } from '@/config/prescription';
 import Autocomplete from '@/components/form/autocomplete';
 import { MEDICINE_ROUTE } from '@/config/mar';
+import { useModal } from '@/components/modal';
 
 interface Props {
   onSave: (data: IPrescriptionItemFormData) => void;
-  medicines: { id: number; name: string }[];
-  units: { id: number; name: string }[];
+  onClose: () => void;
+  medicines: { id: number; name: string; unit?: { name: string } | null; dosage?: string | null }[];
   defaultValues?: IPrescriptionItemFormData;
 }
 
@@ -20,7 +21,7 @@ type PrescriptionItemFormValues = Omit<
   'medicine' | 'unit' | 'instruction'
 > & {
   medicine: number | '';
-  unit: number | '';
+  unit: string | '';
   instruction: string | null;
 };
 
@@ -34,15 +35,15 @@ const toNullableNumber = (value: unknown): number | null => {
 const PrescriptionItemForm: FC<Props> = ({
   onSave,
   medicines,
-  units,
   defaultValues,
 }) => {
-  const { control, handleSubmit } = useForm<PrescriptionItemFormValues>({
+  const { closeModal } = useModal();
+  const { control, handleSubmit, watch, setValue } = useForm<PrescriptionItemFormValues>({
     defaultValues: defaultValues
       ? {
           ...defaultValues,
           medicine: defaultValues.medicine?.id ?? '',
-          unit: defaultValues.unit?.id ?? '',
+          unit: defaultValues.unit?.name ?? '',
           instruction: defaultValues.instruction?.value ?? null,
         }
       : {
@@ -60,21 +61,37 @@ const PrescriptionItemForm: FC<Props> = ({
         },
   });
 
+  // Watch medicine changes to auto-set unit and dosage
+  const medicineId = watch('medicine');
+  useEffect(() => {
+    if (medicineId) {
+      const medicine = medicines.find((m) => m.id === medicineId);
+      if (medicine) {
+        setValue('unit', medicine.unit?.name ?? '', { shouldValidate: true });
+        if (!watch('morning') && !watch('afternoon') && !watch('evening') && !watch('night')) {
+          const medDosage = medicine.dosage ? parseFloat(medicine.dosage) : null;
+          if (medDosage) setValue('morning', medDosage, { shouldValidate: true });
+        }
+      }
+    } else {
+      setValue('unit', '', { shouldValidate: true });
+    }
+  }, [medicineId, medicines, setValue, watch]);
+
   const onSubmit = (values: PrescriptionItemFormValues) => {
     const medicine = medicines.find((option) => option.id === values.medicine);
-    const unit = units.find((option) => option.id === values.unit);
     const instruction =
       MEDICINE_INSTRUCTION.find((opt) => opt.value === values.instruction) ??
       null;
 
-    if (!medicine || !unit) {
+    if (!medicine) {
       return;
     }
 
     onSave({
       ...values,
       medicine,
-      unit,
+      unit: { id: 0, name: values.unit || (medicine.unit?.name ?? '') },
       instruction,
       quantity: toNullableNumber(values.quantity),
       morning: toNullableNumber(values.morning),
@@ -129,15 +146,24 @@ const PrescriptionItemForm: FC<Props> = ({
             />
           </Grid>
           <Grid size={{ md: 6 }}>
-            <Select
-              control={control}
+            <label
+              style={{
+                display: 'block',
+                fontSize: '0.875rem',
+                color: '#666',
+                marginBottom: '0.25rem',
+              }}
+            >
+              Unit
+            </label>
+            <Typography variant="body1" color="text.secondary">
+              {watch('unit') || '—'}
+            </Typography>
+            <input
+              type="hidden"
               name="unit"
-              label="Unit"
-              options={units.map((unit) => ({
-                label: unit.name,
-                value: unit.id,
-              }))}
-              rules={{ required: 'Unit is required' }}
+              value={watch('unit') || ''}
+              onChange={(e) => setValue('unit', e.target.value)}
             />
           </Grid>
           <Grid size={{ md: 6 }}>
@@ -191,7 +217,6 @@ const PrescriptionItemForm: FC<Props> = ({
               name="instruction"
               label="Instruction"
               options={MEDICINE_INSTRUCTION}
-              rules={{ required: 'This field is required' }}
             />
           </Grid>
           <Grid size={{ md: 12 }}>
@@ -200,6 +225,9 @@ const PrescriptionItemForm: FC<Props> = ({
         </Grid>
       </DialogContent>
       <DialogActions>
+        <Button type="button" onClick={closeModal} variant="outlined">
+          Cancel
+        </Button>
         <Button type="submit" variant="contained">
           {defaultValues ? 'Save' : 'Add'}
         </Button>

@@ -72,9 +72,8 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
   const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
   const [isEditing, setIsEditing] = useState(!prescription);
-  const { medicines, units } = usePage<{
-    medicines: { id: number; name: string }[];
-    units: { id: number; name: string }[];
+  const { medicines } = usePage<{
+    medicines: { id: number; name: string; unit?: { name: string } | null; dosage?: string | null }[];
   }>().props;
   const prescriptionItems = useMemo<IPrescriptionFormData['items']>(
     () =>
@@ -83,17 +82,17 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
           'morning',
         ];
         const dose = Number(item.dosage) || 0;
+        const medicine = medicines.find(
+          (medicine) => medicine.id === item.medicine?.id,
+        );
 
         return {
-          medicine: medicines.find(
-            (medicine) => medicine.id === item.medicine?.id,
-          ) ??
-            item.medicine ?? { id: 0, name: '' },
+          medicine:
+            medicine ??
+            item.medicine ??
+            { id: 0, name: '' },
           quantity: item.quantity ?? 0,
-          unit: units.find((unit) => unit.name === item.unit) ?? {
-            id: 0,
-            name: item.unit,
-          },
+          unit: { id: 0, name: item.unit || (medicine?.unit?.name ?? '') },
           route: item.route,
           morning: slots.includes('morning') ? dose : null,
           afternoon: slots.includes('afternoon') ? dose : null,
@@ -108,7 +107,7 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
             ) ?? null,
         };
       }) ?? [],
-    [medicines, prescription, units],
+    [medicines, prescription],
   );
 
   const { control, reset } = useForm<IPrescriptionFormData>({
@@ -144,11 +143,11 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
       content: (
         <MedicineItemForm
           medicines={availableMedicineOptions}
-          units={units}
           onSave={(data) => {
             append(data);
             closeModal();
           }}
+          onClose={closeModal}
         />
       ),
       config: { preventClickAway: true, maxWidth: '2xl' },
@@ -164,12 +163,12 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
       content: (
         <MedicineItemForm
           medicines={medicines}
-          units={units}
           defaultValues={item}
           onSave={(data) => {
             update(index, data);
             closeModal();
           }}
+          onClose={closeModal}
         />
       ),
       config: { preventClickAway: true, maxWidth: '2xl' },

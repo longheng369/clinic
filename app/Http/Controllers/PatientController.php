@@ -176,7 +176,7 @@ class PatientController extends Controller
                         'created_by' => $v->createdBy?->name,
                     ]);
             }, 'medication'),
-            'medicines' => Inertia::defer(fn () => Medicine::orderBy('name')->get(['id', 'name']), 'medicines'),
+            'medicines' => Inertia::defer(fn () => Medicine::with('unit')->orderBy('name')->get(['id', 'name', 'unit_id', 'dosage']), 'medicines'),
             'units' => Inertia::defer(fn () => Unit::orderBy('name')->get(['id', 'name']), 'medicines'),
             'prescription' => Inertia::defer(function () use ($selectedVisit) {
                 if (! $selectedVisit) {

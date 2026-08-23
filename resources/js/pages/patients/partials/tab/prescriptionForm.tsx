@@ -4,7 +4,7 @@ import Select from '@/components/form/select-deprecated';
 import Input from '@/components/form/input-deprecated';
 import Textarea from '@/components/form/textarea';
 import { IPrescription } from '@/interfaces/IPrescription';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { router } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/toast';
@@ -40,7 +40,7 @@ interface PrescriptionFormProps {
     visit_date: string;
     created_by?: string;
   }[];
-  medicines: { id: number; name: string }[];
+  medicines: { id: number; name: string; unit_id?: number | null; unit?: { name: string } | null; dosage?: string | null }[];
   prescription?: IPrescription;
   selectedVisitId?: number;
   onClose: () => void;
@@ -83,7 +83,7 @@ const PrescriptionForm = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
 
-  const { control, handleSubmit } = useForm<PrescriptionFormValues>({
+  const { control, handleSubmit, watch, setValue } = useForm<PrescriptionFormValues>({
     defaultValues: prescription
       ? {
           visit_id: selectedVisitId ?? activeVisits[0]?.id ?? 0,
@@ -108,9 +108,31 @@ const PrescriptionForm = ({
 
   const { fields, append, remove } = useFieldArray({ control, name: 'items' });
 
+  // Watch medicine_id changes to auto-set unit and dosage from medicine
+  const medicineIds = watch('items', { nest: true })?.map((item: any) => item.medicine_id) ?? [];
+  
+  useEffect(() => {
+    medicineIds.forEach((medicineId: number | null, index: number) => {
+      if (medicineId) {
+        const medicine = medicines.find((m) => m.id === medicineId);
+        if (medicine) {
+          setValue(`items.${index}.unit`, medicine.unit?.name ?? '', { shouldValidate: true });
+          if (!watch(`items.${index}.dosage`)) {
+            const medDosage = medicine.dosage ? parseFloat(medicine.dosage) : null;
+            if (medDosage) setValue(`items.${index}.dosage`, medDosage, { shouldValidate: true });
+          }
+        }
+      } else {
+        setValue(`items.${index}.unit`, '', { shouldValidate: true });
+      }
+    });
+  }, [medicineIds, medicines, setValue, watch]);
+
   const medicineOptions = medicines.map((m) => ({
     value: m.id,
     label: m.name,
+    unit: m.unit?.name ?? '',
+    dosage: m.dosage ?? '',
   }));
 
   const visitOptions = activeVisits.map((v) => ({
@@ -229,12 +251,14 @@ const PrescriptionForm = ({
                       />
                     </td>
                     <td>
-                      <Input
-                        control={control}
-                        type="text"
+                      <span style={{ color: '#666', fontSize: '0.875rem' }}>
+                        {watch(`items.${index}.unit`) || '—'}
+                      </span>
+                      <input
+                        type="hidden"
                         name={`items.${index}.unit`}
-                        rules={{ required: true }}
-                        placeholder="mg"
+                        value={watch(`items.${index}.unit`) || ''}
+                        onChange={(e) => setValue(`items.${index}.unit`, e.target.value)}
                       />
                     </td>
                     <td>
