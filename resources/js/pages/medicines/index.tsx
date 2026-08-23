@@ -132,13 +132,7 @@ const Medicine = () => {
       field: 'dosage',
       headerName: 'កម្រិត',
       flex: 1,
-      minWidth: 120,
-      renderCell: (params: GridRenderCellParams<IMedicine>) =>
-        params.value ?? (
-          <Typography component="span" color="text.disabled">
-            &mdash;
-          </Typography>
-        ),
+      minWidth: 120
     },
     {
       field: 'unit_price',

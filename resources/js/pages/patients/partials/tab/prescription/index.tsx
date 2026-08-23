@@ -536,6 +536,8 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
                       {field.evening &&
                         `ល្ងាច ${field.evening} ${field.unit.name}`}{' '}
                       {field.night && `យប់ ${field.night} ${field.unit.name}`}
+
+                      , {field.notes}
                     </TableCell>
                     <TableCell>{field.numberOfDay}</TableCell>
                   </TableRow>

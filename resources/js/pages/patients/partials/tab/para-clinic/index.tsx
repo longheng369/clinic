@@ -1,6 +1,7 @@
 import { Link, usePage } from '@inertiajs/react';
 import { IParaclinicRequest } from '@/interfaces/IParaclinicRequest';
 import DataTable, { type Column } from '@/components/table/DataTable';
+import { DataGrid } from '@mui/x-data-grid';
 import { Button, Chip, Stack, Typography } from '@mui/material';
 import { Plus } from 'lucide-react';
 interface PaginatedData<T> {
@@ -28,6 +29,8 @@ const ParaClinicByPatientTab = ({ patientId }: { patientId: number }) => {
   const { paraClinicRequests } = usePage<{
     paraClinicRequests: PaginatedData<IParaclinicRequest>;
   }>().props;
+  const { data, ...pagination } = paraClinicRequests;
+
   const columns: Column<IParaclinicRequest>[] = [
     {
       header: 'លេខស្នើសុំ',
@@ -74,7 +77,6 @@ const ParaClinicByPatientTab = ({ patientId }: { patientId: number }) => {
       cell: (r) => `$${(r.total_amount ?? 0).toFixed(2)}`,
     },
   ];
-  const { data, ...pagination } = paraClinicRequests;
 
   return (
     <Stack spacing={2}>
@@ -104,4 +106,5 @@ const ParaClinicByPatientTab = ({ patientId }: { patientId: number }) => {
     </Stack>
   );
 };
+
 export default ParaClinicByPatientTab;

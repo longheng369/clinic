@@ -158,7 +158,6 @@ const MedicineForm = ({ medicine, units }: MedicineFormProps) => {
               control={control}
               name="dosage"
               label="Dosage"
-              rules={{ required: 'This field is required' }}
             />
           </Grid>
           <Grid size={{ md: 6 }}>

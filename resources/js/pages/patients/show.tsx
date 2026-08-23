@@ -11,7 +11,7 @@ import SurveillanceTab from './partials/tab/surveillance/index';
 import MedicationOrdersTab from './partials/tab/medication-orders/index';
 import MedicationAdministrationTab from './partials/tab/medication-administration/index';
 import PrescriptionTab from './partials/tab/prescription';
-import ParaclinicByPatientTab from '../paraclinic-requests/partials/tab/byPatient';
+import ParaClinicTab from './partials/tab/para-clinic/index';
 import VaccinationTab from './partials/tab/vaccination';
 import BillingTab from './partials/tab/billing/index';
 import {
@@ -487,8 +487,8 @@ const TabContent = ({
       );
     case 'para-clinic':
       return (
-        <Deferred data="paraclinicRequests" fallback={<TabLoading />}>
-          <ParaclinicByPatientTab patientId={patientId} />
+        <Deferred data="paraClinicRequests" fallback={<TabLoading />}>
+          <ParaClinicTab patientId={patientId} />
         </Deferred>
       );
     case 'attachment':
