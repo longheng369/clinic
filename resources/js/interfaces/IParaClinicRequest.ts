@@ -1,4 +1,9 @@
-export interface IParaclinicRequestTest {
+export interface IParaClinicRequest {
+  id: number;
+
+}
+
+export interface IParaClinicRequestTest {
   id?: number;
   test_category: string;
   test_name: string;
@@ -6,7 +11,7 @@ export interface IParaclinicRequestTest {
   instruction: string | null;
 }
 
-export interface IParaclinicResult {
+export interface IParaClinicResult {
   id: number;
   result_date: string | null;
   result_summary: string | null;
@@ -16,7 +21,7 @@ export interface IParaclinicResult {
   created_at: string;
 }
 
-export interface IParaclinicAttachment {
+export interface IParaClinicAttachment {
   id: number;
   file_name: string;
   file_path: string;
@@ -26,7 +31,7 @@ export interface IParaclinicAttachment {
   created_at: string;
 }
 
-export interface IParaclinicRequest {
+export interface IParaClinicRequest {
   id: number;
   request_number: string;
   patient_id: number;
@@ -50,19 +55,18 @@ export interface IParaclinicRequest {
   total_amount: number;
   payment_status: string;
   payment_date: string | null;
-  tests: IParaclinicRequestTest[];
-  results: IParaclinicResult[];
-  attachments: IParaclinicAttachment[];
+  tests: IParaClinicRequestTest[];
+  results: IParaClinicResult[];
+  attachments: IParaClinicAttachment[];
   created_by: string | null;
   created_at: string;
   updated_at: string;
 }
 
-export interface IParaclinicRequestFormData {
+export interface IParaClinicRequestFormData {
   patient_id: number | null;
   doctor_id: number | null;
   visit_id: number | null;
-  external_facility_name: string | null;
   request_date: string;
   clinical_reason: string | null;
   provisional_diagnosis: string | null;
@@ -72,5 +76,5 @@ export interface IParaclinicRequestFormData {
   total_amount: number;
   payment_status: string;
   payment_date: string | null;
-  tests: IParaclinicRequestTest[];
+  tests: IParaClinicRequestTest[];
 }

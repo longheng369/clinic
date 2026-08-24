@@ -169,16 +169,11 @@ const VaccineForm = ({ vaccine, onClose }: VaccineFormProps) => {
           justifyContent: 'flex-end',
         }}
       >
-        <Button
-          type="button"
-          onClick={onClose}
-          variant="outlined"
-          color="inherit"
-        >
+        <Button type="button" onClick={onClose} variant="outlined">
           Cancel
         </Button>
-        <Button type="submit" disabled={isProcessing}>
-          Submit
+        <Button type="submit" disabled={isProcessing} variant="contained">
+          {vaccine ? 'Save' : 'Create'}
         </Button>
       </Stack>
     </Box>

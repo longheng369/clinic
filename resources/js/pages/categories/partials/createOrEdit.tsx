@@ -1,18 +1,19 @@
 import { useForm } from 'react-hook-form';
-import Input from '@/components/form/input-deprecated';
+import Input from '@/components/form/input';
 import Textarea from '@/components/form/textarea';
 import { ICategory, ICategoryFormData } from '@/interfaces/ICategory';
 import { useState } from 'react';
 import { router } from '@inertiajs/react';
 import { Box, Button, Stack } from '@mui/material';
 import { useToast } from '@/components/toast';
+import { useModal } from '@/components/modal';
 
 interface CategoryFormProps {
   category?: ICategory;
-  onClose: () => void;
 }
 
-const CategoryForm = ({ category, onClose }: CategoryFormProps) => {
+const CategoryForm = ({ category }: CategoryFormProps) => {
+  const { closeModal } = useModal();
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
   const { control, handleSubmit } = useForm<ICategoryFormData>({
@@ -27,7 +28,7 @@ const CategoryForm = ({ category, onClose }: CategoryFormProps) => {
         { ...data },
         {
           onSuccess: () => {
-            onClose();
+            closeModal();
             toast('Category updated successfully!', {
               variant: 'success',
               description: 'The category has been updated.',
@@ -47,10 +48,10 @@ const CategoryForm = ({ category, onClose }: CategoryFormProps) => {
       { ...data },
       {
         onSuccess: () => {
-          onClose();
+          closeModal();
           toast('Category created successfully!', {
             variant: 'success',
-            description: 'The category has been updated.',
+            description: 'The category has been created.',
           });
         },
         onError: (errors) => {
@@ -97,11 +98,11 @@ const CategoryForm = ({ category, onClose }: CategoryFormProps) => {
           justifyContent: 'flex-end',
         }}
       >
-        <Button type="button" onClick={onClose} variant="outlined">
+        <Button type="button" onClick={() => closeModal()} variant="outlined">
           Cancel
         </Button>
-        <Button type="submit" disabled={isProcessing}>
-          Submit
+        <Button type="submit" disabled={isProcessing} variant="contained">
+          {category ? 'Save' : 'Create'}
         </Button>
       </Stack>
     </Box>

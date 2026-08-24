@@ -14,7 +14,7 @@ import {
 import { useState, useEffect, useCallback } from 'react';
 import SearchBar from '@/components/searchBar';
 import { formatCreatedDateTime } from '@/utils/date';
-import { Box, Button, Stack, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 
 interface PaginatedData<T> {
   data: T[];
@@ -27,7 +27,7 @@ interface PaginatedData<T> {
 }
 
 const Unit = () => {
-  const { openModal, closeModal, openAlert } = useModal();
+  const { openModal, openAlert } = useModal();
 
   const { units, search: searchProp } = usePage<{
     units: PaginatedData<IUnit>;
@@ -74,16 +74,27 @@ const Unit = () => {
 
   const handleCreate = () => {
     openModal({
-      title: 'New Unit',
-      content: <UnitForm onClose={() => closeModal()} />,
+      title: (
+        <Typography variant="h5" sx={{ fontWeight: 'medium' }}>
+          New Unit
+        </Typography>
+      ),
+      content: <UnitForm />,
       config: { preventClickAway: true },
     });
   };
 
   const handleEdit = (unit: IUnit) => {
     openModal({
-      title: `Edit ${unit.name}`,
-      content: <UnitForm unit={unit} onClose={() => closeModal()} />,
+      title: (
+        <Typography variant="h5" sx={{ fontWeight: 'medium' }}>
+          Edit{' '}
+          <Typography variant="h6" component="span">
+            {unit.name}
+          </Typography>
+        </Typography>
+      ),
+      content: <UnitForm unit={unit} />,
       config: { preventClickAway: true },
     });
   };
@@ -152,25 +163,30 @@ const Unit = () => {
   return (
     <>
       <Head title="Units" />
-      <Box sx={{ p: 4 }}>
-        <Stack
-          direction={{ xs: 'column', md: 'row' }}
-          spacing={2}
+      <Box
+        sx={{ p: 4, height: '100%', display: 'flex', flexDirection: 'column' }}
+      >
+        <Box
           sx={{
-            mb: 3,
-            alignItems: { md: 'center' },
+            display: 'flex',
+            alignItems: 'center',
             justifyContent: 'space-between',
           }}
         >
           <Box>
-            <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-              Units
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="h5">Units</Typography>
+            <Typography variant="body1" color="textSecondary">
               Manage your clinic units
             </Typography>
           </Box>
-          <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 2,
+            }}
+          >
             <SearchBar
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -178,62 +194,30 @@ const Unit = () => {
             />
             <Button
               onClick={handleCreate}
-              size="large"
               variant="contained"
-              startIcon={<Plus size={20} />}
+              startIcon={<Plus size={16} />}
             >
               New Unit
             </Button>
-          </Stack>
-        </Stack>
+          </Box>
+        </Box>
 
-        <DataGrid
-          rows={units.data}
-          columns={columns}
-          rowCount={units.total}
-          paginationMode="server"
-          paginationModel={{
-            page: units.current_page - 1,
-            pageSize: units.per_page,
-          }}
-          onPaginationModelChange={handlePaginationModelChange}
-          pageSizeOptions={[10]}
-          disableRowSelectionOnClick
-          autoHeight
-          sx={{
-            mt: 3,
-            border: 1,
-            borderColor: 'divider',
-            borderRadius: 2,
-            overflow: 'hidden',
-            '& .MuiDataGrid-columnHeader, & .MuiDataGrid-cell': {
-              borderRight: 1,
-              borderColor: 'divider',
-            },
-            '& .MuiDataGrid-columnHeaders': {
-              borderBottom: 1,
-              borderColor: 'divider',
-            },
-            '& .MuiDataGrid-cell': {
-              borderBottom: 0,
-            },
-            '& .MuiDataGrid-row': {
-              borderBottom: 1,
-              borderColor: 'divider',
-            },
-            '& .MuiDataGrid-row:last-child': {
-              borderBottom: 0,
-            },
-            '& .MuiDataGrid-columnHeader:last-child, & .MuiDataGrid-cell:last-child':
-              {
-                borderRight: 0,
-              },
-            '& .MuiDataGrid-columnHeaderTitle': {
-              fontFamily: 'var(--font-khmer)',
-              fontWeight: 'bold',
-            },
-          }}
-        />
+        <Box sx={{ flex: 1, mt: 3, minHeight: 0 }}>
+          <DataGrid
+            rows={units.data}
+            columns={columns}
+            rowCount={units.total}
+            paginationMode="server"
+            paginationModel={{
+              page: units.current_page - 1,
+              pageSize: units.per_page,
+            }}
+            onPaginationModelChange={handlePaginationModelChange}
+            pageSizeOptions={[20]}
+            disableRowSelectionOnClick
+            sx={{ height: '100%' }}
+          />
+        </Box>
       </Box>
     </>
   );

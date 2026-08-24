@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
-class ParaclinicRequestController extends Controller
+class ParaClinicRequestController extends Controller
 {
     public function index(Request $request)
     {
@@ -57,7 +57,9 @@ class ParaclinicRequestController extends Controller
                 'tests_count' => $r->tests->count(),
             ]);
 
-        return Inertia::render('paraclinic-requests/index', [
+        $patient = $patientId ? Patient::find($patientId) : null;
+
+        return Inertia::render('para-clinic-requests/index', [
             'requests' => $requests,
             'search' => $search,
             'filters' => [
@@ -66,6 +68,11 @@ class ParaclinicRequestController extends Controller
                 'date_from' => $dateFrom,
                 'date_to' => $dateTo,
             ],
+            'patient' => $patient ? [
+                'id' => $patient->id,
+                'khmer_first_name' => $patient->khmer_first_name,
+                'khmer_last_name' => $patient->khmer_last_name,
+            ] : null,
         ]);
     }
 
@@ -92,7 +99,7 @@ class ParaclinicRequestController extends Controller
             $paraclinicRequest->tests()->create($test);
         }
 
-        return redirect()->route('paraclinic-requests.index')
+        return redirect()->route('para-clinic-requests.index')
             ->with('success', 'Paraclinic request created.');
     }
 
@@ -108,7 +115,7 @@ class ParaclinicRequestController extends Controller
             'updatedBy',
         ]);
 
-        return Inertia::render('paraclinic-requests/show', [
+        return Inertia::render('para-clinic-requests/show', [
             'request' => [
                 'id' => $paraclinicRequest->id,
                 'request_number' => $paraclinicRequest->request_number,
@@ -189,7 +196,7 @@ class ParaclinicRequestController extends Controller
     {
         $paraclinicRequest->delete();
 
-        return redirect()->route('paraclinic-requests.index')
+        return redirect()->route('para-clinic-requests.index')
             ->with('success', 'Paraclinic request deleted.');
     }
 

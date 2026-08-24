@@ -21,7 +21,7 @@ class UnitController extends Controller
                     $query->where('name', 'like', "%{$search}%")
                         ->orWhere('description', 'like', "%{$search}%");
                 }))
-                ->paginate(10)
+                ->paginate(20)
                 ->withQueryString(),
             'search' => $search,
         ]);

@@ -110,6 +110,6 @@ Replace `<Placeholder>` with `<MedicationTab>` in `TabContent`.
 2. `app/Http/Controllers/ConsultationController.php` — visit logic in store/destroy/create
 3. `app/Http/Controllers/PatientController.php` — add medication props, active visits
 4. `app/Http/Controllers/PatientSurveillanceController.php` — accept `visit_id`
-5. `app/Http/Controllers/ParaclinicRequestController.php` — accept `visit_id`
+5. `app/Http/Controllers/ParaClinicRequestController.php` — accept `visit_id`
 6. `resources/js/pages/patients/show.tsx` — wire up MedicationTab
 7. `routes/web.php` — medication administration routes

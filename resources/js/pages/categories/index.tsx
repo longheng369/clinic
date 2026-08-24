@@ -4,12 +4,17 @@ import { useModal } from '@/components/modal';
 import { Pencil, Trash2, Plus } from 'lucide-react';
 import CategoryForm from './partials/createOrEdit';
 import { ICategory } from '@/interfaces/ICategory';
-import { Box, Button, Stack, Typography } from '@mui/material';
-import IconButton from '@/components/button/iconButton';
-import DataTable, { type Column } from '@/components/table/DataTable';
-import { useState, useEffect } from 'react';
+import {
+  DataGrid,
+  type GridColDef,
+  type GridPaginationModel,
+  type GridRenderCellParams,
+  GridActionsCellItem,
+} from '@mui/x-data-grid';
+import { useState, useEffect, useCallback } from 'react';
 import SearchBar from '@/components/searchBar';
 import { formatCreatedDateTime } from '@/utils/date';
+import { Box, Typography, Button } from '@mui/material';
 
 interface PaginatedData<T> {
   data: T[];
@@ -22,7 +27,7 @@ interface PaginatedData<T> {
 }
 
 const Category = () => {
-  const { openModal, closeModal, openAlert } = useModal();
+  const { openModal, openAlert } = useModal();
 
   const { categories, search: searchProp } = usePage<{
     categories: PaginatedData<ICategory>;
@@ -37,7 +42,7 @@ const Category = () => {
       if (searchTerm) {
         router.get(
           '/settings/categories',
-          { search: searchTerm },
+          { search: searchTerm, page: 1 },
           { preserveState: true, replace: true },
         );
       } else {
@@ -52,128 +57,165 @@ const Category = () => {
     return () => clearTimeout(timeout);
   }, [searchTerm]);
 
-  const baseUrl = searchProp
-    ? `/settings/categories?search=${encodeURIComponent(searchProp)}`
-    : '/settings/categories';
+  const handlePaginationModelChange = useCallback(
+    (model: GridPaginationModel) => {
+      const page = model.page + 1;
+      const params: Record<string, string | number> = { page };
+      if (searchProp) params.search = searchProp;
+      router.get('/settings/categories', params, {
+        preserveState: true,
+        replace: true,
+      });
+    },
+    [searchProp],
+  );
 
   const handleCreate = () => {
     openModal({
-      title: 'New Category',
-      content: <CategoryForm onClose={() => closeModal()} />,
+      title: (
+        <Typography variant="h5" sx={{ fontWeight: 'medium' }}>
+          New Category
+        </Typography>
+      ),
+      content: <CategoryForm />,
       config: { preventClickAway: true },
     });
   };
 
   const handleEdit = (category: ICategory) => {
     openModal({
-      title: `Edit ${category.name}`,
-      content: (
-        <CategoryForm category={category} onClose={() => closeModal()} />
+      title: (
+        <Typography variant="h5" sx={{ fontWeight: 'medium' }}>
+          Edit{' '}
+          <Typography variant="h6" component="span">
+            {category.name}
+          </Typography>
+        </Typography>
       ),
+      content: <CategoryForm category={category} />,
       config: { preventClickAway: true },
     });
   };
 
-  const handleDelete = (cat: ICategory) => {
+  const handleDelete = (category: ICategory) => {
     openAlert({
       message: 'Delete this category?',
       description: 'This action cannot be undone.',
       variant: 'danger',
       confirmLabel: 'Delete',
-      onConfirm: () => router.delete(`/settings/categories/${cat.id}`),
+      onConfirm: () => router.delete(`/settings/categories/${category.id}`),
     });
   };
 
-  const columns: Column<ICategory>[] = [
+  const columns: GridColDef[] = [
     {
-      header: 'ឈ្មោះ',
-      classNames: {},
-      cell: (cat) => cat.name,
+      field: 'name',
+      headerName: 'ឈ្មោះ',
+      flex: 1,
+      minWidth: 180,
     },
     {
-      header: 'ការពិពណ៌នា',
-      classNames: {},
-      cell: (cat) =>
-        cat.description ?? (
-          <Typography component="span" sx={{ color: 'text.disabled' }}>
+      field: 'description',
+      headerName: 'ការពិពណ៌នា',
+      flex: 1,
+      minWidth: 220,
+      renderCell: (params: GridRenderCellParams<ICategory>) =>
+        params.value ?? (
+          <Typography component="span" color="text.disabled">
             &mdash;
           </Typography>
         ),
     },
     {
-      header: 'បានបង្កើត',
-      classNames: {},
-      cell: (cat) => formatCreatedDateTime(cat.created_at),
+      field: 'created_at',
+      headerName: 'បានបង្កើត',
+      flex: 1,
+      minWidth: 180,
+      valueGetter: (_value, row: ICategory) =>
+        formatCreatedDateTime(row.created_at),
     },
     {
-      header: 'សកម្មភាព',
-      classNames: {},
-      cell: (cat) => (
-        <Stack
-          direction="row"
-          sx={{ alignItems: 'center', justifyContent: 'flex-end' }}
-        >
-          <IconButton
-            onClick={() => handleEdit(cat)}
-            aria-label={`Edit ${cat.name}`}
-          >
-            <Pencil size={16} />
-          </IconButton>
-          <IconButton
-            color="error"
-            onClick={() => handleDelete(cat)}
-            aria-label={`Delete ${cat.name}`}
-          >
-            <Trash2 size={16} />
-          </IconButton>
-        </Stack>
-      ),
+      field: 'actions',
+      type: 'actions',
+      headerName: 'សកម្មភាព',
+      width: 150,
+      getActions: (params) => [
+        <GridActionsCellItem
+          key={`edit-${params.id}`}
+          icon={<Pencil size={16} color="#2563eb" />}
+          label={`Edit ${params.row.name}`}
+          onClick={() => handleEdit(params.row as ICategory)}
+          showInMenu={false}
+        />,
+        <GridActionsCellItem
+          key={`delete-${params.id}`}
+          icon={<Trash2 size={16} color="#dc2626" />}
+          label={`Delete ${params.row.name}`}
+          onClick={() => handleDelete(params.row as ICategory)}
+          showInMenu={false}
+        />,
+      ],
     },
   ];
-
-  const { data, ...pagination } = categories;
 
   return (
     <>
       <Head title="Categories" />
-      <Box sx={{ p: 4 }}>
-        <Stack
-          direction={{ xs: 'column', md: 'row' }}
-          spacing={2}
+      <Box
+        sx={{ p: 4, height: '100%', display: 'flex', flexDirection: 'column' }}
+      >
+        <Box
           sx={{
-            mb: 3,
-            alignItems: { md: 'center', justifyContent: 'space-between' },
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
           }}
         >
           <Box>
-            <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-              Categories
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="h5">Categories</Typography>
+            <Typography variant="body1" color="textSecondary">
               Manage your clinic categories
             </Typography>
           </Box>
-          <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 2,
+            }}
+          >
             <SearchBar
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search category"
             />
-            <Button onClick={handleCreate} size="large" variant="contained">
-              <Plus size={20} /> New Category
+            <Button
+              onClick={handleCreate}
+              variant="contained"
+              startIcon={<Plus size={16} />}
+            >
+              New Category
             </Button>
-          </Stack>
-        </Stack>
+          </Box>
+        </Box>
 
-        <DataTable
-          data={data}
-          keyExtractor={(cat) => cat.id}
-          columns={columns}
-          emptyMessage="No categories found"
-          emptyDescription="Get started by creating a new category."
-          pagination={pagination}
-          baseUrl={baseUrl}
-        />
+        <Box sx={{ flex: 1, mt: 3, minHeight: 0 }}>
+          <DataGrid
+            rows={categories.data}
+            columns={columns}
+            rowCount={categories.total}
+            paginationMode="server"
+            paginationModel={{
+              page: categories.current_page - 1,
+              pageSize: categories.per_page,
+            }}
+            onPaginationModelChange={handlePaginationModelChange}
+            pageSizeOptions={[20]}
+            disableRowSelectionOnClick
+            sx={{ height: '100%' }}
+          />
+        </Box>
       </Box>
     </>
   );

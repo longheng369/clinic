@@ -94,9 +94,9 @@ const sections: HelpSection[] = [
   },
   {
     icon: FileText,
-    title: 'Paraclinic Requests',
+    title: 'Para Clinic Requests',
     description: 'Manage lab tests, imaging, and other diagnostic requests.',
-    link: '/paraclinic-requests',
+    link: '/para-clinic-requests',
     items: [
       'Create diagnostic requests with multiple tests',
       'Upload and view attachments (lab reports, images)',

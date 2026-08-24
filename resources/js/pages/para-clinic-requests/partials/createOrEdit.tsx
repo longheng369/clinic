@@ -4,10 +4,10 @@ import Select from '@/components/form/select-deprecated';
 import SearchSelect from '@/components/form/searchSelect';
 import Textarea from '@/components/form/textarea';
 import {
-  IParaclinicRequest,
-  IParaclinicRequestFormData,
-  IParaclinicRequestTest,
-} from '@/interfaces/IParaclinicRequest';
+  IParaClinicRequest,
+  IParaClinicRequestFormData,
+  IParaClinicRequestTest,
+} from '@/interfaces/IParaClinicRequest';
 import { useState, useEffect } from 'react';
 import { router } from '@inertiajs/react';
 import { Box, Button, Divider, Stack, Typography } from '@mui/material';
@@ -53,65 +53,69 @@ const PRIORITY_OPTIONS = ['Routine', 'Urgent', 'STAT'].map((value) => ({
   label: value,
 }));
 interface ParaclinicFormProps {
-  request?: IParaclinicRequest;
+  request?: IParaClinicRequest;
   authUser: { id: number; name: string };
+  preselectedPatient?: {
+    id: number;
+    khmer_first_name: string;
+    khmer_last_name: string;
+  } | null;
   onClose: () => void;
 }
 const ParaclinicForm = ({
   request,
   authUser,
+  preselectedPatient,
   onClose,
 }: ParaclinicFormProps) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
-  const defaultTests: IParaclinicRequestTest[] = request?.tests?.length
+  const defaultTests: IParaClinicRequestTest[] = request?.tests?.length
     ? request.tests.map((t) => ({
-        test_category: t.test_category,
-        test_name: t.test_name,
-        priority: t.priority,
-        instruction: t.instruction,
-      }))
+      test_category: t.test_category,
+      test_name: t.test_name,
+      priority: t.priority,
+      instruction: t.instruction,
+    }))
     : [
-        {
-          test_category: 'Laboratory',
-          test_name: 'CBC',
-          priority: 'Routine',
-          instruction: null,
-        },
-      ];
+      {
+        test_category: 'Laboratory',
+        test_name: 'CBC',
+        priority: 'Routine',
+        instruction: null,
+      },
+    ];
   const { control, handleSubmit, watch, setValue } =
-    useForm<IParaclinicRequestFormData>({
+    useForm<IParaClinicRequestFormData>({
       defaultValues: request
         ? {
-            patient_id: request.patient?.id ?? null,
-            doctor_id: request.doctor?.id ?? null,
-            visit_id: request.visit_id,
-            external_facility_name: request.external_facility_name,
-            request_date: request.request_date,
-            clinical_reason: request.clinical_reason,
-            provisional_diagnosis: request.provisional_diagnosis,
-            notes: request.notes,
-            subtotal: request.subtotal,
-            total_amount: request.total_amount,
-            payment_status: request.payment_status,
-            payment_date: request.payment_date,
-            tests: defaultTests,
-          }
+          patient_id: request.patient?.id ?? null,
+          doctor_id: request.doctor?.id ?? null,
+          visit_id: request.visit_id,
+          request_date: request.request_date,
+          clinical_reason: request.clinical_reason,
+          provisional_diagnosis: request.provisional_diagnosis,
+          notes: request.notes,
+          subtotal: request.subtotal,
+          total_amount: request.total_amount,
+          payment_status: request.payment_status,
+          payment_date: request.payment_date,
+          tests: defaultTests,
+        }
         : {
-            patient_id: null,
-            doctor_id: authUser.id,
-            visit_id: null,
-            external_facility_name: '',
-            request_date: new Date().toISOString().split('T')[0],
-            clinical_reason: '',
-            provisional_diagnosis: '',
-            notes: '',
-            subtotal: 0,
-            total_amount: 0,
-            payment_status: 'Unpaid',
-            payment_date: null,
-            tests: defaultTests,
-          },
+          patient_id: preselectedPatient?.id ?? null,
+          doctor_id: authUser.id,
+          visit_id: null,
+          request_date: new Date().toISOString().split('T')[0],
+          clinical_reason: '',
+          provisional_diagnosis: '',
+          notes: '',
+          subtotal: 0,
+          total_amount: 0,
+          payment_status: 'Unpaid',
+          payment_date: null,
+          tests: defaultTests,
+        },
     });
   const { fields, append, remove } = useFieldArray({ control, name: 'tests' });
   const subtotal = watch('subtotal');
@@ -119,7 +123,7 @@ const ParaclinicForm = ({
     setValue('total_amount', Number(subtotal) || 0);
   }, [subtotal, setValue]);
   const submitData = (
-    data: IParaclinicRequestFormData,
+    data: IParaClinicRequestFormData,
     extra: Record<string, string> = {},
   ) => ({
     ...data,
@@ -148,8 +152,8 @@ const ParaclinicForm = ({
         onFinish: () => setIsProcessing(false),
       };
       if (request)
-        router.put(`/paraclinic-requests/${request.id}`, payload, options);
-      else router.post('/paraclinic-requests', payload, options);
+        router.put(`/para-clinic-requests/${request.id}`, payload, options);
+      else router.post('/para-clinic-requests', payload, options);
     });
   return (
     <Box
@@ -175,10 +179,15 @@ const ParaclinicForm = ({
                   initialOption={
                     request?.patient
                       ? {
-                          value: request.patient.id,
-                          label: `${request.patient.khmer_first_name} ${request.patient.khmer_last_name}`,
+                        value: request.patient.id,
+                        label: `${request.patient.khmer_first_name} ${request.patient.khmer_last_name}`,
+                      }
+                      : preselectedPatient
+                        ? {
+                          value: preselectedPatient.id,
+                          label: `${preselectedPatient.khmer_first_name} ${preselectedPatient.khmer_last_name}`,
                         }
-                      : undefined
+                        : undefined
                   }
                   placeholder="Search patient by name..."
                 />
@@ -200,14 +209,6 @@ const ParaclinicForm = ({
               </Box>
             </Stack>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-              <Box sx={{ flex: 1 }}>
-                <Input
-                  label="External Facility"
-                  control={control}
-                  name="external_facility_name"
-                  placeholder="e.g. National Laboratory"
-                />
-              </Box>
               <Box sx={{ flex: 1 }}>
                 <Input
                   label="Request Date"

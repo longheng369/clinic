@@ -123,7 +123,7 @@ class PatientController extends Controller
                         'payment_status' => $r->payment_status,
                         'total_amount' => (float) $r->total_amount,
                     ]);
-            }, 'paraClinic'),
+            }, 'paraClinicRequests'),
             'medicationOrders' => Inertia::defer(function () use ($selectedVisit) {
                 if (! $selectedVisit) {
                     return ['data' => [], 'current_page' => 1, 'last_page' => 1, 'per_page' => 10, 'total' => 0, 'from' => 0, 'to' => 0];

@@ -1,18 +1,19 @@
 import { useForm } from 'react-hook-form';
-import Input from '@/components/form/input-deprecated';
+import Input from '@/components/form/input';
 import Textarea from '@/components/form/textarea';
 import { IUnit, IUnitFormData } from '@/interfaces/IUnit';
 import { useState } from 'react';
 import { router } from '@inertiajs/react';
 import { Box, Button, Stack } from '@mui/material';
 import { useToast } from '@/components/toast';
+import { useModal } from '@/components/modal';
 
 interface UnitFormProps {
   unit?: IUnit;
-  onClose: () => void;
 }
 
-const UnitForm = ({ unit, onClose }: UnitFormProps) => {
+const UnitForm = ({ unit }: UnitFormProps) => {
+  const { closeModal } = useModal();
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
   const { control, handleSubmit } = useForm<IUnitFormData>({
@@ -27,7 +28,7 @@ const UnitForm = ({ unit, onClose }: UnitFormProps) => {
         { ...data },
         {
           onSuccess: () => {
-            onClose();
+            closeModal();
             toast('Unit updated successfully!', {
               variant: 'success',
               description: 'The unit has been updated.',
@@ -47,7 +48,7 @@ const UnitForm = ({ unit, onClose }: UnitFormProps) => {
       { ...data },
       {
         onSuccess: () => {
-          onClose();
+          closeModal();
           toast('Unit created successfully!', {
             variant: 'success',
             description: 'The unit has been created.',
@@ -97,11 +98,11 @@ const UnitForm = ({ unit, onClose }: UnitFormProps) => {
           justifyContent: 'flex-end',
         }}
       >
-        <Button type="button" onClick={onClose} variant="outlined">
+        <Button type="button" onClick={() => closeModal()} variant="outlined">
           Cancel
         </Button>
-        <Button type="submit" disabled={isProcessing}>
-          Submit
+        <Button type="submit" disabled={isProcessing} variant="contained">
+          {unit ? 'Save' : 'Create'}
         </Button>
       </Stack>
     </Box>

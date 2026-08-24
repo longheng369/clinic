@@ -32,9 +32,9 @@ export const sidebarSections: ISidebarSection[] = [
       { label: 'Medicines', icon: Pill, path: '/medicines' },
       { label: 'Vaccines', icon: Syringe, path: '/vaccines' },
       {
-        label: 'Paraclinic',
+        label: 'Para Clinic',
         icon: ClipboardList,
-        path: '/paraclinic-requests',
+        path: '/para-clinic-requests',
       },
     ],
   },

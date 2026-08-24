@@ -41,6 +41,7 @@ const SearchSelect = <T extends FieldValues = FieldValues>({
   const [query, setQuery] = useState('');
   const [apiOptions, setApiOptions] = useState<SelectOption[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [open, setOpen] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const isApiMode = Boolean(apiUrl);
 
@@ -61,6 +62,12 @@ const SearchSelect = <T extends FieldValues = FieldValues>({
 
     return () => clearTimeout(debounceRef.current);
   }, [query, apiUrl]);
+
+  useEffect(() => {
+    if (isApiMode && open && apiOptions.length > 0) {
+      setOpen(true);
+    }
+  }, [apiOptions, isApiMode, open]);
 
   const displayOptions =
     isApiMode &&
@@ -83,6 +90,9 @@ const SearchSelect = <T extends FieldValues = FieldValues>({
       value={selected}
       inputValue={selected ? selected.label : query}
       loading={isLoading}
+      open={open}
+      onOpen={() => setOpen(true)}
+      onClose={() => setOpen(false)}
       onInputChange={(_, value, reason) => {
         if (reason === 'clear') {
           setQuery('');

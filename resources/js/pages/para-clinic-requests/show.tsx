@@ -1,5 +1,5 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { IParaclinicRequest } from '@/interfaces/IParaclinicRequest';
+import { IParaClinicRequest } from '@/interfaces/IParaClinicRequest';
 import {
   ArrowLeft,
   FileText,
@@ -69,7 +69,7 @@ const formatSize = (bytes: number) =>
     : bytes < 1024 * 1024
       ? `${(bytes / 1024).toFixed(1)} KB`
       : `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-const Show = ({ request }: { request: IParaclinicRequest }) => {
+const Show = ({ request }: { request: IParaClinicRequest }) => {
   const { openAlert } = useModal();
   const { toast } = useToast();
   const [isUploading, setIsUploading] = useState(false);
@@ -85,7 +85,7 @@ const Show = ({ request }: { request: IParaclinicRequest }) => {
     setIsUploading(true);
     const formData = new FormData();
     formData.append('file', file);
-    router.post(`/paraclinic-requests/${request.id}/attachments`, formData, {
+    router.post(`/para-clinic-requests/${request.id}/attachments`, formData, {
       onSuccess: () =>
         toast('File uploaded successfully!', { variant: 'success' }),
       onError: (err) =>
@@ -103,11 +103,11 @@ const Show = ({ request }: { request: IParaclinicRequest }) => {
       variant: 'danger',
       confirmLabel: 'Delete',
       onConfirm: () =>
-        router.delete(`/paraclinic-requests/${request.id}/attachments/${a.id}`),
+        router.delete(`/para-clinic-requests/${request.id}/attachments/${a.id}`),
     });
   const handleStatusChange = (status: string) =>
     router.patch(
-      `/paraclinic-requests/${request.id}/status`,
+      `/para-clinic-requests/${request.id}/status`,
       { status },
       {
         onSuccess: () =>
@@ -116,16 +116,23 @@ const Show = ({ request }: { request: IParaclinicRequest }) => {
     );
   const transitions = STATUS_TRANSITIONS[request.status] ?? [];
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+    <Box
+      sx={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        bgcolor: 'background.default',
+      }}
+    >
       <Head title={`Request ${request.request_number}`} />
-      <Card square sx={{ position: 'sticky', top: 0, zIndex: 1 }}>
+      <Card square sx={{ flexShrink: 0 }}>
         <Stack
           direction={{ xs: 'column', md: 'row' }}
           spacing={2}
           sx={{ p: 2, alignItems: { md: 'center' } }}
         >
-          <Link href="/paraclinic-requests">
-            <IconButton aria-label="Back to paraclinic requests">
+          <Link href="/para-clinic-requests">
+            <IconButton aria-label="Back to para clinic requests">
               <ArrowLeft size={20} />
             </IconButton>
           </Link>
@@ -156,41 +163,49 @@ const Show = ({ request }: { request: IParaclinicRequest }) => {
           <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap' }}>
             {request.status !== 'Completed' &&
               request.status !== 'Cancelled' && (
-                <>
-                  {request.status === 'Waiting Result' && (
-                    <Button
-                      component="label"
-                      variant="contained"
-                      startIcon={<Upload size={16} />}
-                      disabled={isUploading}
-                    >
+              <>
+                {request.status === 'Waiting Result' && (
+                  <Button
+                    component="label"
+                    variant="contained"
+                    startIcon={<Upload size={16} />}
+                    disabled={isUploading}
+                  >
                       Upload Result
-                      <input
-                        hidden
-                        type="file"
-                        onChange={handleUpload}
-                        disabled={isUploading}
-                      />
-                    </Button>
-                  )}
-                  {transitions.map((s) => (
-                    <Button
-                      key={s}
-                      variant="outlined"
-                      onClick={() => handleStatusChange(s)}
-                    >
+                    <input
+                      hidden
+                      type="file"
+                      onChange={handleUpload}
+                      disabled={isUploading}
+                    />
+                  </Button>
+                )}
+                {transitions.map((s) => (
+                  <Button
+                    key={s}
+                    variant="outlined"
+                    onClick={() => handleStatusChange(s)}
+                  >
                       Mark as {s}
-                    </Button>
-                  ))}
-                </>
-              )}
-            <Link href={`/paraclinic-requests/${request.id}`}>
+                  </Button>
+                ))}
+              </>
+            )}
+            <Link href={`/para-clinic-requests/${request.id}`}>
               <Button variant="outlined">Print</Button>
             </Link>
           </Stack>
         </Stack>
       </Card>
-      <Stack spacing={3} sx={{ p: { xs: 2, md: 4 } }}>
+      <Stack
+        spacing={3}
+        sx={{
+          p: { xs: 2, md: 4 },
+          flex: 1,
+          minHeight: 0,
+          overflowY: 'auto',
+        }}
+      >
         <Section title="General Information">
           <Stack
             direction={{ xs: 'column', md: 'row' }}
@@ -312,7 +327,7 @@ const Show = ({ request }: { request: IParaclinicRequest }) => {
                   </Box>
                   <Button
                     component="a"
-                    href={`/paraclinic-requests/attachments/${a.id}/view`}
+                    href={`/para-clinic-requests/attachments/${a.id}/view`}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
