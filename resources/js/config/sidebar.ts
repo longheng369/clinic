@@ -39,7 +39,7 @@ export const sidebarSections: ISidebarSection[] = [
     ],
   },
   {
-    title: 'Other',
+    title: 'Setting',
     items: [
       {
         label: 'Settings',
@@ -49,7 +49,6 @@ export const sidebarSections: ISidebarSection[] = [
           { label: 'Units', icon: RulerDimensionLine, path: '/settings/units' },
         ],
       },
-      { label: 'Help', icon: HelpCircle, path: '/help' },
     ],
   },
 ];

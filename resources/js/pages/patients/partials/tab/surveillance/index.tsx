@@ -14,6 +14,7 @@ import { useCallback } from 'react';
 import { formatCreatedDateTime } from '@/utils/date';
 import { Box, Typography, Button } from '@mui/material';
 import SurveillanceForm from './partials/SurveillanceForm';
+import { O2_OPTIONS } from '@/config/surveillance';
 
 interface PaginatedData<T> {
   data: T[];
@@ -88,6 +89,10 @@ const SurveillanceTab = ({ patientId, visitId }: Props) => {
     [patientId],
   );
 
+  const renderO2Supply = (value: string | null) => {
+    return O2_OPTIONS.find((opt) => opt.value == value)?.label;
+  }
+
   const columns: GridColDef[] = [
     {
       field: 'created_at',
@@ -129,12 +134,24 @@ const SurveillanceTab = ({ patientId, visitId }: Props) => {
       headerName: 'អុកស៊ីសែន',
       flex: 1,
       minWidth: 90,
+      renderCell: (params: GridRenderCellParams<ISurveillance>) =>
+        params.row.spo2 ?? (
+          <Typography component="span" color="text.disabled">
+            &mdash;
+          </Typography>
+        ),
     },
     {
       field: 'o2_supply',
       headerName: 'ការផ្គត់ផ្គង់ O₂',
       flex: 1,
       minWidth: 250,
+      renderCell: (params: GridRenderCellParams<ISurveillance>) =>
+        renderO2Supply(params.row.o2_supply) ?? (
+          <Typography component="span" color="text.disabled">
+            &mdash;
+          </Typography>
+        ),
     },
     {
       field: 'created_by',

@@ -1,13 +1,16 @@
 import {
   Box,
   Button,
-  IconButton,
-  Paper,
-  Tooltip,
   Typography,
 } from '@mui/material';
+import {
+  DataGrid,
+  type GridColDef,
+  type GridRenderCellParams,
+  GridActionsCellItem,
+} from '@mui/x-data-grid';
 import React, { useRef, useState } from 'react';
-import { router } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import { useToast } from '@/components/toast';
 import { useModal } from '@/components/modal';
 import Modal from '@/components/modal/modal';
@@ -21,8 +24,8 @@ import {
   Loader2,
   Download,
 } from 'lucide-react';
-import { usePage } from '@inertiajs/react';
 import { IVisitWithMetaData } from '@/interfaces/IVisit';
+import { formatCreatedDateTime } from '@/utils/date';
 
 interface Attachment {
   id: number;
@@ -37,7 +40,7 @@ interface Attachment {
 const fileMeta = (type: string) => {
   if (type.startsWith('image/')) {
     return {
-      icon: <Image size={22} />,
+      icon: <Image size={20} />,
       bg: '#eff6ff',
       color: '#2563eb',
       label: 'Image',
@@ -45,14 +48,14 @@ const fileMeta = (type: string) => {
   }
   if (type.includes('pdf')) {
     return {
-      icon: <FileText size={22} />,
+      icon: <FileText size={20} />,
       bg: '#fef2f2',
       color: '#dc2626',
       label: 'PDF',
     };
   }
   return {
-    icon: <File size={22} />,
+    icon: <File size={20} />,
     bg: '#f1f5f9',
     color: '#64748b',
     label: 'File',
@@ -63,14 +66,6 @@ const formatSize = (bytes: number) => {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-};
-
-const formatDate = (date: string) => {
-  return new Date(date).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
 };
 
 type Props = {
@@ -126,6 +121,7 @@ const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
     }
 
     const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
+
     if (!ALLOWED_EXTENSIONS.includes(ext)) {
       toast(
         'This file type is not supported. Allowed types: images (JPG, PNG, GIF, WEBP, BMP), PDF, Office documents (Word, Excel, PowerPoint), CSV, TXT, and ZIP.',
@@ -166,6 +162,115 @@ const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
     });
   };
 
+  const columns: GridColDef[] = [
+    {
+      field: 'file_name',
+      headerName: 'File',
+      flex: 1,
+      minWidth: 250,
+      renderCell: (params: GridRenderCellParams<Attachment>) => {
+        const meta = fileMeta(params.row.file_type);
+        return (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1.5,
+              minWidth: 0,
+              height: '100%',
+            }}
+          >
+            <Box
+              sx={{
+                width: 36,
+                height: 36,
+                borderRadius: 1.5,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+                color: meta.color,
+              }}
+            >
+              {meta.icon}
+            </Box>
+            <Box sx={{ minWidth: 0 }}>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: '#1e293b',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}
+              >
+                {params.row.file_name}
+              </Typography>
+            </Box>
+          </Box>
+        );
+      },
+    },
+    {
+      field: 'file_type',
+      headerName: 'Type',
+      flex: 1,
+      minWidth: 110,
+      renderCell: (params: GridRenderCellParams<Attachment>) =>
+        fileMeta(params.row.file_type).label,
+    },
+    {
+      field: 'file_size',
+      headerName: 'Size',
+      flex: 1,
+      minWidth: 100,
+      renderCell: (params: GridRenderCellParams<Attachment>) =>
+        formatSize(params.row.file_size),
+    },
+    {
+      field: 'uploaded_by',
+      headerName: 'Uploaded By',
+      flex: 1,
+      minWidth: 140,
+      renderCell: (params: GridRenderCellParams<Attachment>) =>
+        params.row.uploaded_by?.name ?? (
+          <Typography component="span" color="text.disabled">
+            &mdash;
+          </Typography>
+        ),
+    },
+    {
+      field: 'created_at',
+      headerName: 'Date',
+      flex: 1,
+      minWidth: 120,
+      renderCell: (params: GridRenderCellParams<Attachment>) =>
+        formatCreatedDateTime(params.row.created_at),
+    },
+    {
+      field: 'actions',
+      type: 'actions',
+      headerName: 'Actions',
+      width: 110,
+      getActions: (params) => [
+        <GridActionsCellItem
+          key={`view-${params.id}`}
+          icon={<Eye size={16} color="#64748b" />}
+          label="Preview"
+          onClick={() => setPreview(params.row as Attachment)}
+          showInMenu={false}
+        />,
+        <GridActionsCellItem
+          key={`delete-${params.id}`}
+          icon={<Trash2 size={16} color="#dc2626" />}
+          label="Delete"
+          onClick={() => handleDelete(params.row as Attachment)}
+          showInMenu={false}
+        />,
+      ],
+    },
+  ];
+
   return (
     <Box>
       <Box
@@ -203,134 +308,14 @@ const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
         disabled={isUploading}
       />
 
-      {attachments.length === 0 ? (
-        <Paper
-          variant="outlined"
-          sx={{
-            py: 6,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 1.5,
-            borderColor: '#e2e8f0',
-            bgcolor: '#fafafa',
-          }}
-        >
-          <Box
-            sx={{
-              width: 52,
-              height: 52,
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              bgcolor: '#f1f5f9',
-              color: '#94a3b8',
-            }}
-          >
-            <File size={24} />
-          </Box>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            No files uploaded yet.
-          </Typography>
-        </Paper>
-      ) : (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-          {attachments.map((a) => {
-            const meta = fileMeta(a.file_type);
-            return (
-              <Paper
-                key={a.id}
-                variant="outlined"
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 2,
-                  p: 1.5,
-                  pl: 2,
-                  borderRadius: 2,
-                  borderColor: '#e2e8f0',
-                  transition: 'all 150ms ease-in-out',
-                  '&:hover': {
-                    borderColor: '#cbd5e1',
-                    boxShadow: '0 2px 8px rgba(15, 23, 42, 0.06)',
-                  },
-                }}
-              >
-                <Box
-                  sx={{
-                    width: 44,
-                    height: 44,
-                    borderRadius: 1.5,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                    bgcolor: meta.bg,
-                    color: meta.color,
-                  }}
-                >
-                  {meta.icon}
-                </Box>
-
-                <Box sx={{ minWidth: 0, flex: 1 }}>
-                  <Tooltip title={a.file_name} placement="top">
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        fontWeight: 600,
-                        color: '#1e293b',
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                      }}
-                    >
-                      {a.file_name}
-                    </Typography>
-                  </Tooltip>
-                  <Typography
-                    variant="caption"
-                    sx={{ color: 'text.secondary', display: 'block', mt: 0.25 }}
-                  >
-                    {meta.label} • {formatSize(a.file_size)}
-                    {a.uploaded_by && ` • by ${a.uploaded_by.name}`}
-                    {' • '}
-                    {formatDate(a.created_at)}
-                  </Typography>
-                </Box>
-
-                <Box
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 0.5,
-                    flexShrink: 0,
-                  }}
-                >
-                  <Tooltip title="Preview" placement="top">
-                    <IconButton
-                      size="small"
-                      onClick={() => setPreview(a)}
-                      sx={{ color: '#64748b' }}
-                    >
-                      <Eye size={18} color="#64748b" />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Delete" placement="top">
-                    <IconButton
-                      size="small"
-                      onClick={() => handleDelete(a)}
-                      sx={{ color: '#dc2626' }}
-                    >
-                      <Trash2 size={18} color="#dc2626" />
-                    </IconButton>
-                  </Tooltip>
-                </Box>
-              </Paper>
-            );
-          })}
-        </Box>
-      )}
+      <DataGrid
+        rows={attachments}
+        columns={columns}
+        getRowId={(row) => row.id}
+        pageSizeOptions={[10, 25, 50]}
+        disableRowSelectionOnClick
+        autoHeight
+      />
 
       {preview && preview.file_type.includes('pdf') && (
         <Modal

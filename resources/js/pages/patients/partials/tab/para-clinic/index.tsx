@@ -202,12 +202,6 @@ const ParaClinicByPatientTab = ({ patientId }: { patientId: number }) => {
         pageSizeOptions={[10]}
         disableRowSelectionOnClick
         autoHeight
-        sx={{
-          '& .MuiDataGrid-columnHeaderTitle': {
-            fontFamily: 'var(--font-khmer)',
-            fontWeight: 'bold',
-          },
-        }}
       />
     </Box>
   );

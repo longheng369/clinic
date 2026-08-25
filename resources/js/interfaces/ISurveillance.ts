@@ -7,8 +7,8 @@ export interface ISurveillance {
   pulse: number;
   temperature: number;
   rr: number;
-  spo2: number;
-  o2_supply: string;
+  spo2: number | null;
+  o2_supply: string | null;
   created_by?: string;
   created_at: string;
   updated_at: string;

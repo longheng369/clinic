@@ -7,19 +7,10 @@ import {
   ISurveillance,
   ISurveillanceFormData,
 } from '@/interfaces/ISurveillance';
-import { IOption } from '@/interfaces/IOption';
 import { router } from '@inertiajs/react';
 import { useToast } from '@/components/toast';
-
-const O2_OPTIONS: IOption<string>[] = [
-  { value: 'Room Air', label: 'Room Air' },
-  { value: 'Nasal Cannula', label: 'Nasal Cannula' },
-  { value: 'Face Mask', label: 'Face Mask' },
-  { value: 'Non-Rebreather Mask', label: 'Non-Rebreather Mask' },
-  { value: 'Ventilator', label: 'Ventilator' },
-  { value: 'CPAP/BiPAP', label: 'CPAP/BiPAP' },
-  { value: 'High Flow Nasal Cannula', label: 'High Flow Nasal Cannula' },
-];
+import Autocomplete from '@/components/form/autocomplete';
+import { O2_OPTIONS } from '@/config/surveillance';
 
 type Props = {
   patientId: number;
@@ -177,20 +168,17 @@ const SurveillanceForm = ({
               disabled={viewOnly}
               slotProps={{ htmlInput: { min: 0, max: 100 } }}
               rules={{
-                required: 'Required',
                 min: { value: 0, message: 'Min 0' },
                 max: { value: 100, message: 'Max 100' },
               }}
             />
           </Grid>
           <Grid size={{ md: 12 }}>
-            <Select
+            <Autocomplete
               control={control}
               name="o2_supply"
               label="O₂ Supply"
               options={O2_OPTIONS}
-              disabled={viewOnly}
-              rules={{ required: 'This field is required' }}
             />
           </Grid>
         </Grid>

@@ -28,6 +28,7 @@ See [architecture/taste.md](architecture/taste.md)
 # components
 - Keep the reusable form input component scoped to `<input>` elements only — do not add textarea support. Confidence: 0.60
 - Use `@base-ui/react` Select component instead of native HTML `<select>` for form select inputs. Confidence: 0.75
+- When a Select field is optional, add a placeholder option (`{ value: '', label: 'Select …' }`) as the first option so the field can be explicitly left unset. Confidence: 0.6
 
 # react
 - Use react-hook-form for form validation instead of custom touched/blur state management. Confidence: 0.65
