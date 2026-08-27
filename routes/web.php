@@ -18,6 +18,7 @@ use App\Http\Controllers\UnitController;
 use App\Http\Controllers\VaccineController;
 use App\Http\Controllers\VisitBillingController;
 use App\Http\Controllers\VisitController;
+use App\Http\Controllers\AutocompleteController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -50,7 +51,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('patients', PatientController::class)
         ->only(['index', 'store', 'edit', 'update', 'destroy']);
 
-    Route::get('patients/search', [ParaClinicRequestController::class, 'searchPatients'])->name('api.patients.search');
+    Route::get('patients/search', [PatientController::class, 'search'])->name('api.patients.search');
     Route::get('patients/{patient}', [PatientController::class, 'show'])->name('patients.show');
     Route::post('patients/{patient}/attachments', [PatientController::class, 'uploadAttachment'])->name('patients.attachments.upload');
     Route::delete('patients/{patient}/attachments/{attachment}', [PatientController::class, 'deleteAttachment'])->name('patients.attachments.destroy');
@@ -120,6 +121,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('components', function () {
         return Inertia::render('components/index');
     });
+
+    Route::get('/autocomplete/{model}', AutocompleteController::class);
 });
 
 require __DIR__.'/auth.php';

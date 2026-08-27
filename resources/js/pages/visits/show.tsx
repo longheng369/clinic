@@ -330,12 +330,12 @@ const VisitShow = ({
           prescriptions.length === 0 &&
           surveillance.length === 0 &&
           paraclinicRequests.length === 0 && (
-            <Box>
-              <Calendar size={40} />
-              <Box>No records</Box>
-              <Box>This visit has no associated records.</Box>
-            </Box>
-          )}
+          <Box>
+            <Calendar size={40} />
+            <Box>No records</Box>
+            <Box>This visit has no associated records.</Box>
+          </Box>
+        )}
       </Box>
     </>
   );

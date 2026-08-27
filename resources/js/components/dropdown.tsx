@@ -7,7 +7,7 @@ const DropDownContext = createContext<{
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   toggleOpen: (event: React.MouseEvent<HTMLElement>) => void;
   anchorEl: HTMLElement | null;
-} | null>(null);
+    } | null>(null);
 
 const Dropdown = ({ children }: { children: ReactNode }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);

@@ -155,8 +155,8 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
             sx={
               customWidth
                 ? {
-                    '& .MuiDialog-paper': { maxWidth: customWidth },
-                  }
+                  '& .MuiDialog-paper': { maxWidth: customWidth },
+                }
                 : undefined
             }
           >

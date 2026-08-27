@@ -46,67 +46,67 @@ const DataTable = <T,>({
   only,
   onRowClick,
 }: Props<T>) => (
-  <>
-    <TableContainer
-      component={Paper}
-      variant="outlined"
-      sx={{ borderRadius: 3, overflow: 'hidden' }}
-    >
-      <Table>
-        <TableHead>
-          <TableRow>
-            {columns.map((column) => (
-              <TableCell
-                key={column.header}
-                sx={{ color: 'text.secondary', fontSize: 14, fontWeight: 500 }}
-              >
-                {column.header}
-              </TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {data.length === 0 ? (
+    <>
+      <TableContainer
+        component={Paper}
+        variant="outlined"
+        sx={{ borderRadius: 3, overflow: 'hidden' }}
+      >
+        <Table>
+          <TableHead>
             <TableRow>
-              <TableCell colSpan={columns.length} sx={{ py: 10 }}>
-                <Stack spacing={1.5} sx={{ alignItems: 'center' }}>
-                  <FolderOpen size={44} strokeWidth={1.5} color="#cbd5e1" />
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ fontWeight: 500 }}
-                  >
-                    {emptyMessage}
-                  </Typography>
-                  <Typography variant="caption" color="text.disabled">
-                    {emptyDescription}
-                  </Typography>
-                </Stack>
-              </TableCell>
+              {columns.map((column) => (
+                <TableCell
+                  key={column.header}
+                  sx={{ color: 'text.secondary', fontSize: 14, fontWeight: 500 }}
+                >
+                  {column.header}
+                </TableCell>
+              ))}
             </TableRow>
-          ) : (
-            data.map((row) => (
-              <TableRow
-                key={keyExtractor(row)}
-                hover={!!onRowClick}
-                onClick={onRowClick ? () => onRowClick(row) : undefined}
-                sx={onRowClick ? { cursor: 'pointer' } : undefined}
-              >
-                {columns.map((column) => (
-                  <TableCell key={column.header} sx={{ fontSize: 14 }}>
-                    {column.cell(row)}
-                  </TableCell>
-                ))}
+          </TableHead>
+          <TableBody>
+            {data.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={columns.length} sx={{ py: 10 }}>
+                  <Stack spacing={1.5} sx={{ alignItems: 'center' }}>
+                    <FolderOpen size={44} strokeWidth={1.5} color="#cbd5e1" />
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ fontWeight: 500 }}
+                    >
+                      {emptyMessage}
+                    </Typography>
+                    <Typography variant="caption" color="text.disabled">
+                      {emptyDescription}
+                    </Typography>
+                  </Stack>
+                </TableCell>
               </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
-    </TableContainer>
-    {pagination && pagination.last_page > 1 && (
-      <Pagination meta={pagination} baseUrl={baseUrl} only={only} />
-    )}
-  </>
-);
+            ) : (
+              data.map((row) => (
+                <TableRow
+                  key={keyExtractor(row)}
+                  hover={!!onRowClick}
+                  onClick={onRowClick ? () => onRowClick(row) : undefined}
+                  sx={onRowClick ? { cursor: 'pointer' } : undefined}
+                >
+                  {columns.map((column) => (
+                    <TableCell key={column.header} sx={{ fontSize: 14 }}>
+                      {column.cell(row)}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      {pagination && pagination.last_page > 1 && (
+        <Pagination meta={pagination} baseUrl={baseUrl} only={only} />
+      )}
+    </>
+  );
 
 export default DataTable;

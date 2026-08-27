@@ -128,12 +128,12 @@ const ParaClinicByPatientTab = ({ patientId }: { patientId: number }) => {
       ),
     },
     {
-      field: 'total_amount',
+      field: 'fee',
       headerName: 'ចំនួនទឹកប្រាក់',
       flex: 1,
       minWidth: 130,
       valueGetter: (_: never, row: IParaClinicRequest) =>
-        row.total_amount != null ? `$${row.total_amount.toFixed(2)}` : null,
+        row.fee != null ? `$${row.fee.toFixed(2)}` : null,
       renderCell: (params: GridRenderCellParams<IParaClinicRequest>) =>
         params.value ?? (
           <Box sx={{}}>

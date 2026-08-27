@@ -75,12 +75,12 @@ const Checkbox = <T extends FieldValues = FieldValues>({
         ? exclusive
           ? [value]
           : [
-              ...fieldValues.filter(
-                (fieldValue) =>
-                  fieldValue !== exclusiveValue && fieldValue !== value,
-              ),
-              value,
-            ]
+            ...fieldValues.filter(
+              (fieldValue) =>
+                fieldValue !== exclusiveValue && fieldValue !== value,
+            ),
+            value,
+          ]
         : fieldValues.filter((fieldValue) => fieldValue !== value);
 
       field.onChange(nextValues);

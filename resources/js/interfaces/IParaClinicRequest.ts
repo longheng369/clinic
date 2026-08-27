@@ -51,8 +51,7 @@ export interface IParaClinicRequest {
   provisional_diagnosis: string | null;
   notes: string | null;
   status: string;
-  subtotal: number;
-  total_amount: number;
+  fee: number | null;
   payment_status: string;
   payment_date: string | null;
   tests: IParaClinicRequestTest[];
@@ -72,8 +71,7 @@ export interface IParaClinicRequestFormData {
   provisional_diagnosis: string | null;
   notes: string | null;
   status?: string;
-  subtotal: number;
-  total_amount: number;
+  fee: number | null;
   payment_status: string;
   payment_date: string | null;
   tests: IParaClinicRequestTest[];

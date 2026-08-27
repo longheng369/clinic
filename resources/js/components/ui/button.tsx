@@ -65,9 +65,9 @@ const Button = ({
           ...sizeSx[size],
           ...(variant === 'gradient'
             ? {
-                background: 'linear-gradient(135deg, #5a8f5a, #3d633d)',
-                color: '#fff',
-              }
+              background: 'linear-gradient(135deg, #5a8f5a, #3d633d)',
+              color: '#fff',
+            }
             : {}),
           ...sx,
         }}
@@ -85,9 +85,9 @@ const Button = ({
         ...sizeSx[size],
         ...(variant === 'gradient'
           ? {
-              background: 'linear-gradient(135deg, #5a8f5a, #3d633d)',
-              color: '#fff',
-            }
+            background: 'linear-gradient(135deg, #5a8f5a, #3d633d)',
+            color: '#fff',
+          }
           : {}),
         ...(variant === 'link'
           ? { textDecoration: 'underline', textUnderlineOffset: 4 }

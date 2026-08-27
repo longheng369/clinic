@@ -100,27 +100,27 @@ const VaccineCard = ({ patient, cardData }: VaccineCardProps) => {
                     <Box sx={{}}>{item.vaccine.name}</Box>
                     {item.total_doses > 0 &&
                     item.doses_completed >= item.total_doses ? (
-                      <Box sx={{}}>
-                        <CheckCircle size={12} /> Completed
-                      </Box>
-                    ) : item.next_dose_due_date ? (
-                      <Box sx={{}}>
-                        {new Date(item.next_dose_due_date) < new Date() ? (
-                          <AlertTriangle size={12} />
-                        ) : (
-                          <Clock size={12} />
-                        )}
-                        {new Date(item.next_dose_due_date) < new Date()
-                          ? 'Overdue'
-                          : 'Pending'}
-                      </Box>
-                    ) : item.eligible ? (
-                      <Box sx={{}}>
-                        <CheckCircle size={12} /> Complete
-                      </Box>
-                    ) : (
-                      <Box sx={{}}>Not eligible</Box>
-                    )}
+                        <Box sx={{}}>
+                          <CheckCircle size={12} /> Completed
+                        </Box>
+                      ) : item.next_dose_due_date ? (
+                        <Box sx={{}}>
+                          {new Date(item.next_dose_due_date) < new Date() ? (
+                            <AlertTriangle size={12} />
+                          ) : (
+                            <Clock size={12} />
+                          )}
+                          {new Date(item.next_dose_due_date) < new Date()
+                            ? 'Overdue'
+                            : 'Pending'}
+                        </Box>
+                      ) : item.eligible ? (
+                        <Box sx={{}}>
+                          <CheckCircle size={12} /> Complete
+                        </Box>
+                      ) : (
+                        <Box sx={{}}>Not eligible</Box>
+                      )}
                   </Box>
 
                   {/* Progress bar */}
@@ -156,12 +156,12 @@ const VaccineCard = ({ patient, cardData }: VaccineCardProps) => {
                     </Box>
                   ) : item.doses_completed >= item.total_doses &&
                     item.total_doses > 0 ? (
-                    <Box sx={{}}>All doses completed</Box>
-                  ) : item.eligible ? (
-                    <Box sx={{}}>Ready for dose 1</Box>
-                  ) : (
-                    <Box sx={{}}>Outside age range for this vaccine</Box>
-                  )}
+                      <Box sx={{}}>All doses completed</Box>
+                    ) : item.eligible ? (
+                      <Box sx={{}}>Ready for dose 1</Box>
+                    ) : (
+                      <Box sx={{}}>Outside age range for this vaccine</Box>
+                    )}
                 </Box>
               ))}
             </Box>

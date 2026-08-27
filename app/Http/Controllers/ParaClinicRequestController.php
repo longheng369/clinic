@@ -53,7 +53,7 @@ class ParaClinicRequestController extends Controller
                 'request_date' => $r->request_date,
                 'status' => $r->status,
                 'payment_status' => $r->payment_status,
-                'total_amount' => (float) $r->total_amount,
+                'fee' => (float) $r->fee,
                 'tests_count' => $r->tests->count(),
             ]);
 
@@ -83,8 +83,7 @@ class ParaClinicRequestController extends Controller
         $requestNumber = 'PARA-'.$today->format('Ymd').'-'.str_pad($count, 4, '0', STR_PAD_LEFT);
 
         $data = $request->safe()->except(['tests']);
-        $data['subtotal'] = (float) ($data['subtotal'] ?? 0);
-        $data['total_amount'] = (float) ($data['total_amount'] ?? 0);
+        $data['fee'] = (float) ($data['fee'] ?? 0);
 
         $paraclinicRequest = ParaclinicRequest::create(array_merge(
             $data,
@@ -137,8 +136,7 @@ class ParaClinicRequestController extends Controller
                 'provisional_diagnosis' => $paraclinicRequest->provisional_diagnosis,
                 'notes' => $paraclinicRequest->notes,
                 'status' => $paraclinicRequest->status,
-                'subtotal' => (float) $paraclinicRequest->subtotal,
-                'total_amount' => (float) $paraclinicRequest->total_amount,
+                'fee' => (float) $paraclinicRequest->fee,
                 'payment_status' => $paraclinicRequest->payment_status,
                 'payment_date' => $paraclinicRequest->payment_date,
                 'tests' => $paraclinicRequest->tests->map(fn ($t) => [
@@ -176,8 +174,7 @@ class ParaClinicRequestController extends Controller
     public function update(UpdateParaclinicRequest $request, ParaclinicRequest $paraclinicRequest)
     {
         $data = $request->safe()->except(['tests']);
-        $data['subtotal'] = (float) ($data['subtotal'] ?? 0);
-        $data['total_amount'] = (float) ($data['total_amount'] ?? 0);
+        $data['fee'] = (float) ($data['fee'] ?? 0);
 
         $paraclinicRequest->update(array_merge(
             $data,
@@ -283,22 +280,5 @@ class ParaClinicRequestController extends Controller
         return User::where('name', 'like', "%{$q}%")
             ->limit(25)
             ->get(['id', 'name']);
-    }
-
-    public function searchPatients(Request $request)
-    {
-        $q = $request->query('q');
-
-        return Patient::where('khmer_first_name', 'like', "%{$q}%")
-            ->orWhere('khmer_last_name', 'like', "%{$q}%")
-            ->orWhere('first_name', 'like', "%{$q}%")
-            ->orWhere('last_name', 'like', "%{$q}%")
-            ->orWhere('phone_number', 'like', "%{$q}%")
-            ->limit(25)
-            ->get()
-            ->map(fn ($p) => [
-                'id' => $p->id,
-                'name' => "{$p->khmer_first_name} {$p->khmer_last_name}",
-            ]);
     }
 }

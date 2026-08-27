@@ -1,19 +1,28 @@
 import { useForm, useFieldArray } from 'react-hook-form';
 import Input from '@/components/form/input-deprecated';
 import Select from '@/components/form/select-deprecated';
-import SearchSelect from '@/components/form/searchSelect';
+import ServerAutocomplete from '@/components/form/serverAutocomplete';
 import Textarea from '@/components/form/textarea';
 import {
   IParaClinicRequest,
   IParaClinicRequestFormData,
   IParaClinicRequestTest,
 } from '@/interfaces/IParaClinicRequest';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { router } from '@inertiajs/react';
-import { Box, Button, Divider, Stack, Typography } from '@mui/material';
-import IconButton from '@/components/button/iconButton';
+import {
+  Box,
+  Button,
+  DialogActions,
+  DialogContent,
+  Grid,
+  Stack,
+  Typography,
+  IconButton
+} from '@mui/material';
 import { useToast } from '@/components/toast';
 import { Plus, X } from 'lucide-react';
+import DatePicker from '@/components/form/date';
 const TEST_CATEGORIES = [
   'Laboratory',
   'Cardiology',
@@ -52,7 +61,7 @@ const PRIORITY_OPTIONS = ['Routine', 'Urgent', 'STAT'].map((value) => ({
   value,
   label: value,
 }));
-interface ParaclinicFormProps {
+interface ParaClinicFormProps {
   request?: IParaClinicRequest;
   authUser: { id: number; name: string };
   preselectedPatient?: {
@@ -62,12 +71,12 @@ interface ParaclinicFormProps {
   } | null;
   onClose: () => void;
 }
-const ParaclinicForm = ({
+const ParaClinicForm = ({
   request,
   authUser,
   preselectedPatient,
   onClose,
-}: ParaclinicFormProps) => {
+}: ParaClinicFormProps) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
   const defaultTests: IParaClinicRequestTest[] = request?.tests?.length
@@ -96,8 +105,7 @@ const ParaclinicForm = ({
           clinical_reason: request.clinical_reason,
           provisional_diagnosis: request.provisional_diagnosis,
           notes: request.notes,
-          subtotal: request.subtotal,
-          total_amount: request.total_amount,
+          fee: request.fee,
           payment_status: request.payment_status,
           payment_date: request.payment_date,
           tests: defaultTests,
@@ -110,18 +118,14 @@ const ParaclinicForm = ({
           clinical_reason: '',
           provisional_diagnosis: '',
           notes: '',
-          subtotal: 0,
-          total_amount: 0,
+          fee: null,
           payment_status: 'Unpaid',
           payment_date: null,
           tests: defaultTests,
         },
     });
   const { fields, append, remove } = useFieldArray({ control, name: 'tests' });
-  const subtotal = watch('subtotal');
-  useEffect(() => {
-    setValue('total_amount', Number(subtotal) || 0);
-  }, [subtotal, setValue]);
+
   const submitData = (
     data: IParaClinicRequestFormData,
     extra: Record<string, string> = {},
@@ -137,6 +141,7 @@ const ParaclinicForm = ({
       }),
     ),
   });
+
   const save = (status?: string) =>
     handleSubmit((data) => {
       setIsProcessing(true);
@@ -155,232 +160,197 @@ const ParaclinicForm = ({
         router.put(`/para-clinic-requests/${request.id}`, payload, options);
       else router.post('/para-clinic-requests', payload, options);
     });
+
   return (
     <Box
       component="form"
       onSubmit={save(request ? undefined : 'Draft')}
       noValidate
-      sx={{ borderTop: 1, borderColor: 'divider' }}
     >
-      <Stack spacing={3} sx={{ p: 3, maxHeight: '70vh', overflowY: 'auto' }}>
-        <Box>
-          <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 600 }}>
-            General Information
-          </Typography>
-          <Stack spacing={2}>
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-              <Box sx={{ flex: 1 }}>
-                <SearchSelect
-                  label="Patient"
-                  control={control}
-                  name="patient_id"
-                  rules={{ required: 'Patient is required' }}
-                  apiUrl="/patients/search"
-                  initialOption={
-                    request?.patient
-                      ? {
-                        value: request.patient.id,
-                        label: `${request.patient.khmer_first_name} ${request.patient.khmer_last_name}`,
-                      }
-                      : preselectedPatient
-                        ? {
-                          value: preselectedPatient.id,
-                          label: `${preselectedPatient.khmer_first_name} ${preselectedPatient.khmer_last_name}`,
-                        }
-                        : undefined
-                  }
-                  placeholder="Search patient by name..."
-                />
-              </Box>
-              <Box sx={{ flex: 1 }}>
-                <Typography variant="body2" sx={{ mb: 0.5, fontWeight: 500 }}>
-                  Doctor *
-                </Typography>
-                <Box
-                  sx={{
-                    p: 1.25,
-                    bgcolor: 'action.disabledBackground',
-                    borderRadius: 1,
-                    color: 'text.secondary',
-                  }}
-                >
-                  {authUser.name}
-                </Box>
-              </Box>
-            </Stack>
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-              <Box sx={{ flex: 1 }}>
-                <Input
-                  label="Request Date"
-                  control={control}
-                  type="date"
-                  name="request_date"
-                  rules={{ required: 'Request date is required' }}
-                />
-              </Box>
-            </Stack>
+      <DialogContent sx={{ borderTop: 1, borderColor: 'divider' }}>
+        <Grid container spacing={2}>
+          <Grid size={{ md: 12 }}>
+            <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 600 }}>
+              General Information
+            </Typography>
+          </Grid>
+          <Grid size={{ md: 12 }}>
+            <DatePicker control={control} name="request_date" />
+          </Grid>
+          <Grid size={{ md: 12 }}>
+            <ServerAutocomplete
+              label="Patient"
+              control={control}
+              name="patient_id"
+              rules={{ required: 'Patient is required' }}
+              model="Patient"
+              placeholder="Search patient by name..."
+            />
+          </Grid>
+          <Grid size={{ md: 12 }}>
             <Input
               label="Provisional Diagnosis"
               control={control}
               name="provisional_diagnosis"
               placeholder="Enter provisional diagnosis"
             />
+          </Grid>
+          <Grid size={{ md: 12 }}>
             <Textarea
               label="Clinical Reason"
               control={control}
               name="clinical_reason"
               placeholder="Enter clinical reason"
             />
+          </Grid>
+          <Grid size={{ md: 12 }}>
             <Textarea
               label="Notes"
               control={control}
               name="notes"
               placeholder="Enter any additional notes"
             />
-          </Stack>
-        </Box>
-        <Box>
-          <Stack
-            direction="row"
-            sx={{
-              mb: 2,
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-              Diagnostic Tests
-            </Typography>
-            <Button
-              type="button"
-              size="small"
-              onClick={() =>
-                append({
-                  test_category: 'Laboratory',
-                  test_name: 'CBC',
-                  priority: 'Routine',
-                  instruction: null,
-                })
-              }
-              startIcon={<Plus size={16} />}
+          </Grid>
+          <Grid size={{ md: 12 }}>
+            <Stack
+              direction="row"
+              sx={{
+                mb: 2,
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
             >
-              Add Test
-            </Button>
-          </Stack>
-          <Stack spacing={1.5}>
-            {fields.map((field, index) => {
-              const availableTests =
-                TEST_NAMES[watch(`tests.${index}.test_category`)] ??
-                TEST_NAMES.Other;
-              return (
-                <Stack
-                  key={field.id}
-                  direction={{ xs: 'column', md: 'row' }}
-                  spacing={1.5}
-                  sx={{
-                    p: 2,
-                    border: 1,
-                    borderColor: 'divider',
-                    borderRadius: 1,
-                    bgcolor: 'action.hover',
-                    alignItems: 'flex-start',
-                  }}
-                >
-                  <Stack
-                    direction={{ xs: 'column', sm: 'row' }}
-                    spacing={1.5}
-                    sx={{ flex: 1, width: '100%' }}
-                  >
-                    <Select
-                      label="Category"
-                      control={control}
-                      name={`tests.${index}.test_category` as any}
-                      options={TEST_CATEGORIES}
-                      rules={{ required: 'Required' }}
-                    />
-                    <Select
-                      label="Test Name"
-                      control={control}
-                      name={`tests.${index}.test_name` as any}
-                      options={availableTests}
-                      rules={{ required: 'Required' }}
-                    />
-                    <Select
-                      label="Priority"
-                      control={control}
-                      name={`tests.${index}.priority` as any}
-                      options={PRIORITY_OPTIONS}
-                      rules={{ required: 'Required' }}
-                    />
-                    <Input
-                      label="Instruction"
-                      control={control}
-                      name={`tests.${index}.instruction` as any}
-                      placeholder="Optional"
-                    />
-                  </Stack>
-                  {fields.length > 1 && (
-                    <IconButton
-                      color="error"
-                      onClick={() => remove(index)}
-                      aria-label="Remove test"
+              <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                Diagnostic Tests
+              </Typography>
+              <Button
+                type="button"
+                size="small"
+                onClick={() =>
+                  append({
+                    test_category: 'Laboratory',
+                    test_name: 'CBC',
+                    priority: 'Routine',
+                    instruction: null,
+                  })
+                }
+                variant="contained"
+                startIcon={<Plus size={14} />}
+              >
+                Add Test
+              </Button>
+            </Stack>
+          </Grid>
+          <Grid size={{ md: 12 }}>
+            <Stack spacing={2}>
+              <Stack spacing={1.5}>
+                {fields.map((field, index) => {
+                  const availableTests =
+                    TEST_NAMES[watch(`tests.${index}.test_category`)] ??
+                    TEST_NAMES.Other;
+                  return (
+                    <Stack
+                      key={field.id}
+                      direction={{ xs: 'column', md: 'row' }}
+                      spacing={1.5}
+                      sx={{
+                        p: 2,
+                        border: 1,
+                        borderColor: 'divider',
+                        borderRadius: 1,
+                        bgcolor: 'action.hover',
+                        alignItems: 'flex-start',
+                      }}
                     >
-                      <X size={16} />
-                    </IconButton>
-                  )}
-                </Stack>
-              );
-            })}
-          </Stack>
-        </Box>
-        <Box>
-          <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 600 }}>
-            Billing
-          </Typography>
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                      <Stack
+                        direction={{ xs: 'column', sm: 'row' }}
+                        spacing={1.5}
+                        sx={{ flex: 1, width: '100%' }}
+                      >
+                        <Select
+                          label="Category"
+                          control={control}
+                          name={`tests.${index}.test_category` as any}
+                          options={TEST_CATEGORIES}
+                          rules={{ required: 'Required' }}
+                        />
+                        <Select
+                          label="Test Name"
+                          control={control}
+                          name={`tests.${index}.test_name` as any}
+                          options={availableTests}
+                          rules={{ required: 'Required' }}
+                        />
+                        <Select
+                          label="Priority"
+                          control={control}
+                          name={`tests.${index}.priority` as any}
+                          options={PRIORITY_OPTIONS}
+                          rules={{ required: 'Required' }}
+                        />
+                        <Input
+                          label="Instruction"
+                          control={control}
+                          name={`tests.${index}.instruction` as any}
+                          placeholder="Optional"
+                        />
+                      </Stack>
+                      {fields.length > 1 && (
+                        <IconButton
+                          color="error"
+                          onClick={() => remove(index)}
+                          aria-label="Remove test"
+                        >
+                          <X size={16} />
+                        </IconButton>
+                      )}
+                    </Stack>
+                  );
+                })}
+              </Stack>
+            </Stack>
+          </Grid>
+          <Grid size={{ md: 12 }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+              Billing
+            </Typography>
+          </Grid>
+          <Grid size={{ md: 6 }}>
             <Input
-              label="Subtotal ($)"
+              label="Fee ($)"
               control={control}
               type="number"
               inputProps={{ step: '0.01', min: '0' }}
-              name="subtotal"
+              name="fee"
               placeholder="0.00"
             />
-            <Input
-              label="Total Amount ($)"
-              control={control}
-              type="number"
-              inputProps={{ step: '0.01', min: '0' }}
-              name="total_amount"
-              placeholder="Calculated automatically"
-            />
-          </Stack>
-        </Box>
-      </Stack>
-      <Divider />
-      <Stack
-        direction="row"
-        spacing={1}
-        sx={{ p: 1, justifyContent: 'flex-end' }}
-      >
+          </Grid>
+        </Grid>
+      </DialogContent>
+      <DialogActions>
         <Button type="button" onClick={onClose} variant="outlined">
           Cancel
+        </Button>
+        <Button
+          type="submit"
+          color="secondary"
+          disabled={isProcessing}
+          variant="contained"
+        >
+          {request ? 'Update' : 'Save Draft'}
         </Button>
         {!request && (
           <Button
             type="button"
-            variant="outlined"
+            variant="contained"
             onClick={save('Requested')}
             disabled={isProcessing}
           >
             Submit Request
           </Button>
         )}
-        <Button type="submit" disabled={isProcessing} variant="contained">
-          {request ? 'Update' : 'Save Draft'}
-        </Button>
-      </Stack>
+      </DialogActions>
     </Box>
   );
 };
-export default ParaclinicForm;
+export default ParaClinicForm;

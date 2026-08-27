@@ -86,24 +86,24 @@ const PrescriptionForm = ({
   const { control, handleSubmit, watch, setValue } = useForm<PrescriptionFormValues>({
     defaultValues: prescription
       ? {
-          visit_id: selectedVisitId ?? activeVisits[0]?.id ?? 0,
-          notes: prescription.notes ?? '',
-          items: prescription.items.map((i) => ({
-            medicine_id: i.medicine?.id ?? null,
-            route: i.route,
-            dosage: i.dosage,
-            unit: i.unit,
-            frequency: i.frequency,
-            number_of_day: i.number_of_day,
-            quantity: i.quantity,
-            notes: i.notes,
-          })),
-        }
+        visit_id: selectedVisitId ?? activeVisits[0]?.id ?? 0,
+        notes: prescription.notes ?? '',
+        items: prescription.items.map((i) => ({
+          medicine_id: i.medicine?.id ?? null,
+          route: i.route,
+          dosage: i.dosage,
+          unit: i.unit,
+          frequency: i.frequency,
+          number_of_day: i.number_of_day,
+          quantity: i.quantity,
+          notes: i.notes,
+        })),
+      }
       : {
-          visit_id: selectedVisitId ?? activeVisits[0]?.id ?? 0,
-          notes: '',
-          items: [emptyItem()],
-        },
+        visit_id: selectedVisitId ?? activeVisits[0]?.id ?? 0,
+        notes: '',
+        items: [emptyItem()],
+      },
   });
 
   const { fields, append, remove } = useFieldArray({ control, name: 'items' });

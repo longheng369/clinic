@@ -31,8 +31,8 @@ createInertiaApp({
       mod.default.layout = name.startsWith('auth/')
         ? (page: React.ReactNode) => <GuestLayout>{page}</GuestLayout>
         : (page: React.ReactNode) => (
-            <AuthenticatedLayout>{page}</AuthenticatedLayout>
-          );
+          <AuthenticatedLayout>{page}</AuthenticatedLayout>
+        );
     }
 
     return mod as any;

@@ -54,7 +54,7 @@ Key conventions: Inertia.js for all server communication, modal-based forms (no 
 
 ### Component Patterns
 
-**Form Inputs** (RHF-integrated — `input.tsx`, `select.tsx`, `textarea.tsx`, `searchSelect.tsx`):
+**Form Inputs** (RHF-integrated — `input.tsx`, `select.tsx`, `textarea.tsx`, `serverAutocomplete.tsx`):
 ```
 base:  "w-full rounded-lg border px-3 py-2.5 outline-none text-sm focus:ring-2"
 default state:  "border-gray-300 focus:ring-primary-500/20 focus:border-primary-500"
@@ -82,7 +82,7 @@ error msg:  "mt-1 text-sm text-red-500"
 - `resources/js/components/form/select.tsx` — Native select (RHF)
 - `resources/js/components/form/textarea.tsx` — Textarea (RHF)
 - `resources/js/components/form/checkbox.tsx` — Button-style checkbox (RHF)
-- `resources/js/components/form/searchSelect.tsx` — Searchable combobox (Headless UI)
+- `resources/js/components/form/serverAutocomplete.tsx` — Searchable combobox (Headless UI)
 - `resources/js/components/inputLabel.tsx` — Label component
 - `resources/js/components/inputError.tsx` — Error message component
 

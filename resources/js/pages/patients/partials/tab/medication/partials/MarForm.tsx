@@ -62,27 +62,27 @@ const MarForm = ({
   const { control, handleSubmit } = useForm<IMedicationOrderFormData>({
     defaultValues: order
       ? {
-          visit_id: selectedVisitId ?? activeVisits[0]?.id ?? 0,
-          medicine_id: order.medicine?.id ?? null,
-          route: order.route,
-          dosage: order.dosage,
-          unit: order.unit,
-          interval: order.interval,
-          duration: order.duration,
-          starts_at: getStartsAtValue(),
-          notes: order.notes ?? '',
-        }
+        visit_id: selectedVisitId ?? activeVisits[0]?.id ?? 0,
+        medicine_id: order.medicine?.id ?? null,
+        route: order.route,
+        dosage: order.dosage,
+        unit: order.unit,
+        interval: order.interval,
+        duration: order.duration,
+        starts_at: getStartsAtValue(),
+        notes: order.notes ?? '',
+      }
       : {
-          visit_id: selectedVisitId ?? activeVisits[0]?.id ?? 0,
-          medicine_id: null,
-          route: '',
-          dosage: null,
-          unit: '',
-          interval: '',
-          duration: null,
-          starts_at: defaultStartsAt,
-          notes: '',
-        },
+        visit_id: selectedVisitId ?? activeVisits[0]?.id ?? 0,
+        medicine_id: null,
+        route: '',
+        dosage: null,
+        unit: '',
+        interval: '',
+        duration: null,
+        starts_at: defaultStartsAt,
+        notes: '',
+      },
   });
 
   const medicineOptions = medicines.map((m) => ({

@@ -12,8 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'type',
     'status',
     'created_by',
-    'subtotal',
-    'total_amount',
+    'fee',
     'paid_amount',
     'payment_status',
     'payment_date',
@@ -77,19 +76,17 @@ class Visit extends Model
             ->where('status', 'provided')
             ->sum('unit_price');
 
-        $paraclinicTotal = $this->paraclinicRequests()->sum('total_amount');
+        $paraclinicTotal = $this->paraclinicRequests()->sum('fee');
 
-        $subtotal = $consultationsTotal + $medicationsTotal + $paraclinicTotal;
-        $total = $subtotal;
+        $fee = $consultationsTotal + $medicationsTotal + $paraclinicTotal;
         $paidAmount = (float) $this->paid_amount;
-        $balance = $total - $paidAmount;
+        $balance = $fee - $paidAmount;
 
         return [
             'consultation_fees' => (float) $consultationsTotal,
             'medication_costs' => (float) $medicationsTotal,
             'paraclinic_costs' => (float) $paraclinicTotal,
-            'subtotal' => $subtotal,
-            'total_amount' => $total,
+            'fee' => $fee,
             'paid_amount' => $paidAmount,
             'balance' => $balance,
             'payment_status' => $this->payment_status,

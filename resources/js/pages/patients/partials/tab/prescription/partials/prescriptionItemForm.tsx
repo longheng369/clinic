@@ -41,24 +41,24 @@ const PrescriptionItemForm: FC<Props> = ({
   const { control, handleSubmit, watch, setValue } = useForm<PrescriptionItemFormValues>({
     defaultValues: defaultValues
       ? {
-          ...defaultValues,
-          medicine: defaultValues.medicine?.id ?? '',
-          unit: defaultValues.unit?.name ?? '',
-          instruction: defaultValues.instruction?.value ?? null,
-        }
+        ...defaultValues,
+        medicine: defaultValues.medicine?.id ?? '',
+        unit: defaultValues.unit?.name ?? '',
+        instruction: defaultValues.instruction?.value ?? null,
+      }
       : {
-          medicine: '',
-          unit: '',
-          route: '',
-          notes: null,
-          quantity: null,
-          morning: null,
-          afternoon: null,
-          evening: null,
-          night: null,
-          numberOfDay: null,
-          instruction: null,
-        },
+        medicine: '',
+        unit: '',
+        route: '',
+        notes: null,
+        quantity: null,
+        morning: null,
+        afternoon: null,
+        evening: null,
+        night: null,
+        numberOfDay: null,
+        instruction: null,
+      },
   });
 
   // Watch medicine changes to auto-set unit and dosage

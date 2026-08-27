@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Autocompletable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
@@ -27,7 +28,20 @@ use Illuminate\Support\Facades\Auth;
 ])]
 class Patient extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, Autocompletable;
+
+    public array $autocompleteSearchable = [
+        'khmer_first_name',
+        'khmer_last_name',
+        'first_name',
+        'last_name',
+        'phone_number',
+    ];
+
+    public function autocompleteLabel(): string
+    {
+        return "{$this->khmer_first_name} {$this->khmer_last_name}";
+    }
 
     protected function casts(): array
     {

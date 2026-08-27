@@ -121,7 +121,7 @@ class PatientController extends Controller
                         'request_date' => $r->request_date,
                         'status' => $r->status,
                         'payment_status' => $r->payment_status,
-                        'total_amount' => (float) $r->total_amount,
+                        'fee' => (float) $r->fee,
                     ]);
             }, 'paraClinicRequests'),
             'medicationOrders' => Inertia::defer(function () use ($selectedVisit) {
@@ -318,5 +318,22 @@ class PatientController extends Controller
             'Content-Type' => $attachment->file_type,
             'Content-Disposition' => 'inline; filename="'.$attachment->file_name.'"',
         ]);
+    }
+
+    public function serverAutocomplete(Request $request)
+    {
+        $q = $request->query('search');
+
+        return Patient::where('khmer_first_name', 'like', "%{$q}%")
+            ->orWhere('khmer_last_name', 'like', "%{$q}%")
+            ->orWhere('first_name', 'like', "%{$q}%")
+            ->orWhere('last_name', 'like', "%{$q}%")
+            ->orWhere('phone_number', 'like', "%{$q}%")
+            ->limit(25)
+            ->get()
+            ->map(fn ($p) => [
+                'value' => $p->id,
+                'label' => "{$p->khmer_first_name} {$p->khmer_last_name}",
+            ]);
     }
 }

@@ -8,8 +8,7 @@ interface BillingData {
   consultation_fees: number;
   medication_costs: number;
   paraclinic_costs: number;
-  subtotal: number;
-  total_amount: number;
+  fee: number;
   paid_amount: number;
   balance: number;
   payment_status: string;
@@ -49,7 +48,7 @@ const BillingTab = ({ visitId }: Props) => {
     );
   }
 
-  const computedTotal = billing.subtotal;
+  const computedTotal = billing.fee;
   const balance = computedTotal - paidAmount;
   const statusBadge =
     PAYMENT_STATUS[billing.payment_status] ?? PAYMENT_STATUS.Unpaid;
@@ -71,7 +70,7 @@ const BillingTab = ({ visitId }: Props) => {
   };
 
   const handleMarkPaid = () => {
-    const total = billing.subtotal;
+    const total = billing.fee;
     setPaidAmount(total);
     setIsSaving(true);
     router.patch(
@@ -238,31 +237,12 @@ const BillingTab = ({ visitId }: Props) => {
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Typography sx={{ fontSize: 13, color: '#64748b' }}>
-                Subtotal
+                Fee
               </Typography>
               <Typography
                 sx={{ fontSize: 14, fontWeight: 600, color: '#1e293b' }}
               >
-                {formatCurrency(billing.subtotal)}
-              </Typography>
-            </Box>
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                pt: 1.5,
-                borderTop: '2px solid #e2e8f0',
-              }}
-            >
-              <Typography
-                sx={{ fontSize: 14, fontWeight: 600, color: '#1e293b' }}
-              >
-                Total
-              </Typography>
-              <Typography
-                sx={{ fontSize: 16, fontWeight: 700, color: '#1e293b' }}
-              >
-                {formatCurrency(computedTotal)}
+                {formatCurrency(billing.fee)}
               </Typography>
             </Box>
           </Box>

@@ -73,24 +73,24 @@ const DoseRow = ({ administration, visitId, orderStatus }: DoseRowProps) => {
         <DoseStatusBadge administration={administration} />
         {administration.status === 'provided' &&
           administration.administered_by && (
-            <Box sx={{ fontSize: 13, color: '#64748b' }}>
+          <Box sx={{ fontSize: 13, color: '#64748b' }}>
               by {administration.administered_by}
-              {administration.unit_price != null && (
-                <Box component="span" sx={{ color: '#94a3b8' }}>
+            {administration.unit_price != null && (
+              <Box component="span" sx={{ color: '#94a3b8' }}>
                   &nbsp;&mdash;&nbsp;$
-                  {Number(administration.unit_price).toFixed(2)}
-                </Box>
-              )}
-            </Box>
-          )}
+                {Number(administration.unit_price).toFixed(2)}
+              </Box>
+            )}
+          </Box>
+        )}
         {(administration.status === 'missed' ||
           administration.status === 'refused' ||
           administration.status === 'cancelled') &&
           administration.reason && (
-            <Box sx={{ fontSize: 13, color: '#94a3b8' }}>
+          <Box sx={{ fontSize: 13, color: '#94a3b8' }}>
               &mdash; {administration.reason}
-            </Box>
-          )}
+          </Box>
+        )}
         {administration.note && (
           <Box sx={{ fontSize: 13, color: '#94a3b8' }}>
             {administration.note}

@@ -512,11 +512,11 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
                     sx={
                       isEditing
                         ? {
-                            cursor: 'pointer',
-                            '&:hover': {
-                              bgcolor: 'action.hover',
-                            },
-                          }
+                          cursor: 'pointer',
+                          '&:hover': {
+                            bgcolor: 'action.hover',
+                          },
+                        }
                         : undefined
                     }
                     onClick={isEditing ? () => openEditModal(index) : undefined}

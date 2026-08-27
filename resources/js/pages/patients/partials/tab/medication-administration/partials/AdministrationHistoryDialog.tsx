@@ -144,10 +144,10 @@ const AdministrationHistoryDialog = ({
                       admin.status === 'refused' ||
                       admin.status === 'cancelled') &&
                       admin.reason && (
-                        <Box sx={{ fontSize: 12, color: '#94a3b8' }}>
+                      <Box sx={{ fontSize: 12, color: '#94a3b8' }}>
                           &mdash; {admin.reason}
-                        </Box>
-                      )}
+                      </Box>
+                    )}
                   </Box>
                 </Box>
               );

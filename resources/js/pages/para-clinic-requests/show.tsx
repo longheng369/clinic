@@ -401,12 +401,8 @@ const Show = ({ request }: { request: IParaClinicRequest }) => {
         <Section title="Billing">
           <Stack direction={{ xs: 'column', md: 'row' }} spacing={4}>
             <InfoItem
-              label="Subtotal"
-              value={`$${(request.subtotal ?? 0).toFixed(2)}`}
-            />
-            <InfoItem
-              label="Total Amount"
-              value={`$${(request.total_amount ?? 0).toFixed(2)}`}
+              label="Fee"
+              value={`$${(request.fee ?? 0).toFixed(2)}`}
             />
             <InfoItem
               label="Payment Status"

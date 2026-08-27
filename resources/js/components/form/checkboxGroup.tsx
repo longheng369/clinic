@@ -82,11 +82,11 @@ const CheckboxGroup = <T extends FieldValues = FieldValues>({
       ? optionValue === exclusiveValue
         ? [optionValue]
         : [
-            ...selectedValues.filter(
-              (value) => value !== exclusiveValue && value !== optionValue,
-            ),
-            optionValue,
-          ]
+          ...selectedValues.filter(
+            (value) => value !== exclusiveValue && value !== optionValue,
+          ),
+          optionValue,
+        ]
       : selectedValues.filter((value) => value !== optionValue);
 
     field.onChange(nextValues);

@@ -14,7 +14,7 @@ import {
 import { AlertTriangle, Clock } from 'lucide-react';
 import { useToast } from '@/components/toast';
 import Input from '@/components/form/input';
-import SearchSelect from '@/components/form/searchSelect';
+import SearchSelect from '@/components/form/serverAutocomplete';
 import Select from '@/components/form/select';
 import Textarea from '@/components/form/textarea';
 import {

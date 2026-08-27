@@ -272,12 +272,12 @@ const Index = () => {
       ),
     },
     {
-      field: 'total_amount',
+      field: 'fee',
       headerName: 'ចំនួនទឹកប្រាក់',
       flex: 1,
       minWidth: 130,
       valueGetter: (_value, row: IParaClinicRequest) =>
-        `$${(row.total_amount ?? 0).toFixed(2)}`,
+        `$${(row.fee ?? 0).toFixed(2)}`,
     },
     {
       field: 'actions',

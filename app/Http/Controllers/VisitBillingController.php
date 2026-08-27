@@ -24,21 +24,19 @@ class VisitBillingController extends Controller
         ]);
 
         $summary = $visit->billingSummary();
-        $subtotal = $summary['subtotal'];
-        $total = $subtotal;
+        $fee = $summary['fee'];
         $paidAmount = $validated['paid_amount'] ?? $visit->paid_amount;
 
-        if ($paidAmount >= $total && $total > 0) {
+        if ($paidAmount >= $fee && $fee > 0) {
             $validated['payment_status'] = 'Paid';
-        } elseif ($paidAmount > 0 && $paidAmount < $total) {
+        } elseif ($paidAmount > 0 && $paidAmount < $fee) {
             $validated['payment_status'] = 'Partial';
         } elseif ($paidAmount <= 0 && isset($validated['payment_status'])) {
             // keep the explicit status if set
         }
 
         $visit->update([
-            'subtotal' => $subtotal,
-            'total_amount' => $total,
+            'fee' => $fee,
             'paid_amount' => $paidAmount,
             'payment_status' => $validated['payment_status'] ?? $visit->payment_status,
             'payment_date' => $paidAmount > 0 ? now() : $visit->payment_date,
