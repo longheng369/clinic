@@ -13,12 +13,12 @@ interface CycleRowProps {
 }
 
 const DOSE_INDICATOR_COLORS: Record<string, string> = {
-  pending: '#93c5fd',
-  overdue: '#fca5a5',
-  provided: '#86efac',
-  missed: '#fdba74',
-  refused: '#c4b5fd',
-  cancelled: '#d1d5db',
+  pending: '#1d4ed8',
+  overdue: '#b91c1c',
+  provided: '#15803d',
+  missed: '#c2410c',
+  refused: '#7e22ce',
+  cancelled: '#475569',
 };
 
 const CycleRow = ({

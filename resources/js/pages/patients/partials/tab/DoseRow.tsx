@@ -104,14 +104,14 @@ const DoseRow = ({ administration, visitId, orderStatus }: DoseRowProps) => {
             aria-label="Provide dose"
             title="Provide"
           >
-            <Check size={16} />
+            <Check size={16} color="#15803d" />
           </IconButton>
           <IconButton
             onClick={handleMissed}
             aria-label="Missed dose"
             title="Missed"
           >
-            <AlertTriangle size={16} />
+            <AlertTriangle size={16} color="#c2410c" />
           </IconButton>
           <IconButton
             color="error"
@@ -119,7 +119,7 @@ const DoseRow = ({ administration, visitId, orderStatus }: DoseRowProps) => {
             aria-label="Refused dose"
             title="Refused"
           >
-            <X size={16} />
+            <X size={16} color="#7e22ce" />
           </IconButton>
         </Box>
       )}

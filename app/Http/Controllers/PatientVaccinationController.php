@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePatientVaccinationRequest;
+use App\Http\Requests\UpdatePatientVaccinationRequest;
 use App\Models\Appointment;
 use App\Models\Patient;
 use App\Models\PatientVaccination;
@@ -61,6 +62,13 @@ class PatientVaccinationController extends Controller
         }
 
         return back()->with('success', 'Vaccination recorded.');
+    }
+
+    public function update(UpdatePatientVaccinationRequest $request, Patient $patient, PatientVaccination $vaccination)
+    {
+        $vaccination->update($request->validated());
+
+        return back()->with('success', 'Vaccination record updated.');
     }
 
     public function destroy(Patient $patient, PatientVaccination $vaccination)

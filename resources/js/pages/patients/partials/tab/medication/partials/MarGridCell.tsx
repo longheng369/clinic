@@ -23,12 +23,12 @@ const CELL_STYLES: Record<
   string,
   { bg: string; color: string; cursor: string }
 > = {
-  pending: { bg: '#dbeafe', color: '#2563eb', cursor: 'pointer' },
-  overdue: { bg: '#fee2e2', color: '#dc2626', cursor: 'pointer' },
-  provided: { bg: '#dcfce7', color: '#16a34a', cursor: 'default' },
-  missed: { bg: '#ffedd5', color: '#ea580c', cursor: 'default' },
-  refused: { bg: '#f3e8ff', color: '#9333ea', cursor: 'default' },
-  cancelled: { bg: '#f1f5f9', color: '#94a3b8', cursor: 'default' },
+  pending: { bg: '#dbeafe', color: '#1d4ed8', cursor: 'pointer' },
+  overdue: { bg: '#fee2e2', color: '#b91c1c', cursor: 'pointer' },
+  provided: { bg: '#dcfce7', color: '#15803d', cursor: 'default' },
+  missed: { bg: '#ffedd5', color: '#c2410c', cursor: 'default' },
+  refused: { bg: '#f3e8ff', color: '#7e22ce', cursor: 'default' },
+  cancelled: { bg: '#f1f5f9', color: '#475569', cursor: 'default' },
 };
 
 const MarGridCell = ({

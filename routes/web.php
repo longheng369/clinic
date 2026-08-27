@@ -63,6 +63,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('patients/{patient}/vaccinations', [PatientVaccinationController::class, 'index'])->name('patients.vaccinations.index');
     Route::post('patients/{patient}/vaccinations', [PatientVaccinationController::class, 'store'])->name('patients.vaccinations.store');
+    Route::put('patients/{patient}/vaccinations/{vaccination}', [PatientVaccinationController::class, 'update'])->name('patients.vaccinations.update');
     Route::delete('patients/{patient}/vaccinations/{vaccination}', [PatientVaccinationController::class, 'destroy'])->name('patients.vaccinations.destroy');
 
     Route::post('patients/{patient}/visits', [VisitController::class, 'store'])->name('patients.visits.store');

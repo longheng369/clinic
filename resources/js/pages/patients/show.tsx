@@ -12,7 +12,7 @@ import MedicationOrdersTab from './partials/tab/medication-orders/index';
 import MedicationAdministrationTab from './partials/tab/medication-administration/index';
 import PrescriptionTab from './partials/tab/prescription';
 import ParaClinicTab from './partials/tab/para-clinic/index';
-import VaccinationTab from './partials/tab/vaccination';
+import VaccinationTab from '@/pages/patients/partials/tab/vaccination/index';
 import BillingTab from './partials/tab/billing/index';
 import {
   Box,

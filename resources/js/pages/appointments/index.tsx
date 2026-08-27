@@ -1,22 +1,30 @@
 import { Head, router, usePage } from '@inertiajs/react';
-import { Pencil, Trash2, Plus } from 'lucide-react';
-import AppointmentForm from './partials/createOrEdit';
-import { IAppointment } from '@/interfaces/IAppointment';
-import IconButton from '@/components/button/iconButton';
-import DataTable, { type Column } from '@/components/table/DataTable';
-import { formatDob } from '@/utils/date';
-import { useState, useEffect } from 'react';
+import { Pencil, Plus, Trash2 } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   Box,
   Button,
   Chip,
   MenuItem,
+  Paper,
   Select,
   Stack,
   TextField,
   Typography,
 } from '@mui/material';
+import {
+  DataGrid,
+  GridActionsCellItem,
+  type GridColDef,
+  type GridPaginationModel,
+  type GridRenderCellParams,
+} from '@mui/x-data-grid';
 import { useModal } from '@/components/modal';
+import SearchBar from '@/components/searchBar';
+import { formatDate } from '@/utils/date';
+import AppointmentForm from './partials/createOrEdit';
+import { IAppointment } from '@/interfaces/IAppointment';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 interface PaginatedData<T> {
   data: T[];
@@ -36,12 +44,14 @@ type ChipColor =
   | 'info'
   | 'success'
   | 'warning';
+
 const STATUS_COLORS: Record<string, ChipColor> = {
   scheduled: 'info',
   completed: 'success',
   cancelled: 'default',
   no_show: 'error',
 };
+
 const TYPE_COLORS: Record<string, ChipColor> = {
   consultation: 'primary',
   vaccination: 'warning',
@@ -50,36 +60,69 @@ const TYPE_COLORS: Record<string, ChipColor> = {
   other: 'default',
 };
 
+type Props = {
+  appointments: PaginatedData<IAppointment>;
+  search: string | null;
+  dateFilter: string | null;
+  statusFilter: string | null;
+};
+
 const Appointment = () => {
   const { openModal, closeModal, openAlert } = useModal();
-  const {
-    appointments,
-    search: searchProp,
-    dateFilter,
-    statusFilter,
-  } = usePage<{
-    appointments: PaginatedData<IAppointment>;
-    search: string | null;
-    dateFilter: string | null;
-    statusFilter: string | null;
-  }>().props;
+  const { appointments, search: searchProp, dateFilter, statusFilter } =
+    usePage<Props>().props;
   const [searchTerm, setSearchTerm] = useState(searchProp ?? '');
   const [date, setDate] = useState(dateFilter ?? '');
   const [status, setStatus] = useState(statusFilter ?? '');
+  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
+    page: Math.max(appointments.current_page - 1, 0),
+    pageSize: appointments.per_page,
+  });
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      const params: Record<string, string> = {};
+      if (
+        (searchTerm || '') === (searchProp || '') &&
+        (date || '') === (dateFilter || '') &&
+        (status || '') === (statusFilter || '')
+      ) {
+        return;
+      }
+
+      setPaginationModel((prev) => ({ ...prev, page: 0 }));
+
+      const params: Record<string, string | number> = { page: 1 };
       if (searchTerm) params.search = searchTerm;
       if (date) params.date = date;
       if (status) params.status = status;
+
       router.get('/appointments', params, {
         preserveState: true,
         replace: true,
       });
     }, 300);
+
     return () => clearTimeout(timeout);
-  }, [searchTerm, date, status]);
+  }, [searchTerm, date, status, searchProp, dateFilter, statusFilter]);
+
+  const handlePaginationModelChange = useCallback(
+    (model: GridPaginationModel) => {
+      setPaginationModel(model);
+
+      const params: Record<string, string | number> = {
+        page: model.page + 1,
+      };
+      if (searchTerm) params.search = searchTerm;
+      if (date) params.date = date;
+      if (status) params.status = status;
+
+      router.get('/appointments', params, {
+        preserveState: true,
+        replace: true,
+      });
+    },
+    [searchTerm, date, status],
+  );
 
   const handleCreate = () =>
     openModal({
@@ -87,6 +130,7 @@ const Appointment = () => {
       content: <AppointmentForm onClose={closeModal} />,
       config: { preventClickAway: true, maxWidth: '2xl' },
     });
+
   const handleEdit = (appointment: IAppointment) =>
     openModal({
       title: 'Edit Appointment',
@@ -95,6 +139,7 @@ const Appointment = () => {
       ),
       config: { preventClickAway: true, maxWidth: '2xl' },
     });
+
   const handleDelete = (appointment: IAppointment) =>
     openAlert({
       message: 'Delete this appointment?',
@@ -104,57 +149,91 @@ const Appointment = () => {
       onConfirm: () => router.delete(`/appointments/${appointment.id}`),
     });
 
-  const columns: Column<IAppointment>[] = [
-    { header: 'កាលបរិច្ឆេទ', cell: (a) => formatDob(a.created_at) },
+  const columns: GridColDef[] = [
     {
-      header: 'អ្នកជំងឺ',
-      cell: (a) =>
-        a.patient ? (
-          <Typography component="span" sx={{ fontFamily: 'inherit' }}>
-            {a.patient.khmer_last_name} {a.patient.khmer_first_name}
-          </Typography>
-        ) : (
+      field: 'patient',
+      headerName: 'អ្នកជំងឺ',
+      flex: 1.1,
+      minWidth: 190,
+      valueGetter: (_value, row: IAppointment) =>
+        row.patient
+          ? `${row.patient.khmer_last_name} ${row.patient.khmer_first_name}`
+          : null,
+      renderCell: (params: GridRenderCellParams<IAppointment>) =>
+        params.value ?? (
           <Typography component="span" color="text.disabled">
             &mdash;
           </Typography>
         ),
     },
     {
-      header: 'ប្រភេទ',
-      cell: (a) => (
-        <Chip
-          size="small"
-          label={a.type.replace('_', ' ')}
-          color={TYPE_COLORS[a.type] ?? 'default'}
-          sx={{ textTransform: 'capitalize' }}
-        />
-      ),
+      field: 'appointment_date',
+      headerName: 'កាលបរិច្ឆេទ',
+      flex: 0.8,
+      minWidth: 130,
+      valueGetter: (_value, row: IAppointment) =>
+        formatDate(row.appointment_date),
     },
     {
-      header: 'ស្ថានភាព',
-      cell: (a) => (
-        <Chip
-          size="small"
-          label={a.status.replace('_', ' ')}
-          color={STATUS_COLORS[a.status] ?? 'default'}
-          sx={{ textTransform: 'capitalize' }}
-        />
-      ),
-    },
-    { header: 'កាលបរិច្ឆេទណាត់', cell: (a) => formatDob(a.appointment_date) },
-    {
-      header: 'កំណត់ចំណាំ',
-      cell: (a) =>
-        a.notes ?? (
+      field: 'appointment_time',
+      headerName: 'ម៉ោង',
+      flex: 0.6,
+      minWidth: 100,
+      renderCell: (params: GridRenderCellParams<IAppointment>) =>
+        params.value ?? (
           <Typography component="span" color="text.disabled">
             &mdash;
           </Typography>
         ),
     },
     {
-      header: 'ការជូនដំណឹងវ៉ាក់សាំង',
-      cell: (a) =>
-        a.has_vaccine_alerts ? (
+      field: 'type',
+      headerName: 'ប្រភេទ',
+      flex: 0.9,
+      minWidth: 140,
+      renderCell: (params: GridRenderCellParams<IAppointment>) => (
+        <Chip
+          size="small"
+          label={(params.value as string)?.replace('_', ' ')}
+          color={TYPE_COLORS[params.value as string] ?? 'default'}
+          sx={{ textTransform: 'capitalize' }}
+        />
+      ),
+    },
+    {
+      field: 'status',
+      headerName: 'ស្ថានភាព',
+      flex: 0.8,
+      minWidth: 130,
+      renderCell: (params: GridRenderCellParams<IAppointment>) => (
+        <Chip
+          size="small"
+          label={(params.value as string)?.replace('_', ' ')}
+          color={STATUS_COLORS[params.value as string] ?? 'default'}
+          sx={{ textTransform: 'capitalize' }}
+        />
+      ),
+    },
+    {
+      field: 'notes',
+      headerName: 'កំណត់ចំណាំ',
+      flex: 1.5,
+      minWidth: 220,
+      renderCell: (params: GridRenderCellParams<IAppointment>) =>
+        params.value ?? (
+          <Typography component="span" color="text.disabled">
+            &mdash;
+          </Typography>
+        ),
+    },
+    {
+      field: 'has_vaccine_alerts',
+      headerName: 'វ៉ាក់សាំង',
+      flex: 0.7,
+      minWidth: 120,
+      sortable: false,
+      renderCell: (params: GridRenderCellParams<IAppointment>) =>
+        params.value ? (
           <Chip size="small" color="error" label="⚠ ជិតដល់" />
         ) : (
           <Typography component="span" color="text.disabled">
@@ -163,73 +242,113 @@ const Appointment = () => {
         ),
     },
     {
-      header: 'សកម្មភាព',
-      cell: (a) => (
-        <Stack direction="row" sx={{ justifyContent: 'flex-end' }}>
-          <IconButton
-            onClick={() => handleEdit(a)}
-            aria-label="Edit appointment"
-          >
-            <Pencil size={16} />
-          </IconButton>
-          <IconButton
-            color="error"
-            onClick={() => handleDelete(a)}
-            aria-label="Delete appointment"
-          >
-            <Trash2 size={16} />
-          </IconButton>
-        </Stack>
-      ),
+      field: 'actions',
+      type: 'actions',
+      headerName: 'សកម្មភាព',
+      width: 120,
+      getActions: (params) => [
+        <GridActionsCellItem
+          key={`edit-${params.id}`}
+          icon={<Pencil size={16} color="#2563eb" />}
+          label="Edit appointment"
+          onClick={() => handleEdit(params.row as IAppointment)}
+          showInMenu={false}
+        />,
+        <GridActionsCellItem
+          key={`delete-${params.id}`}
+          icon={<Trash2 size={16} color="#dc2626" />}
+          label="Delete appointment"
+          onClick={() => handleDelete(params.row as IAppointment)}
+          showInMenu={false}
+        />,
+      ],
     },
   ];
-  const { data, ...pagination } = appointments;
+
+  const pageSizeOptions = [...new Set([appointments.per_page, 10, 20, 25])].sort(
+    (a, b) => a - b,
+  );
 
   return (
     <>
       <Head title="កាលវិភាគ" />
-      <Box sx={{ p: 4 }}>
-        <Stack
-          direction={{ xs: 'column', lg: 'row' }}
-          spacing={3}
+      <Box
+        sx={{ p: 4, height: '100%', display: 'flex', flexDirection: 'column' }}
+      >
+        <Paper
+          variant="outlined"
           sx={{
             mb: 3,
-            alignItems: { xs: 'stretch', lg: 'center' },
+            p: 3,
+            display: 'flex',
+            alignItems: { xs: 'flex-start', md: 'center' },
             justifyContent: 'space-between',
+            gap: 2,
+            flexDirection: { xs: 'column', md: 'row' },
           }}
         >
           <Box>
-            <Typography variant="h4" sx={{ fontWeight: 700 }}>
+            <Typography variant="h4" sx={{ fontWeight: 700, mb: 0.5 }}>
               កាលវិភាគ
             </Typography>
-            <Typography color="text.secondary" sx={{ mt: 0.5 }}>
+            <Typography color="text.secondary">
               គ្រប់គ្រងកាលវិភាគអ្នកជំងឺ
             </Typography>
           </Box>
+          <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap' }}>
+            <Chip
+              label={`${appointments.total} total`}
+              variant="outlined"
+              color="primary"
+            />
+            <Chip
+              label={status ? status.replace('_', ' ') : 'All statuses'}
+              variant="outlined"
+              color={status ? (STATUS_COLORS[status] ?? 'default') : 'default'}
+              sx={{ textTransform: 'capitalize' }}
+            />
+          </Stack>
+        </Paper>
+
+        <Paper
+          variant="outlined"
+          sx={{
+            mb: 3,
+            p: 2.5,
+            display: 'flex',
+            flexDirection: { xs: 'column', xl: 'row' },
+            alignItems: { xs: 'stretch', xl: 'center' },
+            justifyContent: 'space-between',
+            gap: 2,
+          }}
+        >
           <Stack
             direction={{ xs: 'column', md: 'row' }}
             spacing={1.5}
-            sx={{ alignItems: 'stretch' }}
+            sx={{ flex: 1, minWidth: 0 }}
           >
-            <TextField
-              size="small"
+            <SearchBar
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search patient name"
-              slotProps={{ htmlInput: { 'aria-label': 'Search patient name' } }}
+              fullWidth
             />
-            <TextField
-              size="small"
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              slotProps={{
-                inputLabel: { shrink: true },
-                htmlInput: { 'aria-label': 'Filter by date' },
-              }}
-            />
+            <DatePicker />
+            {/*<TextField*/}
+            {/*  size="small"*/}
+            {/*  fullWidth*/}
+            {/*  type="date"*/}
+            {/*  label="Appointment date"*/}
+            {/*  value={date}*/}
+            {/*  onChange={(e) => setDate(e.target.value)}*/}
+            {/*  slotProps={{*/}
+            {/*    inputLabel: { shrink: true },*/}
+            {/*    htmlInput: { 'aria-label': 'Filter by date' },*/}
+            {/*  }}*/}
+            {/*/>*/}
             <Select
               size="small"
+              fullWidth
               value={status}
               onChange={(e) => setStatus(e.target.value)}
               displayEmpty
@@ -241,27 +360,33 @@ const Appointment = () => {
               <MenuItem value="cancelled">Cancelled</MenuItem>
               <MenuItem value="no_show">No Show</MenuItem>
             </Select>
-            <Button
-              onClick={handleCreate}
-              size="large"
-              variant="contained"
-              startIcon={<Plus size={20} />}
-            >
-              New Appointment
-            </Button>
           </Stack>
-        </Stack>
-        <DataTable
-          data={data}
-          keyExtractor={(a) => a.id}
-          columns={columns}
-          emptyMessage="No appointments found"
-          emptyDescription="Create a new appointment to get started."
-          pagination={pagination}
-          baseUrl="/appointments"
-        />
+          <Button
+            onClick={handleCreate}
+            variant="contained"
+            size="large"
+            startIcon={<Plus size={16} />}
+            sx={{ minWidth: { xs: '100%', md: 180 } }}
+          >
+            New Appointment
+          </Button>
+        </Paper>
+
+        <Box sx={{ flex: 1, minHeight: 0 }}>
+          <DataGrid
+            rows={appointments.data}
+            columns={columns}
+            rowCount={appointments.total}
+            paginationMode="server"
+            paginationModel={paginationModel}
+            onPaginationModelChange={handlePaginationModelChange}
+            pageSizeOptions={pageSizeOptions}
+            disableRowSelectionOnClick
+          />
+        </Box>
       </Box>
     </>
   );
 };
+
 export default Appointment;
