@@ -1,6 +1,6 @@
 import dayjs, { type Dayjs } from 'dayjs';
 import {
-  DatePicker,
+  DatePicker as MuiDatePicker,
   type DatePickerProps,
 } from '@mui/x-date-pickers/DatePicker';
 import {
@@ -22,7 +22,7 @@ type Props<T extends FieldValues = FieldValues> = {
   >;
 } & Omit<DatePickerProps, 'value' | 'onChange' | 'slotProps'>;
 
-const DateInput = <T extends FieldValues = FieldValues>({
+const DatePicker = <T extends FieldValues = FieldValues>({
   control,
   name,
   label,
@@ -41,7 +41,7 @@ const DateInput = <T extends FieldValues = FieldValues>({
   };
 
   return (
-    <DatePicker
+    <MuiDatePicker
       {...rest}
       label={label}
       format={format}
@@ -61,4 +61,4 @@ const DateInput = <T extends FieldValues = FieldValues>({
   );
 };
 
-export default DateInput;
+export default DatePicker;
