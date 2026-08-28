@@ -7,10 +7,18 @@ import Autocomplete from '@/components/form/autocomplete';
 import { IPatient, IPatientFormData } from '@/interfaces/IPatient';
 import { router } from '@inertiajs/react';
 import { useToast } from '@/components/toast';
-import { DialogActions, DialogContent, Grid, Box, Button } from '@mui/material';
+import {
+  DialogActions,
+  DialogContent,
+  Grid,
+  Box,
+  Button,
+  Typography,
+} from '@mui/material';
 import { useModal } from '@/components/modal';
 import { IGazetteer } from '@/interfaces/IGazetteer';
 import { getGazetteerInfo } from '@/utils/gazetteer';
+import { Save } from 'lucide-react';
 
 const BLOOD_GROUPS = [
   { value: 'A+', label: 'A+' },
@@ -246,6 +254,9 @@ const PatientForm = ({ patient }: Props) => {
     <Box component="form" onSubmit={onSubmit} noValidate>
       <DialogContent sx={{ borderTop: 1, borderColor: 'divider' }}>
         <Grid container spacing={3}>
+          <Grid size={{ md: 12 }}>
+            <Typography variant="h6">General Information</Typography>
+          </Grid>
           <Grid size={{ md: 6 }}>
             <Input
               control={control}
@@ -337,6 +348,12 @@ const PatientForm = ({ patient }: Props) => {
           <Grid size={{ md: 6 }}>
             <Input control={control} name="national_id" label="National ID" />
           </Grid>
+          <Grid size={{ md: 12 }}>
+            <Input control={control} name="allergy" label="Allergy" />
+          </Grid>
+          <Grid size={{ md: 12 }}>
+            <Typography variant="h6">Address</Typography>
+          </Grid>
           <Grid size={{ md: 6 }}>
             <Autocomplete
               control={control}
@@ -406,16 +423,18 @@ const PatientForm = ({ patient }: Props) => {
               }}
             />
           </Grid>
-          <Grid size={{ md: 12 }}>
-            <Input control={control} name="allergy" label="Allergy" />
-          </Grid>
         </Grid>
       </DialogContent>
       <DialogActions>
         <Button type="button" onClick={() => closeModal()} variant="outlined">
           Cancel
         </Button>
-        <Button type="submit" disabled={isProcessing} variant="contained">
+        <Button
+          type="submit"
+          disabled={isProcessing}
+          variant="contained"
+          startIcon={<Save size={16} />}
+        >
           {patient ? 'Save' : 'Create'}
         </Button>
       </DialogActions>
