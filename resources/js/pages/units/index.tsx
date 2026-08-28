@@ -14,7 +14,7 @@ import {
 import { useState, useEffect, useCallback } from 'react';
 import SearchBar from '@/components/searchBar';
 import { formatCreatedDateTime } from '@/utils/date';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Typography, Button } from '@mui/material';
 
 interface PaginatedData<T> {
   data: T[];
@@ -61,9 +61,7 @@ const Unit = () => {
     (model: GridPaginationModel) => {
       const page = model.page + 1;
       const params: Record<string, string | number> = { page };
-
       if (searchProp) params.search = searchProp;
-
       router.get('/settings/units', params, {
         preserveState: true,
         replace: true,
@@ -74,28 +72,17 @@ const Unit = () => {
 
   const handleCreate = () => {
     openModal({
-      title: (
-        <Typography variant="h5" sx={{ fontWeight: 'medium' }}>
-          New Unit
-        </Typography>
-      ),
+      title: 'New Unit',
       content: <UnitForm />,
-      config: { preventClickAway: true },
+      config: { preventClickAway: true, maxWidth: 'sm' },
     });
   };
 
   const handleEdit = (unit: IUnit) => {
     openModal({
-      title: (
-        <Typography variant="h5" sx={{ fontWeight: 'medium' }}>
-          Edit{' '}
-          <Typography variant="h6" component="span">
-            {unit.name}
-          </Typography>
-        </Typography>
-      ),
+      title: "Edit Unit",
       content: <UnitForm unit={unit} />,
-      config: { preventClickAway: true },
+      config: { preventClickAway: true, maxWidth: 'sm' },
     });
   };
 

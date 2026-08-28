@@ -4,9 +4,10 @@ import Textarea from '@/components/form/textarea';
 import { IUnit, IUnitFormData } from '@/interfaces/IUnit';
 import { useState } from 'react';
 import { router } from '@inertiajs/react';
-import { Box, Button, Stack } from '@mui/material';
+import { Box, Button, DialogActions, DialogContent, Grid } from '@mui/material';
 import { useToast } from '@/components/toast';
 import { useModal } from '@/components/modal';
+import { Save } from 'lucide-react';
 
 interface UnitFormProps {
   unit?: IUnit;
@@ -70,41 +71,40 @@ const UnitForm = ({ unit }: UnitFormProps) => {
   });
 
   return (
-    <Box
-      component="form"
-      onSubmit={onSubmit}
-      sx={{ borderTop: 1, borderColor: 'divider' }}
-      noValidate
-    >
-      <Stack spacing={2} sx={{ p: 3 }}>
-        <Input
-          label="Name"
-          control={control}
-          placeholder="Enter name"
-          name="name"
-          rules={{ required: 'This field is required' }}
-        />
-
-        <Textarea label="Description" control={control} name="description" />
-      </Stack>
-
-      <Stack
-        direction="row"
-        spacing={1}
-        sx={{
-          p: 1,
-          borderTop: 1,
-          borderColor: 'divider',
-          justifyContent: 'flex-end',
-        }}
-      >
+    <Box component="form" onSubmit={onSubmit} noValidate>
+      <DialogContent sx={{ borderTop: 1, borderColor: 'divider' }}>
+        <Grid container spacing={2}>
+          <Grid size={{ md: 12 }}>
+            <Input
+              label="Name"
+              control={control}
+              placeholder="Enter name"
+              name="name"
+              rules={{ required: 'This field is required' }}
+            />
+          </Grid>
+          <Grid size={{ md: 12 }}>
+            <Textarea
+              label="Description"
+              control={control}
+              name="description"
+            />
+          </Grid>
+        </Grid>
+      </DialogContent>
+      <DialogActions>
         <Button type="button" onClick={() => closeModal()} variant="outlined">
           Cancel
         </Button>
-        <Button type="submit" disabled={isProcessing} variant="contained">
-          {unit ? 'Save' : 'Create'}
+        <Button
+          type="submit"
+          disabled={isProcessing}
+          variant="contained"
+          startIcon={<Save size={16} />}
+        >
+          Save
         </Button>
-      </Stack>
+      </DialogActions>
     </Box>
   );
 };

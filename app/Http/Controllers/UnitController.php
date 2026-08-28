@@ -15,12 +15,8 @@ class UnitController extends Controller
         $search = $request->query('search');
 
         return Inertia::render('units/index', [
-            'units' => Unit::query()
-                ->latest()
-                ->when($search, fn ($query) => $query->where(function ($query) use ($search) {
-                    $query->where('name', 'like', "%{$search}%")
-                        ->orWhere('description', 'like', "%{$search}%");
-                }))
+            'units' => Unit::latest()
+                ->when($search, fn ($query) => $query->where('name', 'like', "%{$search}%"))
                 ->paginate(20)
                 ->withQueryString(),
             'search' => $search,
