@@ -72,28 +72,17 @@ const Category = () => {
 
   const handleCreate = () => {
     openModal({
-      title: (
-        <Typography variant="h5" sx={{ fontWeight: 'medium' }}>
-          New Category
-        </Typography>
-      ),
+      title: 'New Category',
       content: <CategoryForm />,
-      config: { preventClickAway: true },
+      config: { preventClickAway: true, maxWidth: 'sm' },
     });
   };
 
   const handleEdit = (category: ICategory) => {
     openModal({
-      title: (
-        <Typography variant="h5" sx={{ fontWeight: 'medium' }}>
-          Edit{' '}
-          <Typography variant="h6" component="span">
-            {category.name}
-          </Typography>
-        </Typography>
-      ),
+      title: "Edit Category",
       content: <CategoryForm category={category} />,
-      config: { preventClickAway: true },
+      config: { preventClickAway: true, maxWidth: 'sm' },
     });
   };
 
