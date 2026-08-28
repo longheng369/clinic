@@ -18,6 +18,9 @@ type Props<T extends FieldValues = FieldValues> = {
   label: string;
   options: IOption<any>[];
   placeholder?: string;
+  disabled?: boolean;
+  disableClearable?: boolean;
+  onChange?: (option: IOption<any> | null) => void;
 };
 
 const Autocomplete = <T extends FieldValues = FieldValues>({
@@ -27,6 +30,9 @@ const Autocomplete = <T extends FieldValues = FieldValues>({
   label,
   options,
   placeholder = 'Search...',
+  disabled,
+  disableClearable,
+  onChange,
 }: Props<T>) => {
   const { field, fieldState } = useController({ control, name, rules });
 
@@ -37,12 +43,15 @@ const Autocomplete = <T extends FieldValues = FieldValues>({
     <MuiAutoComplete
       options={options}
       value={selectedOption}
+      disabled={disabled}
+      disableClearable={disableClearable}
       onChange={(_, option) => {
         field.onChange(option?.value ?? null);
+        onChange?.(option);
       }}
       getOptionLabel={(option) => option.label}
       isOptionEqualToValue={(option, selected) =>
-        option.value === selected.value
+        option.value === selected?.value
       }
       noOptionsText="No results found."
       size="small"

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\GazetteerHelper;
 use App\Http\Requests\StorePatientRequest;
 use App\Http\Requests\UpdatePatientRequest;
 use App\Models\Medicine;
@@ -47,6 +48,28 @@ class PatientController extends Controller
     public function show(Request $request, Patient $patient)
     {
         $selectedVisitId = $request->query('visit');
+        $gazetteer = GazetteerHelper::getGazetteer($patient->address !== null ? (string) $patient->address : null);
+
+        $patient->province = [
+            'name_in_khmer' => $gazetteer['province']?->name_in_khmer,
+            'name_in_latin' => $gazetteer['province']?->name_in_latin,
+            'code' => $gazetteer['province']?->code,
+        ];
+        $patient->district = [
+            'name_in_khmer' => $gazetteer['district']?->name_in_khmer,
+            'name_in_latin' => $gazetteer['district']?->name_in_latin,
+            'code' => $gazetteer['district']?->code,
+        ];
+        $patient->commune = [
+            'name_in_khmer' => $gazetteer['commune']?->name_in_khmer,
+            'name_in_latin' => $gazetteer['commune']?->name_in_latin,
+            'code' => $gazetteer['commune']?->code,
+        ];
+        $patient->village = [
+            'name_in_khmer' => $gazetteer['village']?->name_in_khmer,
+            'name_in_latin' => $gazetteer['village']?->name_in_latin,
+            'code' => $gazetteer['village']?->code,
+        ];
 
         $allVisits = $patient->visits()->with('createdBy')->latest()->get();
 

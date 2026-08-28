@@ -14,7 +14,7 @@ class UpdatePatientRequest extends FormRequest
             'first_name' => ['nullable', 'string', 'max:255'],
             'last_name' => ['nullable', 'string', 'max:255'],
             'date_of_birth' => ['required', 'string', 'max:255'],
-            'address' => ['nullable', 'string'],
+            'address' => ['nullable', 'integer'],
             'blood_group' => ['nullable', 'string', 'max:10'],
             'phone_number' => ['required', 'string', 'max:20'],
             'gender' => ['required', 'string', 'in:male,female'],

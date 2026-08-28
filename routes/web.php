@@ -19,12 +19,18 @@ use App\Http\Controllers\VaccineController;
 use App\Http\Controllers\VisitBillingController;
 use App\Http\Controllers\VisitController;
 use App\Http\Controllers\AutocompleteController;
+use App\Http\Controllers\GazetteerController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
     return redirect('/login');
 });
+
+Route::get('gazetteers/provinces', [GazetteerController::class, 'getProvinceAndCapitalCity']);
+Route::get('gazetteers/districts/{province_code}', [GazetteerController::class, 'getDistrictByProvince']);
+Route::get('gazetteers/communes/{district_code}', [GazetteerController::class, 'getCommuneByDistrict']);
+Route::get('gazetteers/villages/{commune_code}', [GazetteerController::class, 'getVillageByCommune']);
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
@@ -85,6 +91,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('para-clinic-requests/{paraclinic_request}/attachments/{attachment}', [ParaClinicRequestController::class, 'deleteAttachment'])->name('para-clinic-requests.attachments.destroy');
     Route::get('para-clinic-requests/attachments/{attachment}/view', [ParaClinicRequestController::class, 'viewAttachment'])->name('para-clinic-requests.attachments.view');
     Route::patch('para-clinic-requests/{paraclinic_request}/status', [ParaClinicRequestController::class, 'updateStatus'])->name('para-clinic-requests.status');
+    Route::patch('para-clinic-requests/{paraclinic_request}/payment', [ParaClinicRequestController::class, 'updatePayment'])->name('para-clinic-requests.payment');
     Route::post('para-clinic-requests/{paraclinic_request}/results', [ParaClinicRequestController::class, 'storeResult'])->name('para-clinic-requests.results.store');
 
     Route::get('doctors/search', [ParaClinicRequestController::class, 'searchDoctors'])->name('api.doctors.search');

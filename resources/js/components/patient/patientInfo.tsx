@@ -80,7 +80,19 @@ const PatientInfo = ({ patient, compact = false }: Props) => (
           <InfoItem label="អត្តសញ្ញាណប័ណ្ណ" value={patient.national_id} />
         </Grid>
         <Grid size={{ xs: 12, md: 4 }}>
-          <InfoItem label="អាសយដ្ឋាន" value={patient.address} />
+          <InfoItem
+            label="អាសយដ្ឋាន"
+            value={
+              [
+                patient.province?.name_in_khmer,
+                patient.district?.name_in_khmer,
+                patient.commune?.name_in_khmer,
+                patient.village?.name_in_khmer,
+              ]
+                .filter(Boolean)
+                .join(', ') || patient.address
+            }
+          />
         </Grid>
         <Grid size={{ xs: 12, md: 4 }}>
           <InfoItem label="អាលែកហ្ស៊ី" value={patient.allergy} />

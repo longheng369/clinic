@@ -185,7 +185,7 @@ const ServerAutocomplete = <T extends FieldValues = FieldValues>({
         }
       }}
       getOptionLabel={(option) => option.label}
-      isOptionEqualToValue={(option, value) => option.value === value.value}
+      isOptionEqualToValue={(option, value) => option.value === value?.value}
       filterOptions={(x) => x}
       noOptionsText={isLoading ? 'Searching...' : 'No results found'}
       renderInput={(params) => (
