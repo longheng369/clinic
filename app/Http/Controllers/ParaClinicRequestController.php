@@ -251,6 +251,21 @@ class ParaClinicRequestController extends Controller
         return back()->with('success', 'Status updated to '.$request->status.'.');
     }
 
+    public function updatePayment(Request $request, ParaclinicRequest $paraclinicRequest)
+    {
+        $request->validate([
+            'payment_status' => ['required', 'in:Unpaid,Partial,Paid'],
+        ]);
+
+        $paraclinicRequest->update([
+            'payment_status' => $request->payment_status,
+            'payment_date' => $request->payment_status === 'Paid' ? now()->toDateString() : $paraclinicRequest->payment_date,
+            'updated_by' => auth()->id(),
+        ]);
+
+        return back()->with('success', 'Payment status updated to '.$request->payment_status.'.');
+    }
+
     public function storeResult(Request $request, ParaclinicRequest $paraclinicRequest)
     {
         $request->validate([
