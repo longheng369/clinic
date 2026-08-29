@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { router } from '@inertiajs/react';
-import { useForm } from 'react-hook-form';
+import { useController, useForm } from 'react-hook-form';
 import dayjs, { Dayjs } from 'dayjs';
 import {
   Alert,
@@ -43,19 +43,9 @@ const AppointmentForm = ({ appointment, readOnly = false }: Props) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [vaccineAlerts, setVaccineAlerts] = useState<IAppointmentAlert[]>([]);
   const [loadingAlerts, setLoadingAlerts] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(
-    appointment?.appointment_date ? dayjs(appointment.appointment_date) : null
-  );
-  const [selectedTime, setSelectedTime] = useState<Dayjs | null>(
-    appointment?.appointment_time
-      ? dayjs(`2000-01-01T${appointment.appointment_time}`)
-      : null
-  );
-  const [dateError, setDateError] = useState(false);
-  const [timeError, setTimeError] = useState(false);
   const { toast } = useToast();
 
-  const { control, handleSubmit, watch, setValue } = useForm<IAppointmentFormData>({
+  const { control, handleSubmit, watch } = useForm<IAppointmentFormData>({
     defaultValues: appointment
       ? {
         patient_id: appointment.patient?.id ?? null,
@@ -73,7 +63,27 @@ const AppointmentForm = ({ appointment, readOnly = false }: Props) => {
       },
   });
 
+  const {
+    field: dateField,
+    fieldState: dateFieldState,
+  } = useController({
+    control,
+    name: 'appointment_date',
+    rules: readOnly ? undefined : { required: 'Please select a date' },
+  });
+
+  const {
+    field: timeField,
+    fieldState: timeFieldState,
+  } = useController({
+    control,
+    name: 'appointment_time',
+    rules: readOnly ? undefined : { required: 'Please select a time' },
+  });
+
   const selectedPatientId = watch('patient_id');
+  const selectedDate = watch('appointment_date');
+  const selectedTime = watch('appointment_time');
 
   useEffect(() => {
     if (!selectedPatientId) {
@@ -89,29 +99,7 @@ const AppointmentForm = ({ appointment, readOnly = false }: Props) => {
       .finally(() => setLoadingAlerts(false));
   }, [selectedPatientId]);
 
-  useEffect(() => {
-    if (selectedDate) {
-      setValue('appointment_date', selectedDate.format('YYYY-MM-DD'));
-    }
-  }, [selectedDate, setValue]);
-
-  useEffect(() => {
-    if (selectedTime) {
-      setValue('appointment_time', selectedTime.format('HH:mm'));
-    }
-  }, [selectedTime, setValue]);
-
   const onSubmit = handleSubmit((data) => {
-    const hasDateError = !selectedDate;
-    const hasTimeError = !selectedTime;
-    setDateError(hasDateError);
-    setTimeError(hasTimeError);
-
-    if (hasDateError || hasTimeError) {
-      setIsProcessing(false);
-      return;
-    }
-
     setIsProcessing(true);
     const options = {
       onSuccess: () => {
@@ -145,9 +133,9 @@ const AppointmentForm = ({ appointment, readOnly = false }: Props) => {
 
   const formatDateTime = () => {
     if (!selectedDate) return 'No date selected';
-    const dateStr = selectedDate.format('dddd, MMMM D, YYYY');
+    const dateStr = dayjs(selectedDate).format('dddd, MMMM D, YYYY');
     if (!selectedTime) return dateStr;
-    const timeStr = selectedTime.format('hh:mm A');
+    const timeStr = dayjs(`2000-01-01T${selectedTime}`).format('hh:mm A');
     return `${dateStr} at ${timeStr}`;
   };
 
@@ -175,30 +163,42 @@ const AppointmentForm = ({ appointment, readOnly = false }: Props) => {
 
           <Stack direction="row" sx={{ alignItems: 'center', gap: 2 }}>
             <Box>
-              <DateCalendar
-                value={selectedDate}
-                onChange={(date) => {
-                  setSelectedDate(date);
-                  setDateError(false);
+              <Box
+                sx={{
+                  borderRadius: 1,
+                  boxShadow: dateFieldState.error
+                    ? 'inset 0 0 0 2px var(--mui-palette-error-main)'
+                    : 'none',
                 }}
-                readOnly={readOnly}
-                sx={{ mx: 0 }}
-              />
+              >
+                <DateCalendar
+                  value={dateField.value ? dayjs(dateField.value) : null}
+                  onChange={(date: Dayjs | null) => {
+                    dateField.onChange(date ? date.format('YYYY-MM-DD') : '');
+                  }}
+                  readOnly={readOnly}
+                  sx={{ mx: 0 }}
+                />
+              </Box>
+              {dateFieldState.error && (
+                <Typography color="error" variant="caption">
+                  {dateFieldState.error.message}
+                </Typography>
+              )}
             </Box>
             <Box>
               <Box
                 sx={{
                   borderRadius: 1,
-                  boxShadow: timeError
+                  boxShadow: timeFieldState.error
                     ? 'inset 0 0 0 2px var(--mui-palette-error-main)'
                     : 'none',
                 }}
               >
                 <StaticTimePicker
-                  value={selectedTime}
-                  onChange={(time) => {
-                    setSelectedTime(time);
-                    setTimeError(false);
+                  value={timeField.value ? dayjs(`2000-01-01T${timeField.value}`) : null}
+                  onChange={(time: Dayjs | null) => {
+                    timeField.onChange(time ? time.format('HH:mm') : '');
                   }}
                   readOnly={readOnly}
                   orientation="landscape"
@@ -233,10 +233,10 @@ const AppointmentForm = ({ appointment, readOnly = false }: Props) => {
                   }}
                 />
               </Box>
-              {timeError && (
-                <Alert severity="error" sx={{ mt: 1 }}>
-                  Please select a time
-                </Alert>
+              {timeFieldState.error && (
+                <Typography color="error" variant="caption">
+                  {timeFieldState.error.message}
+                </Typography>
               )}
             </Box>
           </Stack>

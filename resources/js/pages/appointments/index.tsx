@@ -299,11 +299,11 @@ const Appointment = () => {
           }}
         >
           <Box>
-            <Typography variant="h4" sx={{ fontWeight: 700, mb: 0.5 }}>
-              កាលវិភាគ
+            <Typography variant="h5" sx={{ fontWeight: 700, mb: 0.5 }}>
+              Appointment
             </Typography>
-            <Typography color="text.secondary">
-              គ្រប់គ្រងកាលវិភាគអ្នកជំងឺ
+            <Typography variant="body1" color="textSecondary">
+              manage appointment
             </Typography>
           </Box>
           <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap' }}>

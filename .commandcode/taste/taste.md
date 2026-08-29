@@ -33,6 +33,7 @@ See [architecture/taste.md](architecture/taste.md)
 # react
 - Use react-hook-form for form validation instead of custom touched/blur state management. Confidence: 0.65
 - When a react-hook-form field needs to store a complex object (e.g., `{ id, name }`) rather than a scalar, use `useController` with a manual `onChange` handler instead of `register`, using the primitive (id) as the `<option value>` and reconstructing the full object in `onChange`. Confidence: 0.55
+- Bind MUI date/time pickers (`DateCalendar`, `StaticTimePicker`) to react-hook-form via `useController` rather than `useState` + `useEffect` sync: store a formatted string in `onChange` (`YYYY-MM-DD` for dates, `HH:mm` for times), parse it back for the `value` prop, and validate with RHF `rules.required` (surfacing errors through `fieldState.error`) instead of manual boolean error flags. Confidence: 0.7
 - Persist tab/UI state via URL query parameters (?tab=) rather than localStorage. Confidence: 0.65
 - Prefer DataTable component with pagination over card-based layouts for displaying tabular record data. Confidence: 0.65
 
