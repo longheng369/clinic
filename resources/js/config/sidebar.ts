@@ -22,7 +22,6 @@ export const sidebarSections: ISidebarSection[] = [
         label: 'Appointments',
         icon: Calendar,
         path: '/appointments',
-        badge: 3,
       },
     ],
   },
