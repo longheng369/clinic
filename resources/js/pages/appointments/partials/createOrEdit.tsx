@@ -1,40 +1,61 @@
 import { useEffect, useState } from 'react';
 import { router } from '@inertiajs/react';
 import { useForm } from 'react-hook-form';
+import dayjs, { Dayjs } from 'dayjs';
 import {
   Alert,
   Box,
   Button,
-  CircularProgress,
-  Divider,
-  Paper,
+  DialogActions,
+  DialogContent,
   Stack,
   Typography,
 } from '@mui/material';
-import { AlertTriangle, Clock } from 'lucide-react';
+import { Save } from 'lucide-react';
 import { useToast } from '@/components/toast';
-import Input from '@/components/form/input';
-import SearchSelect from '@/components/form/serverAutocomplete';
-import Select from '@/components/form/select';
-import Textarea from '@/components/form/textarea';
+import { useModal } from '@/components/modal';
 import {
   IAppointment,
   IAppointmentAlert,
   IAppointmentFormData,
 } from '@/interfaces/IAppointment';
+import ServerAutocomplete from '@/components/form/serverAutocomplete';
+import Select from '@/components/form/select';
+import Textarea from '@/components/form/textarea';
+import { DateCalendar, StaticTimePicker } from '@mui/x-date-pickers';
+import type { IOption } from '@/interfaces/IOption';
 
 type Props = {
   appointment?: IAppointment;
-  onClose: () => void;
+  readOnly?: boolean;
 };
 
-const AppointmentForm = ({ appointment, onClose }: Props) => {
+const APPOINTMENT_TYPES: IOption<string>[] = [
+  { value: 'consultation', label: 'Consultation' },
+  { value: 'vaccination', label: 'Vaccination' },
+  { value: 'follow_up', label: 'Follow Up' },
+  { value: 'checkup', label: 'Checkup' },
+  { value: 'other', label: 'Other' },
+];
+
+const AppointmentForm = ({ appointment, readOnly = false }: Props) => {
+  const { closeModal } = useModal();
   const [isProcessing, setIsProcessing] = useState(false);
   const [vaccineAlerts, setVaccineAlerts] = useState<IAppointmentAlert[]>([]);
   const [loadingAlerts, setLoadingAlerts] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(
+    appointment?.appointment_date ? dayjs(appointment.appointment_date) : null
+  );
+  const [selectedTime, setSelectedTime] = useState<Dayjs | null>(
+    appointment?.appointment_time
+      ? dayjs(`2000-01-01T${appointment.appointment_time}`)
+      : null
+  );
+  const [dateError, setDateError] = useState(false);
+  const [timeError, setTimeError] = useState(false);
   const { toast } = useToast();
 
-  const { control, handleSubmit, watch } = useForm<IAppointmentFormData>({
+  const { control, handleSubmit, watch, setValue } = useForm<IAppointmentFormData>({
     defaultValues: appointment
       ? {
         patient_id: appointment.patient?.id ?? null,
@@ -45,7 +66,7 @@ const AppointmentForm = ({ appointment, onClose }: Props) => {
       }
       : {
         patient_id: null,
-        appointment_date: new Date().toISOString().split('T')[0],
+        appointment_date: '',
         appointment_time: '',
         type: 'consultation',
         notes: '',
@@ -68,11 +89,33 @@ const AppointmentForm = ({ appointment, onClose }: Props) => {
       .finally(() => setLoadingAlerts(false));
   }, [selectedPatientId]);
 
+  useEffect(() => {
+    if (selectedDate) {
+      setValue('appointment_date', selectedDate.format('YYYY-MM-DD'));
+    }
+  }, [selectedDate, setValue]);
+
+  useEffect(() => {
+    if (selectedTime) {
+      setValue('appointment_time', selectedTime.format('HH:mm'));
+    }
+  }, [selectedTime, setValue]);
+
   const onSubmit = handleSubmit((data) => {
+    const hasDateError = !selectedDate;
+    const hasTimeError = !selectedTime;
+    setDateError(hasDateError);
+    setTimeError(hasTimeError);
+
+    if (hasDateError || hasTimeError) {
+      setIsProcessing(false);
+      return;
+    }
+
     setIsProcessing(true);
     const options = {
       onSuccess: () => {
-        onClose();
+        closeModal();
         toast(`Appointment ${appointment ? 'updated' : 'created'} successfully!`, {
           variant: 'success',
         });
@@ -100,158 +143,126 @@ const AppointmentForm = ({ appointment, onClose }: Props) => {
     router.post('/appointments', data as Record<string, any>, options);
   });
 
+  const formatDateTime = () => {
+    if (!selectedDate) return 'No date selected';
+    const dateStr = selectedDate.format('dddd, MMMM D, YYYY');
+    if (!selectedTime) return dateStr;
+    const timeStr = selectedTime.format('hh:mm A');
+    return `${dateStr} at ${timeStr}`;
+  };
+
   return (
-    <Box component="form" onSubmit={onSubmit} noValidate sx={{ minWidth: 0 }}>
-      <Box
-        sx={{
-          px: 3,
-          py: 2.5,
-          borderBottom: 1,
-          borderColor: 'divider',
-          bgcolor: '#f8fafc',
-        }}
-      >
-        <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-          {appointment ? 'Edit Appointment' : 'New Appointment'}
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          Keep the appointment details aligned with the patient record.
-        </Typography>
-      </Box>
+    <Box component="form" onSubmit={onSubmit} noValidate>
+      <DialogContent sx={{ borderTop: 1, borderColor: 'divider' }}>
+        <Stack spacing={3}>
+          <ServerAutocomplete
+            control={control}
+            name="patient_id"
+            label="Patient"
+            model="patient"
+            rules={{ required: readOnly ? undefined : 'Please select a patient' }}
+            disabled={readOnly}
+          />
 
-      <Stack
-        spacing={2.5}
-        sx={{ p: 3, maxHeight: '70vh', overflowY: 'auto', minWidth: 0 }}
-      >
-        <Paper variant="outlined" sx={{ p: 2.5 }}>
-          <Stack spacing={2}>
-            <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-              Appointment Details
-            </Typography>
-            <SearchSelect
-              label="Patient"
-              control={control}
-              name="patient_id"
-              apiUrl="/appointments/patients/search"
-              initialOption={
-                appointment?.patient
-                  ? {
-                    value: appointment.patient.id,
-                    label: `${appointment.patient.khmer_last_name} ${appointment.patient.khmer_first_name}`,
-                  }
-                  : undefined
-              }
-              rules={{ required: 'This field is required' }}
-              placeholder="Search patient by name..."
-            />
-            {loadingAlerts && (
-              <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-                <CircularProgress size={14} />
-                <Typography variant="caption" color="text.secondary">
-                  Checking vaccine alerts...
-                </Typography>
-              </Stack>
-            )}
-            {vaccineAlerts.length > 0 && (
-              <Alert severity="error" icon={<AlertTriangle size={18} />}>
-                <Typography variant="subtitle2" sx={{ mb: 1 }}>
-                  Vaccination Due Alerts
-                </Typography>
-                <Stack component="ul" spacing={0.75} sx={{ m: 0, pl: 2 }}>
-                  {vaccineAlerts.map((alert, index) => (
-                    <Box component="li" key={`${alert.vaccine_name}-${index}`}>
-                      <Stack
-                        direction="row"
-                        spacing={1}
-                        sx={{ alignItems: 'center' }}
-                      >
-                        {alert.is_overdue ? (
-                          <AlertTriangle size={13} />
-                        ) : (
-                          <Clock size={13} />
-                        )}
-                        <Typography variant="body2">
-                          <strong>{alert.vaccine_name}</strong> — Dose{' '}
-                          {alert.dose_number} ({alert.doses_completed}/
-                          {alert.total_doses} completed)
-                          {alert.is_overdue
-                            ? ` — Overdue since ${alert.due_date}`
-                            : ` — Due ${alert.due_date}`}
-                        </Typography>
-                      </Stack>
-                    </Box>
-                  ))}
-                </Stack>
-              </Alert>
-            )}
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-              <Box sx={{ flex: 1 }}>
-                <Input
-                  label="Appointment Date"
-                  control={control}
-                  name="appointment_date"
-                  type="date"
-                  rules={{ required: 'This field is required' }}
+          <Select
+            control={control}
+            name="type"
+            label="Appointment Type"
+            rules={{ required: readOnly ? undefined : 'This field is required' }}
+            options={APPOINTMENT_TYPES}
+            disabled={readOnly}
+          />
+
+          <Stack direction="row" sx={{ alignItems: 'center', gap: 2 }}>
+            <Box>
+              <DateCalendar
+                value={selectedDate}
+                onChange={(date) => {
+                  setSelectedDate(date);
+                  setDateError(false);
+                }}
+                readOnly={readOnly}
+                sx={{ mx: 0 }}
+              />
+            </Box>
+            <Box>
+              <Box
+                sx={{
+                  borderRadius: 1,
+                  boxShadow: timeError
+                    ? 'inset 0 0 0 2px var(--mui-palette-error-main)'
+                    : 'none',
+                }}
+              >
+                <StaticTimePicker
+                  value={selectedTime}
+                  onChange={(time) => {
+                    setSelectedTime(time);
+                    setTimeError(false);
+                  }}
+                  readOnly={readOnly}
+                  orientation="landscape"
+                  sx={{
+                    '& .MuiClockNumber-root.Mui-selected': {
+                      backgroundColor: 'primary.main',
+                      color: 'primary.contrastText',
+                    },
+                    '& .MuiClockNumber-root.Mui-selected:hover': {
+                      backgroundColor: 'primary.dark',
+                    },
+                    '& .MuiButtonBase-root.Mui-selected': {
+                      color: 'primary.main',
+                    },
+                    '& .MuiPickersToolbarText-root': {
+                      color: '#BFC9D1',
+                    },
+                    '& .MuiPickersToolbarText-root[data-selected="true"]': {
+                      color: 'primary.main',
+                    },
+                  }}
+                  slotProps={{
+                    actionBar: {
+                      actions: [],
+                    },
+                    layout: {
+                      sx: {
+                        width: 'auto',
+                        maxWidth: 'fit-content',
+                      },
+                    },
+                  }}
                 />
               </Box>
-              <Box sx={{ flex: 1 }}>
-                <Input
-                  label="Time (optional)"
-                  control={control}
-                  name="appointment_time"
-                  type="time"
-                />
-              </Box>
-            </Stack>
-            <Select
-              label="Type"
-              control={control}
-              name="type"
-              rules={{ required: 'This field is required' }}
-              options={[
-                { value: 'consultation', label: 'Consultation' },
-                { value: 'vaccination', label: 'Vaccination' },
-                { value: 'follow_up', label: 'Follow Up' },
-                { value: 'checkup', label: 'Checkup' },
-                { value: 'other', label: 'Other' },
-              ]}
-            />
-            <Textarea label="Notes" control={control} name="notes" />
+              {timeError && (
+                <Alert severity="error" sx={{ mt: 1 }}>
+                  Please select a time
+                </Alert>
+              )}
+            </Box>
           </Stack>
-        </Paper>
 
-        {vaccineAlerts.length > 0 && (
-          <Paper
-            variant="outlined"
-            sx={{ p: 2, bgcolor: '#fff7ed', borderColor: '#fdba74' }}
+          <Typography variant="body2" color="text.secondary">
+            {formatDateTime()}
+          </Typography>
+
+          <Textarea control={control} name="notes" label="Notes" disabled={readOnly} />
+        </Stack>
+      </DialogContent>
+      <DialogActions>
+        <Button type="button" onClick={() => closeModal()} variant="outlined">
+          {readOnly ? 'Close' : 'Cancel'}
+        </Button>
+        {!readOnly && (
+          <Button
+            type="submit"
+            disabled={isProcessing}
+            variant="contained"
+            startIcon={<Save size={16} />}
           >
-            <Typography variant="caption" color="text.secondary">
-              These alerts will be saved with the appointment record for
-              reference.
-            </Typography>
-          </Paper>
+            Save
+          </Button>
         )}
-      </Stack>
-
-      <Divider />
-
-      <Stack
-        direction="row"
-        spacing={1}
-        sx={{
-          p: 2,
-          justifyContent: 'flex-end',
-          borderTop: 1,
-          borderColor: 'divider',
-        }}
-      >
-        <Button type="button" onClick={onClose} variant="outlined">
-          Cancel
-        </Button>
-        <Button type="submit" disabled={isProcessing} variant="contained">
-          {appointment ? 'Update' : 'Create'}
-        </Button>
-      </Stack>
+      </DialogActions>
     </Box>
   );
 };

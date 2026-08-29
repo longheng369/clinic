@@ -1,5 +1,5 @@
 import { Head, router, usePage } from '@inertiajs/react';
-import { Pencil, Plus, Trash2 } from 'lucide-react';
+import { Eye, Pencil, Plus, Trash2 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import {
   Box,
@@ -24,7 +24,6 @@ import SearchBar from '@/components/searchBar';
 import { formatDate } from '@/utils/date';
 import AppointmentForm from './partials/createOrEdit';
 import { IAppointment } from '@/interfaces/IAppointment';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 interface PaginatedData<T> {
   data: T[];
@@ -127,17 +126,22 @@ const Appointment = () => {
   const handleCreate = () =>
     openModal({
       title: 'New Appointment',
-      content: <AppointmentForm onClose={closeModal} />,
-      config: { preventClickAway: true, maxWidth: '2xl' },
+      content: <AppointmentForm />,
+      config: { preventClickAway: true, maxWidth: '4xl' },
     });
 
   const handleEdit = (appointment: IAppointment) =>
     openModal({
       title: 'Edit Appointment',
-      content: (
-        <AppointmentForm appointment={appointment} onClose={closeModal} />
-      ),
-      config: { preventClickAway: true, maxWidth: '2xl' },
+      content: <AppointmentForm appointment={appointment} />,
+      config: { preventClickAway: true, maxWidth: '4xl' },
+    });
+
+  const handleView = (appointment: IAppointment) =>
+    openModal({
+      title: 'View Appointment',
+      content: <AppointmentForm appointment={appointment} readOnly />,
+      config: { preventClickAway: true, maxWidth: '4xl' },
     });
 
   const handleDelete = (appointment: IAppointment) =>
@@ -248,6 +252,13 @@ const Appointment = () => {
       width: 120,
       getActions: (params) => [
         <GridActionsCellItem
+          key={`view-${params.id}`}
+          icon={<Eye size={16} color="#64748b" />}
+          label="View appointment"
+          onClick={() => handleView(params.row as IAppointment)}
+          showInMenu={false}
+        />,
+        <GridActionsCellItem
           key={`edit-${params.id}`}
           icon={<Pencil size={16} color="#2563eb" />}
           label="Edit appointment"
@@ -333,19 +344,18 @@ const Appointment = () => {
               placeholder="Search patient name"
               fullWidth
             />
-            <DatePicker />
-            {/*<TextField*/}
-            {/*  size="small"*/}
-            {/*  fullWidth*/}
-            {/*  type="date"*/}
-            {/*  label="Appointment date"*/}
-            {/*  value={date}*/}
-            {/*  onChange={(e) => setDate(e.target.value)}*/}
-            {/*  slotProps={{*/}
-            {/*    inputLabel: { shrink: true },*/}
-            {/*    htmlInput: { 'aria-label': 'Filter by date' },*/}
-            {/*  }}*/}
-            {/*/>*/}
+            <TextField
+              size="small"
+              fullWidth
+              type="date"
+              label="Appointment date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              slotProps={{
+                inputLabel: { shrink: true },
+                htmlInput: { 'aria-label': 'Filter by date' },
+              }}
+            />
             <Select
               size="small"
               fullWidth

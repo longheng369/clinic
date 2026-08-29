@@ -38,6 +38,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('appointments', AppointmentController::class)
         ->only(['index', 'store', 'edit', 'update', 'destroy']);
+    Route::get('appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
 
     Route::get('appointments/patients/search', [AppointmentController::class, 'searchPatients'])->name('api.appointments.patients.search');
     Route::get('appointments/patients/{patient}/vaccine-alerts', [AppointmentController::class, 'patientVaccineAlerts'])->name('api.appointments.patients.vaccine-alerts');

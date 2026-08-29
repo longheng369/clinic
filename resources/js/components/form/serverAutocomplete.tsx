@@ -21,6 +21,7 @@ type Props<T extends FieldValues = FieldValues> = {
   model?: string;
   initialOption?: IOption<string | number>;
   placeholder?: string;
+  disabled?: boolean;
 };
 
 const ServerAutocomplete = <T extends FieldValues = FieldValues>({
@@ -32,6 +33,7 @@ const ServerAutocomplete = <T extends FieldValues = FieldValues>({
   model,
   initialOption,
   placeholder = 'Search...',
+  disabled = false,
 }: Props<T>) => {
   const { field, fieldState } = useController({ control, name, rules });
   const [open, setOpen] = useState(false);
@@ -142,6 +144,7 @@ const ServerAutocomplete = <T extends FieldValues = FieldValues>({
       inputValue={inputValue}
       loading={isLoading}
       open={open}
+      disabled={disabled}
       onOpen={() => setOpen(true)}
       onInputChange={(_, value, reason) => {
         if (reason === 'clear') {
