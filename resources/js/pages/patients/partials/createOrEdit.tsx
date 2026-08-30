@@ -363,7 +363,6 @@ const PatientForm = ({ patient }: Props) => {
                 value: province.code,
                 label: province.name_in_khmer,
               }))}
-              rules={{ required: 'This field is required' }}
               onChange={() => {
                 setValue('district_code', null);
                 setValue('commune_code', null);
@@ -381,7 +380,6 @@ const PatientForm = ({ patient }: Props) => {
                 value: district.code,
                 label: district.name_in_khmer,
               }))}
-              rules={{ required: 'This field is required' }}
               disabled={!provinceCode}
               onChange={() => {
                 setValue('commune_code', null);
@@ -399,7 +397,6 @@ const PatientForm = ({ patient }: Props) => {
                 value: commune.code,
                 label: commune.name_in_khmer,
               }))}
-              rules={{ required: 'This field is required' }}
               disabled={!districtCode}
               onChange={() => {
                 setValue('village_code', null);
@@ -416,7 +413,6 @@ const PatientForm = ({ patient }: Props) => {
                 value: village.code,
                 label: village.name_in_khmer,
               }))}
-              rules={{ required: 'This field is required' }}
               disabled={!communeCode}
               onChange={(option) => {
                 setValue('address', option?.value ?? null);
