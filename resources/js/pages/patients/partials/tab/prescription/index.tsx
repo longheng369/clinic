@@ -349,41 +349,34 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
       <Grid container spacing={1} sx={{ mt: 5 }}>
         {[
           {
-            label: 'ឈ្មោះខ្មែរ',
+            label: 'គោត្តនាម នាម',
             value: `${patient.khmer_first_name} ${patient.khmer_last_name}`,
-            fontFamily: 'var(--font-khmer)',
-          },
-          {
-            label: 'ឈ្មោះអង់គ្លេស',
-            value: patient.first_name
-              ? `${patient.last_name ?? ''} ${patient.first_name}`.trim()
-              : '—',
-            fontFamily: 'var(--font-khmer)',
           },
           {
             label: 'ភេទ',
             value: patient.gender,
-            fontFamily: 'var(--font-khmer)',
           },
           {
             label: 'អាយុ',
             value: `${calculateAge(patient.date_of_birth)} ឆ្នាំ`,
-            fontFamily: 'var(--font-khmer)',
+          },
+          {
+            label: 'Name',
+            value: patient.first_name
+              ? `${patient.last_name} ${patient.first_name}`
+              : '—',
           },
           {
             label: 'ទូរស័ព្ទ',
             value: patient.phone_number,
-            fontFamily: 'var(--font-khmer)',
           },
           {
             label: 'ក្រុមឈាម',
             value: patient.blood_group ?? '—',
-            fontFamily: 'var(--font-khmer)',
           },
           {
             label: 'អត្តសញ្ញាណប័ណ្ណ',
             value: patient.national_id ?? '—',
-            fontFamily: 'var(--font-khmer)',
           },
         ].map((info) => (
           <Grid key={info.label} size={{ md: 4 }}>
@@ -411,13 +404,7 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
               </Typography>
             </Typography>
             <Typography sx={{ fontFamily: 'var(--font-khmer)' }}>
-              វេជ្ជបណ្ឌិត{' '}
-              <Typography component="span">
-                : {prescription?.created_by ?? '—'}
-              </Typography>
-            </Typography>
-            <Typography sx={{ fontFamily: 'var(--font-khmer)' }}>
-              រោគវិនិច្ឆ័យ{' '}
+              Diagnosis{' '}
               <Typography component="span">
                 : {diagnosis || '—'}
               </Typography>
@@ -557,6 +544,12 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
             </Table>
           </TableContainer>
         )}
+        <Typography sx={{ fontFamily: 'var(--font-khmer)' }}>
+          វេជ្ជបណ្ឌិត{' '}
+          <Typography component="span">
+            : {prescription?.created_by ?? '—'}
+          </Typography>
+        </Typography>
       </Box>
     </Box>
   );
