@@ -6,6 +6,7 @@ use App\Helpers\GazetteerHelper;
 use App\Http\Requests\StorePatientRequest;
 use App\Http\Requests\UpdatePatientRequest;
 use App\Models\Medicine;
+use App\Models\MedicationRoute;
 use App\Models\Patient;
 use App\Models\PatientAttachment;
 use App\Models\Unit;
@@ -125,6 +126,7 @@ class PatientController extends Controller
                         'rr' => $s->rr,
                         'spo2' => $s->spo2,
                         'o2_supply' => $s->o2_supply,
+                        'note' => $s->note,
                         'created_by' => $s->createdBy?->name,
                         'created_at' => $s->created_at,
                     ]);
@@ -201,6 +203,7 @@ class PatientController extends Controller
             }, 'medication'),
             'medicines' => Inertia::defer(fn () => Medicine::with('unit')->orderBy('name')->get(['id', 'name', 'unit_id', 'dosage']), 'medicines'),
             'units' => Inertia::defer(fn () => Unit::orderBy('name')->get(['id', 'name']), 'medicines'),
+            'medicationRoutes' => Inertia::defer(fn () => MedicationRoute::orderBy('name')->get(['id', 'code', 'name']), 'medicines'),
             'prescription' => Inertia::defer(function () use ($selectedVisit) {
                 if (! $selectedVisit) {
                     return null;
@@ -234,6 +237,19 @@ class PatientController extends Controller
                         'instruction' => $i->instruction,
                     ])->values(),
                 ];
+            }, 'prescription'),
+            'consultationDiagnoses' => Inertia::defer(function () use ($selectedVisit) {
+                if (! $selectedVisit) {
+                    return [];
+                }
+
+                return $selectedVisit->consultations()
+                    ->whereNotNull('diagnosis')
+                    ->where('diagnosis', '!=', '')
+                    ->latest()
+                    ->pluck('diagnosis')
+                    ->unique()
+                    ->values();
             }, 'prescription'),
             'vaccinations' => Inertia::defer(function () use ($patient) {
                 return $patient->vaccinations()

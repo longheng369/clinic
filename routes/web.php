@@ -8,6 +8,7 @@ use App\Http\Controllers\HelpController;
 use App\Http\Controllers\MedicationAdministrationController;
 use App\Http\Controllers\MedicationOrderController;
 use App\Http\Controllers\MedicineController;
+use App\Http\Controllers\MedicationRouteController;
 use App\Http\Controllers\ParaClinicRequestController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PatientSurveillanceController;
@@ -44,10 +45,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('appointments/patients/{patient}/vaccine-alerts', [AppointmentController::class, 'patientVaccineAlerts'])->name('api.appointments.patients.vaccine-alerts');
 
     Route::resource('settings/categories', CategoryController::class)
-        ->only(['index', 'store', 'edit', 'update', 'destroy']);
+        ->only(['index', 'store', 'update', 'destroy']);
 
     Route::resource('settings/units', UnitController::class)
         ->only(['index', 'store', 'edit', 'update', 'destroy']);
+
+    Route::resource('settings/routes', MedicationRouteController::class)
+        ->only(['index', 'store', 'edit', 'update', 'destroy'])
+        ->parameters(['routes' => 'medicationRoute']);
 
     Route::resource('medicines', MedicineController::class)
         ->only(['index', 'store', 'edit', 'update', 'destroy']);

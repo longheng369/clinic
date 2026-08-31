@@ -73,6 +73,7 @@ interface SurveillanceRow {
   rr: number;
   spo2: number;
   o2_supply: string;
+  note: string | null;
   created_by?: string;
   created_at: string;
 }
@@ -281,6 +282,7 @@ const VisitShow = ({
                   <Box>RR {s.rr}</Box>
                   <Box>SpO₂ {s.spo2}%</Box>
                   <Box>{s.o2_supply}</Box>
+                  {s.note && <Box>{s.note}</Box>}
                 </Box>
                 <Box>
                   <Box>

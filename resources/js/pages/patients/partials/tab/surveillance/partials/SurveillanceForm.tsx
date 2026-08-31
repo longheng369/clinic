@@ -2,7 +2,7 @@ import { Box, Button, DialogActions, DialogContent, Grid } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import Input from '@/components/form/input';
-import Select from '@/components/form/select';
+import Textarea from '@/components/form/textarea';
 import {
   ISurveillance,
   ISurveillanceFormData,
@@ -39,6 +39,7 @@ const SurveillanceForm = ({
       rr: surveillance?.rr ?? null,
       spo2: surveillance?.spo2 ?? null,
       o2_supply: surveillance?.o2_supply ?? '',
+      note: surveillance?.note ?? '',
     },
   });
 
@@ -179,6 +180,16 @@ const SurveillanceForm = ({
               name="o2_supply"
               label="O₂ Supply"
               options={O2_OPTIONS}
+            />
+          </Grid>
+          <Grid size={{ md: 12 }}>
+            <Textarea
+              control={control}
+              name="note"
+              label="Note"
+              placeholder="Optional notes..."
+              disabled={viewOnly}
+              rules={{ maxLength: { value: 1000, message: 'Max 1000 characters' } }}
             />
           </Grid>
         </Grid>

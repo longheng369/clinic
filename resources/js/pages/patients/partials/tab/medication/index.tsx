@@ -28,7 +28,7 @@ type Props = {
 
 const MedicationTab = ({ patientId, patient, selectedVisit }: Props) => {
   const { openModal, closeModal } = useModal();
-  const { medicationOrders, activeVisits, medicines } = usePage<{
+  const { medicationOrders, activeVisits, medicines, medicationRoutes } = usePage<{
     medicationOrders: PaginatedData<IMedicationOrder>;
     activeVisits: {
       id: number;
@@ -37,6 +37,7 @@ const MedicationTab = ({ patientId, patient, selectedVisit }: Props) => {
       created_by?: string;
     }[];
     medicines: { id: number; name: string }[];
+    medicationRoutes: { id: number; code: string; name: string }[];
   }>().props;
 
   const [searchTerm] = useState('');
@@ -66,6 +67,7 @@ const MedicationTab = ({ patientId, patient, selectedVisit }: Props) => {
           patientId={patientId}
           activeVisits={activeVisits}
           medicines={medicines}
+          routes={medicationRoutes}
           selectedVisitId={selectedVisit.id}
           onClose={() => closeModal()}
         />
@@ -82,6 +84,7 @@ const MedicationTab = ({ patientId, patient, selectedVisit }: Props) => {
           patientId={patientId}
           activeVisits={activeVisits}
           medicines={medicines}
+          routes={medicationRoutes}
           order={order}
           selectedVisitId={selectedVisit.id}
           onClose={() => closeModal()}

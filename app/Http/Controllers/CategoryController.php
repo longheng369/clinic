@@ -14,7 +14,7 @@ class CategoryController extends Controller
     {
         $search = $request->query('search');
 
-        return Inertia::render('categories/index', [
+        return Inertia::render('settings/categories/index', [
             'categories' => Category::latest()
                 ->when($search, fn ($query) => $query->where('name', 'like', "%{$search}%"))
                 ->paginate(20)
@@ -27,22 +27,15 @@ class CategoryController extends Controller
     {
         Category::create($request->validated());
 
-        return redirect()->route('categories.index')
+        return redirect()->route('settings.categories.index')
             ->with('success', 'Category created.');
-    }
-
-    public function edit(Category $category)
-    {
-        return Inertia::render('categories/edit', [
-            'category' => $category,
-        ]);
     }
 
     public function update(UpdateCategoryRequest $request, Category $category)
     {
         $category->update($request->validated());
 
-        return redirect()->route('categories.index')
+        return redirect()->route('settings.categories.index')
             ->with('success', 'Category updated.');
     }
 
@@ -50,7 +43,7 @@ class CategoryController extends Controller
     {
         $category->delete();
 
-        return redirect()->route('categories.index')
+        return redirect()->route('settings.categories.index')
             ->with('success', 'Category deleted.');
     }
 

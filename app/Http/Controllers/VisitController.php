@@ -117,6 +117,7 @@ class VisitController extends Controller
                 'rr' => $s->rr,
                 'spo2' => $s->spo2,
                 'o2_supply' => $s->o2_supply,
+                'note' => $s->note,
                 'created_by' => $s->createdBy?->name,
                 'created_at' => $s->created_at,
             ]),

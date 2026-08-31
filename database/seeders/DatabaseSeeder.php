@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\MedicationRoute;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -29,5 +30,22 @@ class DatabaseSeeder extends Seeder
                 'password' => 'password',
             ]
         );
+
+        $routes = [
+            ['code' => 'PO', 'name' => 'PO (Oral)'],
+            ['code' => 'IV', 'name' => 'IV (Intravenous)'],
+            ['code' => 'IM', 'name' => 'IM (Intramuscular)'],
+            ['code' => 'SC', 'name' => 'SC (Subcutaneous)'],
+            ['code' => 'SL', 'name' => 'SL (Sublingual)'],
+            ['code' => 'PR', 'name' => 'PR (Rectal)'],
+            ['code' => 'Topical', 'name' => 'Topical'],
+            ['code' => 'Inhalation', 'name' => 'Inhalation'],
+            ['code' => 'Otic', 'name' => 'Otic (Ear)'],
+            ['code' => 'Ophthalmic', 'name' => 'Ophthalmic (Eye)'],
+        ];
+
+        foreach ($routes as $route) {
+            MedicationRoute::firstOrCreate(['code' => $route['code']], $route);
+        }
     }
 }

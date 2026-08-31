@@ -72,8 +72,10 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
   const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
   const [isEditing, setIsEditing] = useState(!prescription);
-  const { medicines } = usePage<{
+  const { medicines, medicationRoutes, consultationDiagnoses } = usePage<{
     medicines: { id: number; name: string; unit?: { name: string } | null; dosage?: string | null }[];
+    medicationRoutes: { id: number; code: string; name: string }[];
+    consultationDiagnoses: string[];
   }>().props;
   const prescriptionItems = useMemo<IPrescriptionFormData['items']>(
     () =>
@@ -110,6 +112,8 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
     [medicines, prescription],
   );
 
+  const diagnosis = consultationDiagnoses.join(', ');
+
   const { control, reset } = useForm<IPrescriptionFormData>({
     defaultValues: { items: prescriptionItems },
   });
@@ -143,6 +147,7 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
       content: (
         <MedicineItemForm
           medicines={availableMedicineOptions}
+          routes={medicationRoutes}
           onSave={(data) => {
             append(data);
             closeModal();
@@ -163,6 +168,7 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
       content: (
         <MedicineItemForm
           medicines={medicines}
+          routes={medicationRoutes}
           defaultValues={item}
           onSave={(data) => {
             update(index, data);
@@ -408,6 +414,12 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
               វេជ្ជបណ្ឌិត{' '}
               <Typography component="span">
                 : {prescription?.created_by ?? '—'}
+              </Typography>
+            </Typography>
+            <Typography sx={{ fontFamily: 'var(--font-khmer)' }}>
+              រោគវិនិច្ឆ័យ{' '}
+              <Typography component="span">
+                : {diagnosis || '—'}
               </Typography>
             </Typography>
           </Box>

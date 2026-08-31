@@ -9,6 +9,7 @@ export interface ISurveillance {
   rr: number;
   spo2: number | null;
   o2_supply: string | null;
+  note: string | null;
   created_by?: string;
   created_at: string;
   updated_at: string;
@@ -23,4 +24,5 @@ export interface ISurveillanceFormData {
   rr: number | null;
   spo2: number | null;
   o2_supply: string;
+  note: string;
 }

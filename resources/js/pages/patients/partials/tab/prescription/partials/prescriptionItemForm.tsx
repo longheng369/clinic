@@ -4,15 +4,16 @@ import { useForm } from 'react-hook-form';
 import Input from '@/components/form/input';
 import { Box, DialogActions, DialogContent, Grid, Button, Typography } from '@mui/material';
 import Select from '@/components/form/select';
+import { IMedicationRoute } from '@/interfaces/IMedicationRoute';
 import { MEDICINE_INSTRUCTION } from '@/config/prescription';
 import Autocomplete from '@/components/form/autocomplete';
-import { MEDICINE_ROUTE } from '@/config/mar';
 import { useModal } from '@/components/modal';
 
 interface Props {
   onSave: (data: IPrescriptionItemFormData) => void;
   onClose: () => void;
   medicines: { id: number; name: string; unit?: { name: string } | null; dosage?: string | null }[];
+  routes: IMedicationRoute[];
   defaultValues?: IPrescriptionItemFormData;
 }
 
@@ -35,6 +36,7 @@ const toNullableNumber = (value: unknown): number | null => {
 const PrescriptionItemForm: FC<Props> = ({
   onSave,
   medicines,
+  routes,
   defaultValues,
 }) => {
   const { closeModal } = useModal();
@@ -128,7 +130,10 @@ const PrescriptionItemForm: FC<Props> = ({
               control={control}
               name="route"
               label="Route"
-              options={MEDICINE_ROUTE}
+              options={routes.map((route) => ({
+                value: route.code,
+                label: route.name,
+              }))}
               rules={{ required: 'Route is required' }}
             />
           </Grid>

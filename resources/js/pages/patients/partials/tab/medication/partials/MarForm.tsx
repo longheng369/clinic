@@ -10,7 +10,7 @@ import {
 import { useState } from 'react';
 import { router } from '@inertiajs/react';
 import { useToast } from '@/components/toast';
-import { MEDICINE_ROUTE } from '@/config/mar';
+import { IMedicationRoute } from '@/interfaces/IMedicationRoute';
 
 const INTERVAL_OPTIONS = [
   { value: 'QD', label: 'QD (Once daily)' },
@@ -30,6 +30,7 @@ interface MedicationFormProps {
     created_by?: string;
   }[];
   medicines: { id: number; name: string }[];
+  routes: IMedicationRoute[];
   order?: IMedicationOrder;
   selectedVisitId?: number;
   onClose: () => void;
@@ -39,6 +40,7 @@ const MarForm = ({
   patientId,
   activeVisits,
   medicines,
+  routes,
   order,
   selectedVisitId,
   onClose,
@@ -138,7 +140,10 @@ const MarForm = ({
               label="Route"
               control={control}
               name="route"
-              options={MEDICINE_ROUTE}
+              options={routes.map((route) => ({
+                value: route.code,
+                label: route.name,
+              }))}
               rules={{ required: 'This field is required' }}
             />
           </Grid>

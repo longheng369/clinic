@@ -17,6 +17,7 @@ class StorePatientSurveillanceRequest extends FormRequest
             'rr' => ['required', 'integer', 'min:0', 'max:100'],
             'spo2' => ['nullable', 'integer', 'min:0', 'max:100'],
             'o2_supply' => ['nullable', 'string', 'max:255'],
+            'note' => ['nullable', 'string', 'max:1000'],
         ];
     }
 }

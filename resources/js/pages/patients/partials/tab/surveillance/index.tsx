@@ -154,6 +154,18 @@ const SurveillanceTab = ({ patientId, visitId }: Props) => {
         ),
     },
     {
+      field: 'note',
+      headerName: 'កំណត់ចំណាំ',
+      flex: 1,
+      minWidth: 150,
+      renderCell: (params: GridRenderCellParams<ISurveillance>) =>
+        params.row.note ?? (
+          <Typography component="span" color="text.disabled">
+            &mdash;
+          </Typography>
+        ),
+    },
+    {
       field: 'created_by',
       headerName: 'អ្នកកត់ត្រា',
       flex: 1,

@@ -5,6 +5,7 @@ import {
   HelpCircle,
   LayoutDashboard,
   Pill,
+  Route,
   RulerDimensionLine,
   Settings,
   Syringe,
@@ -46,6 +47,7 @@ export const sidebarSections: ISidebarSection[] = [
         children: [
           { label: 'Category', icon: Folder, path: '/settings/categories' },
           { label: 'Units', icon: RulerDimensionLine, path: '/settings/units' },
+          { label: 'Routes', icon: Route, path: '/settings/routes' },
         ],
       },
     ],

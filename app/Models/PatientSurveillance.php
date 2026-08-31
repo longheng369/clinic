@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'rr',
     'spo2',
     'o2_supply',
+    'note',
     'created_by',
 ])]
 class PatientSurveillance extends Model
