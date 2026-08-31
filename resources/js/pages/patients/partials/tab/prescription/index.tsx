@@ -9,7 +9,7 @@ import {
 } from '@/interfaces/IPrescription';
 import { IPatient } from '@/interfaces/IPatient';
 import MedicineItemForm from './partials/prescriptionItemForm';
-import { formatDob } from '@/utils/date';
+import { calculateAge, formatDob } from '@/utils/date';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { useToast } from '@/components/toast';
 import {
@@ -366,8 +366,8 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
             fontFamily: 'var(--font-khmer)',
           },
           {
-            label: 'ថ្ងៃខែឆ្នាំកំណើត',
-            value: formatDob(patient.date_of_birth),
+            label: 'អាយុ',
+            value: `${calculateAge(patient.date_of_birth)} ឆ្នាំ`,
             fontFamily: 'var(--font-khmer)',
           },
           {
