@@ -14,7 +14,7 @@ class CategoryController extends Controller
     {
         $search = $request->query('search');
 
-        return Inertia::render('settings/categories/index', [
+        return Inertia::render('categories/index', [
             'categories' => Category::latest()
                 ->when($search, fn ($query) => $query->where('name', 'like', "%{$search}%"))
                 ->paginate(20)
