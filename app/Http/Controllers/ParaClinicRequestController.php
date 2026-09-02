@@ -6,6 +6,7 @@ use App\Http\Requests\StoreParaclinicRequest;
 use App\Http\Requests\UpdateParaclinicRequest;
 use App\Models\ParaclinicAttachment;
 use App\Models\ParaclinicRequest;
+use App\Models\LapTest;
 use App\Models\Patient;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -73,6 +74,7 @@ class ParaClinicRequestController extends Controller
                 'khmer_first_name' => $patient->khmer_first_name,
                 'khmer_last_name' => $patient->khmer_last_name,
             ] : null,
+            'lapTests' => LapTest::orderBy('name')->get(['id', 'name', 'value', 'price']),
         ]);
     }
 
@@ -95,7 +97,16 @@ class ParaClinicRequestController extends Controller
         ));
 
         foreach ($request->input('tests', []) as $test) {
-            $paraclinicRequest->tests()->create($test);
+            $lapTest = LapTest::find($test['lab_test_id']);
+
+            $paraclinicRequest->tests()->create([
+                'lab_test_id' => $lapTest?->id,
+                'test_category' => 'Laboratory',
+                'test_name' => $lapTest?->name ?? '',
+                'price' => (float) ($test['price'] ?? $lapTest?->price ?? 0),
+                'priority' => $test['priority'],
+                'instruction' => $test['instruction'] ?? null,
+            ]);
         }
 
         return redirect()->route('para-clinic-requests.index')
@@ -141,8 +152,10 @@ class ParaClinicRequestController extends Controller
                 'payment_date' => $paraclinicRequest->payment_date,
                 'tests' => $paraclinicRequest->tests->map(fn ($t) => [
                     'id' => $t->id,
+                    'lab_test_id' => $t->lab_test_id,
                     'test_category' => $t->test_category,
                     'test_name' => $t->test_name,
+                    'price' => (float) $t->price,
                     'priority' => $t->priority,
                     'instruction' => $t->instruction,
                 ]),
@@ -183,7 +196,16 @@ class ParaClinicRequestController extends Controller
 
         $paraclinicRequest->tests()->delete();
         foreach ($request->input('tests', []) as $test) {
-            $paraclinicRequest->tests()->create($test);
+            $lapTest = LapTest::find($test['lab_test_id']);
+
+            $paraclinicRequest->tests()->create([
+                'lab_test_id' => $lapTest?->id,
+                'test_category' => 'Laboratory',
+                'test_name' => $lapTest?->name ?? '',
+                'price' => (float) ($test['price'] ?? $lapTest?->price ?? 0),
+                'priority' => $test['priority'],
+                'instruction' => $test['instruction'] ?? null,
+            ]);
         }
 
         return back()->with('success', 'Paraclinic request updated.');

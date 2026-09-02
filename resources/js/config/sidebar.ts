@@ -1,8 +1,8 @@
 import {
   Calendar,
   ClipboardList,
+  FlaskConical,
   Folder,
-  HelpCircle,
   LayoutDashboard,
   Pill,
   Route,
@@ -48,6 +48,7 @@ export const sidebarSections: ISidebarSection[] = [
           { label: 'Category', icon: Folder, path: '/settings/categories' },
           { label: 'Units', icon: RulerDimensionLine, path: '/settings/units' },
           { label: 'Routes', icon: Route, path: '/settings/routes' },
+          { label: 'Lap Test', icon: FlaskConical, path: '/settings/lap-tests' },
         ],
       },
     ],

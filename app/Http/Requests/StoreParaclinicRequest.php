@@ -22,8 +22,8 @@ class StoreParaclinicRequest extends FormRequest
             'payment_status' => ['nullable', 'in:Unpaid,Partial,Paid'],
             'payment_date' => ['nullable', 'date'],
             'tests' => ['required', 'array', 'min:1'],
-            'tests.*.test_category' => ['required', 'string'],
-            'tests.*.test_name' => ['required', 'string'],
+            'tests.*.lab_test_id' => ['required', 'exists:lap_tests,id'],
+            'tests.*.price' => ['nullable', 'numeric', 'min:0'],
             'tests.*.priority' => ['required', 'in:Routine,Urgent,STAT'],
             'tests.*.instruction' => ['nullable', 'string'],
         ];

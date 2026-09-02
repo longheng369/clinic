@@ -84,6 +84,7 @@ const Index = () => {
     filters,
     auth,
     patient,
+    lapTests,
   } = usePage<{
     requests: PaginatedData<IParaClinicRequest>;
     search: string | null;
@@ -95,6 +96,7 @@ const Index = () => {
     };
     auth: { user: { id: number; name: string } };
     patient: PreselectedPatient | null;
+    lapTests: { id: number; name: string; value: string; price: number }[];
   }>().props;
 
   const [searchTerm, setSearchTerm] = useState(searchProp ?? ''),
@@ -162,6 +164,7 @@ const Index = () => {
         <ParaClinicForm
           authUser={auth.user}
           preselectedPatient={preselectedPatient}
+          lapTests={lapTests}
           onClose={closeModal}
         />
       ),
@@ -176,7 +179,12 @@ const Index = () => {
     openModal({
       title: `Edit Request ${r.request_number}`,
       content: (
-        <ParaClinicForm request={r} authUser={auth.user} onClose={closeModal} />
+        <ParaClinicForm
+          request={r}
+          authUser={auth.user}
+          lapTests={lapTests}
+          onClose={closeModal}
+        />
       ),
       config: { preventClickAway: true, maxWidth: '4xl' },
     });

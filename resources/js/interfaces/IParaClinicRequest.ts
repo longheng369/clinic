@@ -5,8 +5,16 @@ export interface IParaClinicRequest {
 
 export interface IParaClinicRequestTest {
   id?: number;
+  lab_test_id: number | null;
   test_category: string;
   test_name: string;
+  price: number | null;
+  priority: string;
+  instruction: string | null;
+}
+
+export interface IParaClinicRequestTestFormData {
+  lab_test_id: number | null;
   priority: string;
   instruction: string | null;
 }
@@ -74,5 +82,5 @@ export interface IParaClinicRequestFormData {
   fee: number | null;
   payment_status: string;
   payment_date: string | null;
-  tests: IParaClinicRequestTest[];
+  tests: IParaClinicRequestTestFormData[];
 }

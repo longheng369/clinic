@@ -5,6 +5,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ConsultationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HelpController;
+use App\Http\Controllers\LapTestController;
 use App\Http\Controllers\MedicationAdministrationController;
 use App\Http\Controllers\MedicationOrderController;
 use App\Http\Controllers\MedicineController;
@@ -53,6 +54,16 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('settings/routes', MedicationRouteController::class)
         ->only(['index', 'store', 'edit', 'update', 'destroy'])
         ->parameters(['routes' => 'medicationRoute']);
+
+    // Setting
+    Route::prefix('settings')->group(function () {
+
+        // Lap test
+        Route::get('lap-tests', [LapTestController::class, 'index'])->name('lap-tests.index');
+        Route::post('lap-tests', [LapTestController::class, 'store'])->name('lap-tests.store');
+        Route::put('lap-tests/{lapTest}', [LapTestController::class, 'update'])->name('lap-tests.update');
+        Route::delete('lap-tests/{lapTest}', [LapTestController::class, 'destroy'])->name('lap-tests.destroy');
+    });
 
     Route::resource('medicines', MedicineController::class)
         ->only(['index', 'store', 'edit', 'update', 'destroy']);

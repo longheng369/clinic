@@ -6,9 +6,8 @@ import Textarea from '@/components/form/textarea';
 import {
   IParaClinicRequest,
   IParaClinicRequestFormData,
-  IParaClinicRequestTest,
 } from '@/interfaces/IParaClinicRequest';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { router } from '@inertiajs/react';
 import {
   Box,
@@ -23,44 +22,19 @@ import {
 import { useToast } from '@/components/toast';
 import { Plus, X } from 'lucide-react';
 import DatePicker from '@/components/form/date';
-const TEST_CATEGORIES = [
-  'Laboratory',
-  'Cardiology',
-  'Imaging',
-  'Pathology',
-  'Other',
-].map((value) => ({ value, label: value }));
-const TEST_NAMES: Record<string, { value: string; label: string }[]> =
-  Object.fromEntries(
-    Object.entries({
-      Laboratory: [
-        'CBC',
-        'Blood Sugar',
-        'Lipid Profile',
-        'Liver Function',
-        'Renal Function',
-        'Urinalysis',
-      ],
-      Cardiology: ['ECG', 'Echocardiogram', 'Stress Test', 'Holter Monitor'],
-      Imaging: [
-        'Chest X-Ray',
-        'Abdominal X-Ray',
-        'Ultrasound',
-        'CT Scan',
-        'MRI',
-        'Mammography',
-      ],
-      Pathology: ['Biopsy', 'Histopathology', 'Cytology'],
-      Other: ['Other'],
-    }).map(([key, values]) => [
-      key,
-      values.map((value) => ({ value, label: value })),
-    ]),
-  );
+
 const PRIORITY_OPTIONS = ['Routine', 'Urgent', 'STAT'].map((value) => ({
   value,
   label: value,
 }));
+
+interface LapTestOption {
+  id: number;
+  name: string;
+  value: string;
+  price: number;
+}
+
 interface ParaClinicFormProps {
   request?: IParaClinicRequest;
   authUser: { id: number; name: string };
@@ -69,31 +43,35 @@ interface ParaClinicFormProps {
     khmer_first_name: string;
     khmer_last_name: string;
   } | null;
+  lapTests: LapTestOption[];
   onClose: () => void;
 }
+
 const ParaClinicForm = ({
   request,
   authUser,
   preselectedPatient,
+  lapTests,
   onClose,
 }: ParaClinicFormProps) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
-  const defaultTests: IParaClinicRequestTest[] = request?.tests?.length
+  const lapTestOptions = lapTests.map((t) => ({ value: t.id, label: t.name }));
+
+  const defaultTests = request?.tests?.length
     ? request.tests.map((t) => ({
-      test_category: t.test_category,
-      test_name: t.test_name,
+      lab_test_id: t.lab_test_id ?? null,
       priority: t.priority,
       instruction: t.instruction,
     }))
     : [
       {
-        test_category: 'Laboratory',
-        test_name: 'CBC',
+        lab_test_id: null,
         priority: 'Routine',
         instruction: null,
       },
     ];
+
   const { control, handleSubmit, watch, setValue } =
     useForm<IParaClinicRequestFormData>({
       defaultValues: request
@@ -126,20 +104,32 @@ const ParaClinicForm = ({
     });
   const { fields, append, remove } = useFieldArray({ control, name: 'tests' });
 
+  const testsValues = watch('tests');
+  const labTestIds = testsValues.map((t) => t.lab_test_id);
+
+  useEffect(() => {
+    const total = testsValues.reduce((sum, t) => {
+      const match = lapTests.find((lt) => lt.id === t.lab_test_id);
+      return sum + (match?.price ?? 0);
+    }, 0);
+    setValue('fee', total);
+  }, [JSON.stringify(labTestIds)]);
+
+  const priceFor = (id: number | null) =>
+    lapTests.find((t) => t.id === id)?.price;
+
   const submitData = (
     data: IParaClinicRequestFormData,
     extra: Record<string, string> = {},
   ) => ({
     ...data,
     ...extra,
-    tests: data.tests.map(
-      ({ test_category, test_name, priority, instruction }) => ({
-        test_category,
-        test_name,
-        priority,
-        instruction,
-      }),
-    ),
+    tests: data.tests.map(({ lab_test_id, priority, instruction }) => ({
+      lab_test_id,
+      price: lapTests.find((t) => t.id === lab_test_id)?.price ?? 0,
+      priority,
+      instruction,
+    })),
   });
 
   const save = (status?: string) =>
@@ -228,8 +218,7 @@ const ParaClinicForm = ({
                 size="small"
                 onClick={() =>
                   append({
-                    test_category: 'Laboratory',
-                    test_name: 'CBC',
+                    lab_test_id: null,
                     priority: 'Routine',
                     instruction: null,
                   })
@@ -245,9 +234,9 @@ const ParaClinicForm = ({
             <Stack spacing={2}>
               <Stack spacing={1.5}>
                 {fields.map((field, index) => {
-                  const availableTests =
-                    TEST_NAMES[watch(`tests.${index}.test_category`)] ??
-                    TEST_NAMES.Other;
+                  const selectedPrice = priceFor(
+                    testsValues[index]?.lab_test_id ?? null,
+                  );
                   return (
                     <Stack
                       key={field.id}
@@ -268,17 +257,10 @@ const ParaClinicForm = ({
                         sx={{ flex: 1, width: '100%' }}
                       >
                         <Select
-                          label="Category"
+                          label="Lab Test"
                           control={control}
-                          name={`tests.${index}.test_category` as any}
-                          options={TEST_CATEGORIES}
-                          rules={{ required: 'Required' }}
-                        />
-                        <Select
-                          label="Test Name"
-                          control={control}
-                          name={`tests.${index}.test_name` as any}
-                          options={availableTests}
+                          name={`tests.${index}.lab_test_id` as any}
+                          options={lapTestOptions}
                           rules={{ required: 'Required' }}
                         />
                         <Select
@@ -295,6 +277,17 @@ const ParaClinicForm = ({
                           placeholder="Optional"
                         />
                       </Stack>
+                      <Box
+                        sx={{
+                          minWidth: 90,
+                          pt: 1,
+                          textAlign: 'right',
+                        }}
+                      >
+                        <Typography variant="body2" color="text.secondary">
+                          ${(selectedPrice ?? 0).toFixed(2)}
+                        </Typography>
+                      </Box>
                       {fields.length > 1 && (
                         <IconButton
                           color="error"

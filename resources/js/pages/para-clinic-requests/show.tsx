@@ -268,7 +268,7 @@ const Show = ({ request }: { request: IParaClinicRequest }) => {
               <Table size="small">
                 <TableHead>
                   <TableRow>
-                    {['Category', 'Test Name', 'Priority', 'Instruction'].map(
+                    {['Test Name', 'Price', 'Priority', 'Instruction'].map(
                       (h) => (
                         <TableCell key={h}>{h}</TableCell>
                       ),
@@ -278,8 +278,8 @@ const Show = ({ request }: { request: IParaClinicRequest }) => {
                 <TableBody>
                   {request.tests.map((t, i) => (
                     <TableRow key={t.id ?? i}>
-                      <TableCell>{t.test_category}</TableCell>
                       <TableCell>{t.test_name}</TableCell>
+                      <TableCell>${(t.price ?? 0).toFixed(2)}</TableCell>
                       <TableCell>
                         <Chip
                           size="small"

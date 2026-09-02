@@ -8,15 +8,22 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable([
     'paraclinic_request_id',
+    'lab_test_id',
     'test_category',
     'test_name',
     'priority',
     'instruction',
+    'price',
 ])]
 class ParaclinicRequestTest extends Model
 {
     public function paraclinicRequest(): BelongsTo
     {
         return $this->belongsTo(ParaclinicRequest::class);
+    }
+
+    public function labTest(): BelongsTo
+    {
+        return $this->belongsTo(LapTest::class);
     }
 }
