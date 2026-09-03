@@ -109,7 +109,7 @@ const PrescriptionForm = ({
   const { fields, append, remove } = useFieldArray({ control, name: 'items' });
 
   // Watch medicine_id changes to auto-set unit and dosage from medicine
-  const medicineIds = watch('items', { nest: true })?.map((item: any) => item.medicine_id) ?? [];
+  const medicineIds = watch('items')?.map((item) => item.medicine_id) ?? [];
   
   useEffect(() => {
     medicineIds.forEach((medicineId: number | null, index: number) => {

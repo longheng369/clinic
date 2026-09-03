@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form';
 import Input from '@/components/form/input';
 import { Box, DialogActions, DialogContent, Grid, Button, Typography } from '@mui/material';
 import Select from '@/components/form/select';
-import { IMedicationRoute } from '@/interfaces/IMedicationRoute';
 import { MEDICINE_INSTRUCTION } from '@/config/prescription';
 import Autocomplete from '@/components/form/autocomplete';
 import { useModal } from '@/components/modal';
@@ -13,7 +12,7 @@ interface Props {
   onSave: (data: IPrescriptionItemFormData) => void;
   onClose: () => void;
   medicines: { id: number; name: string; unit?: { name: string } | null; dosage?: string | null }[];
-  routes: IMedicationRoute[];
+  routes: { id: number; code: string; name: string }[];
   defaultValues?: IPrescriptionItemFormData;
 }
 

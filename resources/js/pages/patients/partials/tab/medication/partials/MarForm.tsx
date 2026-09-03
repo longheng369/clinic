@@ -10,7 +10,6 @@ import {
 import { useState } from 'react';
 import { router } from '@inertiajs/react';
 import { useToast } from '@/components/toast';
-import { IMedicationRoute } from '@/interfaces/IMedicationRoute';
 
 const INTERVAL_OPTIONS = [
   { value: 'QD', label: 'QD (Once daily)' },
@@ -30,7 +29,7 @@ interface MedicationFormProps {
     created_by?: string;
   }[];
   medicines: { id: number; name: string }[];
-  routes: IMedicationRoute[];
+  routes: { id: number; code: string; name: string }[];
   order?: IMedicationOrder;
   selectedVisitId?: number;
   onClose: () => void;
