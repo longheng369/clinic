@@ -101,20 +101,20 @@ const LapTests = () => {
       field: 'name',
       headerName: 'ឈ្មោះ',
       flex: 1,
-      minWidth: 180,
+      minWidth: 500,
     },
     {
       field: 'price',
       headerName: 'តម្លៃ',
       flex: 1,
-      minWidth: 120,
+      minWidth: 200,
       valueGetter: (_value, row: ILapTest) => `$${row.price.toFixed(2)}`,
     },
     {
       field: 'description',
       headerName: 'ការពិពណ៌នា',
       flex: 1,
-      minWidth: 220
+      minWidth: 500,
     },
     {
       field: 'created_at',
@@ -129,6 +129,8 @@ const LapTests = () => {
       type: 'actions',
       headerName: 'សកម្មភាព',
       width: 150,
+      minWidth: 150,
+      maxWidth: 150,
       getActions: (params) => [
         <GridActionsCellItem
           key={`edit-${params.id}`}

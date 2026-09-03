@@ -213,13 +213,7 @@ const Index = () => {
       valueGetter: (_value, row: IParaClinicRequest) =>
         row.patient
           ? `${row.patient.khmer_last_name} ${row.patient.khmer_first_name}`
-          : null,
-      renderCell: (params: GridRenderCellParams<IParaClinicRequest>) =>
-        params.value ?? (
-          <Typography component="span" color="text.disabled">
-            &mdash;
-          </Typography>
-        ),
+          : null
     },
     {
       field: 'doctor',
@@ -228,24 +222,12 @@ const Index = () => {
       minWidth: 150,
       valueGetter: (_value, row: IParaClinicRequest) =>
         row.doctor?.name ?? null,
-      renderCell: (params: GridRenderCellParams<IParaClinicRequest>) =>
-        params.value ?? (
-          <Typography component="span" color="text.disabled">
-            &mdash;
-          </Typography>
-        ),
     },
     {
       field: 'external_facility_name',
       headerName: 'មន្ទីរពិសោធន៍',
       flex: 1,
-      minWidth: 170,
-      renderCell: (params: GridRenderCellParams<IParaClinicRequest>) =>
-        params.value ?? (
-          <Typography component="span" color="text.disabled">
-            &mdash;
-          </Typography>
-        ),
+      minWidth: 170
     },
     {
       field: 'request_date',

@@ -107,13 +107,7 @@ const Unit = () => {
       field: 'description',
       headerName: 'ការពិពណ៌នា',
       flex: 1,
-      minWidth: 220,
-      renderCell: (params: GridRenderCellParams<IUnit>) =>
-        params.value ?? (
-          <Typography component="span" color="text.disabled">
-            &mdash;
-          </Typography>
-        ),
+      minWidth: 220
     },
     {
       field: 'created_at',

@@ -114,13 +114,7 @@ const MedicationRoutes = () => {
       field: 'description',
       headerName: 'ការពិពណ៌នា',
       flex: 1,
-      minWidth: 220,
-      renderCell: (params: GridRenderCellParams<IMedicationRoute>) =>
-        params.value ?? (
-          <Typography component="span" color="text.disabled">
-            &mdash;
-          </Typography>
-        ),
+      minWidth: 220
     },
     {
       field: 'created_at',
