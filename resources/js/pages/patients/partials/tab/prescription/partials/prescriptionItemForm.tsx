@@ -4,15 +4,16 @@ import { useForm } from 'react-hook-form';
 import Input from '@/components/form/input';
 import { Box, DialogActions, DialogContent, Grid, Button, Typography } from '@mui/material';
 import Select from '@/components/form/select';
-import { MEDICINE_INSTRUCTION } from '@/config/prescription';
+import { IOption } from '@/interfaces/IOption';
 import Autocomplete from '@/components/form/autocomplete';
 import { useModal } from '@/components/modal';
 
 interface Props {
   onSave: (data: IPrescriptionItemFormData) => void;
   onClose: () => void;
-  medicines: { id: number; name: string; unit?: { name: string } | null; dosage?: string | null }[];
+  medicines: { id: number; name: string; unit?: { id: number; name: string } | null; dosage?: string | null }[];
   routes: { id: number; code: string; name: string }[];
+  instructions: IOption<string>[];
   defaultValues?: IPrescriptionItemFormData;
 }
 
@@ -36,6 +37,7 @@ const PrescriptionItemForm: FC<Props> = ({
   onSave,
   medicines,
   routes,
+  instructions,
   defaultValues,
 }) => {
   const { closeModal } = useModal();
@@ -82,7 +84,7 @@ const PrescriptionItemForm: FC<Props> = ({
   const onSubmit = (values: PrescriptionItemFormValues) => {
     const medicine = medicines.find((option) => option.id === values.medicine);
     const instruction =
-      MEDICINE_INSTRUCTION.find((opt) => opt.value === values.instruction) ??
+      instructions.find((opt) => opt.value === values.instruction) ??
       null;
 
     if (!medicine) {
@@ -92,7 +94,7 @@ const PrescriptionItemForm: FC<Props> = ({
     onSave({
       ...values,
       medicine,
-      unit: { id: 0, name: values.unit || (medicine.unit?.name ?? '') },
+      unit: medicine.unit ?? { id: 0, name: values.unit || '' },
       instruction,
       quantity: toNullableNumber(values.quantity),
       morning: toNullableNumber(values.morning),
@@ -220,7 +222,7 @@ const PrescriptionItemForm: FC<Props> = ({
               control={control}
               name="instruction"
               label="Instruction"
-              options={MEDICINE_INSTRUCTION}
+              options={instructions}
             />
           </Grid>
           <Grid size={{ md: 12 }}>

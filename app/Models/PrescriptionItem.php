@@ -10,9 +10,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'prescription_id',
     'medicine_id',
     'route',
-    'dosage',
-    'unit',
-    'frequency',
+    'unit_id',
+    'morning',
+    'afternoon',
+    'evening',
+    'night',
     'number_of_day',
     'quantity',
     'notes',
@@ -23,7 +25,10 @@ class PrescriptionItem extends Model
     protected function casts(): array
     {
         return [
-            'dosage' => 'decimal:2',
+            'morning' => 'decimal:2',
+            'afternoon' => 'decimal:2',
+            'evening' => 'decimal:2',
+            'night' => 'decimal:2',
             'quantity' => 'decimal:2',
             'number_of_day' => 'integer',
         ];
@@ -37,5 +42,10 @@ class PrescriptionItem extends Model
     public function medicine(): BelongsTo
     {
         return $this->belongsTo(Medicine::class);
+    }
+
+    public function unit(): BelongsTo
+    {
+        return $this->belongsTo(Unit::class);
     }
 }

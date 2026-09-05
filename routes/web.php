@@ -9,6 +9,7 @@ use App\Http\Controllers\LapTestController;
 use App\Http\Controllers\MedicationAdministrationController;
 use App\Http\Controllers\MedicationOrderController;
 use App\Http\Controllers\MedicineController;
+use App\Http\Controllers\MedicineInstructionController;
 use App\Http\Controllers\MedicationRouteController;
 use App\Http\Controllers\ParaClinicRequestController;
 use App\Http\Controllers\PatientController;
@@ -54,6 +55,10 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('settings/routes', MedicationRouteController::class)
         ->only(['index', 'store', 'edit', 'update', 'destroy'])
         ->parameters(['routes' => 'medicationRoute']);
+
+    Route::resource('settings/medicine-instructions', MedicineInstructionController::class)
+        ->only(['index', 'store', 'update', 'destroy'])
+        ->parameters(['medicine-instructions' => 'medicineInstruction']);
 
     // Setting
     Route::prefix('settings')->group(function () {

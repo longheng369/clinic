@@ -56,9 +56,11 @@ interface PrescriptionItemRow {
   id: number;
   medicine?: string;
   route: string;
-  dosage: number;
-  unit: string;
-  frequency: string;
+  unit?: string;
+  morning?: number;
+  afternoon?: number;
+  evening?: number;
+  night?: number;
   number_of_day?: number;
   quantity?: number;
   notes?: string;
@@ -254,7 +256,10 @@ const VisitShow = ({
                       <Box>{item.medicine ?? '—'}</Box>
                       <Box>{item.route}</Box>
                       <Box>
-                        {item.dosage} {item.unit} &middot; {item.frequency}
+                        {[item.morning, item.afternoon, item.evening, item.night]
+                          .filter((v) => Number(v) > 0)
+                          .join('/')}{' '}
+                        {item.unit}
                       </Box>
                       {item.number_of_day && <Box>{item.number_of_day}d</Box>}
                       {item.quantity && <Box>Qty: {item.quantity}</Box>}

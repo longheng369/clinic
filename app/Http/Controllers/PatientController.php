@@ -6,6 +6,7 @@ use App\Helpers\GazetteerHelper;
 use App\Http\Requests\StorePatientRequest;
 use App\Http\Requests\UpdatePatientRequest;
 use App\Models\Medicine;
+use App\Models\MedicineInstruction;
 use App\Models\MedicationRoute;
 use App\Models\Patient;
 use App\Models\PatientAttachment;
@@ -204,13 +205,14 @@ class PatientController extends Controller
             'medicines' => Inertia::defer(fn () => Medicine::with('unit')->orderBy('name')->get(['id', 'name', 'unit_id', 'dosage']), 'medicines'),
             'units' => Inertia::defer(fn () => Unit::orderBy('name')->get(['id', 'name']), 'medicines'),
             'medicationRoutes' => Inertia::defer(fn () => MedicationRoute::orderBy('name')->get(['id', 'code', 'name']), 'medicines'),
+            'medicineInstructions' => Inertia::defer(fn () => MedicineInstruction::orderBy('name')->get(['id', 'code', 'name']), 'medicines'),
             'prescription' => Inertia::defer(function () use ($selectedVisit) {
                 if (! $selectedVisit) {
                     return null;
                 }
 
                 $prescription = $selectedVisit->prescriptions()
-                    ->with(['items.medicine', 'createdBy'])
+                    ->with(['items.medicine', 'items.unit', 'createdBy'])
                     ->latest()
                     ->first();
 
@@ -228,9 +230,11 @@ class PatientController extends Controller
                         'id' => $i->id,
                         'medicine' => $i->medicine ? ['id' => $i->medicine->id, 'name' => $i->medicine->name] : null,
                         'route' => $i->route,
-                        'dosage' => (float) $i->dosage,
-                        'unit' => $i->unit,
-                        'frequency' => $i->frequency,
+                        'unit' => $i->unit ? ['id' => $i->unit->id, 'name' => $i->unit->name] : null,
+                        'morning' => $i->morning !== null ? (float) $i->morning : null,
+                        'afternoon' => $i->afternoon !== null ? (float) $i->afternoon : null,
+                        'evening' => $i->evening !== null ? (float) $i->evening : null,
+                        'night' => $i->night !== null ? (float) $i->night : null,
                         'number_of_day' => $i->number_of_day,
                         'quantity' => $i->quantity ? (float) $i->quantity : null,
                         'notes' => $i->notes,

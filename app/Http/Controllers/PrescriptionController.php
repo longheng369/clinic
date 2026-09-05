@@ -17,12 +17,14 @@ class PrescriptionController extends Controller
 
         // Fill unit from medicine if not provided
         foreach ($items as &$item) {
-            if (empty($item['unit']) && isset($item['medicine_id'])) {
+            if (empty($item['unit_id']) && isset($item['medicine_id'])) {
                 $medicine = Medicine::find($item['medicine_id']);
-                if ($medicine && $medicine->unit) {
-                    $item['unit'] = $medicine->unit->name;
+                if ($medicine && $medicine->unit_id) {
+                    $item['unit_id'] = $medicine->unit_id;
                 }
             }
+
+            $item = $this->normalizeDoseSlots($item);
         }
 
         $prescription = Prescription::create($validated);
@@ -39,12 +41,14 @@ class PrescriptionController extends Controller
 
         // Fill unit from medicine if not provided
         foreach ($items as &$item) {
-            if (empty($item['unit']) && isset($item['medicine_id'])) {
+            if (empty($item['unit_id']) && isset($item['medicine_id'])) {
                 $medicine = Medicine::find($item['medicine_id']);
-                if ($medicine && $medicine->unit) {
-                    $item['unit'] = $medicine->unit->name;
+                if ($medicine && $medicine->unit_id) {
+                    $item['unit_id'] = $medicine->unit_id;
                 }
             }
+
+            $item = $this->normalizeDoseSlots($item);
         }
 
         $prescription->update($validated);
@@ -52,5 +56,18 @@ class PrescriptionController extends Controller
         $prescription->items()->createMany($items);
 
         return back()->with('success', 'Prescription updated.');
+    }
+
+    private function normalizeDoseSlots(array $item): array
+    {
+        $slots = ['morning', 'afternoon', 'evening', 'night'];
+
+        foreach ($slots as $slot) {
+            $item[$slot] = isset($item[$slot]) && $item[$slot] !== ''
+                ? (float) $item[$slot]
+                : null;
+        }
+
+        return $item;
     }
 }

@@ -4,9 +4,11 @@ export interface IPrescriptionItem {
   id: number;
   medicine: { id: number; name: string } | null;
   route: string;
-  dosage: number;
-  unit: string;
-  frequency: string;
+  unit: { id: number; name: string } | null;
+  morning: number | null;
+  afternoon: number | null;
+  evening: number | null;
+  night: number | null;
   number_of_day: number | null;
   quantity: number | null;
   notes: string | null;

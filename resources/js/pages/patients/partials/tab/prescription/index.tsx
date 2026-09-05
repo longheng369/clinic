@@ -15,6 +15,7 @@ import { useToast } from '@/components/toast';
 import {
   Box,
   Button,
+  Dialog,
   Grid,
   Paper,
   Table,
@@ -26,41 +27,9 @@ import {
   Typography,
 } from '@mui/material';
 import { IVisitWithMetaData } from '@/interfaces/IVisit';
-import { MEDICINE_INSTRUCTION } from '@/config/prescription';
 import GridItemInfo from './partials/gridItemInfo';
-
-type DoseSlot = 'morning' | 'afternoon' | 'evening' | 'night';
-
-const doseSlots: DoseSlot[] = ['morning', 'afternoon', 'evening', 'night'];
-
-const frequencySlots: Record<string, DoseSlot[]> = {
-  QD: ['morning'],
-  BID: ['morning', 'afternoon'],
-  TID: ['morning', 'afternoon', 'evening'],
-  QID: ['morning', 'afternoon', 'evening', 'night'],
-  QHS: ['night'],
-  PRN: ['morning'],
-};
-
-const getFrequency = (item: IPrescriptionFormData['items'][number]) => {
-  const currentFrequency = item.frequency?.toUpperCase();
-  const expectedSlots = currentFrequency
-    ? frequencySlots[currentFrequency]
-    : undefined;
-  const activeSlots = doseSlots.filter((slot) => Number(item[slot]) > 0);
-
-  if (
-    expectedSlots &&
-    activeSlots.length === expectedSlots.length &&
-    expectedSlots.every((slot) => activeSlots.includes(slot))
-  ) {
-    return currentFrequency;
-  }
-
-  return (
-    ['QD', 'BID', 'TID', 'QID'][Math.min(activeSlots.length, 4) - 1] ?? 'QD'
-  );
-};
+import Print from '@/pages/patients/partials/tab/prescription/partials/print';
+import PatientField from '@/pages/patients/partials/tab/prescription/partials/PatientField';
 
 type Props = {
   patient: IPatient;
@@ -73,18 +42,25 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
   const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
   const [isEditing, setIsEditing] = useState(!prescription);
-  const { medicines, medicationRoutes, consultationDiagnoses } = usePage<{
-    medicines: { id: number; name: string; unit?: { name: string } | null; dosage?: string | null }[];
+  const [openPrint, setOpenPrint] = useState(false);
+  const { medicines, medicationRoutes, medicineInstructions, consultationDiagnoses } = usePage<{
+    medicines: { id: number; name: string; unit_id?: number | null; unit?: { id: number; name: string } | null; dosage?: string | null }[];
     medicationRoutes: { id: number; code: string; name: string }[];
+    medicineInstructions: { id: number; code: string; name: string }[];
     consultationDiagnoses: string[];
   }>().props;
+  const instructionOptions = useMemo(
+    () =>
+      medicineInstructions.map((instruction) => ({
+        label: instruction.name,
+        value: instruction.code,
+      })),
+    [medicineInstructions],
+  );
+
   const prescriptionItems = useMemo<IPrescriptionFormData['items']>(
     () =>
       prescription?.items.map((item) => {
-        const slots = frequencySlots[item.frequency?.toUpperCase()] ?? [
-          'morning',
-        ];
-        const dose = Number(item.dosage) || 0;
         const medicine = medicines.find(
           (medicine) => medicine.id === item.medicine?.id,
         );
@@ -95,22 +71,21 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
             item.medicine ??
             { id: 0, name: '' },
           quantity: item.quantity ?? 0,
-          unit: { id: 0, name: item.unit || (medicine?.unit?.name ?? '') },
+          unit: item.unit ?? { id: 0, name: medicine?.unit?.name ?? '' },
           route: item.route,
-          morning: slots.includes('morning') ? dose : null,
-          afternoon: slots.includes('afternoon') ? dose : null,
-          evening: slots.includes('evening') ? dose : null,
-          night: slots.includes('night') ? dose : null,
+          morning: item.morning ?? null,
+          afternoon: item.afternoon ?? null,
+          evening: item.evening ?? null,
+          night: item.night ?? null,
           numberOfDay: item.number_of_day ?? null,
-          frequency: item.frequency,
           notes: item.notes,
           instruction:
-            MEDICINE_INSTRUCTION.find(
+            instructionOptions.find(
               (opt) => opt.value === item.instruction,
             ) ?? null,
         };
       }) ?? [],
-    [medicines, prescription],
+    [medicines, prescription, instructionOptions],
   );
 
   const diagnosis = consultationDiagnoses.join(', ');
@@ -149,6 +124,7 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
         <MedicineItemForm
           medicines={availableMedicineOptions}
           routes={medicationRoutes}
+          instructions={instructionOptions}
           onSave={(data) => {
             append(data);
             closeModal();
@@ -170,6 +146,7 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
         <MedicineItemForm
           medicines={medicines}
           routes={medicationRoutes}
+          instructions={instructionOptions}
           defaultValues={item}
           onSave={(data) => {
             update(index, data);
@@ -208,14 +185,11 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
       items: fields.map((item) => ({
         medicine_id: item.medicine.id,
         route: item.route,
-        dosage: Math.max(
-          Number(item.morning) || 0,
-          Number(item.afternoon) || 0,
-          Number(item.evening) || 0,
-          Number(item.night) || 0,
-        ),
-        unit: item.unit.name,
-        frequency: getFrequency(item),
+        unit_id: item.unit?.id ?? null,
+        morning: item.morning ?? null,
+        afternoon: item.afternoon ?? null,
+        evening: item.evening ?? null,
+        night: item.night ?? null,
         number_of_day:
           item.numberOfDay && item.numberOfDay > 0 ? item.numberOfDay : null,
         quantity: item.quantity ?? null,
@@ -306,6 +280,7 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
           borderRadius: 0,
           position: 'relative',
           p: 4,
+          minHeight: '100vh',
         }}
       >
         <Typography
@@ -349,46 +324,7 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
           <Stethoscope size={30} color="#fff" />
         </Box>
 
-        <Grid container spacing={1} sx={{ mt: 5 }}>
-          {[
-            {
-              label: 'គោត្តនាម នាម',
-              value: `${patient.khmer_first_name} ${patient.khmer_last_name}`,
-            },
-            {
-              label: 'ភេទ',
-              value: patient.gender,
-            },
-            {
-              label: 'អាយុ',
-              value: `${calculateAge(patient.date_of_birth)} ឆ្នាំ`,
-            },
-            {
-              label: 'Name',
-              value: patient.first_name
-                ? `${patient.last_name} ${patient.first_name}`
-                : '—',
-            },
-            {
-              label: 'ទូរស័ព្ទ',
-              value: patient.phone_number,
-            },
-            {
-              label: 'ក្រុមឈាម',
-              value: patient.blood_group ?? '—',
-            },
-            {
-              label: 'អត្តសញ្ញាណប័ណ្ណ',
-              value: patient.national_id ?? '—',
-            },
-          ].map((info) => (
-            <Grid key={info.label} size={{ md: 4 }}>
-              <GridItemInfo label={info.label} value={info.value} />
-            </Grid>
-          ))}
-        </Grid>
-
-        <Box sx={{ mt: 2 }}>
+        <Box sx={{ position: 'absolute', top: '1rem', right: '1rem' }}>
           <Box
             sx={{
               display: 'flex',
@@ -396,27 +332,12 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
               alignItems: 'end',
             }}
           >
-            <Box>
-              <Typography sx={{ fontFamily: 'var(--font-khmer)' }}>
-                កាលបរិច្ឆេទ{' '}
-                <Typography component="span">
-                  :{' '}
-                  {formatDob(
-                    prescription?.created_at ?? new Date().toISOString(),
-                  )}
-                </Typography>
-              </Typography>
-              <Typography sx={{ fontFamily: 'var(--font-khmer)' }}>
-                Diagnosis{' '}
-                <Typography component="span">: {diagnosis || '—'}</Typography>
-              </Typography>
-            </Box>
             {!isEditing ? (
               <Box className="no-print" sx={{ display: 'flex', gap: 1 }}>
                 <Button
                   variant="outlined"
                   startIcon={<Printer size={16} />}
-                  onClick={() => window.print()}
+                  onClick={() => setOpenPrint(true)}
                 >
                   Print
                 </Button>
@@ -462,13 +383,63 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
           </Box>
         </Box>
 
+        <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
+          {[
+            {
+              label: 'គោត្តនាម នាម',
+              value: `${patient.khmer_first_name} ${patient.khmer_last_name}`,
+            },
+            {
+              label: 'ភេទ',
+              value: patient.gender,
+            },
+            {
+              label: 'អាយុ',
+              value: `${calculateAge(patient.date_of_birth)} ឆ្នាំ`,
+            },
+            {
+              label: 'Name',
+              value: `${patient.last_name} ${patient.first_name}`,
+            },
+            {
+              label: 'ទូរស័ព្ទ',
+              value: patient.phone_number,
+            },
+            {
+              label: 'ក្រុមឈាម',
+              value: patient.blood_group,
+            },
+            {
+              label: 'អត្តសញ្ញាណប័ណ្ណ',
+              value: patient.national_id,
+            },
+            {
+              label: 'កាលបរិច្ឆេទ',
+              value: formatDob(
+                prescription?.created_at ?? new Date().toISOString(),
+              ),
+            },
+            {
+              label: 'Diagnosis',
+              value: consultationDiagnoses.join(', '),
+            },
+          ].map((info) => (
+            <PatientField
+              key={info.label}
+              label={info.label}
+              value={info.value!}
+              fontSize="14px"
+            />
+          ))}
+        </Box>
+
         <Box>
           {fields.length === 0 ? (
             <Box sx={{ py: 4, textAlign: 'center', color: 'text.secondary' }}>
               No medicines in this prescription.
             </Box>
           ) : (
-            <TableContainer sx={{ mt: 2 }}>
+            <TableContainer>
               <Table
                 sx={{
                   borderCollapse: 'collapse',
@@ -481,7 +452,6 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
                 <TableHead
                   sx={{
                     '& .MuiTableCell-root': {
-                      fontFamily: 'var(--font-khmer)',
                       border: 1,
                       borderColor: 'divider',
                     },
@@ -546,16 +516,37 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
               </Table>
             </TableContainer>
           )}
-          <Box className="prescription-footer">
-            <Typography sx={{ fontFamily: 'var(--font-khmer)' }}>
+          <Box sx={{ mt: 8 }}>
+            <Typography>
               វេជ្ជបណ្ឌិត{' '}
               <Typography component="span">
-                : {prescription?.created_by ?? '—'}
+                : {prescription?.created_by}
               </Typography>
             </Typography>
           </Box>
         </Box>
       </Paper>
+
+      <Dialog
+        open={openPrint}
+        maxWidth="md"
+        onClose={() => setOpenPrint(false)}
+        slotProps={{
+          transition: {
+            onEntered: () => {
+              window.print();
+            },
+          },
+        }}
+        scroll="body"
+      >
+        <Print
+          onClose={() => setOpenPrint(false)}
+          patient={patient}
+          prescription={prescription!}
+          diagnoses={consultationDiagnoses}
+        />
+      </Dialog>
     </>
   );
 };

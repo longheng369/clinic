@@ -24,50 +24,64 @@ body {
     color: #1e293b;
 }
 
+/*=== Prescription ===*/
+
+.prescription-printable {
+    padding: 1rem;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.patient-info {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 1rem;
+}
+
+.patient-info p {
+    margin: 0;
+    font-size: 14px;
+}
+
+@page {
+    size: auto;
+    margin: 0;
+}
+
 @media print {
     body * {
-        visibility: hidden !important;
-    }
-
-    body > #app {
-        visibility: hidden !important;
-    }
-
-    .no-print {
-        display: none !important;
+        visibility: hidden;
     }
 
     .prescription-printable,
     .prescription-printable * {
-        visibility: visible !important;
-        font-size: 12px !important;
+        visibility: visible;
     }
 
     .prescription-printable {
-        position: fixed !important;
-        inset: 0 !important;
-        width: 100% !important;
-        max-width: none !important;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
         margin: 0 !important;
-        padding: 12mm !important;
-        border: 0 !important;
-        overflow: visible !important;
+        padding: 1rem !important;
+        font-size: 12px;
+        border: 1px solid black;
     }
 
-    .prescription-printable table {
-        width: 100% !important;
-        table-layout: auto !important;
+    .prescription-table .MuiTableCell-root {
+        font-size: 12px;
     }
 
-    .prescription-printable th,
-    .prescription-printable td {
-        overflow-wrap: break-word !important;
-        word-break: normal !important;
+    .patient-info p {
+        margin: 0;
+        font-size: 12px;
     }
 
-    .prescription-printable tr {
-        break-inside: avoid !important;
-        page-break-inside: avoid !important;
+    .no-print {
+        display: none !important;
     }
 }
 
