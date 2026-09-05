@@ -4,7 +4,7 @@ import Textarea from '@/components/form/textarea';
 import { ICategory, ICategoryFormData } from '@/interfaces/ICategory';
 import { useState } from 'react';
 import { router } from '@inertiajs/react';
-import { Box, Button, DialogActions, DialogContent, Grid, Stack } from '@mui/material';
+import { Box, Button, DialogActions, DialogContent, Grid } from '@mui/material';
 import { useToast } from '@/components/toast';
 import { useModal } from '@/components/modal';
 import { Save } from 'lucide-react';

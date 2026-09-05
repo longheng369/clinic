@@ -8,7 +8,6 @@ import {
   DataGrid,
   type GridColDef,
   type GridPaginationModel,
-  type GridRenderCellParams,
   GridActionsCellItem,
 } from '@mui/x-data-grid';
 import { useState, useEffect, useCallback } from 'react';

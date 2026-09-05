@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { router } from '@inertiajs/react';
 import { useController, useForm } from 'react-hook-form';
 import dayjs, { Dayjs } from 'dayjs';
 import {
-  Alert,
   Box,
   Button,
   DialogActions,
@@ -16,7 +15,6 @@ import { useToast } from '@/components/toast';
 import { useModal } from '@/components/modal';
 import {
   IAppointment,
-  IAppointmentAlert,
   IAppointmentFormData,
 } from '@/interfaces/IAppointment';
 import ServerAutocomplete from '@/components/form/serverAutocomplete';
@@ -41,8 +39,6 @@ const APPOINTMENT_TYPES: IOption<string>[] = [
 const AppointmentForm = ({ appointment, readOnly = false }: Props) => {
   const { closeModal } = useModal();
   const [isProcessing, setIsProcessing] = useState(false);
-  const [vaccineAlerts, setVaccineAlerts] = useState<IAppointmentAlert[]>([]);
-  const [loadingAlerts, setLoadingAlerts] = useState(false);
   const { toast } = useToast();
 
   const { control, handleSubmit, watch } = useForm<IAppointmentFormData>({
@@ -81,23 +77,8 @@ const AppointmentForm = ({ appointment, readOnly = false }: Props) => {
     rules: readOnly ? undefined : { required: 'Please select a time' },
   });
 
-  const selectedPatientId = watch('patient_id');
   const selectedDate = watch('appointment_date');
   const selectedTime = watch('appointment_time');
-
-  useEffect(() => {
-    if (!selectedPatientId) {
-      setVaccineAlerts([]);
-      return;
-    }
-
-    setLoadingAlerts(true);
-    fetch(`/appointments/patients/${selectedPatientId}/vaccine-alerts`)
-      .then((response) => response.json())
-      .then((data) => setVaccineAlerts(data.alerts ?? []))
-      .catch(() => setVaccineAlerts([]))
-      .finally(() => setLoadingAlerts(false));
-  }, [selectedPatientId]);
 
   const onSubmit = handleSubmit((data) => {
     setIsProcessing(true);

@@ -7,15 +7,12 @@ import {
   File,
   Upload,
   Trash2,
-  Calendar,
 } from 'lucide-react';
 import { useState } from 'react';
 import {
-  Alert,
   Box,
   Button,
   Chip,
-  Divider,
   IconButton,
   Paper,
   Stack,
@@ -24,7 +21,6 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  TextField,
   Typography,
 } from '@mui/material';
 import { useModal } from '@/components/modal';
@@ -78,12 +74,6 @@ const Show = ({ request }: { request: IParaClinicRequest }) => {
   const { openAlert } = useModal();
   const { toast } = useToast();
   const [isUploading, setIsUploading] = useState(false);
-  const [resultSummary, setResultSummary] = useState(
-    request.results?.[0]?.result_summary ?? '',
-  );
-  const [doctorInterpretation, setDoctorInterpretation] = useState(
-    request.results?.[0]?.doctor_interpretation ?? '',
-  );
 
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

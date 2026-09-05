@@ -67,7 +67,7 @@ type Props = {
 };
 
 const Appointment = () => {
-  const { openModal, closeModal, openAlert } = useModal();
+  const { openModal, openAlert } = useModal();
   const { appointments, search: searchProp, dateFilter, statusFilter } =
     usePage<Props>().props;
   const [searchTerm, setSearchTerm] = useState(searchProp ?? '');

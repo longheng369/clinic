@@ -16,7 +16,6 @@ import {
   Box,
   Button,
   Dialog,
-  Grid,
   Paper,
   Table,
   TableBody,
@@ -27,7 +26,6 @@ import {
   Typography,
 } from '@mui/material';
 import { IVisitWithMetaData } from '@/interfaces/IVisit';
-import GridItemInfo from './partials/gridItemInfo';
 import Print from '@/pages/patients/partials/tab/prescription/partials/print';
 import PatientField from '@/pages/patients/partials/tab/prescription/partials/PatientField';
 
@@ -87,8 +85,6 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
       }) ?? [],
     [medicines, prescription, instructionOptions],
   );
-
-  const diagnosis = consultationDiagnoses.join(', ');
 
   const { control, reset } = useForm<IPrescriptionFormData>({
     defaultValues: { items: prescriptionItems },
@@ -482,11 +478,11 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
                       sx={
                         isEditing
                           ? {
-                              cursor: 'pointer',
-                              '&:hover': {
-                                bgcolor: 'action.hover',
-                              },
-                            }
+                            cursor: 'pointer',
+                            '&:hover': {
+                              bgcolor: 'action.hover',
+                            },
+                          }
                           : undefined
                       }
                       onClick={
