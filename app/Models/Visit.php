@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 
 #[Fillable([
     'patient_id',
@@ -78,7 +79,12 @@ class Visit extends Model
 
         $paraclinicTotal = $this->paraclinicRequests()->sum('fee');
 
-        $fee = $consultationsTotal + $medicationsTotal + $paraclinicTotal;
+        $prescriptionsTotal = PrescriptionItem::query()
+            ->whereHas('prescription', fn ($q) => $q->where('visit_id', $this->id))
+            ->join('medicines', 'prescription_items.medicine_id', '=', 'medicines.id')
+            ->sum(DB::raw('prescription_items.quantity * medicines.unit_price'));
+
+        $fee = $consultationsTotal + $medicationsTotal + $paraclinicTotal + $prescriptionsTotal;
         $paidAmount = (float) $this->paid_amount;
         $balance = $fee - $paidAmount;
 
@@ -86,6 +92,7 @@ class Visit extends Model
             'consultation_fees' => (float) $consultationsTotal,
             'medication_costs' => (float) $medicationsTotal,
             'paraclinic_costs' => (float) $paraclinicTotal,
+            'prescription_costs' => (float) $prescriptionsTotal,
             'fee' => $fee,
             'paid_amount' => $paidAmount,
             'balance' => $balance,

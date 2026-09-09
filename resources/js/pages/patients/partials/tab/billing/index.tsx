@@ -8,6 +8,7 @@ interface BillingData {
   consultation_fees: number;
   medication_costs: number;
   paraclinic_costs: number;
+  prescription_costs: number;
   fee: number;
   paid_amount: number;
   balance: number;
@@ -191,7 +192,12 @@ const BillingTab = ({ visitId }: Props) => {
             </Typography>
           </Box>
           <Box
-            sx={{ display: 'flex', justifyContent: 'space-between', py: 1.5 }}
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              py: 1.5,
+              borderBottom: '1px solid #f1f5f9',
+            }}
           >
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
               <Box
@@ -210,6 +216,32 @@ const BillingTab = ({ visitId }: Props) => {
               sx={{ fontSize: 14, fontWeight: 600, color: '#1e293b' }}
             >
               {formatCurrency(billing.paraclinic_costs)}
+            </Typography>
+          </Box>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              py: 1.5,
+            }}
+          >
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+              <Box
+                sx={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: '50%',
+                  bgcolor: '#8b5cf6',
+                }}
+              />
+              <Typography sx={{ fontSize: 14, color: '#475569' }}>
+                Prescription Costs
+              </Typography>
+            </Box>
+            <Typography
+              sx={{ fontSize: 14, fontWeight: 600, color: '#1e293b' }}
+            >
+              {formatCurrency(billing.prescription_costs)}
             </Typography>
           </Box>
         </Box>
