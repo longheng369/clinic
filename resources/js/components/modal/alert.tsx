@@ -1,43 +1,31 @@
-import Button from '@/components/button/button'
-import { AlertTriangle, AlertCircle } from 'lucide-react'
+import {
+  Box,
+  Button,
+  DialogActions,
+  DialogContent,
+  Stack,
+  Typography,
+} from '@mui/material';
+import { AlertCircle, AlertTriangle } from 'lucide-react';
 
-type AlertVariant = 'danger' | 'warning' | 'info'
+export type AlertVariant = 'danger' | 'warning' | 'info';
 
-interface AlertProps {
-  message: string
-  description?: string
-  variant?: AlertVariant
-  confirmLabel?: string
-  cancelLabel?: string
-  onConfirm: () => void
-  onClose: () => void
+export interface AlertProps {
+  message: string;
+  description?: string;
+  variant?: AlertVariant;
+  confirmLabel?: string;
+  cancelLabel?: string;
+  onConfirm: () => void;
+  onCancel?: () => void;
+  onClose: () => void;
 }
 
-export type { AlertProps }
-
-const variantStyles: Record<AlertVariant, { icon: React.ReactNode; iconBg: string; iconColor: string }> = {
-  danger: {
-    icon: <AlertTriangle size={24} />,
-    iconBg: 'bg-red-100',
-    iconColor: 'text-red-600',
-  },
-  warning: {
-    icon: <AlertTriangle size={24} />,
-    iconBg: 'bg-amber-100',
-    iconColor: 'text-amber-600',
-  },
-  info: {
-    icon: <AlertCircle size={24} />,
-    iconBg: 'bg-blue-100',
-    iconColor: 'text-blue-600',
-  },
-}
-
-const buttonColor: Record<AlertVariant, 'error' | 'primary'> = {
+const severityMap = {
   danger: 'error',
-  warning: 'primary',
-  info: 'primary',
-}
+  warning: 'warning',
+  info: 'info',
+} as const;
 
 const Alert = ({
   message,
@@ -46,42 +34,75 @@ const Alert = ({
   confirmLabel = 'Confirm',
   cancelLabel = 'Cancel',
   onConfirm,
+  onCancel,
   onClose,
 }: AlertProps) => {
+  const Icon = variant === 'info' ? AlertCircle : AlertTriangle;
+
   const handleConfirm = () => {
-    onConfirm()
-    onClose()
-  }
+    onConfirm();
+    onClose();
+  };
 
   const handleCancel = () => {
-    onClose()
-  }
-
-  const style = variantStyles[variant]
+    onCancel?.();
+    onClose();
+  };
 
   return (
-    <div className="px-4 pb-6">
-      <div className="flex items-start gap-3">
-        <div className={`shrink-0 rounded-full p-2 ${style.iconBg} ${style.iconColor}`}>
-          {style.icon}
-        </div>
-        <div className="min-w-0">
-          <p className="text-sm font-semibold text-gray-900">{message}</p>
-          {description && (
-            <p className="mt-1 text-sm text-gray-500">{description}</p>
-          )}
-        </div>
-      </div>
-      <div className="mt-6 flex justify-end gap-3">
-        <Button variant="outlined" color="secondary" onClick={handleCancel}>
+    <>
+      <DialogContent sx={{ pt: 3 }}>
+        <Stack direction="row" spacing={1.5} sx={{ alignItems: 'flex-start' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexShrink: 0,
+              p: 1,
+              borderRadius: '50%',
+              bgcolor: `${severityMap[variant]}.lighter`,
+            }}
+          >
+            <Icon
+              size={24}
+              color={
+                variant === 'danger'
+                  ? '#dc2626'
+                  : variant === 'warning'
+                    ? '#d97706'
+                    : '#2563eb'
+              }
+            />
+          </Box>
+          <Box sx={{ minWidth: 0 }}>
+            <Typography variant="body2" sx={{ fontWeight: 600 }}>
+              {message}
+            </Typography>
+            {description && (
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ mt: 0.5 }}
+              >
+                {description}
+              </Typography>
+            )}
+          </Box>
+        </Stack>
+      </DialogContent>
+      <DialogActions sx={{ px: 3, pb: 3 }}>
+        <Button variant="outlined" color="inherit" onClick={handleCancel}>
           {cancelLabel}
         </Button>
-        <Button color={buttonColor[variant]} onClick={handleConfirm}>
+        <Button
+          variant="contained"
+          color={severityMap[variant]}
+          onClick={handleConfirm}
+        >
           {confirmLabel}
         </Button>
-      </div>
-    </div>
-  )
-}
+      </DialogActions>
+    </>
+  );
+};
 
-export default Alert
+export default Alert;

@@ -47,7 +47,7 @@ The `interval` field (QD/BID/TID/QID/QHS/PRN) is informational — it tells the 
 
 **Columns:** `id`, `patient_id` (FK → patients, cascade), `type` (OPD/IPD, default OPD), `status` (active/closed, default active), `visit_date` (default now()), `recorded_by` (FK → users, nullOnDelete), timestamps.
 
-**Model:** `app/Models/Visit.php` — relationships: `patient()`, `recordedBy()`, `consultations()`, `paraclinicRequests()`, `surveillances()`, `attachments()`, `medicationAdministrations()`
+**Model:** `app/Models/Visit.php` — relationships: `patient()`, `recordedBy()`, `consultations()`, `paraclinicRequests()`, `surveillance()`, `attachments()`, `medicationAdministrations()`
 
 ### 2. Add `visit_id` to all scoped tables (4 migrations)
 
@@ -110,6 +110,6 @@ Replace `<Placeholder>` with `<MedicationTab>` in `TabContent`.
 2. `app/Http/Controllers/ConsultationController.php` — visit logic in store/destroy/create
 3. `app/Http/Controllers/PatientController.php` — add medication props, active visits
 4. `app/Http/Controllers/PatientSurveillanceController.php` — accept `visit_id`
-5. `app/Http/Controllers/ParaclinicRequestController.php` — accept `visit_id`
+5. `app/Http/Controllers/ParaClinicRequestController.php` — accept `visit_id`
 6. `resources/js/pages/patients/show.tsx` — wire up MedicationTab
 7. `routes/web.php` — medication administration routes

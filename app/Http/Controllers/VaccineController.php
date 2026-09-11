@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Vaccine;
 use App\Http\Requests\StoreVaccineRequest;
 use App\Http\Requests\UpdateVaccineRequest;
+use App\Models\Vaccine;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 

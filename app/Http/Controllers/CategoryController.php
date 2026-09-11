@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -17,7 +17,7 @@ class CategoryController extends Controller
         return Inertia::render('categories/index', [
             'categories' => Category::latest()
                 ->when($search, fn ($query) => $query->where('name', 'like', "%{$search}%"))
-                ->paginate(10)
+                ->paginate(20)
                 ->withQueryString(),
             'search' => $search,
         ]);
@@ -27,22 +27,15 @@ class CategoryController extends Controller
     {
         Category::create($request->validated());
 
-        return redirect()->route('categories.index')
+        return redirect()->route('settings.categories.index')
             ->with('success', 'Category created.');
-    }
-
-    public function edit(Category $category)
-    {
-        return Inertia::render('categories/edit', [
-            'category' => $category,
-        ]);
     }
 
     public function update(UpdateCategoryRequest $request, Category $category)
     {
         $category->update($request->validated());
 
-        return redirect()->route('categories.index')
+        return redirect()->route('settings.categories.index')
             ->with('success', 'Category updated.');
     }
 
@@ -50,7 +43,7 @@ class CategoryController extends Controller
     {
         $category->delete();
 
-        return redirect()->route('categories.index')
+        return redirect()->route('settings.categories.index')
             ->with('success', 'Category deleted.');
     }
 
@@ -63,5 +56,10 @@ class CategoryController extends Controller
             ->orderBy('name')
             ->limit(25)
             ->get(['id', 'name']);
+    }
+
+    public function all()
+    {
+        return Category::orderBy('name')->get(['id', 'name']);
     }
 }

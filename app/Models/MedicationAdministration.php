@@ -7,37 +7,41 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable([
-    'visit_id',
-    'medicine_id',
-    'route',
-    'dosage',
-    'unit',
-    'interval',
+    'medication_order_id',
+    'cycle_no',
+    'administration_no',
+    'total_administrations',
+    'scheduled_at',
+    'administered_at',
     'status',
-    'notes',
-    'created_by',
+    'administered_by',
+    'unit_price',
+    'reason',
+    'note',
 ])]
 class MedicationAdministration extends Model
 {
+    protected $table = 'medication_administrations';
+
     protected function casts(): array
     {
         return [
-            'dosage' => 'decimal:2',
+            'cycle_no' => 'integer',
+            'administration_no' => 'integer',
+            'total_administrations' => 'integer',
+            'scheduled_at' => 'datetime',
+            'administered_at' => 'datetime',
+            'unit_price' => 'decimal:2',
         ];
     }
 
-    public function visit(): BelongsTo
+    public function medicationOrder(): BelongsTo
     {
-        return $this->belongsTo(Visit::class);
+        return $this->belongsTo(MedicationOrder::class, 'medication_order_id');
     }
 
-    public function medicine(): BelongsTo
+    public function administeredBy(): BelongsTo
     {
-        return $this->belongsTo(Medicine::class);
-    }
-
-    public function recordedBy(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(User::class, 'administered_by');
     }
 }

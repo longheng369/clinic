@@ -1,4 +1,6 @@
 *
+!gazetteer/
+!gazetteer/**
 !private/
 !public/
 !.gitignore

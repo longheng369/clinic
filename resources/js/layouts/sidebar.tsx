@@ -1,205 +1,287 @@
-import React, { useState } from 'react'
-import { Link, usePage, router } from '@inertiajs/react'
+import React, { useState } from 'react';
+import { Link as InertiaLink, usePage, router } from '@inertiajs/react';
+import { sidebarSections } from '@/config/sidebar';
+import type { ISidebarOption } from '@/interfaces/ISidebar';
+import { LogOut, ChevronDown, ChevronRight } from 'lucide-react';
+import { alpha, useTheme } from '@mui/material/styles';
 import {
-  LayoutDashboard,
-  Users,
-  Stethoscope,
-  Pill,
-  Syringe,
-  ClipboardList,
-  Settings,
-  HelpCircle,
-  LogOut,
-  ChevronDown,
-  ChevronRight,
-  Tags,
-  Calendar,
-  type LucideIcon,
-} from 'lucide-react'
+  Avatar,
+  Box,
+  Collapse,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Typography,
+} from '@mui/material';
 
-interface SidebarOption {
-  label: string
-  icon?: LucideIcon
-  path?: string
-  badge?: number
-  children?: SidebarOption[]
-}
-
-interface SidebarSection {
-  title: string
-  items: SidebarOption[]
-}
+const SidebarLink = React.forwardRef<
+  HTMLAnchorElement,
+  React.ComponentProps<typeof InertiaLink>
+>(({ children, ...props }, ref) => (
+  <InertiaLink {...props} ref={ref}>
+    {children}
+  </InertiaLink>
+));
+SidebarLink.displayName = 'SidebarLink';
 
 const Sidebar = () => {
-  const { url, props } = usePage()
-  const user = props.auth?.user
-  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
+  const theme = useTheme();
+  const { url, props: pageProps } = usePage();
+  const user = pageProps.auth?.user;
+  const pathname = url.split('?')[0];
+
+  const [expandedSections, setExpandedSections] = useState<
+    Record<string, boolean>
+  >({
     Settings: true,
-  })
+  });
 
   const toggleSection = (label: string) => {
-    setExpandedSections((prev) => ({ ...prev, [label]: !prev[label] }))
-  }
-
-  const sections: SidebarSection[] = [
-    {
-      title: 'Menu',
-      items: [
-        { label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
-        { label: 'Patients', icon: Users, path: '/patients' },
-        { label: 'Appointments', icon: Calendar, path: '/appointments' },
-      ],
-    },
-    {
-      title: 'Clinic',
-      items: [
-        { label: 'Medicines', icon: Pill, path: '/medicines' },
-        { label: 'Vaccines', icon: Syringe, path: '/vaccines' },
-        { label: 'Paraclinic', icon: ClipboardList, path: '/paraclinic-requests' },
-      ],
-    },
-    {
-      title: 'Other',
-      items: [
-        {
-          label: 'Settings',
-          icon: Settings,
-          children: [
-            { label: 'Category', icon: Tags, path: '/settings/categories' },
-            { label: 'Units', icon: Tags, path: '/settings/units' },
-          ],
-        },
-        { label: 'Help', icon: HelpCircle, path: '/help' },
-      ],
-    },
-  ]
+    setExpandedSections((prev) => ({ ...prev, [label]: !prev[label] }));
+  };
 
   const handleLogout = () => {
-    router.post('/logout')
-  }
+    router.post('/logout');
+  };
+
+  const activeGradient = `linear-gradient(to bottom right, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`;
+
+  const activeItemSx = {
+    color: theme.palette.primary.contrastText,
+    backgroundImage: activeGradient,
+    boxShadow: `0 4px 6px -1px ${alpha(theme.palette.primary.main, 0.2)}`,
+    borderRight: `2px solid ${theme.palette.primary.main}`,
+    '&:hover': {
+      color: theme.palette.primary.contrastText,
+      backgroundImage: activeGradient,
+    },
+  };
+
+  const inactiveItemSx = {
+    color: theme.palette.text.secondary,
+    '&:hover': {
+      color: theme.palette.primary.main,
+      bgcolor: alpha(theme.palette.primary.main, 0.08),
+    },
+  };
+
+  const renderBadge = (badge?: number, isActive?: boolean) =>
+    badge ? (
+      <Box
+        component="span"
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: 20,
+          height: 20,
+          borderRadius: '50%',
+          fontSize: 11,
+          fontWeight: 600,
+          bgcolor: isActive
+            ? theme.palette.primary.main
+            : alpha(theme.palette.primary.main, 0.12),
+          color: isActive
+            ? theme.palette.primary.contrastText
+            : theme.palette.primary.dark,
+        }}
+      >
+        {badge}
+      </Box>
+    ) : null;
+
+  const renderSidebarItem = (item: ISidebarOption): React.ReactNode => {
+    const Icon = item.icon;
+    const isExpanded = expandedSections[item.label];
+
+    if (item.children) {
+      return (
+        <Box key={item.label}>
+          <ListItem disablePadding>
+            <ListItemButton
+              onClick={() => toggleSection(item.label)}
+              sx={{
+                borderRadius: 1,
+                ...inactiveItemSx,
+              }}
+            >
+              <ListItemIcon sx={{ color: 'inherit' }}>
+                {Icon && <Icon size={16} />}
+              </ListItemIcon>
+              <ListItemText primary={item.label} sx={{ my: 0 }} />
+              {isExpanded ? (
+                <ChevronDown size={16} />
+              ) : (
+                <ChevronRight size={16} />
+              )}
+            </ListItemButton>
+          </ListItem>
+          <Collapse in={isExpanded} timeout="auto" unmountOnExit>
+            <List disablePadding sx={{ pl: 3, mt: 0.25 }}>
+              {item.children.map((child) => renderSidebarItem(child))}
+            </List>
+          </Collapse>
+        </Box>
+      );
+    }
+
+    const isActive = item.path === pathname;
+
+    return (
+      <ListItem key={item.path ?? item.label} disablePadding>
+        <ListItemButton
+          component={SidebarLink as React.ElementType}
+          href={item.path!}
+          sx={{
+            borderRadius: 1,
+            ...(isActive ? activeItemSx : inactiveItemSx),
+          }}
+        >
+          <ListItemIcon sx={{ color: 'inherit' }}>
+            {Icon && <Icon size={16} />}
+          </ListItemIcon>
+          <ListItemText
+            primary={item.label}
+            sx={{ my: 0 }}
+            slotProps={{ primary: { sx: { fontSize: 14, fontWeight: 500 } } }}
+          />
+          {renderBadge(item.badge, isActive)}
+        </ListItemButton>
+      </ListItem>
+    );
+  };
 
   return (
-    <aside className='w-75 h-screen flex flex-col bg-sidebar-bg border-r border-slate-300'>
-      {/* Logo */}
-      <div className='flex items-center gap-3 px-6 py-6'>
-        <div className='flex items-center justify-center size-9 rounded-lg bg-primary-500'>
-          <Stethoscope size={20} className='text-white' />
-        </div>
-        <span className='text-lg font-semibold tracking-tight text-sidebar-text'>Clinic</span>
-      </div>
+    <Box
+      component="aside"
+      sx={{
+        position: 'relative',
+        height: '100%',
+        flexShrink: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        bgcolor: theme.palette.background.paper,
+        borderRight: `1px solid ${theme.palette.divider}`,
+        zIndex: 30,
+        width: 300,
+        transition: 'width 200ms ease',
+      }}
+    >
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1.5,
+          px: 3,
+          py: 2.5,
+          justifyContent: 'flex-start',
+        }}
+      >
+        <Box
+          component="img"
+          src="/storage/hospital-logo.jpeg"
+          alt="Hospital logo"
+          sx={{ width: 50, height: 50, objectFit: 'contain', flexShrink: 0 }}
+        />
+      </Box>
 
-      {/* Navigation */}
-      <nav className='flex-1 overflow-y-auto px-4 py-5 space-y-6'>
-        {sections.map((section) => (
-          <div key={section.title}>
-            <h3 className='text-xs font-semibold uppercase tracking-wider text-sidebar-muted-light mb-2 px-3'>
+      <Box component="nav" sx={{ flex: 1, overflowY: 'auto', px: 2 }}>
+        {sidebarSections.map((section) => (
+          <Box key={section.title}>
+            <Typography
+              sx={{
+                fontSize: 11,
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                color: theme.palette.text.secondary,
+              }}
+            >
               {section.title}
-            </h3>
-            <ul className='space-y-0.5'>
-              {section.items.map((item) => {
-                const Icon = item.icon
-                const isExpanded = expandedSections[item.label]
-
-                if (item.children) {
-                  return (
-                    <li key={item.label}>
-                      <button
-                        onClick={() => toggleSection(item.label)}
-                        className='flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium w-full text-sidebar-muted-light hover:text-sidebar-text hover:bg-sidebar-hover-light transition-colors duration-150 cursor-pointer'
-                      >
-                        {Icon && <Icon size={18} />}
-                        <span className='flex-1 text-left'>{item.label}</span>
-                        {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-                      </button>
-                      {isExpanded && (
-                        <ul className='ml-6 mt-0.5 space-y-0.5'>
-                          {item.children.map((child) => {
-                            const isChildActive = child.path === url
-                            return (
-                              <li key={child.path}>
-                                <Link
-                                  href={child.path!}
-                                  className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-150
-                                    ${isChildActive
-                                      ? 'bg-primary-100 text-primary-700'
-                                      : 'text-sidebar-muted-light hover:text-sidebar-text hover:bg-sidebar-hover-light'
-                                    }`}
-                                >
-                                  <span className='flex-1'>{child.label}</span>
-                                  {child.badge && (
-                                    <span
-                                      className={`flex items-center justify-center size-5 rounded-full text-[11px] font-semibold
-                                        ${isChildActive
-                                          ? 'bg-primary text-primary-foreground'
-                                          : 'bg-primary-100 text-primary-700'
-                                        }`}
-                                    >
-                                      {child.badge}
-                                    </span>
-                                  )}
-                                </Link>
-                              </li>
-                            )
-                          })}
-                        </ul>
-                      )}
-                    </li>
-                  )
-                }
-
-                const isActive = item.path === url
-                return (
-                  <li key={item.path}>
-                    <Link
-                      href={item.path!}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150
-                        ${isActive
-                          ? 'bg-primary-100 text-primary-700'
-                          : 'text-sidebar-muted-light hover:text-sidebar-text hover:bg-sidebar-hover-light'
-                        }`}
-                    >
-                      {Icon && <Icon size={18} />}
-                      <span className='flex-1'>{item.label}</span>
-                      {item.badge && (
-                        <span
-                          className={`flex items-center justify-center size-5 rounded-full text-[11px] font-semibold
-                            ${isActive
-                              ? 'bg-primary text-primary-foreground'
-                              : 'bg-primary-100 text-primary-700'
-                            }`}
-                        >
-                          {item.badge}
-                        </span>
-                      )}
-                    </Link>
-                  </li>
-                )
-              })}
-            </ul>
-          </div>
+            </Typography>
+            <List>{section.items.map((item) => renderSidebarItem(item))}</List>
+          </Box>
         ))}
-      </nav>
+      </Box>
 
-      {/* Profile */}
-      <div className='border-t border-slate-300 px-4 py-4'>
-        <button onClick={() => router.visit('/profile')} className='flex flex-col items-start gap-3 px-3 py-2 rounded-lg hover:bg-primary-50 transition-colors w-full cursor-pointer'>
-            <p className='text-sm font-medium truncate'>
-                {user?.name ?? 'User'}
-            </p>
-            <p className='text-xs truncate'>
-                {user?.email ?? ''}
-            </p>
-        </button>
-        <button
+      <Box
+        sx={{
+          borderTop: `1px solid ${alpha(theme.palette.primary.main, 0.12)}`,
+          px: 2,
+          py: 2,
+        }}
+      >
+        <ListItemButton
+          onClick={() => router.visit('/profile')}
+          sx={{
+            borderRadius: 1,
+            px: 1.5,
+            py: 1,
+            '&:hover': { bgcolor: alpha(theme.palette.primary.main, 0.08) },
+          }}
+        >
+          <Avatar
+            sx={{
+              width: 36,
+              height: 36,
+              flexShrink: 0,
+              backgroundImage: `linear-gradient(135deg, ${theme.palette.primary.light}, ${theme.palette.primary.main})`,
+              fontSize: 12,
+              fontWeight: 600,
+              mr: 1.5,
+            }}
+          >
+            {(user?.name ?? 'U').charAt(0).toUpperCase()}
+          </Avatar>
+          <Box sx={{ minWidth: 0 }}>
+            <Typography
+              sx={{
+                fontSize: 14,
+                fontWeight: 500,
+                color: theme.palette.text.primary,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {user?.name ?? 'User'}
+            </Typography>
+            <Typography
+              sx={{
+                fontSize: 12,
+                color: theme.palette.text.secondary,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {user?.email ?? ''}
+            </Typography>
+          </Box>
+        </ListItemButton>
+        <ListItemButton
           onClick={handleLogout}
-          className='flex items-center gap-3 px-3 py-2 mt-1 rounded-lg text-sm text-red-500 hover:text-red-600 hover:bg-danger/5 transition-colors w-full cursor-pointer'
+          sx={{
+            borderRadius: 1,
+            mt: 0.5,
+            px: 1.5,
+            py: 1,
+            gap: 1.5,
+            color: theme.palette.error.light,
+            '&:hover': {
+              color: theme.palette.error.main,
+              bgcolor: alpha(theme.palette.error.main, 0.08),
+            },
+          }}
         >
           <LogOut size={18} />
-          <span>Logout</span>
-        </button>
-      </div>
-    </aside>
-  )
-}
+          <Typography sx={{ fontSize: 14 }}>Logout</Typography>
+        </ListItemButton>
+      </Box>
+    </Box>
+  );
+};
 
-export default Sidebar
+export default Sidebar;

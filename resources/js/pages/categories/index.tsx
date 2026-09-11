@@ -1,178 +1,206 @@
-import { usePage, router } from '@inertiajs/react'
-import { Head } from '@inertiajs/react'
-import { useModal } from '@/components/modal'
-import { Pencil, Trash2, Plus, Search, X } from 'lucide-react'
-import CategoryForm from './partials/createOrEdit'
-import { ICategory } from '@/interfaces/ICategory'
-import Button from '@/components/button/button'
-import IconButton from '@/components/button/iconButton'
-import DataTable, { type Column } from '@/components/table/DataTable'
-import TextInput from '@/components/textInput'
-import { useState, useEffect } from 'react'
+import { usePage, router } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
+import { useModal } from '@/components/modal';
+import { Pencil, Trash2, Plus } from 'lucide-react';
+import CategoryForm from './partials/createOrEdit';
+import { ICategory } from '@/interfaces/ICategory';
+import {
+  DataGrid,
+  type GridColDef,
+  type GridPaginationModel,
+  GridActionsCellItem,
+} from '@mui/x-data-grid';
+import { useState, useEffect, useCallback } from 'react';
+import SearchBar from '@/components/searchBar';
+import { formatCreatedDateTime } from '@/utils/date';
+import { Box, Typography, Button } from '@mui/material';
 
 interface PaginatedData<T> {
-    data: T[]
-    current_page: number
-    last_page: number
-    per_page: number
-    total: number
-    from: number
-    to: number
+  data: T[];
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+  from: number;
+  to: number;
 }
 
 const Category = () => {
-    const { openModal, closeModal, openAlert } = useModal()
+  const { openModal, openAlert } = useModal();
 
-    const { categories, search: searchProp } = usePage<{
-        categories: PaginatedData<ICategory>
-        search: string | null
-    }>().props
+  const { categories, search: searchProp } = usePage<{
+    categories: PaginatedData<ICategory>;
+    search: string | null;
+  }>().props;
 
-    const [searchTerm, setSearchTerm] = useState(searchProp ?? '')
+  const [searchTerm, setSearchTerm] = useState(searchProp ?? '');
 
-    useEffect(() => {
-        const timeout = setTimeout(() => {
-            if ((searchTerm || '') === (searchProp || '')) return
-            if (searchTerm) {
-                router.get('/settings/categories', { search: searchTerm }, { preserveState: true, replace: true })
-            } else {
-                router.get('/settings/categories', {}, { preserveState: true, replace: true })
-            }
-        }, 300)
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if ((searchTerm || '') === (searchProp || '')) return;
+      if (searchTerm) {
+        router.get(
+          '/settings/categories',
+          { search: searchTerm, page: 1 },
+          { preserveState: true, replace: true },
+        );
+      } else {
+        router.get(
+          '/settings/categories',
+          {},
+          { preserveState: true, replace: true },
+        );
+      }
+    }, 300);
 
-        return () => clearTimeout(timeout)
-    }, [searchTerm])
+    return () => clearTimeout(timeout);
+  }, [searchTerm]);
 
-    const handleClear = () => {
-        setSearchTerm('')
-    }
+  const handlePaginationModelChange = useCallback(
+    (model: GridPaginationModel) => {
+      const page = model.page + 1;
+      const params: Record<string, string | number> = { page };
+      if (searchProp) params.search = searchProp;
+      router.get('/settings/categories', params, {
+        preserveState: true,
+        replace: true,
+      });
+    },
+    [searchProp],
+  );
 
-    const baseUrl = searchProp
-        ? `/settings/categories?search=${encodeURIComponent(searchProp)}`
-        : '/settings/categories'
+  const handleCreate = () => {
+    openModal({
+      title: 'New Category',
+      content: <CategoryForm />,
+      config: { preventClickAway: true, maxWidth: 'sm' },
+    });
+  };
 
-    const handleCreate = () => {
-        openModal({
-            title: 'New Category',
-            content: <CategoryForm onClose={() => closeModal()} />,
-            config: { preventClickAway: true }
-        })
-    }
+  const handleEdit = (category: ICategory) => {
+    openModal({
+      title: "Edit Category",
+      content: <CategoryForm category={category} />,
+      config: { preventClickAway: true, maxWidth: 'sm' },
+    });
+  };
 
-    const handleEdit = (category: ICategory) => {
-        openModal({
-            title: `Edit ${category.name}`,
-            content: <CategoryForm category={category} onClose={() => closeModal()} />,
-            config: { preventClickAway: true }
-        })
-    }
+  const handleDelete = (category: ICategory) => {
+    openAlert({
+      message: 'Delete this category?',
+      description: 'This action cannot be undone.',
+      variant: 'danger',
+      confirmLabel: 'Delete',
+      onConfirm: () => router.delete(`/settings/categories/${category.id}`),
+    });
+  };
 
-    const handleDelete = (cat: ICategory) => {
-        openAlert({
-            message: 'Delete this category?',
-            description: 'This action cannot be undone.',
-            variant: 'danger',
-            confirmLabel: 'Delete',
-            onConfirm: () => router.delete(`/settings/categories/${cat.id}`)
-        })
-    }
+  const columns: GridColDef[] = [
+    {
+      field: 'name',
+      headerName: 'ឈ្មោះ',
+      flex: 1,
+      minWidth: 180,
+    },
+    {
+      field: 'description',
+      headerName: 'ការពិពណ៌នា',
+      flex: 1,
+      minWidth: 220
+    },
+    {
+      field: 'created_at',
+      headerName: 'បានបង្កើត',
+      flex: 1,
+      minWidth: 180,
+      valueGetter: (_value, row: ICategory) =>
+        formatCreatedDateTime(row.created_at),
+    },
+    {
+      field: 'actions',
+      type: 'actions',
+      headerName: 'សកម្មភាព',
+      width: 150,
+      getActions: (params) => [
+        <GridActionsCellItem
+          key={`edit-${params.id}`}
+          icon={<Pencil size={16} color="#2563eb" />}
+          label={`Edit ${params.row.name}`}
+          onClick={() => handleEdit(params.row as ICategory)}
+          showInMenu={false}
+        />,
+        <GridActionsCellItem
+          key={`delete-${params.id}`}
+          icon={<Trash2 size={16} color="#dc2626" />}
+          label={`Delete ${params.row.name}`}
+          onClick={() => handleDelete(params.row as ICategory)}
+          showInMenu={false}
+        />,
+      ],
+    },
+  ];
 
-    const columns: Column<ICategory>[] = [
-        {
-            header: 'Name',
-            className: 'font-medium text-gray-900',
-            cell: (cat) => cat.name,
-        },
-        {
-            header: 'Description',
-            className: 'max-w-xs truncate',
-            cell: (cat) => cat.description ?? <span className="text-gray-300">&mdash;</span>,
-        },
-        {
-            header: 'Created',
-            className: 'whitespace-nowrap',
-            cell: (cat) =>
-                new Date(cat.created_at).toLocaleString('en-US', {
-                    timeZone: 'Asia/Phnom_Penh',
-                    year: 'numeric',
-                    month: 'short',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: false,
-                }),
-        },
-        {
-            header: 'Actions',
-            className: 'text-end',
-            cell: (cat) => (
-                <div className="flex items-center justify-end">
-                    <IconButton onClick={() => handleEdit(cat)} aria-label={`Edit ${cat.name}`}>
-                        <Pencil size={16} />
-                    </IconButton>
-                    <IconButton color="error" onClick={() => handleDelete(cat)} aria-label={`Delete ${cat.name}`}>
-                        <Trash2 size={16} />
-                    </IconButton>
-                </div>
-            ),
-        },
-    ]
+  return (
+    <>
+      <Head title="Categories" />
+      <Box
+        sx={{ p: 4, height: '100%', display: 'flex', flexDirection: 'column' }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Box>
+            <Typography variant="h5">Categories</Typography>
+            <Typography variant="body1" color="textSecondary">
+              Manage your clinic categories
+            </Typography>
+          </Box>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 2,
+            }}
+          >
+            <SearchBar
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search category"
+            />
+            <Button
+              onClick={handleCreate}
+              variant="contained"
+              startIcon={<Plus size={16} />}
+            >
+              New Category
+            </Button>
+          </Box>
+        </Box>
 
-    const { data, ...pagination } = categories
+        <Box sx={{ flex: 1, mt: 3, minHeight: 0 }}>
+          <DataGrid
+            rows={categories.data}
+            columns={columns}
+            rowCount={categories.total}
+            paginationMode="server"
+            paginationModel={{
+              page: categories.current_page - 1,
+              pageSize: categories.per_page,
+            }}
+            onPaginationModelChange={handlePaginationModelChange}
+            pageSizeOptions={[20]}
+            disableRowSelectionOnClick
+            sx={{ height: '100%' }}
+          />
+        </Box>
+      </Box>
+    </>
+  );
+};
 
-    return (
-        <>
-            <Head title="Categories" />
-            <div className="p-8">
-                <div className="mb-6 flex items-center justify-between">
-                    <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Categories</h1>
-                        <p className="mt-1 text-sm text-gray-500">
-                            Manage your clinic categories
-                        </p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                        <div className="relative">
-                            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                            <TextInput
-                                type="text"
-                                placeholder="Search categories..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="pl-9 pr-8 w-64 py-2!"
-                            />
-                            {searchTerm && (
-                                <button
-                                    type="button"
-                                    onClick={handleClear}
-                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                                >
-                                    <X size={14} />
-                                </button>
-                            )}
-                        </div>
-                        <Button
-                            onClick={handleCreate}
-                            startIcon={<Plus size={20} />}
-                        >
-                            New Category
-                        </Button>
-                    </div>
-                </div>
-
-                <DataTable
-                    data={data}
-                    keyExtractor={(cat) => cat.id}
-                    columns={columns}
-                    emptyMessage="No categories found"
-                    emptyDescription="Get started by creating a new category."
-                    pagination={pagination}
-                    baseUrl={baseUrl}
-                />
-            </div>
-        </>
-    )
-}
-
-export default Category
+export default Category;

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable([
     'patient_id',
+    'visit_id',
     'file_name',
     'file_path',
     'file_type',
@@ -19,6 +20,11 @@ class PatientAttachment extends Model
     public function patient(): BelongsTo
     {
         return $this->belongsTo(Patient::class);
+    }
+
+    public function visit(): BelongsTo
+    {
+        return $this->belongsTo(Visit::class);
     }
 
     public function uploadedBy(): BelongsTo

@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
-use App\Models\Vaccine;
+use App\Traits\Autocompletable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 
 #[Fillable([
     'khmer_first_name',
@@ -20,13 +22,26 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     'phone_number',
     'gender',
     'allergy',
-    'register_by',
+    'created_by',
     'last_modifier',
     'national_id',
 ])]
 class Patient extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, Autocompletable;
+
+    public array $autocompleteSearchable = [
+        'khmer_first_name',
+        'khmer_last_name',
+        'first_name',
+        'last_name',
+        'phone_number',
+    ];
+
+    public function autocompleteLabel(): string
+    {
+        return "{$this->khmer_first_name} {$this->khmer_last_name}";
+    }
 
     protected function casts(): array
     {
@@ -35,37 +50,37 @@ class Patient extends Model
         ];
     }
 
-    public function registerBy(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function createdBy(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'register_by');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function lastModifier(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function lastModifier(): BelongsTo
     {
         return $this->belongsTo(User::class, 'last_modifier');
     }
 
-    public function attachments(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function attachments(): HasMany
     {
         return $this->hasMany(PatientAttachment::class);
     }
 
-    public function surveillances(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function surveillance(): HasMany
     {
         return $this->hasMany(PatientSurveillance::class);
     }
 
-    public function consultations(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function consultations(): HasMany
     {
         return $this->hasMany(Consultation::class);
     }
 
-    public function paraclinicRequests(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function paraClinicRequests(): HasMany
     {
         return $this->hasMany(ParaclinicRequest::class);
     }
 
-    public function visits(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function visits(): HasMany
     {
         return $this->hasMany(Visit::class);
     }
@@ -106,7 +121,7 @@ class Patient extends Model
         $totalDoses = count($rule['doses']);
         $lastVaccination = $this->vaccinations()
             ->where('vaccine_id', $vaccine->id)
-            ->latest('dose_number')
+            ->latest('id')
             ->first();
 
         $dosesCompleted = $lastVaccination?->dose_number ?? 0;
@@ -154,5 +169,16 @@ class Patient extends Model
             'next_dose_number' => $nextDoseNumber,
             'next_dose_due_date' => $dueDate->toDateString(),
         ];
+    }
+
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::creating(function (self $patient) {
+            if (! $patient->created_by && Auth::check()) {
+                $patient->created_by = Auth::id();
+            }
+        });
     }
 }

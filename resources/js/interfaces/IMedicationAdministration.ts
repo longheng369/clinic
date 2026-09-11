@@ -1,22 +1,13 @@
 export interface IMedicationAdministration {
-    id: number;
-    medicine: { id: number; name: string } | null;
-    route: string;
-    dosage: number;
-    unit: string;
-    interval: string;
-    status: 'prescribed' | 'provided' | 'continued' | 'stopped';
-    notes: string | null;
-    recorded_by?: string | null;
-    created_at: string;
-}
-
-export interface IMedicationFormData {
-    visit_id: number;
-    medicine_id: number | null;
-    route: string;
-    dosage: number | null;
-    unit: string;
-    interval: string;
-    notes: string;
+  id: number;
+  cycle_no: number;
+  administration_no: number | null;
+  total_administrations: number | null;
+  scheduled_at: string;
+  administered_at: string | null;
+  status: 'pending' | 'provided' | 'missed' | 'refused' | 'cancelled';
+  administered_by: string | null;
+  unit_price: number | null;
+  reason: string | null;
+  note: string | null;
 }

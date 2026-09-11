@@ -1,12 +1,12 @@
 export interface ICategory {
-    id: number;
-    name: string;
-    description: string | null;
-    created_at: string;
-    updated_at: string;
+  id: number;
+  name: string;
+  description: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface ICategoryFormData {
-    name: string;
-    description: string | null;
+  name: string;
+  description: string | null;
 }

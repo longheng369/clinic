@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable([
     'patient_id',
+    'visit_id',
     'systolic',
     'diastolic',
     'pulse',
@@ -15,19 +16,25 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'rr',
     'spo2',
     'o2_supply',
-    'recorded_by',
+    'note',
+    'created_by',
 ])]
 class PatientSurveillance extends Model
 {
-    protected $table = 'patient_surveillances';
+    protected $table = 'patient_surveillance';
 
     public function patient(): BelongsTo
     {
         return $this->belongsTo(Patient::class);
     }
 
-    public function recordedBy(): BelongsTo
+    public function visit(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'recorded_by');
+        return $this->belongsTo(Visit::class);
+    }
+
+    public function createdBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

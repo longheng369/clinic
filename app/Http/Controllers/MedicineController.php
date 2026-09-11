@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Medicine;
-use App\Models\Category;
-use App\Models\Unit;
 use App\Http\Requests\StoreMedicineRequest;
 use App\Http\Requests\UpdateMedicineRequest;
+use App\Models\Category;
+use App\Models\Medicine;
+use App\Models\Unit;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -20,7 +20,7 @@ class MedicineController extends Controller
             'medicines' => Medicine::with(['category', 'unit'])
                 ->latest()
                 ->when($search, fn ($query) => $query->where('name', 'like', "%{$search}%"))
-                ->paginate(10)
+                ->paginate(20)
                 ->withQueryString(),
             'units' => Unit::orderBy('name')->get(),
             'search' => $search,

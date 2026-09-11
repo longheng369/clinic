@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Consultation;
-use App\Models\Patient;
 use App\Http\Requests\StoreConsultationRequest;
 use App\Http\Requests\UpdateConsultationRequest;
+use App\Models\Consultation;
+use App\Models\Patient;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class ConsultationController extends Controller
 {
     public function index(Patient $patient)
     {
-        return $patient->consultations()
-            ->with('recordedBy')
+        $consultations = $patient->consultations()
+            ->with('createdBy')
             ->latest()
             ->paginate(10)
             ->withQueryString()
@@ -23,46 +24,53 @@ class ConsultationController extends Controller
                 'chief_complaint' => $c->chief_complaint,
                 'diagnosis' => $c->diagnosis,
                 'fee' => $c->fee ? (float) $c->fee : null,
-                'recorded_by' => $c->recordedBy?->name,
+                'created_by' => $c->createdBy?->name,
                 'created_at' => $c->created_at,
             ]);
+
+        return Inertia::render('patients/partials/tab/consultation/index', [
+            'patientId' => $patient->id,
+            'consultations' => $consultations,
+        ]);
     }
 
-    public function create(Patient $patient)
+    public function create(Request $request, Patient $patient)
     {
-        $activeVisits = $patient->visits()->where('status', 'active')->latest()->get();
+        $visit = $patient->visits()
+            ->whereKey($request->query('visit'))
+            ->where('status', 'active')
+            ->first();
 
-        return Inertia::render('consultations/create', [
+        return Inertia::render('patients/partials/tab/consultation/create', [
             'patient' => $patient,
-            'activeVisits' => $activeVisits->map(fn ($v) => [
-                'id' => $v->id,
-                'type' => $v->type,
-                'visit_date' => $v->visit_date,
-            ]),
+            'visitId' => $visit?->id,
         ]);
     }
 
     public function store(StoreConsultationRequest $request, Patient $patient)
     {
-        $visit = $patient->visits()->create([
-            'type' => 'OPD',
-            'recorded_by' => auth()->id(),
-        ]);
+        $visit = $patient->visits()
+            ->whereKey($request->validated('visit_id'))
+            ->where('status', 'active')
+            ->firstOrFail();
 
         $patient->consultations()->create(array_merge(
             $request->validated(),
-            ['visit_id' => $visit->id, 'recorded_by' => auth()->id()]
+            ['visit_id' => $visit->id, 'created_by' => auth()->id()]
         ));
 
-        return redirect()->route('patients.show', $patient->id)
-            ->with('success', 'Consultation created.');
+        return redirect()->route('patients.show', [
+            'patient' => $patient,
+            'visit' => $visit->id,
+            'tab' => 'consultation',
+        ])->with('success', 'Consultation created.');
     }
 
     public function show(Patient $patient, Consultation $consultation)
     {
-        $consultation->load('recordedBy');
+        $consultation->load('createdBy');
 
-        return Inertia::render('consultations/show', [
+        return Inertia::render('patients/partials/tab/consultation/show', [
             'patient' => $patient,
             'consultation' => [
                 'id' => $consultation->id,
@@ -91,12 +99,12 @@ class ConsultationController extends Controller
                 'nose_others_note' => $consultation->nose_others_note,
                 'throat_symptoms' => $consultation->throat_symptoms ?? [],
                 'throat_others_note' => $consultation->throat_others_note,
-                'psycology_symptoms' => $consultation->psycology_symptoms ?? [],
-                'psycology_others_note' => $consultation->psycology_others_note,
+                'psychology_symptoms' => $consultation->psychology_symptoms ?? [],
+                'psychology_others_note' => $consultation->psychology_others_note,
                 'diagnosis' => $consultation->diagnosis,
                 'note' => $consultation->note,
                 'fee' => $consultation->fee ? (float) $consultation->fee : null,
-                'recorded_by' => $consultation->recordedBy?->name,
+                'created_by' => $consultation->createdBy?->name,
                 'created_at' => $consultation->created_at,
             ],
         ]);
@@ -104,9 +112,9 @@ class ConsultationController extends Controller
 
     public function edit(Patient $patient, Consultation $consultation)
     {
-        $consultation->load('recordedBy');
+        $consultation->load('createdBy');
 
-        return Inertia::render('consultations/edit', [
+        return Inertia::render('patients/partials/tab/consultation/edit', [
             'patient' => $patient,
             'consultation' => [
                 'id' => $consultation->id,
@@ -135,12 +143,12 @@ class ConsultationController extends Controller
                 'nose_others_note' => $consultation->nose_others_note,
                 'throat_symptoms' => $consultation->throat_symptoms ?? [],
                 'throat_others_note' => $consultation->throat_others_note,
-                'psycology_symptoms' => $consultation->psycology_symptoms ?? [],
-                'psycology_others_note' => $consultation->psycology_others_note,
+                'psychology_symptoms' => $consultation->psychology_symptoms ?? [],
+                'psychology_others_note' => $consultation->psychology_others_note,
                 'diagnosis' => $consultation->diagnosis,
                 'note' => $consultation->note,
                 'fee' => $consultation->fee ? (float) $consultation->fee : null,
-                'recorded_by' => $consultation->recordedBy?->name,
+                'created_by' => $consultation->createdBy?->name,
                 'created_at' => $consultation->created_at,
             ],
         ]);

@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePatientVaccinationRequest;
+use App\Http\Requests\UpdatePatientVaccinationRequest;
+use App\Models\Appointment;
 use App\Models\Patient;
 use App\Models\PatientVaccination;
-use App\Http\Requests\StorePatientVaccinationRequest;
+use App\Models\Vaccine;
 use Illuminate\Http\Request;
 
 class PatientVaccinationController extends Controller
@@ -30,12 +33,42 @@ class PatientVaccinationController extends Controller
 
     public function store(StorePatientVaccinationRequest $request, Patient $patient)
     {
-        $patient->vaccinations()->create(array_merge(
+        $vaccination = $patient->vaccinations()->create(array_merge(
             $request->validated(),
             ['administered_by' => auth()->id()]
         ));
 
+        $vaccine = Vaccine::find($request->vaccine_id);
+        if ($vaccine) {
+            $nextDose = $patient->nextDoseForVaccine($vaccine);
+
+            if ($nextDose['next_dose_number'] && $nextDose['next_dose_due_date']) {
+                $hasAppointment = Appointment::where('patient_id', $patient->id)
+                    ->where('appointment_date', $nextDose['next_dose_due_date'])
+                    ->where('type', 'vaccination')
+                    ->where('status', 'scheduled')
+                    ->exists();
+
+                if (! $hasAppointment) {
+                    Appointment::create([
+                        'patient_id' => $patient->id,
+                        'appointment_date' => $nextDose['next_dose_due_date'],
+                        'type' => 'vaccination',
+                        'notes' => "{$vaccine->name} Dose {$nextDose['next_dose_number']} follow-up (First dose: {$vaccination->administered_date})",
+                        'created_by' => auth()->id(),
+                    ]);
+                }
+            }
+        }
+
         return back()->with('success', 'Vaccination recorded.');
+    }
+
+    public function update(UpdatePatientVaccinationRequest $request, Patient $patient, PatientVaccination $vaccination)
+    {
+        $vaccination->update($request->validated());
+
+        return back()->with('success', 'Vaccination record updated.');
     }
 
     public function destroy(Patient $patient, PatientVaccination $vaccination)

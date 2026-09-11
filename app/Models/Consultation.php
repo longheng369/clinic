@@ -33,12 +33,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'nose_others_note',
     'throat_symptoms',
     'throat_others_note',
-    'psycology_symptoms',
-    'psycology_others_note',
+    'psychology_symptoms',
+    'psychology_others_note',
     'diagnosis',
     'note',
     'fee',
-    'recorded_by',
+    'created_by',
 ])]
 class Consultation extends Model
 {
@@ -58,7 +58,7 @@ class Consultation extends Model
             'ear_symptoms' => 'array',
             'nose_symptoms' => 'array',
             'throat_symptoms' => 'array',
-            'psycology_symptoms' => 'array',
+            'psychology_symptoms' => 'array',
         ];
     }
 
@@ -72,8 +72,8 @@ class Consultation extends Model
         return $this->belongsTo(Visit::class);
     }
 
-    public function recordedBy(): BelongsTo
+    public function createdBy(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'recorded_by');
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

@@ -9,6 +9,7 @@ class StoreConsultationRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'visit_id' => ['required', 'integer', 'exists:visits,id'],
             'weight' => ['nullable', 'numeric', 'min:0', 'max:500'],
             'chief_complaint' => ['required', 'string', 'max:65535'],
             'respiratory_system_symptoms' => ['nullable', 'array'],
@@ -33,8 +34,8 @@ class StoreConsultationRequest extends FormRequest
             'nose_others_note' => ['nullable', 'string', 'max:65535'],
             'throat_symptoms' => ['nullable', 'array'],
             'throat_others_note' => ['nullable', 'string', 'max:65535'],
-            'psycology_symptoms' => ['nullable', 'array'],
-            'psycology_others_note' => ['nullable', 'string', 'max:65535'],
+            'psychology_symptoms' => ['nullable', 'array'],
+            'psychology_others_note' => ['nullable', 'string', 'max:65535'],
             'diagnosis' => ['nullable', 'string', 'max:65535'],
             'note' => ['nullable', 'string', 'max:65535'],
             'fee' => ['nullable', 'numeric', 'min:0'],

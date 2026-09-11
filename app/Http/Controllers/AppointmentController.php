@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreAppointmentRequest;
+use App\Http\Requests\UpdateAppointmentRequest;
 use App\Models\Appointment;
 use App\Models\Patient;
 use App\Models\Vaccine;
-use App\Http\Requests\StoreAppointmentRequest;
-use App\Http\Requests\UpdateAppointmentRequest;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -26,9 +26,10 @@ class AppointmentController extends Controller
             ->get()
             ->map(fn ($p) => [
                 'id' => $p->id,
-                'name' => "{$p->khmer_first_name} {$p->khmer_last_name}" . ($p->first_name ? " ({$p->last_name} {$p->first_name})" : ''),
+                'name' => "{$p->khmer_first_name} {$p->khmer_last_name}".($p->first_name ? " ({$p->last_name} {$p->first_name})" : ''),
             ]);
     }
+
     public function index(Request $request)
     {
         $search = $request->query('search');
@@ -55,7 +56,7 @@ class AppointmentController extends Controller
                     'type' => $a->type,
                     'status' => $a->status,
                     'notes' => $a->notes,
-                    'has_vaccine_alerts' => !empty($a->vaccine_alerts),
+                    'has_vaccine_alerts' => ! empty($a->vaccine_alerts),
                     'created_by' => $a->createdBy?->name,
                     'created_at' => $a->created_at,
                 ]),
@@ -107,7 +108,7 @@ class AppointmentController extends Controller
                     ];
                 }
             }
-            $vaccineAlerts = !empty($alerts) ? $alerts : null;
+            $vaccineAlerts = ! empty($alerts) ? $alerts : null;
         }
 
         Appointment::create(array_merge(

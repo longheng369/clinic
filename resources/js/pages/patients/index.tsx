@@ -1,190 +1,268 @@
-import { usePage, router } from '@inertiajs/react'
-import { Head } from '@inertiajs/react'
-import { useModal } from '@/components/modal'
-import { Pencil, Trash2, Plus, Search, X, Eye } from 'lucide-react'
-import PatientForm from './partials/createOrEdit'
-import { IPatient } from '@/interfaces/IPatient'
-import { Button } from '@/components/ui/button'
-import IconButton from '@/components/button/iconButton'
-import DataTable, { type Column } from '@/components/table/DataTable'
-import TextInput from '@/components/textInput'
-import { useState, useEffect } from 'react'
-import { formatDob } from '@/utils/date'
+import { usePage, router } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
+import { useModal } from '@/components/modal';
+import { Pencil, Trash2, Plus, Eye } from 'lucide-react';
+import PatientForm from './partials/createOrEdit';
+import { IPatient } from '@/interfaces/IPatient';
+import {
+  DataGrid,
+  type GridColDef,
+  type GridPaginationModel,
+  type GridRenderCellParams,
+  GridActionsCellItem,
+} from '@mui/x-data-grid';
+import { useState, useEffect, useCallback } from 'react';
+import SearchBar from '@/components/searchBar';
+import { formatDob } from '@/utils/date';
+import { Box, Typography, Button } from '@mui/material';
 
 interface PaginatedData<T> {
-    data: T[]
-    current_page: number
-    last_page: number
-    per_page: number
-    total: number
-    from: number
-    to: number
+  data: T[];
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+  from: number;
+  to: number;
 }
 
 const Patient = () => {
-    const { openModal, closeModal, openAlert } = useModal()
+  const { openModal, openAlert } = useModal();
 
-    const { patients, search: searchProp } = usePage<{
-        patients: PaginatedData<IPatient>
-        search: string | null
-    }>().props
+  const { patients, search: searchProp } = usePage<{
+    patients: PaginatedData<IPatient>;
+    search: string | null;
+  }>().props;
 
-    const [searchTerm, setSearchTerm] = useState(searchProp ?? '')
+  const [searchTerm, setSearchTerm] = useState(searchProp ?? '');
 
-    useEffect(() => {
-        const timeout = setTimeout(() => {
-            if ((searchTerm || '') === (searchProp || '')) return
-            if (searchTerm) {
-                router.get('/patients', { search: searchTerm }, { preserveState: true, replace: true })
-            } else {
-                router.get('/patients', {}, { preserveState: true, replace: true })
-            }
-        }, 300)
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if ((searchTerm || '') === (searchProp || '')) return;
+      if (searchTerm) {
+        router.get(
+          '/patients',
+          { search: searchTerm, page: 1 },
+          { preserveState: true, replace: true },
+        );
+      } else {
+        router.get('/patients', {}, { preserveState: true, replace: true });
+      }
+    }, 300);
 
-        return () => clearTimeout(timeout)
-    }, [searchTerm])
+    return () => clearTimeout(timeout);
+  }, [searchTerm]);
 
-    const handleClear = () => {
-        setSearchTerm('')
-    }
+  const handlePaginationModelChange = useCallback(
+    (model: GridPaginationModel) => {
+      const page = model.page + 1;
+      const params: Record<string, string | number> = { page };
+      if (searchProp) params.search = searchProp;
+      router.get('/patients', params, { preserveState: true, replace: true });
+    },
+    [searchProp],
+  );
 
-    const baseUrl = searchProp
-        ? `/patients?search=${encodeURIComponent(searchProp)}`
-        : '/patients'
+  const handleCreate = () => {
+    openModal({
+      title: (
+        <Typography variant="h5" sx={{ fontWeight: 'medium' }}>
+          New Patient
+        </Typography>
+      ),
+      content: <PatientForm />,
+      config: { preventClickAway: true, maxWidth: '4xl' },
+    });
+  };
 
-    const handleCreate = () => {
-        openModal({
-            title: 'New Patient',
-            content: <PatientForm onClose={() => closeModal()} />,
-            config: { preventClickAway: true, maxWidth: '4xl' }
-        })
-    }
+  const handleEdit = (patient: IPatient) => {
+    openModal({
+      title: (
+        <Typography variant="h5" sx={{ fontWeight: 'medium' }}>
+          Edit{' '}
+          <Typography
+            variant="h6"
+            component="span"
+            sx={{ fontFamily: 'var(--font-khmer)' }}
+          >
+            {patient.khmer_first_name} {patient.khmer_last_name}
+          </Typography>
+        </Typography>
+      ),
+      content: <PatientForm patient={patient} />,
+      config: { preventClickAway: true, maxWidth: '4xl' },
+    });
+  };
 
-    const handleEdit = (patient: IPatient) => {
-        openModal({
-            title: `Edit ${patient.khmer_first_name} ${patient.khmer_last_name}`,
-            content: <PatientForm patient={patient} onClose={() => closeModal()} />,
-            config: { preventClickAway: true, maxWidth: '4xl' }
-        })
-    }
+  const handleDelete = (patient: IPatient) => {
+    openAlert({
+      message: 'Delete this patient?',
+      description: 'This action cannot be undone.',
+      variant: 'danger',
+      confirmLabel: 'Delete',
+      onConfirm: () => router.delete(`/patients/${patient.id}`),
+    });
+  };
 
-    const handleDelete = (patient: IPatient) => {
-        openAlert({
-            message: 'Delete this patient?',
-            description: 'This action cannot be undone.',
-            variant: 'danger',
-            confirmLabel: 'Delete',
-            onConfirm: () => router.delete(`/patients/${patient.id}`)
-        })
-    }
+  const columns: GridColDef[] = [
+    {
+      field: 'khmer_name',
+      headerName: 'ឈ្មោះខ្មែរ',
+      flex: 1,
+      minWidth: 180,
+      valueGetter: (_value, row: IPatient) =>
+        `${row.khmer_last_name} ${row.khmer_first_name}`,
+    },
+    {
+      field: 'english_name',
+      headerName: 'ឈ្មោះជាភាសាអង់គ្លេស',
+      flex: 1,
+      minWidth: 180,
+      valueGetter: (_value, row: IPatient) =>
+        row.first_name
+          ? `${row.last_name ?? ''} ${row.first_name}`.trim()
+          : null,
+      renderCell: (params: GridRenderCellParams<IPatient>) =>
+        params.value ?? (
+          <Typography component="span" color="text.disabled">
+            &mdash;
+          </Typography>
+        ),
+    },
+    {
+      field: 'phone_number',
+      headerName: 'លេខទូរស័ព្ទ',
+      flex: 1,
+      minWidth: 130,
+    },
+    {
+      field: 'gender',
+      headerName: 'ភេទ',
+      flex: 1,
+      minWidth: 90,
+      renderCell: (params: GridRenderCellParams<IPatient>) => (
+        <Typography
+          component="span"
+          sx={{
+            textTransform: 'capitalize',
+            color: params.value === 'male' ? 'info.main' : 'error.main',
+          }}
+        >
+          {params.value}
+        </Typography>
+      ),
+    },
+    {
+      field: 'date_of_birth',
+      headerName: 'ថ្ងៃខែឆ្នាំកំណើត',
+      flex: 1,
+      minWidth: 130,
+      valueGetter: (_value, row: IPatient) => formatDob(row.date_of_birth),
+    },
+    {
+      field: 'blood_group',
+      headerName: 'ប្រភេទឈាម',
+      flex: 1,
+      minWidth: 110,
+      renderCell: (params: GridRenderCellParams<IPatient>) =>
+        params.value ?? (
+          <Typography component="span" color="text.disabled">
+            &mdash;
+          </Typography>
+        ),
+    },
+    {
+      field: 'actions',
+      type: 'actions',
+      headerName: 'សកម្មភាព',
+      width: 150,
+      getActions: (params) => [
+        <GridActionsCellItem
+          key={`view-${params.id}`}
+          icon={<Eye size={16} color="#64748b" />}
+          label={`View ${params.row.khmer_first_name}`}
+          onClick={() => router.visit(`/patients/${params.id}`)}
+          showInMenu={false}
+        />,
+        <GridActionsCellItem
+          key={`edit-${params.id}`}
+          icon={<Pencil size={16} color="#2563eb" />}
+          label={`Edit ${params.row.khmer_first_name}`}
+          onClick={() => handleEdit(params.row as IPatient)}
+          showInMenu={false}
+        />,
+        <GridActionsCellItem
+          key={`delete-${params.id}`}
+          icon={<Trash2 size={16} color="#dc2626" />}
+          label={`Delete ${params.row.khmer_first_name}`}
+          onClick={() => handleDelete(params.row as IPatient)}
+          showInMenu={false}
+        />,
+      ],
+    },
+  ];
 
-    const columns: Column<IPatient>[] = [
-        {
-            header: 'Khmer Name',
-            className: 'font-medium text-gray-900',
-            cell: (p) => <span className='font-khmer text-[16px]'>{p.khmer_last_name} {p.khmer_first_name}</span>,
-        },
-        {
-            header: 'English Name',
-            className: '',
-            cell: (p) => p.first_name
-                ? `${p.last_name ?? ''} ${p.first_name}`.trim()
-                : <span className="text-gray-300">&mdash;</span>,
-        },
-        {
-            header: 'Phone',
-            className: 'whitespace-nowrap',
-            cell: (p) => p.phone_number,
-        },
-        {
-            header: 'Gender',
-            className: '',
-            cell: (p) => (
-                <span className={`capitalize ${p.gender === 'male' ? 'text-blue-600' : 'text-pink-600'}`}>
-                    {p.gender}
-                </span>
-            ),
-        },
-        {
-            header: 'DOB',
-            className: 'whitespace-nowrap',
-            cell: (p) => formatDob(p.date_of_birth),
-        },
-        {
-            header: 'Blood',
-            className: '',
-            cell: (p) => p.blood_group ?? <span className="text-gray-300">&mdash;</span>,
-        },
-        {
-            header: 'Actions',
-            className: 'text-end',
-            cell: (p) => (
-                <div className="flex items-center justify-end">
-                    <IconButton onClick={() => router.visit(`/patients/${p.id}`)} aria-label={`View ${p.khmer_first_name}`}>
-                        <Eye size={16} />
-                    </IconButton>
-                    <IconButton onClick={() => handleEdit(p)} aria-label={`Edit ${p.khmer_first_name}`}>
-                        <Pencil size={16} />
-                    </IconButton>
-                    <IconButton color="error" onClick={() => handleDelete(p)} aria-label={`Delete ${p.khmer_first_name}`}>
-                        <Trash2 size={16} />
-                    </IconButton>
-                </div>
-            ),
-        },
-    ]
+  return (
+    <>
+      <Head title="Patients" />
+      <Box
+        sx={{ p: 4, height: '100%', display: 'flex', flexDirection: 'column' }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Box>
+            <Typography variant="h5">Patients</Typography>
+            <Typography variant="body1" color="textSecondary">
+              Manage your clinic patients
+            </Typography>
+          </Box>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 2,
+            }}
+          >
+            <SearchBar
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search patient"
+            />
+            <Button
+              onClick={handleCreate}
+              variant="contained"
+              startIcon={<Plus size={16} />}
+            >
+              New Patient
+            </Button>
+          </Box>
+        </Box>
 
-    const { data, ...pagination } = patients
+        <Box sx={{ flex: 1, mt: 3, minHeight: 0 }}>
+          <DataGrid
+            rows={patients.data}
+            columns={columns}
+            rowCount={patients.total}
+            paginationMode="server"
+            paginationModel={{
+              page: patients.current_page - 1,
+              pageSize: patients.per_page,
+            }}
+            onPaginationModelChange={handlePaginationModelChange}
+            pageSizeOptions={[20]}
+            disableRowSelectionOnClick
+            sx={{ height: '100%' }}
+          />
+        </Box>
+      </Box>
+    </>
+  );
+};
 
-    return (
-        <>
-            <Head title="Patients" />
-            <div className="p-8">
-                <div className="mb-6 flex items-center justify-between">
-                    <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Patients</h1>
-                        <p className="mt-1 text-sm text-gray-500">
-                            Manage your clinic patients
-                        </p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                        <div className="relative">
-                            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                            <TextInput
-                                type="text"
-                                placeholder="Search patients..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="pl-9 pr-8 w-64 py-2!"
-                            />
-                            {searchTerm && (
-                                <button
-                                    type="button"
-                                    onClick={handleClear}
-                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                                >
-                                    <X size={14} />
-                                </button>
-                            )}
-                        </div>
-                        <Button onClick={handleCreate}>
-                            <Plus size={20} /> New Patient
-                        </Button>
-                    </div>
-                </div>
-
-                <DataTable
-                    data={data}
-                    keyExtractor={(p) => p.id}
-                    columns={columns}
-                    emptyMessage="No patients found"
-                    emptyDescription="Get started by creating a new patient."
-                    pagination={pagination}
-                    baseUrl={baseUrl}
-                />
-            </div>
-        </>
-    )
-}
-
-export default Patient
+export default Patient;

@@ -1,186 +1,251 @@
-import { usePage, router } from '@inertiajs/react'
-import { Head } from '@inertiajs/react'
-import { useModal } from '@/components/modal'
-import { Pencil, Trash2, Plus, Search, X } from 'lucide-react'
-import MedicineForm from './partials/createOrEdit'
-import { IMedicine } from '@/interfaces/IMedicine'
+import { usePage, router } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
+import { useModal } from '@/components/modal';
+import { Pencil, Trash2, Plus } from 'lucide-react';
+import MedicineForm from './partials/createOrEdit';
+import { IMedicine } from '@/interfaces/IMedicine';
 import { IUnit } from '@/interfaces/IUnit';
-import Button from '@/components/button/button'
-import IconButton from '@/components/button/iconButton'
-import DataTable, { type Column } from '@/components/table/DataTable'
-import TextInput from '@/components/textInput'
-import { useState, useEffect } from 'react'
-import { formatCreatedDateTime } from '@/utils/date'
+import {
+  DataGrid,
+  type GridColDef,
+  type GridPaginationModel,
+  type GridRenderCellParams,
+  GridActionsCellItem,
+} from '@mui/x-data-grid';
+import { useState, useEffect, useCallback } from 'react';
+import SearchBar from '@/components/searchBar';
+import { formatDate } from '@/utils/date';
+import { Box, Typography, Button } from '@mui/material';
 
 interface PaginatedData<T> {
-    data: T[]
-    current_page: number
-    last_page: number
-    per_page: number
-    total: number
-    from: number
-    to: number
+  data: T[];
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+  from: number;
+  to: number;
 }
 
 const Medicine = () => {
-    const { openModal, closeModal, openAlert } = useModal()
+  const { openModal, openAlert } = useModal();
 
-    const { medicines, units, search: searchProp } = usePage<{
-        medicines: PaginatedData<IMedicine>
-        units: IUnit[]
-        search: string | null
-    }>().props
+  const {
+    medicines,
+    units,
+    search: searchProp,
+  } = usePage<{
+    medicines: PaginatedData<IMedicine>;
+    units: IUnit[];
+    search: string | null;
+  }>().props;
 
-    const [searchTerm, setSearchTerm] = useState(searchProp ?? '')
+  const [searchTerm, setSearchTerm] = useState(searchProp ?? '');
 
-    useEffect(() => {
-        const timeout = setTimeout(() => {
-            if (searchTerm === searchProp) return
-            if (searchTerm) {
-                router.get('/medicines', { search: searchTerm }, { preserveState: true, replace: true })
-            } else {
-                router.get('/medicines', {}, { preserveState: true, replace: true })
-            }
-        }, 300)
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if ((searchTerm || '') === (searchProp || '')) return;
+      if (searchTerm) {
+        router.get(
+          '/medicines',
+          { search: searchTerm, page: 1 },
+          { preserveState: true, replace: true },
+        );
+      } else {
+        router.get('/medicines', {}, { preserveState: true, replace: true });
+      }
+    }, 300);
 
-        return () => clearTimeout(timeout)
-    }, [searchTerm])
+    return () => clearTimeout(timeout);
+  }, [searchTerm]);
 
-    const handleClear = () => {
-        setSearchTerm('')
-    }
+  const handlePaginationModelChange = useCallback(
+    (model: GridPaginationModel) => {
+      const page = model.page + 1;
+      const params: Record<string, string | number> = { page };
+      if (searchProp) params.search = searchProp;
+      router.get('/medicines', params, { preserveState: true, replace: true });
+    },
+    [searchProp],
+  );
 
-    const baseUrl = searchProp
-        ? `/medicines?search=${encodeURIComponent(searchProp)}`
-        : '/medicines'
+  const handleCreate = () => {
+    openModal({
+      title: (
+        <Typography variant="h5" sx={{ fontWeight: 'medium' }}>
+          New Medicine
+        </Typography>
+      ),
+      content: <MedicineForm units={units} />,
+      config: { preventClickAway: true, maxWidth: '2xl' },
+    });
+  };
 
-    const handleCreate = () => {
-        openModal({
-            title: 'New Medicine',
-            content: <MedicineForm units={units} onClose={() => closeModal()} />,
-            config: { preventClickAway: true, maxWidth: '2xl' },
-        })
-    }
+  const handleEdit = (medicine: IMedicine) => {
+    openModal({
+      title: `Edit ${medicine.name}`,
+      content: <MedicineForm medicine={medicine} units={units} />,
+      config: { preventClickAway: true, maxWidth: '2xl' },
+    });
+  };
 
-    const handleEdit = (medicine: IMedicine) => {
-        openModal({
-            title: `Edit ${medicine.name}`,
-            content: <MedicineForm medicine={medicine} units={units} onClose={() => closeModal()} />,
-            config: { preventClickAway: true, maxWidth: '2xl' }
-        })
-    }
+  const handleDelete = (med: IMedicine) => {
+    openAlert({
+      message: 'Delete this medicine?',
+      description: 'This action cannot be undone.',
+      variant: 'danger',
+      confirmLabel: 'Delete',
+      onConfirm: () => router.delete(`/medicines/${med.id}`),
+    });
+  };
 
-    const handleDelete = (medicine: IMedicine) => {
-        openAlert({
-            message: 'Delete this medicine?',
-            description: 'This action cannot be undone.',
-            variant: 'danger',
-            confirmLabel: 'Delete',
-            onConfirm: () => router.delete(`/medicines/${medicine.id}`)
-        })
-    }
+  const columns: GridColDef[] = [
+    { field: 'name', headerName: 'ឈ្មោះ', flex: 1, minWidth: 150 },
+    { field: 'type', headerName: 'ប្រភេទ', flex: 1, minWidth: 120 },
+    {
+      field: 'category',
+      headerName: 'ប្រភេទចំណាត់ថ្នាក់',
+      flex: 1,
+      minWidth: 180,
+      valueGetter: (_value, row: IMedicine) => row.category?.name ?? null,
+      renderCell: (params: GridRenderCellParams<IMedicine>) =>
+        params.value ?? (
+          <Typography component="span" color="text.disabled">
+            &mdash;
+          </Typography>
+        ),
+    },
+    {
+      field: 'unit',
+      headerName: 'ឯកតា',
+      flex: 1,
+      minWidth: 100,
+      valueGetter: (_value, row: IMedicine) => row.unit?.name ?? null,
+      renderCell: (params: GridRenderCellParams<IMedicine>) =>
+        params.value ?? (
+          <Typography component="span" color="text.disabled">
+            &mdash;
+          </Typography>
+        ),
+    },
+    {
+      field: 'dosage',
+      headerName: 'កម្រិត',
+      flex: 1,
+      minWidth: 120
+    },
+    {
+      field: 'unit_price',
+      headerName: 'តម្លៃឯកតា',
+      flex: 1,
+      minWidth: 120,
+      valueGetter: (_value, row: IMedicine) =>
+        row.unit_price != null ? `$${Number(row.unit_price).toFixed(2)}` : null,
+      renderCell: (params: GridRenderCellParams<IMedicine>) =>
+        params.value ?? (
+          <Typography component="span" color="text.disabled">
+            &mdash;
+          </Typography>
+        ),
+    },
+    {
+      field: 'created_at',
+      headerName: 'បានបង្កើត',
+      flex: 1,
+      minWidth: 160,
+      valueGetter: (_value, row: IMedicine) => formatDate(row.created_at),
+    },
+    {
+      field: 'actions',
+      type: 'actions',
+      headerName: 'សកម្មភាព',
+      width: 120,
+      getActions: (params) => [
+        <GridActionsCellItem
+          key={`edit-${params.id}`}
+          icon={<Pencil size={16} color="#2563eb" />}
+          label={`Edit ${params.row.name}`}
+          onClick={() => handleEdit(params.row as IMedicine)}
+          showInMenu={false}
+        />,
+        <GridActionsCellItem
+          key={`delete-${params.id}`}
+          icon={<Trash2 size={16} color="#dc2626" />}
+          label={`Delete ${params.row.name}`}
+          onClick={() => handleDelete(params.row as IMedicine)}
+          showInMenu={false}
+        />,
+      ],
+    },
+  ];
 
-    const columns: Column<IMedicine>[] = [
-        {
-            header: 'Name',
-            className: 'font-medium text-gray-900',
-            cell: (med) => med.name,
-        },
-        {
-            header: 'Type',
-            cell: (med) => med.type,
-        },
-        {
-            header: 'Category',
-            cell: (med) => med.category?.name ?? <span className="text-gray-300">&mdash;</span>,
-        },
-        {
-            header: 'Unit',
-            cell: (med) => med.unit?.name ?? <span className="text-gray-300">&mdash;</span>,
-        },
-        {
-            header: 'Dosage',
-            cell: (med) => med.dosage ?? <span className="text-gray-300">&mdash;</span>,
-        },
-        {
-            header: 'Unit Price',
-            cell: (med) => med.unit_price != null ? `$${Number(med.unit_price).toFixed(2)}` : <span className="text-gray-300">&mdash;</span>,
-        },
-        {
-            header: 'Created',
-            className: 'whitespace-nowrap',
-            cell: (med) => formatCreatedDateTime(med.created_at)
-        },
-        {
-            header: 'Actions',
-            className: 'text-end',
-            cell: (med) => (
-                <div className="flex items-center justify-end">
-                    <IconButton onClick={() => handleEdit(med)} aria-label={`Edit ${med.name}`}>
-                        <Pencil size={16} />
-                    </IconButton>
-                    <IconButton color="error" onClick={() => handleDelete(med)} aria-label={`Delete ${med.name}`}>
-                        <Trash2 size={16} />
-                    </IconButton>
-                </div>
-            ),
-        },
-    ]
+  return (
+    <>
+      <Head title="Medicines" />
+      <Box
+        sx={{ p: 4, height: '100%', display: 'flex', flexDirection: 'column' }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Box>
+            <Typography variant="h5">Medicines</Typography>
+            <Typography variant="body1" color="textSecondary">
+              Manage your clinic medicines
+            </Typography>
+          </Box>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 2,
+            }}
+          >
+            <SearchBar
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search medicine"
+            />
+            <Button
+              onClick={handleCreate}
+              variant="contained"
+              startIcon={<Plus size={16} />}
+            >
+              New Medicine
+            </Button>
+          </Box>
+        </Box>
 
-    const { data, ...pagination } = medicines
+        <Box sx={{ flex: 1, mt: 3, minHeight: 0 }}>
+          <DataGrid
+            rows={medicines.data}
+            columns={columns}
+            rowCount={medicines.total}
+            paginationMode="server"
+            paginationModel={{
+              page: medicines.current_page - 1,
+              pageSize: medicines.per_page,
+            }}
+            onPaginationModelChange={handlePaginationModelChange}
+            pageSizeOptions={[20]}
+            disableRowSelectionOnClick
+            sx={{
+              height: '100%',
+              '& .MuiDataGrid-columnHeaderTitle': {
+                fontFamily: 'var(--font-khmer)',
+                fontWeight: 'bold',
+              },
+            }}
+          />
+        </Box>
+      </Box>
+    </>
+  );
+};
 
-    return (
-        <>
-            <Head title="Medicines" />
-            <div className="p-8">
-                <div className="mb-6 flex items-center justify-between">
-                    <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Medicines</h1>
-                        <p className="mt-1 text-sm text-gray-500">
-                            Manage your clinic medicines
-                        </p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                        <div className="relative">
-                            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                            <TextInput
-                                type="text"
-                                placeholder="Search medicines..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="pl-9 pr-8 w-64 py-2!"
-                            />
-                            {searchTerm && (
-                                <button
-                                    type="button"
-                                    onClick={handleClear}
-                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                                >
-                                    <X size={14} />
-                                </button>
-                            )}
-                        </div>
-                        <Button
-                            onClick={handleCreate}
-                            startIcon={<Plus size={20} />}
-                        >
-                            New Medicine
-                        </Button>
-                    </div>
-                </div>
-
-                <DataTable
-                    data={data}
-                    keyExtractor={(med) => med.id}
-                    columns={columns}
-                    emptyMessage="No medicines found"
-                    emptyDescription="Get started by creating a new medicine."
-                    pagination={pagination}
-                    baseUrl={baseUrl}
-                />
-            </div>
-        </>
-    )
-}
-
-export default Medicine
+export default Medicine;
