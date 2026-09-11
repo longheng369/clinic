@@ -13,7 +13,7 @@ import {
 import { useState, useEffect, useCallback } from 'react';
 import SearchBar from '@/components/searchBar';
 import { formatCreatedDateTime } from '@/utils/date';
-import { Box, Typography, Button } from '@mui/material';
+import { Box, Typography, Button, Stack } from '@mui/material';
 
 interface PaginatedData<T> {
   data: T[];
@@ -152,9 +152,7 @@ const LapTests = () => {
   return (
     <>
       <Head title="Lap Tests" />
-      <Box
-        sx={{ p: 4, height: '100%', display: 'flex', flexDirection: 'column' }}
-      >
+      <Stack sx={{ p: 4, height: '100%' }}>
         <Box
           sx={{
             display: 'flex',
@@ -162,18 +160,13 @@ const LapTests = () => {
             justifyContent: 'space-between',
           }}
         >
-          <Box>
-            <Typography variant="h5">Lap Tests</Typography>
-            <Typography variant="body1" color="textSecondary">
-              Manage your lab tests
-            </Typography>
-          </Box>
+          <Typography variant="h5">Lap Tests</Typography>
           <Box
             sx={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: 2,
+              gap: 1,
             }}
           >
             <SearchBar
@@ -186,7 +179,7 @@ const LapTests = () => {
               variant="contained"
               startIcon={<Plus size={16} />}
             >
-              New Lap Test
+              New
             </Button>
           </Box>
         </Box>
@@ -207,7 +200,7 @@ const LapTests = () => {
             sx={{ height: '100%' }}
           />
         </Box>
-      </Box>
+      </Stack>
     </>
   );
 };
