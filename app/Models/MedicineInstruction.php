@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['code', 'name', 'description'])]
+#[Fillable(['name', 'description'])]
 class MedicineInstruction extends Model
 {
 }

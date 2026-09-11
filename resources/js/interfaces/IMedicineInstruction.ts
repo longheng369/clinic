@@ -1,6 +1,5 @@
 export interface IMedicineInstruction {
   id: number;
-  code: string;
   name: string;
   description: string | null;
   created_at: string;
@@ -8,7 +7,6 @@ export interface IMedicineInstruction {
 }
 
 export interface IMedicineInstructionFormData {
-  code: string;
   name: string;
   description: string | null;
 }

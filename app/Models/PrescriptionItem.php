@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'number_of_day',
     'quantity',
     'notes',
-    'instruction',
+    'medicine_instruction_id',
 ])]
 class PrescriptionItem extends Model
 {

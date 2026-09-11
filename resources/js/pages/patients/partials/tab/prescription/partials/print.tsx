@@ -21,13 +21,20 @@ type Props = {
   patient: IPatient;
   prescription: IPrescription;
   diagnoses: string[]
+  instructionOptions: { label: string; value: number }[];
 }
 
 const formatGenderValue = (gender: string) => {
   return gender === 'male' ? 'ប្រុស' : 'ស្រី';
 }
 
-const Print = ({ onClose, patient, prescription, diagnoses }: Props) => {
+const Print = ({
+  onClose,
+  patient,
+  prescription,
+  diagnoses,
+  instructionOptions,
+}: Props) => {
   return (
     <Box className="prescription-printable">
       <Box>
@@ -141,7 +148,7 @@ const Print = ({ onClose, patient, prescription, diagnoses }: Props) => {
                   <TableCell>{item.medicine?.name}</TableCell>
                   <TableCell>{item.quantity}</TableCell>
                   <TableCell>
-                    {item.instruction}{' '}
+                    {instructionOptions.find((opt) => opt.value === item.medicine_instruction_id)?.label ?? ''}{' '}
                     {item.morning && `ព្រឹក ${item.morning} ${item.unit?.name}`}{' '}
                     {item.afternoon &&
                       `រសៀល ${item.afternoon} ${item.unit?.name}`}{' '}

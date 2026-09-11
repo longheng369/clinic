@@ -12,7 +12,7 @@ export interface IPrescriptionItem {
   number_of_day: number | null;
   quantity: number | null;
   notes: string | null;
-  instruction: string;
+  medicine_instruction_id: number | null;
 }
 
 export interface IPrescription {
@@ -42,7 +42,7 @@ export interface IPrescriptionItemFormData {
   night: number | null;
   numberOfDay: number | null;
   frequency?: string;
-  instruction: IOption<string> | null;
+  instruction: IOption<number> | null;
   notes: string | null;
 }
 

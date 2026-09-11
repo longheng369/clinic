@@ -52,26 +52,26 @@ class DatabaseSeeder extends Seeder
         }
 
         $medicineInstructions = [
-            ['code' => 'BEFORE_MEAL', 'name' => 'មុនបាយ'],
-            ['code' => 'DURING_MEAL', 'name' => 'អំឡុងពេលអាហារ'],
-            ['code' => 'AFTER_MEAL', 'name' => 'ក្រោយបាយ'],
-            ['code' => 'BEFORE_BED', 'name' => 'មុនចូលគេង'],
-            ['code' => 'IN_THE_MORNING', 'name' => 'ពេលព្រឹក'],
-            ['code' => 'IN_THE_AFTERNOON', 'name' => 'ពេលថ្ងៃ'],
-            ['code' => 'IN_THE_EVENING', 'name' => 'ពេលល្ងាច'],
-            ['code' => 'AT_NIGHT', 'name' => 'ពេលយប់'],
-            ['code' => 'ON_EMPTY_STOMACH', 'name' => 'ពេលឃ្លាន'],
-            ['code' => 'WITH_PLENTY_OF_WATER', 'name' => 'ជាមួយទឹកច្រើន'],
-            ['code' => 'WITH_WATER', 'name' => 'ផឹកជាមួយទឹក'],
-            ['code' => 'DO_NOT_SWALLOW', 'name' => 'មិនត្រូវលេប'],
-            ['code' => 'FOR_EXTERNAL_USE', 'name' => 'សម្រាប់លាបខាងក្រៅ'],
-            ['code' => 'FOR_IRRIGATION', 'name' => 'សម្រាប់លាង'],
-            ['code' => 'AS_NEEDED', 'name' => 'ប្រើតាមតម្រូវការ'],
-            ['code' => 'AS_PRESCRIBED', 'name' => 'ប្រើតាមវេជ្ជបញ្ជា'],
+            ['name' => 'មុនបាយ'],
+            ['name' => 'អំឡុងពេលអាហារ'],
+            ['name' => 'ក្រោយបាយ'],
+            ['name' => 'មុនចូលគេង'],
+            ['name' => 'ពេលព្រឹក'],
+            ['name' => 'ពេលថ្ងៃ'],
+            ['name' => 'ពេលល្ងាច'],
+            ['name' => 'ពេលយប់'],
+            ['name' => 'ពេលឃ្លាន'],
+            ['name' => 'ជាមួយទឹកច្រើន'],
+            ['name' => 'ផឹកជាមួយទឹក'],
+            ['name' => 'មិនត្រូវលេប'],
+            ['name' => 'សម្រាប់លាបខាងក្រៅ'],
+            ['name' => 'សម្រាប់លាង'],
+            ['name' => 'ប្រើតាមតម្រូវការ'],
+            ['name' => 'ប្រើតាមវេជ្ជបញ្ជា'],
         ];
 
         foreach ($medicineInstructions as $instruction) {
-            MedicineInstruction::firstOrCreate(['code' => $instruction['code']], $instruction);
+            MedicineInstruction::firstOrCreate($instruction);
         }
 
         $lapTests = [

@@ -59,10 +59,10 @@ const MedicineInstructionForm = ({ medicineInstruction }: MedicineInstructionFor
           });
         },
         onError: (errors) => {
-          if (errors.code || errors.name) {
+          if (errors.name) {
             toast('Unable to create medicine instruction', {
               variant: 'error',
-              description: errors.code ?? errors.name,
+              description: errors.name,
             });
           }
         },
@@ -77,16 +77,7 @@ const MedicineInstructionForm = ({ medicineInstruction }: MedicineInstructionFor
     <Box component="form" onSubmit={onSubmit} noValidate>
       <DialogContent sx={{ borderTop: 1, borderColor: 'divider' }}>
         <Grid container spacing={2}>
-          <Grid size={{ md: 6 }}>
-            <Input
-              label="Code"
-              control={control}
-              placeholder="e.g. BEFORE_MEAL"
-              name="code"
-              rules={{ required: 'This field is required' }}
-            />
-          </Grid>
-          <Grid size={{ md: 6 }}>
+          <Grid size={{ md: 12 }}>
             <Input
               label="Name"
               control={control}

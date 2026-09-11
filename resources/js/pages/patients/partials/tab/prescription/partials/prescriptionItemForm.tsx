@@ -13,7 +13,7 @@ interface Props {
   onClose: () => void;
   medicines: { id: number; name: string; unit?: { id: number; name: string } | null; dosage?: string | null }[];
   routes: { id: number; code: string; name: string }[];
-  instructions: IOption<string>[];
+  instructions: IOption<number>[];
   defaultValues?: IPrescriptionItemFormData;
 }
 
@@ -23,7 +23,7 @@ type PrescriptionItemFormValues = Omit<
 > & {
   medicine: number | '';
   unit: string | '';
-  instruction: string | null;
+  instruction: number | null;
 };
 
 const toNullableNumber = (value: unknown): number | null => {

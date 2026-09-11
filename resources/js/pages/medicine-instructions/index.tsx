@@ -98,12 +98,6 @@ const MedicineInstructions = () => {
 
   const columns: GridColDef[] = [
     {
-      field: 'code',
-      headerName: 'កូដ',
-      flex: 1,
-      minWidth: 160,
-    },
-    {
       field: 'name',
       headerName: 'ឈ្មោះ',
       flex: 1,

@@ -205,7 +205,7 @@ class PatientController extends Controller
             'medicines' => Inertia::defer(fn () => Medicine::with('unit')->orderBy('name')->get(['id', 'name', 'unit_id', 'dosage']), 'medicines'),
             'units' => Inertia::defer(fn () => Unit::orderBy('name')->get(['id', 'name']), 'medicines'),
             'medicationRoutes' => Inertia::defer(fn () => MedicationRoute::orderBy('name')->get(['id', 'code', 'name']), 'medicines'),
-            'medicineInstructions' => Inertia::defer(fn () => MedicineInstruction::orderBy('name')->get(['id', 'code', 'name']), 'medicines'),
+            'medicineInstructions' => Inertia::defer(fn () => MedicineInstruction::orderBy('name')->get(['id', 'name']), 'medicines'),
             'prescription' => Inertia::defer(function () use ($selectedVisit) {
                 if (! $selectedVisit) {
                     return null;
@@ -238,7 +238,7 @@ class PatientController extends Controller
                         'number_of_day' => $i->number_of_day,
                         'quantity' => $i->quantity ? (float) $i->quantity : null,
                         'notes' => $i->notes,
-                        'instruction' => $i->instruction,
+                        'medicine_instruction_id' => $i->medicine_instruction_id,
                     ])->values(),
                 ];
             }, 'prescription'),

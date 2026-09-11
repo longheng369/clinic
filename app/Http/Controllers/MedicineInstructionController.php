@@ -17,8 +17,7 @@ class MedicineInstructionController extends Controller
         return Inertia::render('medicine-instructions/index', [
             'medicineInstructions' => MedicineInstruction::latest()
                 ->when($search, fn ($query) => $query
-                    ->where('code', 'like', "%{$search}%")
-                    ->orWhere('name', 'like', "%{$search}%"))
+                    ->where('name', 'like', "%{$search}%"))
                 ->paginate(20)
                 ->withQueryString(),
             'search' => $search,

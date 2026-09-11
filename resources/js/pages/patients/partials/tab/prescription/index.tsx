@@ -44,14 +44,14 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
   const { medicines, medicationRoutes, medicineInstructions, consultationDiagnoses } = usePage<{
     medicines: { id: number; name: string; unit_id?: number | null; unit?: { id: number; name: string } | null; dosage?: string | null }[];
     medicationRoutes: { id: number; code: string; name: string }[];
-    medicineInstructions: { id: number; code: string; name: string }[];
+    medicineInstructions: { id: number; name: string }[];
     consultationDiagnoses: string[];
   }>().props;
   const instructionOptions = useMemo(
     () =>
       medicineInstructions.map((instruction) => ({
         label: instruction.name,
-        value: instruction.code,
+        value: instruction.id,
       })),
     [medicineInstructions],
   );
@@ -79,7 +79,7 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
           notes: item.notes,
           instruction:
             instructionOptions.find(
-              (opt) => opt.value === item.instruction,
+              (opt) => opt.value === item.medicine_instruction_id,
             ) ?? null,
         };
       }) ?? [],
@@ -190,7 +190,7 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
           item.numberOfDay && item.numberOfDay > 0 ? item.numberOfDay : null,
         quantity: item.quantity ?? null,
         notes: item.notes ?? null,
-        instruction: item.instruction?.value ?? null,
+        medicine_instruction_id: item.instruction?.value ?? null,
       })),
     };
 
@@ -457,9 +457,6 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
                     sx={{
                       border: 1,
                       borderColor: 'divider',
-                      '& .MuiTableCell-root': {
-                        fontWeight: 'bold',
-                      },
                     }}
                   >
                     <TableCell width="5%" align="center">
@@ -478,11 +475,11 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
                       sx={
                         isEditing
                           ? {
-                            cursor: 'pointer',
-                            '&:hover': {
-                              bgcolor: 'action.hover',
-                            },
-                          }
+                              cursor: 'pointer',
+                              '&:hover': {
+                                bgcolor: 'action.hover',
+                              },
+                            }
                           : undefined
                       }
                       onClick={
@@ -513,9 +510,9 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
             </TableContainer>
           )}
           <Box sx={{ mt: 8 }}>
-            <Typography>
-              វេជ្ជបណ្ឌិត{' '}
-              <Typography component="span">
+            <Typography sx={{ fontSize: 14 }}>
+              វេជ្ជបណ្ឌិត
+              <Typography component="span" sx={{ fontSize: 14 }}>
                 : {prescription?.created_by}
               </Typography>
             </Typography>
@@ -541,6 +538,7 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
           patient={patient}
           prescription={prescription!}
           diagnoses={consultationDiagnoses}
+          instructionOptions={instructionOptions}
         />
       </Dialog>
     </>
