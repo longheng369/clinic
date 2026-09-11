@@ -7,10 +7,10 @@ import { IMedicationRoute } from '@/interfaces/IMedicationRoute';
 import {
   DataGrid,
   type GridColDef,
-  type GridPaginationModel,
   GridActionsCellItem,
 } from '@mui/x-data-grid';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
+import { usePagination } from '@/hooks/usePagination';
 import SearchBar from '@/components/searchBar';
 import { formatCreatedDateTime } from '@/utils/date';
 import { Box, Typography, Button } from '@mui/material';
@@ -56,18 +56,10 @@ const MedicationRoutes = () => {
     return () => clearTimeout(timeout);
   }, [searchTerm]);
 
-  const handlePaginationModelChange = useCallback(
-    (model: GridPaginationModel) => {
-      const page = model.page + 1;
-      const params: Record<string, string | number> = { page };
-      if (searchProp) params.search = searchProp;
-      router.get('/settings/routes', params, {
-        preserveState: true,
-        replace: true,
-      });
-    },
-    [searchProp],
-  );
+  const handlePaginationModelChange = usePagination({
+    route: '/settings/routes',
+    search: searchProp,
+  });
 
   const handleCreate = () => {
     openModal({

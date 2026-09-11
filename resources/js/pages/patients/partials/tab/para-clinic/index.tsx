@@ -5,11 +5,10 @@ import { IParaClinicRequest } from '@/interfaces/IParaClinicRequest';
 import {
   DataGrid,
   type GridColDef,
-  type GridPaginationModel,
   type GridRenderCellParams,
   GridActionsCellItem,
 } from '@mui/x-data-grid';
-import { useCallback } from 'react';
+import { usePagination } from '@/hooks/usePagination';
 import type React from 'react';
 import { Box, Button, Chip, Typography } from '@mui/material';
 
@@ -54,16 +53,11 @@ const ParaClinicByPatientTab = ({ patientId }: { patientId: number }) => {
     });
   };
 
-  const handlePaginationModelChange = useCallback(
-    (model: GridPaginationModel) => {
-      router.get(
-        `/patients/${patientId}`,
-        { page: String(model.page + 1), tab: 'para-clinic' },
-        { preserveState: true, replace: true, only: ['paraClinicRequests'] },
-      );
-    },
-    [patientId],
-  );
+  const handlePaginationModelChange = usePagination({
+    route: `/patients/${patientId}`,
+    extraParams: { tab: 'para-clinic' },
+    only: ['paraClinicRequests'],
+  });
 
   const columns: GridColDef[] = [
     {

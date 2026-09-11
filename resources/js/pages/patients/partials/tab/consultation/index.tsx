@@ -5,11 +5,10 @@ import { IConsultation } from '@/interfaces/IConsultation';
 import {
   DataGrid,
   type GridColDef,
-  type GridPaginationModel,
   type GridRenderCellParams,
   GridActionsCellItem,
 } from '@mui/x-data-grid';
-import { useCallback } from 'react';
+import { usePagination } from '@/hooks/usePagination';
 import type React from 'react';
 import { formatCreatedDateTime } from '@/utils/date';
 import { Box, Button, Typography } from '@mui/material';
@@ -50,16 +49,11 @@ const ConsultationTab = ({
     });
   };
 
-  const handlePaginationModelChange = useCallback(
-    (model: GridPaginationModel) => {
-      router.get(
-        `/patients/${patientId}`,
-        { page: String(model.page + 1), tab: 'consultation' },
-        { preserveState: true, replace: true, only: ['consultations'] },
-      );
-    },
-    [patientId],
-  );
+  const handlePaginationModelChange = usePagination({
+    route: `/patients/${patientId}`,
+    extraParams: { tab: 'consultation' },
+    only: ['consultations'],
+  });
 
   const columns: GridColDef[] = [
     {

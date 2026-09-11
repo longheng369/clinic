@@ -14,11 +14,10 @@ import {
 import {
   DataGrid,
   type GridColDef,
-  type GridPaginationModel,
   type GridRenderCellParams,
   GridActionsCellItem,
 } from '@mui/x-data-grid';
-import { useCallback } from 'react';
+import { usePagination } from '@/hooks/usePagination';
 
 interface PaginatedData<T> {
   data: T[];
@@ -101,16 +100,14 @@ const VaccinationTab = ({ patient }: VaccinationTabProps) => {
     });
   };
 
-  const handlePaginationModelChange = useCallback(
-    (model: GridPaginationModel) => {
-      router.get(
-        `/patients/${patient.id}`,
-        { page: String(model.page + 1), per_page: String(model.pageSize), tab: 'vaccination' },
-        { preserveState: true, replace: true, only: ['vaccinations'] },
-      );
-    },
-    [patient.id],
-  );
+  const handlePaginationModelChange = usePagination({
+    route: `/patients/${patient.id}`,
+    extraParams: (model) => ({
+      tab: 'vaccination',
+      per_page: String(model.pageSize),
+    }),
+    only: ['vaccinations'],
+  });
 
   const columns: GridColDef[] = [
     {

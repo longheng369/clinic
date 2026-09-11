@@ -6,3 +6,7 @@ export interface PaginationMeta {
   from: number;
   to: number;
 }
+
+export interface IPagination<T> extends PaginationMeta {
+  data: T[];
+}

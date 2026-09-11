@@ -7,32 +7,21 @@ import { ILapTest } from '@/interfaces/ILapTest';
 import {
   DataGrid,
   type GridColDef,
-  type GridPaginationModel,
   GridActionsCellItem,
 } from '@mui/x-data-grid';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
+import { usePagination } from '@/hooks/usePagination';
 import SearchBar from '@/components/searchBar';
 import { formatCreatedDateTime } from '@/utils/date';
 import { Box, Typography, Button, Stack } from '@mui/material';
-
-interface PaginatedData<T> {
-  data: T[];
-  current_page: number;
-  last_page: number;
-  per_page: number;
-  total: number;
-  from: number;
-  to: number;
-}
+import { IPagination } from '@/interfaces/IPagination';
 
 const LapTests = () => {
   const { openModal, openAlert } = useModal();
-
   const { lapTests, search: searchProp } = usePage<{
-    lapTests: PaginatedData<ILapTest>;
+    lapTests: IPagination<ILapTest>;
     search: string | null;
   }>().props;
-
   const [searchTerm, setSearchTerm] = useState(searchProp ?? '');
 
   useEffect(() => {
@@ -56,18 +45,10 @@ const LapTests = () => {
     return () => clearTimeout(timeout);
   }, [searchTerm]);
 
-  const handlePaginationModelChange = useCallback(
-    (model: GridPaginationModel) => {
-      const page = model.page + 1;
-      const params: Record<string, string | number> = { page };
-      if (searchProp) params.search = searchProp;
-      router.get('/settings/lap-tests', params, {
-        preserveState: true,
-        replace: true,
-      });
-    },
-    [searchProp],
-  );
+  const handlePaginationModelChange = usePagination({
+    route: '/settings/lap-tests',
+    search: searchProp,
+  });
 
   const handleCreate = () => {
     openModal({

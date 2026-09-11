@@ -6,11 +6,10 @@ import { ISurveillance } from '@/interfaces/ISurveillance';
 import {
   DataGrid,
   type GridColDef,
-  type GridPaginationModel,
   type GridRenderCellParams,
   GridActionsCellItem,
 } from '@mui/x-data-grid';
-import { useCallback } from 'react';
+import { usePagination } from '@/hooks/usePagination';
 import { formatCreatedDateTime } from '@/utils/date';
 import { Box, Typography, Button } from '@mui/material';
 import SurveillanceForm from './partials/SurveillanceForm';
@@ -78,16 +77,11 @@ const SurveillanceTab = ({ patientId, visitId }: Props) => {
     });
   };
 
-  const handlePaginationModelChange = useCallback(
-    (model: GridPaginationModel) => {
-      router.get(
-        `/patients/${patientId}`,
-        { page: String(model.page + 1), tab: 'surveillance' },
-        { preserveState: true, replace: true, only: ['surveillance'] },
-      );
-    },
-    [patientId],
-  );
+  const handlePaginationModelChange = usePagination({
+    route: `/patients/${patientId}`,
+    extraParams: { tab: 'surveillance' },
+    only: ['surveillance'],
+  });
 
   const renderO2Supply = (value: string | null) => {
     return O2_OPTIONS.find((opt) => opt.value == value)?.label;
