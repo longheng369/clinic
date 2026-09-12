@@ -56,10 +56,10 @@ const LapTestForm = ({ lapTest }: LapTestFormProps) => {
           });
         },
         onError: (errors) => {
-          if (errors.name || errors.value) {
+          if (errors.name) {
             toast('Unable to create lap test', {
               variant: 'error',
-              description: errors.name ?? errors.value,
+              description: errors.name,
             });
           }
         },

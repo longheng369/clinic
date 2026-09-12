@@ -17,8 +17,7 @@ class LapTestController extends Controller
         return Inertia::render('lap-tests/index', [
             'lapTests' => LapTest::latest()
                 ->when($search, fn ($query) => $query
-                    ->where('name', 'like', "%{$search}%")
-                    ->orWhere('value', 'like', "%{$search}%"))
+                    ->where('name', 'like', "%{$search}%"))
                 ->paginate(20)
                 ->withQueryString(),
             'search' => $search,

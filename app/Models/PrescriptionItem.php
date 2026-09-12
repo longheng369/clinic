@@ -48,4 +48,9 @@ class PrescriptionItem extends Model
     {
         return $this->belongsTo(Unit::class);
     }
+
+    public function medicineInstruction(): BelongsTo
+    {
+        return $this->belongsTo(MedicineInstruction::class);
+    }
 }
