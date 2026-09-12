@@ -46,13 +46,18 @@ Route::middleware(['auth'])->group(function () {
     Route::get('appointments/patients/search', [AppointmentController::class, 'searchPatients'])->name('api.appointments.patients.search');
     Route::get('appointments/patients/{patient}/vaccine-alerts', [AppointmentController::class, 'patientVaccineAlerts'])->name('api.appointments.patients.vaccine-alerts');
 
+    // Category
     Route::get('settings/categories', [CategoryController::class, 'index'])->name('settings.categories.index');
     Route::post('settings/categories', [CategoryController::class, 'store'])->name('settings.categories.store');
     Route::put('settings/categories/{category}', [CategoryController::class, 'update'])->name('settings.categories.update');
     Route::delete('settings/categories/{category}', [CategoryController::class, 'destroy'])->name('settings.categories.destroy');
 
-    Route::resource('settings/units', UnitController::class)
-        ->only(['index', 'store', 'edit', 'update', 'destroy']);
+    // Units
+    Route::get('settings/units', [UnitController::class, 'index'])->name('settings.units.index');
+    Route::post('settings/units', [UnitController::class, 'store'])->name('settings.units.store');
+    Route::get('settings/units/{unit}/edit', [UnitController::class, 'edit'])->name('settings.units.edit');
+    Route::put('settings/units/{unit}', [UnitController::class, 'update'])->name('settings.units.update');
+    Route::delete('settings/units/{unit}', [UnitController::class, 'destroy'])->name('settings.units.destroy');
 
     Route::resource('settings/routes', MedicationRouteController::class)
         ->only(['index', 'store', 'edit', 'update', 'destroy'])
