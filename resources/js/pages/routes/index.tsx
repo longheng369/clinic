@@ -141,7 +141,7 @@ const MedicationRoutes = () => {
               variant="contained"
               startIcon={<Plus size={16} />}
             >
-              New Route
+              New
             </Button>
           </Box>
         </Box>

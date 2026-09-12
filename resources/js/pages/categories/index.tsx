@@ -134,7 +134,7 @@ const Category = () => {
               variant="contained"
               startIcon={<Plus size={16} />}
             >
-              New Category
+              New
             </Button>
           </Box>
         </Box>

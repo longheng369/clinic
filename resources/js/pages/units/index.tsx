@@ -134,7 +134,7 @@ const Unit = () => {
               variant="contained"
               startIcon={<Plus size={16} />}
             >
-              New Unit
+              New
             </Button>
           </Box>
         </Box>
