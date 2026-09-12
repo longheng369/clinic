@@ -5,8 +5,9 @@ import { Pencil, Trash2, Plus } from 'lucide-react';
 import VaccineForm from './partials/createOrEdit';
 import { IVaccine } from '@/interfaces/IVaccine';
 import { Box, Button, Typography } from '@mui/material';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import SearchBar from '@/components/searchBar';
+import { useDebouncedSearch } from '@/hooks/useDebouncedSearch';
 import { formatCreatedDateTime } from '@/utils/date';
 import {
   DataGrid,
@@ -33,31 +34,18 @@ const Vaccine = () => {
     search: string | null;
   }>().props;
 
-  const [searchTerm, setSearchTerm] = useState(searchProp ?? '');
+  const { searchTerm, setSearchTerm } = useDebouncedSearch({
+    route: '/vaccines',
+    searchProp,
+    onBeforeNavigate: () =>
+      setPaginationModel((prev) => ({ ...prev, page: 0 })),
+  });
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>(
     {
       page: Math.max(vaccines.current_page - 1, 0),
       pageSize: vaccines.per_page,
     },
   );
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if ((searchTerm || '') === (searchProp || '')) return;
-      setPaginationModel((prev) => ({ ...prev, page: 0 }));
-      if (searchTerm) {
-        router.get(
-          '/vaccines',
-          { search: searchTerm },
-          { preserveState: true, replace: true },
-        );
-      } else {
-        router.get('/vaccines', {}, { preserveState: true, replace: true });
-      }
-    }, 300);
-
-    return () => clearTimeout(timeout);
-  }, [searchTerm]);
 
   const handleCreate = () => {
     openModal({

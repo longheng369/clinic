@@ -21,6 +21,7 @@ import {
 } from '@mui/material';
 import { useModal } from '@/components/modal';
 import SearchBar from '@/components/searchBar';
+import { useDebouncedSearch } from '@/hooks/useDebouncedSearch';
 
 interface PaginatedData<T> {
   data: T[];
@@ -99,21 +100,12 @@ const Index = () => {
     lapTests: { id: number; name: string; value: string; price: number }[];
   }>().props;
 
-  const [searchTerm, setSearchTerm] = useState(searchProp ?? ''),
-    [filterStatus, setFilterStatus] = useState(filters.status ?? ''),
+  const { searchTerm, setSearchTerm } = useDebouncedSearch({
+    route: '/para-clinic-requests',
+    searchProp,
+  });
+  const [filterStatus, setFilterStatus] = useState(filters.status ?? ''),
     [filterPayment, setFilterPayment] = useState(filters.payment_status ?? '');
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if ((searchTerm || '') === (searchProp || '')) return;
-      router.get(
-        '/para-clinic-requests',
-        searchTerm ? { search: searchTerm, page: 1 } : {},
-        { preserveState: true, replace: true },
-      );
-    }, 300);
-    return () => clearTimeout(timeout);
-  }, [searchTerm, searchProp]);
 
   const navigateToRequests = useCallback(
     (params: Record<string, string | number>) => {

@@ -11,8 +11,8 @@ import {
   type GridRenderCellParams,
   GridActionsCellItem,
 } from '@mui/x-data-grid';
-import { useState, useEffect } from 'react';
 import { usePagination } from '@/hooks/usePagination';
+import { useDebouncedSearch } from '@/hooks/useDebouncedSearch';
 import SearchBar from '@/components/searchBar';
 import { formatDate } from '@/utils/date';
 import { Box, Typography, Button } from '@mui/material';
@@ -40,24 +40,10 @@ const Medicine = () => {
     search: string | null;
   }>().props;
 
-  const [searchTerm, setSearchTerm] = useState(searchProp ?? '');
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if ((searchTerm || '') === (searchProp || '')) return;
-      if (searchTerm) {
-        router.get(
-          '/medicines',
-          { search: searchTerm, page: 1 },
-          { preserveState: true, replace: true },
-        );
-      } else {
-        router.get('/medicines', {}, { preserveState: true, replace: true });
-      }
-    }, 300);
-
-    return () => clearTimeout(timeout);
-  }, [searchTerm]);
+  const { searchTerm, setSearchTerm } = useDebouncedSearch({
+    route: '/medicines',
+    searchProp,
+  });
 
   const handlePaginationModelChange = usePagination({
     route: '/medicines',

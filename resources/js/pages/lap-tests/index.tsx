@@ -9,8 +9,8 @@ import {
   type GridColDef,
   GridActionsCellItem,
 } from '@mui/x-data-grid';
-import { useState, useEffect } from 'react';
 import { usePagination } from '@/hooks/usePagination';
+import { useDebouncedSearch } from '@/hooks/useDebouncedSearch';
 import SearchBar from '@/components/searchBar';
 import { formatCreatedDateTime } from '@/utils/date';
 import { Box, Typography, Button, Stack } from '@mui/material';
@@ -22,28 +22,10 @@ const LapTests = () => {
     lapTests: IPagination<ILapTest>;
     search: string | null;
   }>().props;
-  const [searchTerm, setSearchTerm] = useState(searchProp ?? '');
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if ((searchTerm || '') === (searchProp || '')) return;
-      if (searchTerm) {
-        router.get(
-          '/settings/lap-tests',
-          { search: searchTerm, page: 1 },
-          { preserveState: true, replace: true },
-        );
-      } else {
-        router.get(
-          '/settings/lap-tests',
-          {},
-          { preserveState: true, replace: true },
-        );
-      }
-    }, 300);
-
-    return () => clearTimeout(timeout);
-  }, [searchTerm]);
+  const { searchTerm, setSearchTerm } = useDebouncedSearch({
+    route: '/settings/lap-tests',
+    searchProp,
+  });
 
   const handlePaginationModelChange = usePagination({
     route: '/settings/lap-tests',
@@ -146,7 +128,6 @@ const LapTests = () => {
             sx={{
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
               gap: 1,
             }}
           >

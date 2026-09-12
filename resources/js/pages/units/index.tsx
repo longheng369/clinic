@@ -9,52 +9,23 @@ import {
   type GridColDef,
   GridActionsCellItem,
 } from '@mui/x-data-grid';
-import { useState, useEffect } from 'react';
 import { usePagination } from '@/hooks/usePagination';
+import { useDebouncedSearch } from '@/hooks/useDebouncedSearch';
 import SearchBar from '@/components/searchBar';
 import { formatCreatedDateTime } from '@/utils/date';
-import { Box, Typography, Button } from '@mui/material';
-
-interface PaginatedData<T> {
-  data: T[];
-  current_page: number;
-  last_page: number;
-  per_page: number;
-  total: number;
-  from: number;
-  to: number;
-}
+import { Box, Typography, Button, Stack } from '@mui/material';
+import { IPagination } from '@/interfaces/IPagination';
 
 const Unit = () => {
   const { openModal, openAlert } = useModal();
-
   const { units, search: searchProp } = usePage<{
-    units: PaginatedData<IUnit>;
+    units: IPagination<IUnit>;
     search: string | null;
   }>().props;
-
-  const [searchTerm, setSearchTerm] = useState(searchProp ?? '');
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if ((searchTerm || '') === (searchProp || '')) return;
-      if (searchTerm) {
-        router.get(
-          '/settings/units',
-          { search: searchTerm, page: 1 },
-          { preserveState: true, replace: true },
-        );
-      } else {
-        router.get(
-          '/settings/units',
-          {},
-          { preserveState: true, replace: true },
-        );
-      }
-    }, 300);
-
-    return () => clearTimeout(timeout);
-  }, [searchTerm]);
+  const { searchTerm, setSearchTerm } = useDebouncedSearch({
+    route: '/settings/units',
+    searchProp,
+  });
 
   const handlePaginationModelChange = usePagination({
     route: '/settings/units',
@@ -135,8 +106,8 @@ const Unit = () => {
   return (
     <>
       <Head title="Units" />
-      <Box
-        sx={{ p: 4, height: '100%', display: 'flex', flexDirection: 'column' }}
+      <Stack
+        sx={{ p: 4, height: '100%' }}
       >
         <Box
           sx={{
@@ -145,18 +116,12 @@ const Unit = () => {
             justifyContent: 'space-between',
           }}
         >
-          <Box>
-            <Typography variant="h5">Units</Typography>
-            <Typography variant="body1" color="textSecondary">
-              Manage your clinic units
-            </Typography>
-          </Box>
+          <Typography variant="h5">Units</Typography>
           <Box
             sx={{
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              gap: 2,
+              gap: 1,
             }}
           >
             <SearchBar
@@ -190,7 +155,7 @@ const Unit = () => {
             sx={{ height: '100%' }}
           />
         </Box>
-      </Box>
+      </Stack>
     </>
   );
 };

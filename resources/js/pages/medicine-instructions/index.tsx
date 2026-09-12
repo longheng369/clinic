@@ -9,52 +9,23 @@ import {
   type GridColDef,
   GridActionsCellItem,
 } from '@mui/x-data-grid';
-import { useState, useEffect } from 'react';
 import { usePagination } from '@/hooks/usePagination';
+import { useDebouncedSearch } from '@/hooks/useDebouncedSearch';
 import SearchBar from '@/components/searchBar';
 import { formatCreatedDateTime } from '@/utils/date';
-import { Box, Typography, Button } from '@mui/material';
-
-interface PaginatedData<T> {
-  data: T[];
-  current_page: number;
-  last_page: number;
-  per_page: number;
-  total: number;
-  from: number;
-  to: number;
-}
+import { Box, Typography, Button, Stack } from '@mui/material';
+import { IPagination } from '@/interfaces/IPagination';
 
 const MedicineInstructions = () => {
   const { openModal, openAlert } = useModal();
-
   const { medicineInstructions, search: searchProp } = usePage<{
-    medicineInstructions: PaginatedData<IMedicineInstruction>;
+    medicineInstructions: IPagination<IMedicineInstruction>;
     search: string | null;
   }>().props;
-
-  const [searchTerm, setSearchTerm] = useState(searchProp ?? '');
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if ((searchTerm || '') === (searchProp || '')) return;
-      if (searchTerm) {
-        router.get(
-          '/settings/medicine-instructions',
-          { search: searchTerm, page: 1 },
-          { preserveState: true, replace: true },
-        );
-      } else {
-        router.get(
-          '/settings/medicine-instructions',
-          {},
-          { preserveState: true, replace: true },
-        );
-      }
-    }, 300);
-
-    return () => clearTimeout(timeout);
-  }, [searchTerm]);
+  const { searchTerm, setSearchTerm } = useDebouncedSearch({
+    route: '/settings/medicine-instructions',
+    searchProp,
+  });
 
   const handlePaginationModelChange = usePagination({
     route: '/settings/medicine-instructions',
@@ -136,28 +107,19 @@ const MedicineInstructions = () => {
   return (
     <>
       <Head title="Medicine Instructions" />
-      <Box
-        sx={{ p: 4, height: '100%', display: 'flex', flexDirection: 'column' }}
-      >
+      <Stack sx={{ p: 4, height: '100%' }}>
         <Box
           sx={{
             display: 'flex',
-            alignItems: 'center',
             justifyContent: 'space-between',
           }}
         >
-          <Box>
-            <Typography variant="h5">Medicine Instructions</Typography>
-            <Typography variant="body1" color="textSecondary">
-              Manage your medicine instructions
-            </Typography>
-          </Box>
+          <Typography variant="h5">Medicine Instructions</Typography>
           <Box
             sx={{
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              gap: 2,
+              gap: 1,
             }}
           >
             <SearchBar
@@ -170,7 +132,7 @@ const MedicineInstructions = () => {
               variant="contained"
               startIcon={<Plus size={16} />}
             >
-              New Instruction
+              New
             </Button>
           </Box>
         </Box>
@@ -191,7 +153,7 @@ const MedicineInstructions = () => {
             sx={{ height: '100%' }}
           />
         </Box>
-      </Box>
+      </Stack>
     </>
   );
 };
