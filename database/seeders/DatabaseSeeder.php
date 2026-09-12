@@ -34,6 +34,14 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        User::firstOrCreate(
+            ['email' => 'phandy@gmail.com'],
+            [
+                'name' => 'Phandy',
+                'password' => 'password',
+            ]
+        );
+
         $routes = [
             ['name' => 'PO (Oral)'],
             ['name' => 'IV (Intravenous)'],
