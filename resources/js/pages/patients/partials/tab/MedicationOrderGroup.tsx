@@ -149,7 +149,7 @@ const MedicationOrderGroup = ({
               {order.dosage} {order.unit}
             </Box>
             <Box>&middot;</Box>
-            <Box>{order.route}</Box>
+            <Box>{order.route?.name}</Box>
             <Box>&middot;</Box>
             <Box>{order.interval}</Box>
             {unitPrice != null && (

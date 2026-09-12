@@ -156,14 +156,14 @@ class PatientController extends Controller
                 }
 
                 return $selectedVisit->medicationOrders()
-                    ->with(['medicine', 'createdBy', 'administrations' => fn ($q) => $q->orderBy('scheduled_at')])
+                    ->with(['medicine', 'route', 'createdBy', 'administrations' => fn ($q) => $q->orderBy('scheduled_at')])
                     ->latest()
                     ->paginate(10)
                     ->withQueryString()
                     ->through(fn ($m) => [
                         'id' => $m->id,
                         'medicine' => $m->medicine ? ['id' => $m->medicine->id, 'name' => $m->medicine->name, 'unit_price' => $m->medicine->unit_price ? (float) $m->medicine->unit_price : null] : null,
-                        'route' => $m->route,
+                        'route' => $m->route ? ['id' => $m->route->id, 'name' => $m->route->name] : null,
                         'dosage' => (float) $m->dosage,
                         'unit' => $m->unit,
                         'interval' => $m->interval,
@@ -204,7 +204,7 @@ class PatientController extends Controller
             }, 'medication'),
             'medicines' => Inertia::defer(fn () => Medicine::with('unit')->orderBy('name')->get(['id', 'name', 'unit_id', 'dosage']), 'medicines'),
             'units' => Inertia::defer(fn () => Unit::orderBy('name')->get(['id', 'name']), 'medicines'),
-            'medicationRoutes' => Inertia::defer(fn () => MedicationRoute::orderBy('name')->get(['id', 'code', 'name']), 'medicines'),
+            'medicationRoutes' => Inertia::defer(fn () => MedicationRoute::orderBy('name')->get(['id', 'name']), 'medicines'),
             'medicineInstructions' => Inertia::defer(fn () => MedicineInstruction::orderBy('name')->get(['id', 'name']), 'medicines'),
             'prescription' => Inertia::defer(function () use ($selectedVisit) {
                 if (! $selectedVisit) {
@@ -212,7 +212,7 @@ class PatientController extends Controller
                 }
 
                 $prescription = $selectedVisit->prescriptions()
-                    ->with(['items.medicine', 'items.unit', 'createdBy'])
+                    ->with(['items.medicine', 'items.route', 'items.unit', 'createdBy'])
                     ->latest()
                     ->first();
 
@@ -229,7 +229,7 @@ class PatientController extends Controller
                     'items' => $prescription->items->map(fn ($i) => [
                         'id' => $i->id,
                         'medicine' => $i->medicine ? ['id' => $i->medicine->id, 'name' => $i->medicine->name] : null,
-                        'route' => $i->route,
+                        'route' => $i->route ? ['id' => $i->route->id, 'name' => $i->route->name] : null,
                         'unit' => $i->unit ? ['id' => $i->unit->id, 'name' => $i->unit->name] : null,
                         'morning' => $i->morning !== null ? (float) $i->morning : null,
                         'afternoon' => $i->afternoon !== null ? (float) $i->afternoon : null,

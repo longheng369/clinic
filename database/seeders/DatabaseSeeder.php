@@ -35,20 +35,20 @@ class DatabaseSeeder extends Seeder
         );
 
         $routes = [
-            ['code' => 'PO', 'name' => 'PO (Oral)'],
-            ['code' => 'IV', 'name' => 'IV (Intravenous)'],
-            ['code' => 'IM', 'name' => 'IM (Intramuscular)'],
-            ['code' => 'SC', 'name' => 'SC (Subcutaneous)'],
-            ['code' => 'SL', 'name' => 'SL (Sublingual)'],
-            ['code' => 'PR', 'name' => 'PR (Rectal)'],
-            ['code' => 'Topical', 'name' => 'Topical'],
-            ['code' => 'Inhalation', 'name' => 'Inhalation'],
-            ['code' => 'Otic', 'name' => 'Otic (Ear)'],
-            ['code' => 'Ophthalmic', 'name' => 'Ophthalmic (Eye)'],
+            ['name' => 'PO (Oral)'],
+            ['name' => 'IV (Intravenous)'],
+            ['name' => 'IM (Intramuscular)'],
+            ['name' => 'SC (Subcutaneous)'],
+            ['name' => 'SL (Sublingual)'],
+            ['name' => 'PR (Rectal)'],
+            ['name' => 'Topical'],
+            ['name' => 'Inhalation'],
+            ['name' => 'Otic (Ear)'],
+            ['name' => 'Ophthalmic (Eye)'],
         ];
 
         foreach ($routes as $route) {
-            MedicationRoute::firstOrCreate(['code' => $route['code']], $route);
+            MedicationRoute::firstOrCreate(['name' => $route['name']], $route);
         }
 
         $medicineInstructions = [
@@ -75,31 +75,31 @@ class DatabaseSeeder extends Seeder
         }
 
         $lapTests = [
-            ['value' => 'CBC', 'name' => 'CBC', 'price' => 0],
-            ['value' => 'BLOOD-SUGAR', 'name' => 'Blood Sugar', 'price' => 0],
-            ['value' => 'LIPID-PROFILE', 'name' => 'Lipid Profile', 'price' => 0],
-            ['value' => 'LIVER-FUNCTION', 'name' => 'Liver Function', 'price' => 0],
-            ['value' => 'RENAL-FUNCTION', 'name' => 'Renal Function', 'price' => 0],
-            ['value' => 'URINALYSIS', 'name' => 'Urinalysis', 'price' => 0],
-            ['value' => 'ECG', 'name' => 'ECG', 'price' => 0],
-            ['value' => 'ECHOCARDIOGRAM', 'name' => 'Echocardiogram', 'price' => 0],
-            ['value' => 'STRESS-TEST', 'name' => 'Stress Test', 'price' => 0],
-            ['value' => 'HOLTER-MONITOR', 'name' => 'Holter Monitor', 'price' => 0],
-            ['value' => 'CHEST-XRAY', 'name' => 'Chest X-Ray', 'price' => 0],
-            ['value' => 'ABDOMINAL-XRAY', 'name' => 'Abdominal X-Ray', 'price' => 0],
-            ['value' => 'ULTRASOUND', 'name' => 'Ultrasound', 'price' => 0],
-            ['value' => 'CT-SCAN', 'name' => 'CT Scan', 'price' => 0],
-            ['value' => 'MRI', 'name' => 'MRI', 'price' => 0],
-            ['value' => 'MAMMOGRAPHY', 'name' => 'Mammography', 'price' => 0],
-            ['value' => 'BIOPSY', 'name' => 'Biopsy', 'price' => 0],
-            ['value' => 'HISTOPATHOLOGY', 'name' => 'Histopathology', 'price' => 0],
-            ['value' => 'CYTOLOGY', 'name' => 'Cytology', 'price' => 0],
-            ['value' => 'OTHER', 'name' => 'Other', 'price' => 0],
+            ['name' => 'CBC', 'price' => 0],
+            ['name' => 'Blood Sugar', 'price' => 0],
+            ['name' => 'Lipid Profile', 'price' => 0],
+            ['name' => 'Liver Function', 'price' => 0],
+            ['name' => 'Renal Function', 'price' => 0],
+            ['name' => 'Urinalysis', 'price' => 0],
+            ['name' => 'ECG', 'price' => 0],
+            ['name' => 'Echocardiogram', 'price' => 0],
+            ['name' => 'Stress Test', 'price' => 0],
+            ['name' => 'Holter Monitor', 'price' => 0],
+            ['name' => 'Chest X-Ray', 'price' => 0],
+            ['name' => 'Abdominal X-Ray', 'price' => 0],
+            ['name' => 'Ultrasound', 'price' => 0],
+            ['name' => 'CT Scan', 'price' => 0],
+            ['name' => 'MRI', 'price' => 0],
+            ['name' => 'Mammography', 'price' => 0],
+            ['name' => 'Biopsy', 'price' => 0],
+            ['name' => 'Histopathology', 'price' => 0],
+            ['name' => 'Cytology', 'price' => 0],
+            ['name' => 'Other', 'price' => 0],
         ];
 
         foreach ($lapTests as $lapTest) {
             LapTest::firstOrCreate(
-                ['value' => $lapTest['value']],
+                ['name' => $lapTest['name']],
                 $lapTest + ['description' => null]
             );
         }

@@ -1,6 +1,5 @@
 export interface IMedicationRoute {
   id: number;
-  code: string;
   name: string;
   description: string | null;
   created_at: string;
@@ -8,7 +7,6 @@ export interface IMedicationRoute {
 }
 
 export interface IMedicationRouteFormData {
-  code: string;
   name: string;
   description: string | null;
 }

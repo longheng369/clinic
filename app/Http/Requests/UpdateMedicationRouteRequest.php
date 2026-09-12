@@ -10,7 +10,6 @@ class UpdateMedicationRouteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'code' => ['required', 'string', 'max:255', Rule::unique('medication_routes')->ignore($this->medicationRoute)],
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
         ];

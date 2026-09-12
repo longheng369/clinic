@@ -12,7 +12,7 @@ interface Props {
   onSave: (data: IPrescriptionItemFormData) => void;
   onClose: () => void;
   medicines: { id: number; name: string; unit?: { id: number; name: string } | null; dosage?: string | null }[];
-  routes: { id: number; code: string; name: string }[];
+  routes: { id: number; name: string }[];
   instructions: IOption<number>[];
   defaultValues?: IPrescriptionItemFormData;
 }
@@ -52,7 +52,7 @@ const PrescriptionItemForm: FC<Props> = ({
       : {
         medicine: '',
         unit: '',
-        route: '',
+        route_id: null,
         notes: null,
         quantity: null,
         morning: null,
@@ -129,10 +129,10 @@ const PrescriptionItemForm: FC<Props> = ({
           <Grid size={{ md: 6 }}>
             <Select
               control={control}
-              name="route"
+              name="route_id"
               label="Route"
               options={routes.map((route) => ({
-                value: route.code,
+                value: route.id,
                 label: route.name,
               }))}
               rules={{ required: 'Route is required' }}

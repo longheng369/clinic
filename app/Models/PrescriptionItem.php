@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Fillable([
     'prescription_id',
     'medicine_id',
-    'route',
+    'route_id',
     'unit_id',
     'morning',
     'afternoon',
@@ -42,6 +42,11 @@ class PrescriptionItem extends Model
     public function medicine(): BelongsTo
     {
         return $this->belongsTo(Medicine::class);
+    }
+
+    public function route(): BelongsTo
+    {
+        return $this->belongsTo(MedicationRoute::class);
     }
 
     public function unit(): BelongsTo

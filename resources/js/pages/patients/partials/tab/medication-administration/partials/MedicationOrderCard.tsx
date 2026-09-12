@@ -152,7 +152,7 @@ const MedicationOrderCard = ({
                 {order.dosage} {order.unit}
               </Box>
               <Box sx={{ color: '#cbd5e1' }}>&middot;</Box>
-              <Box>{order.route}</Box>
+              <Box>{order.route?.name}</Box>
               <Box sx={{ color: '#cbd5e1' }}>&middot;</Box>
               <Box>{order.interval}</Box>
             </Box>

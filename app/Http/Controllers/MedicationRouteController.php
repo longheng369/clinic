@@ -16,7 +16,7 @@ class MedicationRouteController extends Controller
 
         return Inertia::render('routes/index', [
             'medicationRoutes' => MedicationRoute::latest()
-                ->when($search, fn ($query) => $query->where('code', 'like', "%{$search}%")->orWhere('name', 'like', "%{$search}%"))
+                ->when($search, fn ($query) => $query->where('name', 'like', "%{$search}%"))
                 ->paginate(20)
                 ->withQueryString(),
             'search' => $search,

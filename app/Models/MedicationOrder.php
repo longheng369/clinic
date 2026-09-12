@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 #[Fillable([
     'visit_id',
     'medicine_id',
-    'route',
+    'route_id',
     'dosage',
     'unit',
     'interval',
@@ -45,6 +45,11 @@ class MedicationOrder extends Model
     public function medicine(): BelongsTo
     {
         return $this->belongsTo(Medicine::class);
+    }
+
+    public function route(): BelongsTo
+    {
+        return $this->belongsTo(MedicationRoute::class);
     }
 
     public function createdBy(): BelongsTo

@@ -133,7 +133,7 @@ const NotAdministeredDialog = ({
                 </strong>
               </Box>
               <Box>
-                Route: <strong>{order.route}</strong>
+                Route: <strong>{order.route?.name}</strong>
               </Box>
               <Box>
                 Scheduled: <strong>{scheduledTime}</strong>

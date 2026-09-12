@@ -116,7 +116,7 @@ const AdministerDialog = ({
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Box sx={{ color: '#16a34a' }}>&#10003;</Box>
                 <Box>
-                  Route: <strong>{order.route}</strong>
+                  Route: <strong>{order.route?.name}</strong>
                 </Box>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

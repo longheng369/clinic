@@ -43,8 +43,10 @@ class VisitController extends Controller
             'createdBy',
             'consultations.createdBy',
             'medicationOrders.medicine',
+            'medicationOrders.route',
             'medicationOrders.createdBy',
             'prescriptions.items.medicine',
+            'prescriptions.items.route',
             'prescriptions.items.unit',
             'prescriptions.createdBy',
             'surveillance.createdBy',
@@ -82,7 +84,7 @@ class VisitController extends Controller
             'medicationOrders' => $visit->medicationOrders->map(fn ($m) => [
                 'id' => $m->id,
                 'medicine' => $m->medicine?->name,
-                'route' => $m->route,
+                'route' => $m->route ? ['id' => $m->route->id, 'name' => $m->route->name] : null,
                 'dosage' => (float) $m->dosage,
                 'unit' => $m->unit,
                 'interval' => $m->interval,
@@ -100,7 +102,7 @@ class VisitController extends Controller
                 'items' => $p->items->map(fn ($i) => [
                     'id' => $i->id,
                     'medicine' => $i->medicine?->name,
-                    'route' => $i->route,
+                    'route' => $i->route ? ['id' => $i->route->id, 'name' => $i->route->name] : null,
                     'unit' => $i->unit?->name,
                     'morning' => $i->morning !== null ? (float) $i->morning : null,
                     'afternoon' => $i->afternoon !== null ? (float) $i->afternoon : null,

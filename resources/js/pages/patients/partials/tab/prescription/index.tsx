@@ -43,7 +43,7 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
   const [openPrint, setOpenPrint] = useState(false);
   const { medicines, medicationRoutes, medicineInstructions, consultationDiagnoses } = usePage<{
     medicines: { id: number; name: string; unit_id?: number | null; unit?: { id: number; name: string } | null; dosage?: string | null }[];
-    medicationRoutes: { id: number; code: string; name: string }[];
+    medicationRoutes: { id: number; name: string }[];
     medicineInstructions: { id: number; name: string }[];
     consultationDiagnoses: string[];
   }>().props;
@@ -70,7 +70,7 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
             { id: 0, name: '' },
           quantity: item.quantity ?? 0,
           unit: item.unit ?? { id: 0, name: medicine?.unit?.name ?? '' },
-          route: item.route,
+          route_id: item.route?.id ?? null,
           morning: item.morning ?? null,
           afternoon: item.afternoon ?? null,
           evening: item.evening ?? null,
@@ -180,7 +180,7 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
       notes: prescription?.notes ?? null,
       items: fields.map((item) => ({
         medicine_id: item.medicine.id,
-        route: item.route,
+        route_id: item.route_id,
         unit_id: item.unit?.id ?? null,
         morning: item.morning ?? null,
         afternoon: item.afternoon ?? null,

@@ -34,7 +34,7 @@ const MedicationOrdersTab = ({ patientId, visitId }: Props) => {
       created_by?: string;
     }[];
     medicines: { id: number; name: string }[];
-    medicationRoutes: { id: number; code: string; name: string }[];
+    medicationRoutes: { id: number; name: string }[];
   }>().props;
 
   const [searchTerm, setSearchTerm] = useState('');

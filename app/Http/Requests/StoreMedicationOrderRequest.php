@@ -11,7 +11,7 @@ class StoreMedicationOrderRequest extends FormRequest
         return [
             'visit_id' => ['required', 'exists:visits,id'],
             'medicine_id' => ['required', 'exists:medicines,id'],
-            'route' => ['required', 'string', 'max:255'],
+            'route_id' => ['required', 'exists:medication_routes,id'],
             'dosage' => ['required', 'numeric', 'min:0'],
             'unit' => ['required', 'string', 'max:255'],
             'interval' => ['required', 'string', 'in:QD,BID,TID,QID,QHS,PRN'],

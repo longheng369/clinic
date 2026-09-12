@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['code', 'name', 'description'])]
+#[Fillable(['name', 'description'])]
 class MedicationRoute extends Model
 {
     /** @use HasFactory<MedicationRouteFactory> */

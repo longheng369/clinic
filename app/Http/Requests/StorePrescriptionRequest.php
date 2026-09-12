@@ -14,7 +14,7 @@ class StorePrescriptionRequest extends FormRequest
             'notes' => ['nullable', 'string', 'max:1000'],
             'items' => ['required', 'array', 'min:1'],
             'items.*.medicine_id' => ['required', 'exists:medicines,id'],
-            'items.*.route' => ['required', 'string', 'max:255'],
+            'items.*.route_id' => ['required', 'exists:medication_routes,id'],
             'items.*.unit_id' => ['nullable', 'exists:units,id'],
             'items.*.morning' => ['nullable', 'numeric', 'min:0'],
             'items.*.afternoon' => ['nullable', 'numeric', 'min:0'],

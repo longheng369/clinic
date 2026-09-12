@@ -3,7 +3,7 @@ import type { IMedicationAdministration } from './IMedicationAdministration';
 export interface IMedicationOrder {
   id: number;
   medicine: { id: number; name: string; unit_price: number | null } | null;
-  route: string;
+  route: { id: number; name: string } | null;
   dosage: number;
   unit: string;
   interval: string;
@@ -20,7 +20,7 @@ export interface IMedicationOrder {
 export interface IMedicationOrderFormData {
   visit_id: number;
   medicine_id: number | null;
-  route: string;
+  route_id: number | null;
   dosage: number | null;
   unit: string;
   interval: string;

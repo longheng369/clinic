@@ -29,7 +29,7 @@ interface MedicationFormProps {
     created_by?: string;
   }[];
   medicines: { id: number; name: string }[];
-  routes: { id: number; code: string; name: string }[];
+  routes: { id: number; name: string }[];
   order?: IMedicationOrder;
   selectedVisitId?: number;
   onClose: () => void;
@@ -65,7 +65,7 @@ const MarForm = ({
       ? {
         visit_id: selectedVisitId ?? activeVisits[0]?.id ?? 0,
         medicine_id: order.medicine?.id ?? null,
-        route: order.route,
+        route_id: order.route?.id ?? null,
         dosage: order.dosage,
         unit: order.unit,
         interval: order.interval,
@@ -76,7 +76,7 @@ const MarForm = ({
       : {
         visit_id: selectedVisitId ?? activeVisits[0]?.id ?? 0,
         medicine_id: null,
-        route: '',
+        route_id: null,
         dosage: null,
         unit: '',
         interval: '',
@@ -138,9 +138,9 @@ const MarForm = ({
             <Select
               label="Route"
               control={control}
-              name="route"
+              name="route_id"
               options={routes.map((route) => ({
-                value: route.code,
+                value: route.id,
                 label: route.name,
               }))}
               rules={{ required: 'This field is required' }}

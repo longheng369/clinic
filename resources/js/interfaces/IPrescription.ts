@@ -3,7 +3,7 @@ import { IOption } from './IOption';
 export interface IPrescriptionItem {
   id: number;
   medicine: { id: number; name: string } | null;
-  route: string;
+  route: { id: number; name: string } | null;
   unit: { id: number; name: string } | null;
   morning: number | null;
   afternoon: number | null;
@@ -35,7 +35,7 @@ export interface IPrescriptionItemFormData {
     id: number;
     name: string;
   };
-  route: string;
+  route_id: number | null;
   morning: number | null;
   afternoon: number | null;
   evening: number | null;
