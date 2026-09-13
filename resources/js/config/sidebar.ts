@@ -32,11 +32,6 @@ export const sidebarSections: ISidebarSection[] = [
     items: [
       { label: 'Medicines', icon: Pill, path: '/medicines' },
       { label: 'Vaccines', icon: Syringe, path: '/vaccines' },
-      {
-        label: 'Para Clinic',
-        icon: ClipboardList,
-        path: '/para-clinic-requests',
-      },
     ],
   },
   {

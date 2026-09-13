@@ -30,10 +30,18 @@ class AutocompleteController extends Controller
             });
         }
 
-        $results = $query->limit(25)->get()->map(fn ($record) => [
-            'value' => $record->id,
-            'label' => $record->autocompleteLabel(),
-        ]);
+        $extraColumns = $class::autocompleteExtra();
+
+        $results = $query->limit(25)->get()->map(function ($record) use ($extraColumns) {
+            $result = [
+                'value' => $record->id,
+                'label' => $record->autocompleteLabel(),
+            ];
+            foreach ($extraColumns as $column) {
+                $result[$column] = $record->{$column};
+            }
+            return $result;
+        });
 
         return response()->json($results);
     }

@@ -11,6 +11,7 @@ import {
 import { usePagination } from '@/hooks/usePagination';
 import type React from 'react';
 import { Box, Button, Chip, Typography } from '@mui/material';
+import ParaClinicForm from '@/pages/patients/partials/tab/para-clinic/partials/createOrEdit';
 
 const STATUS_COLORS: Record<
   string,
@@ -35,8 +36,8 @@ interface PaginatedData<T> {
   to: number;
 }
 
-const ParaClinicByPatientTab = ({ patientId }: { patientId: number }) => {
-  const { openAlert } = useModal();
+const ParaClinicByPatientTab = ({ patientId, selectedVisitId }: { patientId: number; selectedVisitId: number | null }) => {
+  const { openAlert, openModal } = useModal();
   const { paraClinicRequests } = usePage<{
     paraClinicRequests: PaginatedData<IParaClinicRequest>;
   }>().props;
@@ -44,14 +45,21 @@ const ParaClinicByPatientTab = ({ patientId }: { patientId: number }) => {
 
   const handleDelete = (request: IParaClinicRequest) => {
     openAlert({
-      message: 'Delete this paraclinic request?',
+      message: 'Delete this para clinic request?',
       description: 'This action cannot be undone.',
       variant: 'danger',
       confirmLabel: 'Delete',
       onConfirm: () =>
-        router.delete(`/paraclinic-requests/${request.id}`),
+        router.delete(`/para-clinic-requests/${request.id}`),
     });
   };
+
+  const openRequestForm = () => {
+    openModal({
+      title: 'New Para Clinic Request',
+      content: <ParaClinicForm patientId={patientId} visitId={selectedVisitId} />,
+    });
+  }
 
   const handlePaginationModelChange = usePagination({
     route: `/patients/${patientId}`,
@@ -67,26 +75,12 @@ const ParaClinicByPatientTab = ({ patientId }: { patientId: number }) => {
       minWidth: 150,
       renderCell: (params: GridRenderCellParams<IParaClinicRequest>) => (
         <InertiaLink
-          href={`/paraclinic-requests/${params.row.id}`}
+          href={`/para-clinic-requests/${params.row.id}`}
           style={{ color: 'inherit' }}
         >
           {params.value}
         </InertiaLink>
       ),
-    },
-    {
-      field: 'doctor.name',
-      headerName: 'វេជ្ជបណ្ឌិត',
-      flex: 1,
-      minWidth: 150,
-      renderCell: (params: GridRenderCellParams<IParaClinicRequest>) =>
-        params.value ?? (
-          <Box sx={{}}>
-            <Typography component="span" color="text.disabled">
-              &mdash;
-            </Typography>
-          </Box>
-        ),
     },
     {
       field: 'external_facility_name',
@@ -148,7 +142,7 @@ const ParaClinicByPatientTab = ({ patientId }: { patientId: number }) => {
           icon={<Eye size={16} color="#64748b" />}
           label="View request"
           onClick={() =>
-            router.visit(`/paraclinic-requests/${params.row.id}`)
+            router.visit(`/para-clinic-requests/${params.row.id}`)
           }
           showInMenu={false}
         />,
@@ -177,8 +171,7 @@ const ParaClinicByPatientTab = ({ patientId }: { patientId: number }) => {
           Para clinic test requests for this patient
         </Typography>
         <Button
-          component={InertiaLink as React.ElementType}
-          href={`/para-clinic-requests?patient_id=${patientId}`}
+          onClick={openRequestForm}
           variant="contained"
           startIcon={<Plus size={16} />}
         >

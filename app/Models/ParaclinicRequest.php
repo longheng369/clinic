@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[Fillable([
     'request_number',
     'patient_id',
-    'doctor_id',
     'visit_id',
     'external_facility_name',
     'request_date',
@@ -29,14 +28,18 @@ class ParaclinicRequest extends Model
 {
     use SoftDeletes;
 
+    protected $table = 'para_clinic_requests';
+
+    protected static function boot(): void
+    {
+        parent::boot();
+        static::creating(fn (ParaclinicRequest $model) => $model->created_by ??= auth()->id());
+        static::updating(fn (ParaclinicRequest $model) => $model->updated_by = auth()->id());
+    }
+
     public function patient(): BelongsTo
     {
         return $this->belongsTo(Patient::class);
-    }
-
-    public function doctor(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'doctor_id');
     }
 
     public function tests(): HasMany

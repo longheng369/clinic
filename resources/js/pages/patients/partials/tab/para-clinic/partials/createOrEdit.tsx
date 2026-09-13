@@ -1,13 +1,14 @@
 import { useForm, useFieldArray } from 'react-hook-form';
 import Input from '@/components/form/input';
-import Select from '@/components/form/select';
 import ServerAutocomplete from '@/components/form/serverAutocomplete';
 import Textarea from '@/components/form/textarea';
 import {
   IParaClinicRequest,
   IParaClinicRequestFormData,
 } from '@/interfaces/IParaClinicRequest';
-import { useState } from 'react';
+import { IOption } from '@/interfaces/IOption';
+import dayjs from 'dayjs';
+import { useState, useEffect } from 'react';
 import { router } from '@inertiajs/react';
 import {
   Box,
@@ -28,38 +29,22 @@ const PRIORITY_OPTIONS = ['Routine', 'Urgent', 'STAT'].map((value) => ({
   label: value,
 }));
 
-interface DiagnosticTestOption {
-  id: number;
-  name: string;
-  value: string;
-  price: number;
-}
-
-interface ParaClinicFormProps {
+type Props = {
   request?: IParaClinicRequest;
-  authUser: { id: number; name: string };
-  preselectedPatient?: {
-    id: number;
-    khmer_first_name: string;
-    khmer_last_name: string;
-  } | null;
-  diagnosticTests: DiagnosticTestOption[];
-  onClose: () => void;
+  patientId: number;
+  visitId?: number | null;
 }
 
-const ParaClinicForm = ({
-  request,
-  authUser,
-  preselectedPatient,
-  diagnosticTests,
-  onClose,
-}: ParaClinicFormProps) => {
+const ParaClinicForm = ({ request, patientId, visitId }: Props) => {
   const [isProcessing, setIsProcessing] = useState(false);
+  const [testPrices, setTestPrices] = useState<Record<number, number>>({});
   const { toast } = useToast();
-  const diagnosticTestOptions = diagnosticTests.map((t) => ({
-    value: t.id,
-    label: `${t.name}${t.price ? ` ($${t.price.toFixed(2)})` : ''}`,
-  }));
+
+  const handleTestSelect = (option: IOption<any>) => {
+    if (option.value && option.price != null) {
+      setTestPrices((prev) => ({ ...prev, [option.value]: option.price }));
+    }
+  };
 
   const defaultTests = request?.tests?.length
     ? request.tests.map((t) => ({
@@ -80,7 +65,6 @@ const ParaClinicForm = ({
       defaultValues: request
         ? {
             patient_id: request.patient?.id ?? null,
-            doctor_id: request.doctor?.id ?? null,
             visit_id: request.visit_id,
             external_facility_name: request.external_facility_name ?? '',
             request_date: request.request_date,
@@ -93,11 +77,10 @@ const ParaClinicForm = ({
             tests: defaultTests,
           }
         : {
-            patient_id: preselectedPatient?.id ?? null,
-            doctor_id: authUser.id,
-            visit_id: null,
+            patient_id: patientId,
+            visit_id: visitId ?? null,
             external_facility_name: '',
-            request_date: new Date().toISOString().split('T')[0],
+            request_date: dayjs().format('DD-MM-YYYY'),
             clinical_reason: '',
             provisional_diagnosis: '',
             notes: '',
@@ -111,14 +94,17 @@ const ParaClinicForm = ({
   const { fields, append, remove } = useFieldArray({ control, name: 'tests' });
   const testsValues = watch('tests');
   const feeValue = watch('fee');
-
-  const priceFor = (id: number | null) =>
-    diagnosticTests.find((t) => t.id === id)?.price;
-
-  const autoTotal = testsValues.reduce((sum, t) => {
-    const match = diagnosticTests.find((lt) => lt.id === t.diagnostic_test_id);
-    return sum + (match?.price ?? 0);
+  const selectedTestIds = testsValues
+    .map((t) => t.diagnostic_test_id)
+    .filter((id): id is number => id != null);
+  const totalFee = testsValues.reduce((sum, t) => {
+    const price = t.diagnostic_test_id ? testPrices[t.diagnostic_test_id] ?? 0 : 0;
+    return sum + price;
   }, 0);
+
+  useEffect(() => {
+    setValue('fee', totalFee);
+  }, [totalFee, setValue]);
 
   const submitData = (
     data: IParaClinicRequestFormData,
@@ -128,7 +114,6 @@ const ParaClinicForm = ({
     ...extra,
     tests: data.tests.map(({ diagnostic_test_id, priority, instruction }) => ({
       diagnostic_test_id,
-      price: diagnosticTests.find((t) => t.id === diagnostic_test_id)?.price ?? 0,
       priority,
       instruction,
     })),
@@ -140,11 +125,11 @@ const ParaClinicForm = ({
       const payload = submitData(data, status ? { status } : {});
       const options = {
         onSuccess: () => {
-          onClose();
           toast(
             `Request ${status === 'Requested' ? 'submitted' : request ? 'updated' : 'created'} successfully!`,
             { variant: 'success' },
           );
+          router.reload({ only: ['paraClinicRequests'] });
         },
         onError: (errors: Record<string, string | string[]>) => {
           const msg = Object.values(errors).flat().join(', ');
@@ -179,39 +164,11 @@ const ParaClinicForm = ({
             />
           </Grid>
           <Grid size={{ md: 12 }}>
-            <ServerAutocomplete
-              label="Patient"
-              control={control}
-              name="patient_id"
-              rules={{ required: 'Patient is required' }}
-              model="Patient"
-              placeholder="Search patient by name..."
-            />
-          </Grid>
-          <Grid size={{ md: 12 }}>
-            <ServerAutocomplete
-              label="Referring Doctor"
-              control={control}
-              name="doctor_id"
-              rules={{ required: 'Doctor is required' }}
-              apiUrl="/doctors/search"
-              placeholder="Search doctor by name..."
-            />
-          </Grid>
-          <Grid size={{ md: 12 }}>
             <Input
-              label="External Facility Name"
-              control={control}
-              name="external_facility_name"
-              placeholder="e.g. Referral Lab Center"
-            />
-          </Grid>
-          <Grid size={{ md: 12 }}>
-            <Input
-              label="Provisional Diagnosis"
+              label="Diagnosis"
               control={control}
               name="provisional_diagnosis"
-              placeholder="Enter provisional diagnosis"
+              placeholder="Enter diagnosis"
             />
           </Grid>
           <Grid size={{ md: 12 }}>
@@ -263,49 +220,31 @@ const ParaClinicForm = ({
             <Stack spacing={2}>
               <Stack spacing={1.5}>
                 {fields.map((field, index) => {
-                  const selectedPrice = priceFor(
-                    testsValues[index]?.diagnostic_test_id ?? null,
-                  );
                   return (
                     <Stack
                       key={field.id}
-                      direction={{ xs: 'column', md: 'row' }}
+                      direction="row"
                       spacing={1.5}
                       sx={{
                         p: 2,
                         border: 1,
                         borderColor: 'divider',
                         borderRadius: 1,
-                        bgcolor: 'action.hover',
-                        alignItems: 'flex-start',
+                        alignItems: 'center',
                       }}
                     >
-                      <Stack
-                        direction={{ xs: 'column', sm: 'row' }}
-                        spacing={1.5}
-                        sx={{ flex: 1, width: '100%' }}
-                      >
-                        <Select
-                          label="Diagnostic Test"
-                          control={control}
-                          name={`tests.${index}.diagnostic_test_id` as any}
-                          options={diagnosticTestOptions}
-                          rules={{ required: 'Required' }}
-                        />
-                        <Select
-                          label="Priority"
-                          control={control}
-                          name={`tests.${index}.priority` as any}
-                          options={PRIORITY_OPTIONS}
-                          rules={{ required: 'Required' }}
-                        />
-                        <Input
-                          label="Instruction"
-                          control={control}
-                          name={`tests.${index}.instruction` as any}
-                          placeholder="Optional"
-                        />
-                      </Stack>
+                      <ServerAutocomplete
+                        label="Diagnostic Test"
+                        control={control}
+                        name={`tests.${index}.diagnostic_test_id` as any}
+                        model="DiagnosticTest"
+                        rules={{ required: 'Required' }}
+                        placeholder="Search test by name..."
+                        onSelect={handleTestSelect}
+                        excludeValues={selectedTestIds.filter(
+                          (id) => id !== testsValues[index]?.diagnostic_test_id,
+                        )}
+                      />
                       <Box
                         sx={{
                           minWidth: 90,
@@ -314,7 +253,12 @@ const ParaClinicForm = ({
                         }}
                       >
                         <Typography variant="body2" color="text.secondary">
-                          ${(selectedPrice ?? 0).toFixed(2)}
+                          {(() => {
+                            const testId = testsValues[index]?.diagnostic_test_id;
+                            return testId && testPrices[testId]
+                              ? `$${testPrices[testId].toFixed(2)}`
+                              : '-';
+                          })()}
                         </Typography>
                       </Box>
                       {fields.length > 1 && (
@@ -339,7 +283,7 @@ const ParaClinicForm = ({
           </Grid>
           <Grid size={{ md: 6 }}>
             <Input
-              label={`Fee ($) — Auto: $${autoTotal.toFixed(2)}`}
+              label={`Fee ($) — Auto: $${totalFee.toFixed(2)}`}
               control={control}
               type="number"
               slotProps={{ htmlInput: { step: '0.01', min: '0' } }}
@@ -350,7 +294,7 @@ const ParaClinicForm = ({
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button type="button" onClick={onClose} variant="outlined">
+        <Button type="button" variant="outlined">
           Cancel
         </Button>
         <Button

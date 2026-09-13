@@ -488,7 +488,7 @@ const TabContent = ({
     case 'para-clinic':
       return (
         <Deferred data="paraClinicRequests" fallback={<TabLoading />}>
-          <ParaClinicTab patientId={patientId} />
+          <ParaClinicTab patientId={patientId} selectedVisitId={selectedVisit?.id ?? null} />
         </Deferred>
       );
     case 'attachment':

@@ -1,8 +1,3 @@
-export interface IParaClinicRequest {
-  id: number;
-
-}
-
 export interface IParaClinicRequestTest {
   id?: number;
   diagnostic_test_id: number | null;
@@ -50,8 +45,6 @@ export interface IParaClinicRequest {
     phone_number?: string;
     gender?: string;
   } | null;
-  doctor_id: number;
-  doctor: { id: number; name: string } | null;
   visit_id: number | null;
   external_facility_name: string | null;
   request_date: string;
@@ -72,8 +65,8 @@ export interface IParaClinicRequest {
 
 export interface IParaClinicRequestFormData {
   patient_id: number | null;
-  doctor_id: number | null;
   visit_id: number | null;
+  external_facility_name: string;
   request_date: string;
   clinical_reason: string | null;
   provisional_diagnosis: string | null;

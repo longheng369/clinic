@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 ])]
 class ParaclinicAttachment extends Model
 {
+    protected $table = 'para_clinic_attachments';
+
     public function paraclinicRequest(): BelongsTo
     {
         return $this->belongsTo(ParaclinicRequest::class);

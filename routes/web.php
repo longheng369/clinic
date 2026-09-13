@@ -112,18 +112,10 @@ Route::middleware(['auth'])->group(function () {
     Route::put('patients/{patient}/consultations/{consultation}', [ConsultationController::class, 'update'])->name('patients.consultations.update');
     Route::delete('patients/{patient}/consultations/{consultation}', [ConsultationController::class, 'destroy'])->name('patients.consultations.destroy');
 
-    Route::resource('para-clinic-requests', ParaClinicRequestController::class)
-        ->only(['index', 'store', 'update', 'destroy']);
-
-    Route::get('para-clinic-requests/{paraclinic_request}', [ParaClinicRequestController::class, 'show'])->name('para-clinic-requests.show');
-    Route::post('para-clinic-requests/{paraclinic_request}/attachments', [ParaClinicRequestController::class, 'uploadAttachment'])->name('para-clinic-requests.attachments.upload');
-    Route::delete('para-clinic-requests/{paraclinic_request}/attachments/{attachment}', [ParaClinicRequestController::class, 'deleteAttachment'])->name('para-clinic-requests.attachments.destroy');
-    Route::get('para-clinic-requests/attachments/{attachment}/view', [ParaClinicRequestController::class, 'viewAttachment'])->name('para-clinic-requests.attachments.view');
-    Route::patch('para-clinic-requests/{paraclinic_request}/status', [ParaClinicRequestController::class, 'updateStatus'])->name('para-clinic-requests.status');
-    Route::patch('para-clinic-requests/{paraclinic_request}/payment', [ParaClinicRequestController::class, 'updatePayment'])->name('para-clinic-requests.payment');
-    Route::post('para-clinic-requests/{paraclinic_request}/results', [ParaClinicRequestController::class, 'storeResult'])->name('para-clinic-requests.results.store');
-
-    Route::get('doctors/search', [ParaClinicRequestController::class, 'searchDoctors'])->name('api.doctors.search');
+    // Para-clinic requests (patient detail tab)
+    Route::post('para-clinic-requests', [ParaClinicRequestController::class, 'store'])->name('para-clinic-requests.store');
+    Route::put('para-clinic-requests/{paraClinicRequest}', [ParaClinicRequestController::class, 'update'])->name('para-clinic-requests.update');
+    Route::delete('para-clinic-requests/{paraClinicRequest}', [ParaClinicRequestController::class, 'destroy'])->name('para-clinic-requests.destroy');
 
     Route::post('patients/{patient}/medications', [MedicationOrderController::class, 'store'])->name('patients.medications.store');
     Route::put('patients/{patient}/medications/{medicationOrder}', [MedicationOrderController::class, 'update'])->name('patients.medications.update');

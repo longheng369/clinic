@@ -134,7 +134,7 @@ class PatientController extends Controller
             }, 'surveillance'),
             'paraClinicRequests' => Inertia::defer(function () use ($patient, $selectedVisitId) {
                 return $patient->paraClinicRequests()
-                    ->with(['doctor', 'tests'])
+                    ->with(['tests'])
                     ->when($selectedVisitId, fn ($q) => $q->where('visit_id', $selectedVisitId))
                     ->latest()
                     ->paginate(10)
@@ -142,9 +142,8 @@ class PatientController extends Controller
                     ->through(fn ($r) => [
                         'id' => $r->id,
                         'request_number' => $r->request_number,
-                        'doctor' => $r->doctor ? ['id' => $r->doctor->id, 'name' => $r->doctor->name] : null,
                         'external_facility_name' => $r->external_facility_name,
-                        'request_date' => $r->request_date,
+                        'request_date' => $r->request_date ? \Carbon\Carbon::parse($r->request_date)->format('d-m-Y') : null,
                         'status' => $r->status,
                         'payment_status' => $r->payment_status,
                         'fee' => (float) $r->fee,
