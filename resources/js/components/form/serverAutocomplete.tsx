@@ -22,6 +22,8 @@ type Props<T extends FieldValues = FieldValues> = {
   initialOption?: IOption<string | number>;
   placeholder?: string;
   disabled?: boolean;
+  onSelect?: (option: IOption<any>) => void;
+  excludeValues?: (string | number)[];
 };
 
 const ServerAutocomplete = <T extends FieldValues = FieldValues>({
@@ -34,6 +36,8 @@ const ServerAutocomplete = <T extends FieldValues = FieldValues>({
   initialOption,
   placeholder = 'Search...',
   disabled = false,
+  onSelect,
+  excludeValues,
 }: Props<T>) => {
   const { field, fieldState } = useController({ control, name, rules });
   const [open, setOpen] = useState(false);
@@ -145,6 +149,7 @@ const ServerAutocomplete = <T extends FieldValues = FieldValues>({
       loading={isLoading}
       open={open}
       disabled={disabled}
+      fullWidth
       onOpen={() => setOpen(true)}
       onInputChange={(_, value, reason) => {
         if (reason === 'clear') {
@@ -177,6 +182,9 @@ const ServerAutocomplete = <T extends FieldValues = FieldValues>({
         setSearchQuery('');
         setIsEditingSearch(false);
         setOpen(false);
+        if (value && onSelect) {
+          onSelect(value);
+        }
       }}
       onClose={(_, reason) => {
         setOpen(false);
@@ -189,7 +197,11 @@ const ServerAutocomplete = <T extends FieldValues = FieldValues>({
       }}
       getOptionLabel={(option) => option.label}
       isOptionEqualToValue={(option, value) => option.value === value?.value}
-      filterOptions={(x) => x}
+      filterOptions={(options) =>
+        excludeValues?.length
+          ? options.filter((o) => !excludeValues.includes(o.value))
+          : options
+      }
       noOptionsText={isLoading ? 'Searching...' : 'No results found'}
       renderInput={(params) => (
         <TextField
@@ -200,6 +212,7 @@ const ServerAutocomplete = <T extends FieldValues = FieldValues>({
           error={!!fieldState.error}
           helperText={fieldState.error?.message}
           variant="standard"
+          fullWidth
           slotProps={{
             input: {
               ...params.slotProps.input,

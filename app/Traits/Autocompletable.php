@@ -28,4 +28,9 @@ trait Autocompletable
         $column = static::autocompleteSearchable()[0] ?? null;
         return $column ? (string) $this->{$column} : (string) $this->id;
     }
+
+    public static function autocompleteExtra(): array
+    {
+        return [];
+    }
 }

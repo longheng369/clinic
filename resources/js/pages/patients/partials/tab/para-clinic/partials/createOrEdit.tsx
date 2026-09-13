@@ -1,13 +1,13 @@
 import { useForm, useFieldArray } from 'react-hook-form';
-import Input from '@/components/form/input-deprecated';
-import Select from '@/components/form/select-deprecated';
+import Input from '@/components/form/input';
+import Select from '@/components/form/select';
 import ServerAutocomplete from '@/components/form/serverAutocomplete';
 import Textarea from '@/components/form/textarea';
 import {
   IParaClinicRequest,
   IParaClinicRequestFormData,
 } from '@/interfaces/IParaClinicRequest';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { router } from '@inertiajs/react';
 import {
   Box,
@@ -17,7 +17,7 @@ import {
   Grid,
   Stack,
   Typography,
-  IconButton
+  IconButton,
 } from '@mui/material';
 import { useToast } from '@/components/toast';
 import { Plus, X } from 'lucide-react';
@@ -56,67 +56,69 @@ const ParaClinicForm = ({
 }: ParaClinicFormProps) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
-  const diagnosticTestOptions = diagnosticTests.map((t) => ({ value: t.id, label: t.name }));
+  const diagnosticTestOptions = diagnosticTests.map((t) => ({
+    value: t.id,
+    label: `${t.name}${t.price ? ` ($${t.price.toFixed(2)})` : ''}`,
+  }));
 
   const defaultTests = request?.tests?.length
     ? request.tests.map((t) => ({
-      diagnostic_test_id: t.diagnostic_test_id ?? null,
-      priority: t.priority,
-      instruction: t.instruction,
-    }))
+        diagnostic_test_id: t.diagnostic_test_id ?? null,
+        priority: t.priority,
+        instruction: t.instruction,
+      }))
     : [
-      {
-        diagnostic_test_id: null,
-        priority: 'Routine',
-        instruction: null,
-      },
-    ];
+        {
+          diagnostic_test_id: null,
+          priority: 'Routine',
+          instruction: null,
+        },
+      ];
 
   const { control, handleSubmit, watch, setValue } =
     useForm<IParaClinicRequestFormData>({
       defaultValues: request
         ? {
-          patient_id: request.patient?.id ?? null,
-          doctor_id: request.doctor?.id ?? null,
-          visit_id: request.visit_id,
-          request_date: request.request_date,
-          clinical_reason: request.clinical_reason,
-          provisional_diagnosis: request.provisional_diagnosis,
-          notes: request.notes,
-          fee: request.fee,
-          payment_status: request.payment_status,
-          payment_date: request.payment_date,
-          tests: defaultTests,
-        }
+            patient_id: request.patient?.id ?? null,
+            doctor_id: request.doctor?.id ?? null,
+            visit_id: request.visit_id,
+            external_facility_name: request.external_facility_name ?? '',
+            request_date: request.request_date,
+            clinical_reason: request.clinical_reason,
+            provisional_diagnosis: request.provisional_diagnosis,
+            notes: request.notes,
+            fee: request.fee,
+            payment_status: request.payment_status,
+            payment_date: request.payment_date,
+            tests: defaultTests,
+          }
         : {
-          patient_id: preselectedPatient?.id ?? null,
-          doctor_id: authUser.id,
-          visit_id: null,
-          request_date: new Date().toISOString().split('T')[0],
-          clinical_reason: '',
-          provisional_diagnosis: '',
-          notes: '',
-          fee: null,
-          payment_status: 'Unpaid',
-          payment_date: null,
-          tests: defaultTests,
-        },
+            patient_id: preselectedPatient?.id ?? null,
+            doctor_id: authUser.id,
+            visit_id: null,
+            external_facility_name: '',
+            request_date: new Date().toISOString().split('T')[0],
+            clinical_reason: '',
+            provisional_diagnosis: '',
+            notes: '',
+            fee: 0,
+            payment_status: 'Unpaid',
+            payment_date: null,
+            tests: defaultTests,
+          },
     });
+
   const { fields, append, remove } = useFieldArray({ control, name: 'tests' });
-
   const testsValues = watch('tests');
-  const diagnosticTestIds = testsValues.map((t) => t.diagnostic_test_id);
-
-  useEffect(() => {
-    const total = testsValues.reduce((sum, t) => {
-      const match = diagnosticTests.find((lt) => lt.id === t.diagnostic_test_id);
-      return sum + (match?.price ?? 0);
-    }, 0);
-    setValue('fee', total);
-  }, [JSON.stringify(diagnosticTestIds)]);
+  const feeValue = watch('fee');
 
   const priceFor = (id: number | null) =>
     diagnosticTests.find((t) => t.id === id)?.price;
+
+  const autoTotal = testsValues.reduce((sum, t) => {
+    const match = diagnosticTests.find((lt) => lt.id === t.diagnostic_test_id);
+    return sum + (match?.price ?? 0);
+  }, 0);
 
   const submitData = (
     data: IParaClinicRequestFormData,
@@ -144,6 +146,10 @@ const ParaClinicForm = ({
             { variant: 'success' },
           );
         },
+        onError: (errors: Record<string, string | string[]>) => {
+          const msg = Object.values(errors).flat().join(', ');
+          toast(msg || 'Failed to save request.', { variant: 'error' });
+        },
         onFinish: () => setIsProcessing(false),
       };
       if (request)
@@ -165,7 +171,12 @@ const ParaClinicForm = ({
             </Typography>
           </Grid>
           <Grid size={{ md: 12 }}>
-            <DatePicker control={control} name="request_date" />
+            <DatePicker
+              control={control}
+              name="request_date"
+              label="Request Date"
+              rules={{ required: 'Request date is required' }}
+            />
           </Grid>
           <Grid size={{ md: 12 }}>
             <ServerAutocomplete
@@ -175,6 +186,24 @@ const ParaClinicForm = ({
               rules={{ required: 'Patient is required' }}
               model="Patient"
               placeholder="Search patient by name..."
+            />
+          </Grid>
+          <Grid size={{ md: 12 }}>
+            <ServerAutocomplete
+              label="Referring Doctor"
+              control={control}
+              name="doctor_id"
+              rules={{ required: 'Doctor is required' }}
+              apiUrl="/doctors/search"
+              placeholder="Search doctor by name..."
+            />
+          </Grid>
+          <Grid size={{ md: 12 }}>
+            <Input
+              label="External Facility Name"
+              control={control}
+              name="external_facility_name"
+              placeholder="e.g. Referral Lab Center"
             />
           </Grid>
           <Grid size={{ md: 12 }}>
@@ -310,10 +339,10 @@ const ParaClinicForm = ({
           </Grid>
           <Grid size={{ md: 6 }}>
             <Input
-              label="Fee ($)"
+              label={`Fee ($) — Auto: $${autoTotal.toFixed(2)}`}
               control={control}
               type="number"
-              inputProps={{ step: '0.01', min: '0' }}
+              slotProps={{ htmlInput: { step: '0.01', min: '0' } }}
               name="fee"
               placeholder="0.00"
             />
