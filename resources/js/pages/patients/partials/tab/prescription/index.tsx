@@ -506,11 +506,8 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
             </Table>
           </TableContainer>
           <Box sx={{ height: '100px' }}>
-            <Typography sx={{ fontSize: 14 }}>
-              វេជ្ជបណ្ឌិត
-              <Typography component="span" sx={{ fontSize: 14 }}>
-                : {prescription?.created_by}
-              </Typography>
+            <Typography sx={{ fontSize: 14, textAlign: 'end' }}>
+              គ្រូពេទ្យព្យាបាល
             </Typography>
           </Box>
         </Box>

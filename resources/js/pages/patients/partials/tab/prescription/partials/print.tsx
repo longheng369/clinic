@@ -84,7 +84,7 @@ const Print = ({
             textAlign: 'center',
             letterSpacing: 1,
             mt: 0.5,
-            fontSize: '1rem'
+            fontSize: '1rem',
           }}
         >
           ជាតិ សាសនា ព្រះមហាក្សត្រ
@@ -148,7 +148,9 @@ const Print = ({
                   <TableCell>{item.medicine?.name}</TableCell>
                   <TableCell>{item.quantity}</TableCell>
                   <TableCell>
-                    {instructionOptions.find((opt) => opt.value === item.medicine_instruction_id)?.label ?? ''}{' '}
+                    {instructionOptions.find(
+                      (opt) => opt.value === item.medicine_instruction_id,
+                    )?.label ?? ''}{' '}
                     {item.morning && `ព្រឹក ${item.morning} ${item.unit?.name}`}{' '}
                     {item.afternoon &&
                       `រសៀល ${item.afternoon} ${item.unit?.name}`}{' '}
@@ -165,9 +167,7 @@ const Print = ({
       </Box>
 
       <Box sx={{ height: '150px' }}>
-        <p>
-          អ្នកព្យាបាល: <span>{prescription?.created_by}</span>
-        </p>
+        <p style={{ textAlign: 'end' }}>គ្រូពេទ្យព្យាបាល</p>
       </Box>
     </Box>
   );
