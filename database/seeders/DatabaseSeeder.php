@@ -2,9 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\LapTest;
+use App\Models\DiagnosticTest;
 use App\Models\MedicineInstruction;
 use App\Models\MedicationRoute;
+use App\Models\Unit;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -82,7 +83,7 @@ class DatabaseSeeder extends Seeder
             MedicineInstruction::firstOrCreate($instruction);
         }
 
-        $lapTests = [
+        $diagnosticTests = [
             ['name' => 'CBC', 'price' => 0],
             ['name' => 'Blood Sugar', 'price' => 0],
             ['name' => 'Lipid Profile', 'price' => 0],
@@ -105,18 +106,43 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Other', 'price' => 0],
         ];
 
-        foreach ($lapTests as $lapTest) {
-            LapTest::firstOrCreate(
-                ['name' => $lapTest['name']],
-                $lapTest + ['description' => null]
+        foreach ($diagnosticTests as $diagnosticTest) {
+            DiagnosticTest::firstOrCreate(
+                ['name' => $diagnosticTest['name']],
+                $diagnosticTest + ['description' => null]
             );
         }
 
-        foreach (LapTest::all() as $lapTest) {
+        foreach (DiagnosticTest::all() as $diagnosticTest) {
             DB::table('paraclinic_request_tests')
-                ->where('test_name', $lapTest->name)
-                ->whereNull('lab_test_id')
-                ->update(['lab_test_id' => $lapTest->id]);
+                ->where('test_name', $diagnosticTest->name)
+                ->whereNull('diagnostic_test_id')
+                ->update(['diagnostic_test_id' => $diagnosticTest->id]);
+        }
+
+        $units = [
+            ['name' => 'mg', 'description' => 'Milligrams'],
+            ['name' => 'g', 'description' => 'Grams'],
+            ['name' => 'mcg', 'description' => 'Micrograms'],
+            ['name' => 'mL', 'description' => 'Milliliters'],
+            ['name' => 'L', 'description' => 'Liters'],
+            ['name' => 'IU', 'description' => 'International Units'],
+            ['name' => 'tablet', 'description' => 'Tablets'],
+            ['name' => 'capsule', 'description' => 'Capsules'],
+            ['name' => 'drop', 'description' => 'Drops'],
+            ['name' => 'ampoule', 'description' => 'Ampoules'],
+            ['name' => 'vial', 'description' => 'Vials'],
+            ['name' => 'patch', 'description' => 'Patches'],
+            ['name' => 'suppository', 'description' => 'Suppositories'],
+            ['name' => 'puff', 'description' => 'Puffs (inhaler)'],
+            ['name' => 'tube', 'description' => 'Tubes (topical)'],
+            ['name' => 'bottle', 'description' => 'Bottles'],
+            ['name' => 'sachet', 'description' => 'Sachets'],
+            ['name' => 'sheet', 'description' => 'Sheets'],
+        ];
+
+        foreach ($units as $unit) {
+            Unit::firstOrCreate(['name' => $unit['name']], $unit);
         }
     }
 }
