@@ -277,239 +277,235 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
           position: 'relative',
           p: 4,
           minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
-        <Typography
-          sx={{
-            fontFamily: 'Moul',
-            color: 'info.main',
-            textAlign: 'center',
-            letterSpacing: 1,
-            fontSize: '1.3rem',
-          }}
-        >
-          ព្រះរាជាណាចក្រកម្ពុជា
-        </Typography>
-        <Typography
-          sx={{
-            fontFamily: 'Moul',
-            color: 'info.main',
-            textAlign: 'center',
-            letterSpacing: 1,
-            mt: 0.5,
-          }}
-        >
-          ជាតិ សាសនា ព្រះមហាក្សត្រ
-        </Typography>
-
-        <Box
-          sx={{
-            position: 'absolute',
-            top: 32,
-            left: 32,
-            display: 'flex',
-            width: 80,
-            height: 80,
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexShrink: 0,
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg, #5a8f5a, #3d633d)',
-          }}
-        >
-          <Stethoscope size={30} color="#fff" />
-        </Box>
-
-        <Box sx={{ position: 'absolute', top: '1rem', right: '1rem' }}>
-          <Box
+        <Box>
+          <Typography
             sx={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'end',
+              fontFamily: 'Moul',
+              color: 'info.main',
+              textAlign: 'center',
+              letterSpacing: 1,
+              fontSize: '1.3rem',
             }}
           >
-            {!isEditing ? (
-              <Box className="no-print" sx={{ display: 'flex', gap: 1 }}>
-                <Button
-                  variant="outlined"
-                  startIcon={<Printer size={16} />}
-                  onClick={() => setOpenPrint(true)}
-                >
-                  Print
-                </Button>
-                <Button
-                  variant="contained"
-                  startIcon={<Pencil size={16} />}
-                  onClick={() => setIsEditing(true)}
-                >
-                  Edit
-                </Button>
-              </Box>
-            ) : (
-              <Box className="no-print" sx={{ display: 'flex', gap: 1 }}>
-                {prescription && (
+            ព្រះរាជាណាចក្រកម្ពុជា
+          </Typography>
+          <Typography
+            sx={{
+              fontFamily: 'Moul',
+              color: 'info.main',
+              textAlign: 'center',
+              letterSpacing: 1,
+              mt: 0.5,
+            }}
+          >
+            ជាតិ សាសនា ព្រះមហាក្សត្រ
+          </Typography>
+
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 32,
+              left: 32,
+              display: 'flex',
+              width: 80,
+              height: 80,
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+              borderRadius: '50%',
+              background: 'linear-gradient(135deg, #5a8f5a, #3d633d)',
+            }}
+          >
+            <Stethoscope size={30} color="#fff" />
+          </Box>
+
+          <Box sx={{ position: 'absolute', top: '1rem', right: '1rem' }}>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'end',
+              }}
+            >
+              {!isEditing ? (
+                <Box className="no-print" sx={{ display: 'flex', gap: 1 }}>
                   <Button
                     variant="outlined"
-                    startIcon={<X size={16} />}
-                    onClick={cancelEditing}
+                    startIcon={<Printer size={16} />}
+                    onClick={() => setOpenPrint(true)}
+                  >
+                    Print
+                  </Button>
+                  <Button
+                    variant="contained"
+                    startIcon={<Pencil size={16} />}
+                    onClick={() => setIsEditing(true)}
+                  >
+                    Edit
+                  </Button>
+                </Box>
+              ) : (
+                <Box className="no-print" sx={{ display: 'flex', gap: 1 }}>
+                  {prescription && (
+                    <Button
+                      variant="outlined"
+                      startIcon={<X size={16} />}
+                      onClick={cancelEditing}
+                      disabled={isSaving}
+                    >
+                      Cancel
+                    </Button>
+                  )}
+                  <Button
+                    variant="contained"
+                    startIcon={<Save size={16} />}
+                    onClick={savePrescription}
                     disabled={isSaving}
                   >
-                    Cancel
+                    Save
                   </Button>
-                )}
-                <Button
-                  variant="contained"
-                  startIcon={<Save size={16} />}
-                  onClick={savePrescription}
-                  disabled={isSaving}
-                >
-                  Save
-                </Button>
-                <Button
-                  onClick={openAddModal}
-                  variant="contained"
-                  color="info"
-                  startIcon={<Plus size={16} />}
-                  disabled={isSaving}
-                >
-                  Add Medicine
-                </Button>
-              </Box>
-            )}
+                  <Button
+                    onClick={openAddModal}
+                    variant="contained"
+                    color="info"
+                    startIcon={<Plus size={16} />}
+                    disabled={isSaving}
+                  >
+                    Add Medicine
+                  </Button>
+                </Box>
+              )}
+            </Box>
+          </Box>
+
+          <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
+            {[
+              {
+                label: 'គោត្តនាម នាម',
+                value: `${patient.khmer_first_name} ${patient.khmer_last_name}`,
+              },
+              {
+                label: 'ភេទ',
+                value: patient.gender,
+              },
+              {
+                label: 'អាយុ',
+                value: `${calculateAge(patient.date_of_birth)} ឆ្នាំ`,
+              },
+              {
+                label: 'Name',
+                value: `${patient.last_name} ${patient.first_name}`,
+              },
+              {
+                label: 'ទូរស័ព្ទ',
+                value: patient.phone_number,
+              },
+              {
+                label: 'ក្រុមឈាម',
+                value: patient.blood_group,
+              },
+              {
+                label: 'អត្តសញ្ញាណប័ណ្ណ',
+                value: patient.national_id,
+              },
+              {
+                label: 'កាលបរិច្ឆេទ',
+                value: formatDob(
+                  prescription?.created_at ?? new Date().toISOString(),
+                ),
+              },
+              {
+                label: 'Diagnosis',
+                value: consultationDiagnoses.join(', '),
+              },
+            ].map((info) => (
+              <PatientField
+                key={info.label}
+                label={info.label}
+                value={info.value!}
+                fontSize="14px"
+              />
+            ))}
           </Box>
         </Box>
 
-        <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
-          {[
-            {
-              label: 'គោត្តនាម នាម',
-              value: `${patient.khmer_first_name} ${patient.khmer_last_name}`,
-            },
-            {
-              label: 'ភេទ',
-              value: patient.gender,
-            },
-            {
-              label: 'អាយុ',
-              value: `${calculateAge(patient.date_of_birth)} ឆ្នាំ`,
-            },
-            {
-              label: 'Name',
-              value: `${patient.last_name} ${patient.first_name}`,
-            },
-            {
-              label: 'ទូរស័ព្ទ',
-              value: patient.phone_number,
-            },
-            {
-              label: 'ក្រុមឈាម',
-              value: patient.blood_group,
-            },
-            {
-              label: 'អត្តសញ្ញាណប័ណ្ណ',
-              value: patient.national_id,
-            },
-            {
-              label: 'កាលបរិច្ឆេទ',
-              value: formatDob(
-                prescription?.created_at ?? new Date().toISOString(),
-              ),
-            },
-            {
-              label: 'Diagnosis',
-              value: consultationDiagnoses.join(', '),
-            },
-          ].map((info) => (
-            <PatientField
-              key={info.label}
-              label={info.label}
-              value={info.value!}
-              fontSize="14px"
-            />
-          ))}
-        </Box>
-
-        <Box>
-          {fields.length === 0 ? (
-            <Box sx={{ py: 4, textAlign: 'center', color: 'text.secondary' }}>
-              No medicines in this prescription.
-            </Box>
-          ) : (
-            <TableContainer>
-              <Table
+        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+          <TableContainer sx={{ flex: 1 }}>
+            <Table
+              sx={{
+                borderCollapse: 'collapse',
+                '& .MuiTableCell-root': {
+                  border: 1,
+                  borderColor: 'divider',
+                },
+              }}
+            >
+              <TableHead
                 sx={{
-                  borderCollapse: 'collapse',
                   '& .MuiTableCell-root': {
                     border: 1,
                     borderColor: 'divider',
                   },
                 }}
               >
-                <TableHead
+                <TableRow
                   sx={{
-                    '& .MuiTableCell-root': {
-                      border: 1,
-                      borderColor: 'divider',
-                    },
+                    border: 1,
+                    borderColor: 'divider',
                   }}
                 >
+                  <TableCell width="5%" align="center">
+                    ល.រ
+                  </TableCell>
+                  <TableCell width="30%">ឈ្មោះថ្នាំ</TableCell>
+                  <TableCell width="10%">ចំនួន</TableCell>
+                  <TableCell width="40%">ការប្រើប្រាស់</TableCell>
+                  <TableCell width="10%">ចំនួនថ្ងៃ</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {fields.map((field, index) => (
                   <TableRow
-                    sx={{
-                      border: 1,
-                      borderColor: 'divider',
-                    }}
+                    key={field.id}
+                    sx={
+                      isEditing
+                        ? {
+                            cursor: 'pointer',
+                            '&:hover': {
+                              bgcolor: 'action.hover',
+                            },
+                          }
+                        : undefined
+                    }
+                    onClick={isEditing ? () => openEditModal(index) : undefined}
                   >
-                    <TableCell width="5%" align="center">
-                      ល.រ
+                    <TableCell align="center">{index + 1}</TableCell>
+                    <TableCell>{field.medicine?.name}</TableCell>
+                    <TableCell>
+                      {field.quantity} {field.unit?.name}
                     </TableCell>
-                    <TableCell width="30%">ឈ្មោះថ្នាំ</TableCell>
-                    <TableCell width="10%">ចំនួន</TableCell>
-                    <TableCell width="40%">ការប្រើប្រាស់</TableCell>
-                    <TableCell width="10%">ចំនួនថ្ងៃ</TableCell>
+                    <TableCell>
+                      {field.instruction?.label}{' '}
+                      {field.morning &&
+                        `ព្រឹក ${field.morning} ${field.unit.name}`}{' '}
+                      {field.afternoon &&
+                        `រសៀល ${field.afternoon} ${field.unit.name}`}{' '}
+                      {field.evening &&
+                        `ល្ងាច ${field.evening} ${field.unit.name}`}{' '}
+                      {field.night && `យប់ ${field.night} ${field.unit.name}`},{' '}
+                      {field.notes}
+                    </TableCell>
+                    <TableCell>{field.numberOfDay}</TableCell>
                   </TableRow>
-                </TableHead>
-                <TableBody>
-                  {fields.map((field, index) => (
-                    <TableRow
-                      key={field.id}
-                      sx={
-                        isEditing
-                          ? {
-                              cursor: 'pointer',
-                              '&:hover': {
-                                bgcolor: 'action.hover',
-                              },
-                            }
-                          : undefined
-                      }
-                      onClick={
-                        isEditing ? () => openEditModal(index) : undefined
-                      }
-                    >
-                      <TableCell align="center">{index + 1}</TableCell>
-                      <TableCell>{field.medicine?.name}</TableCell>
-                      <TableCell>
-                        {field.quantity} {field.unit?.name}
-                      </TableCell>
-                      <TableCell>
-                        {field.instruction?.label}{' '}
-                        {field.morning &&
-                          `ព្រឹក ${field.morning} ${field.unit.name}`}{' '}
-                        {field.afternoon &&
-                          `រសៀល ${field.afternoon} ${field.unit.name}`}{' '}
-                        {field.evening &&
-                          `ល្ងាច ${field.evening} ${field.unit.name}`}{' '}
-                        {field.night && `យប់ ${field.night} ${field.unit.name}`}
-                        , {field.notes}
-                      </TableCell>
-                      <TableCell>{field.numberOfDay}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          )}
-          <Box sx={{ mt: 8 }}>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <Box sx={{ height: '100px' }}>
             <Typography sx={{ fontSize: 14 }}>
               វេជ្ជបណ្ឌិត
               <Typography component="span" sx={{ fontSize: 14 }}>

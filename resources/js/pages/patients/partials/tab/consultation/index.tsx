@@ -12,16 +12,7 @@ import { usePagination } from '@/hooks/usePagination';
 import type React from 'react';
 import { formatCreatedDateTime } from '@/utils/date';
 import { Box, Button, Typography } from '@mui/material';
-
-interface PaginatedData<T> {
-  data: T[];
-  current_page: number;
-  last_page: number;
-  per_page: number;
-  total: number;
-  from: number;
-  to: number;
-}
+import { IPagination } from '@/interfaces/IPagination';
 
 const ConsultationTab = ({
   patientId,
@@ -32,7 +23,7 @@ const ConsultationTab = ({
 }) => {
   const { openAlert } = useModal();
   const { consultations } = usePage<{
-    consultations: PaginatedData<IConsultation>;
+    consultations: IPagination<IConsultation>;
   }>().props;
   const { data: rows, total, current_page, per_page } = consultations;
 
@@ -167,7 +158,7 @@ const ConsultationTab = ({
           justifyContent: 'space-between',
         }}
       >
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+        <Typography variant="body2">
           Consultation records for this patient
         </Typography>
         <Button
