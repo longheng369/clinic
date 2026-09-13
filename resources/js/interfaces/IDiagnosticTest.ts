@@ -1,4 +1,4 @@
-export interface ILapTest {
+export interface IDiagnosticTest {
   id: number;
   name: string;
   price: number;
@@ -7,7 +7,7 @@ export interface ILapTest {
   updated_at: string;
 }
 
-export interface ILapTestFormData {
+export interface IDiagnosticTestFormData {
   name: string;
   price: number | null;
   description: string | null;

@@ -28,7 +28,7 @@ const PRIORITY_OPTIONS = ['Routine', 'Urgent', 'STAT'].map((value) => ({
   label: value,
 }));
 
-interface LapTestOption {
+interface DiagnosticTestOption {
   id: number;
   name: string;
   value: string;
@@ -43,7 +43,7 @@ interface ParaClinicFormProps {
     khmer_first_name: string;
     khmer_last_name: string;
   } | null;
-  lapTests: LapTestOption[];
+  diagnosticTests: DiagnosticTestOption[];
   onClose: () => void;
 }
 
@@ -51,22 +51,22 @@ const ParaClinicForm = ({
   request,
   authUser,
   preselectedPatient,
-  lapTests,
+  diagnosticTests,
   onClose,
 }: ParaClinicFormProps) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
-  const lapTestOptions = lapTests.map((t) => ({ value: t.id, label: t.name }));
+  const diagnosticTestOptions = diagnosticTests.map((t) => ({ value: t.id, label: t.name }));
 
   const defaultTests = request?.tests?.length
     ? request.tests.map((t) => ({
-      lab_test_id: t.lab_test_id ?? null,
+      diagnostic_test_id: t.diagnostic_test_id ?? null,
       priority: t.priority,
       instruction: t.instruction,
     }))
     : [
       {
-        lab_test_id: null,
+        diagnostic_test_id: null,
         priority: 'Routine',
         instruction: null,
       },
@@ -105,18 +105,18 @@ const ParaClinicForm = ({
   const { fields, append, remove } = useFieldArray({ control, name: 'tests' });
 
   const testsValues = watch('tests');
-  const labTestIds = testsValues.map((t) => t.lab_test_id);
+  const diagnosticTestIds = testsValues.map((t) => t.diagnostic_test_id);
 
   useEffect(() => {
     const total = testsValues.reduce((sum, t) => {
-      const match = lapTests.find((lt) => lt.id === t.lab_test_id);
+      const match = diagnosticTests.find((lt) => lt.id === t.diagnostic_test_id);
       return sum + (match?.price ?? 0);
     }, 0);
     setValue('fee', total);
-  }, [JSON.stringify(labTestIds)]);
+  }, [JSON.stringify(diagnosticTestIds)]);
 
   const priceFor = (id: number | null) =>
-    lapTests.find((t) => t.id === id)?.price;
+    diagnosticTests.find((t) => t.id === id)?.price;
 
   const submitData = (
     data: IParaClinicRequestFormData,
@@ -124,9 +124,9 @@ const ParaClinicForm = ({
   ) => ({
     ...data,
     ...extra,
-    tests: data.tests.map(({ lab_test_id, priority, instruction }) => ({
-      lab_test_id,
-      price: lapTests.find((t) => t.id === lab_test_id)?.price ?? 0,
+    tests: data.tests.map(({ diagnostic_test_id, priority, instruction }) => ({
+      diagnostic_test_id,
+      price: diagnosticTests.find((t) => t.id === diagnostic_test_id)?.price ?? 0,
       priority,
       instruction,
     })),
@@ -218,7 +218,7 @@ const ParaClinicForm = ({
                 size="small"
                 onClick={() =>
                   append({
-                    lab_test_id: null,
+                    diagnostic_test_id: null,
                     priority: 'Routine',
                     instruction: null,
                   })
@@ -235,7 +235,7 @@ const ParaClinicForm = ({
               <Stack spacing={1.5}>
                 {fields.map((field, index) => {
                   const selectedPrice = priceFor(
-                    testsValues[index]?.lab_test_id ?? null,
+                    testsValues[index]?.diagnostic_test_id ?? null,
                   );
                   return (
                     <Stack
@@ -257,10 +257,10 @@ const ParaClinicForm = ({
                         sx={{ flex: 1, width: '100%' }}
                       >
                         <Select
-                          label="Lab Test"
+                          label="Diagnostic Test"
                           control={control}
-                          name={`tests.${index}.lab_test_id` as any}
-                          options={lapTestOptions}
+                          name={`tests.${index}.diagnostic_test_id` as any}
+                          options={diagnosticTestOptions}
                           rules={{ required: 'Required' }}
                         />
                         <Select

@@ -85,7 +85,7 @@ const Index = () => {
     filters,
     auth,
     patient,
-    lapTests,
+    diagnosticTests,
   } = usePage<{
     requests: PaginatedData<IParaClinicRequest>;
     search: string | null;
@@ -97,7 +97,7 @@ const Index = () => {
     };
     auth: { user: { id: number; name: string } };
     patient: PreselectedPatient | null;
-    lapTests: { id: number; name: string; value: string; price: number }[];
+    diagnosticTests: { id: number; name: string; value: string; price: number }[];
   }>().props;
 
   const { searchTerm, setSearchTerm } = useDebouncedSearch({
@@ -156,7 +156,7 @@ const Index = () => {
         <ParaClinicForm
           authUser={auth.user}
           preselectedPatient={preselectedPatient}
-          lapTests={lapTests}
+          diagnosticTests={diagnosticTests}
           onClose={closeModal}
         />
       ),
@@ -174,7 +174,7 @@ const Index = () => {
         <ParaClinicForm
           request={r}
           authUser={auth.user}
-          lapTests={lapTests}
+          diagnosticTests={diagnosticTests}
           onClose={closeModal}
         />
       ),

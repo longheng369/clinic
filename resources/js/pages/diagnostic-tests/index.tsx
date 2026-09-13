@@ -2,8 +2,8 @@ import { usePage, router } from '@inertiajs/react';
 import { Head } from '@inertiajs/react';
 import { useModal } from '@/components/modal';
 import { Pencil, Trash2, Plus } from 'lucide-react';
-import LapTestForm from './partials/createOrEdit';
-import { ILapTest } from '@/interfaces/ILapTest';
+import DiagnosticTestForm from './partials/createOrEdit';
+import { IDiagnosticTest } from '@/interfaces/IDiagnosticTest';
 import {
   DataGrid,
   type GridColDef,
@@ -16,45 +16,45 @@ import { formatCreatedDateTime } from '@/utils/date';
 import { Box, Typography, Button, Stack } from '@mui/material';
 import { IPagination } from '@/interfaces/IPagination';
 
-const LapTests = () => {
+const DiagnosticTests = () => {
   const { openModal, openAlert } = useModal();
-  const { lapTests, search: searchProp } = usePage<{
-    lapTests: IPagination<ILapTest>;
+  const { diagnosticTests, search: searchProp } = usePage<{
+    diagnosticTests: IPagination<IDiagnosticTest>;
     search: string | null;
   }>().props;
   const { searchTerm, setSearchTerm } = useDebouncedSearch({
-    route: '/settings/lap-tests',
+    route: '/settings/diagnostic-tests',
     searchProp,
   });
 
   const handlePaginationModelChange = usePagination({
-    route: '/settings/lap-tests',
+    route: '/settings/diagnostic-tests',
     search: searchProp,
   });
 
   const handleCreate = () => {
     openModal({
-      title: 'New Lap Test',
-      content: <LapTestForm />,
+      title: 'New Diagnostic Test',
+      content: <DiagnosticTestForm />,
       config: { preventClickAway: true, maxWidth: 'sm' },
     });
   };
 
-  const handleEdit = (lapTest: ILapTest) => {
+  const handleEdit = (diagnosticTest: IDiagnosticTest) => {
     openModal({
-      title: 'Edit Lap Test',
-      content: <LapTestForm lapTest={lapTest} />,
+      title: 'Edit Diagnostic Test',
+      content: <DiagnosticTestForm diagnosticTest={diagnosticTest} />,
       config: { preventClickAway: true, maxWidth: 'sm' },
     });
   };
 
-  const handleDelete = (lapTest: ILapTest) => {
+  const handleDelete = (diagnosticTest: IDiagnosticTest) => {
     openAlert({
-      message: 'Delete this lap test?',
+      message: 'Delete this diagnostic test?',
       description: 'This action cannot be undone.',
       variant: 'danger',
       confirmLabel: 'Delete',
-      onConfirm: () => router.delete(`/settings/lap-tests/${lapTest.id}`),
+      onConfirm: () => router.delete(`/settings/diagnostic-tests/${diagnosticTest.id}`),
     });
   };
 
@@ -70,7 +70,7 @@ const LapTests = () => {
       headerName: 'តម្លៃ',
       flex: 1,
       minWidth: 200,
-      valueGetter: (_value, row: ILapTest) => `$${row.price.toFixed(2)}`,
+      valueGetter: (_value, row: IDiagnosticTest) => `$${row.price.toFixed(2)}`,
     },
     {
       field: 'description',
@@ -83,7 +83,7 @@ const LapTests = () => {
       headerName: 'កាលបរិច្ឆេទបង្កើត',
       flex: 1,
       minWidth: 180,
-      valueGetter: (_value, row: ILapTest) =>
+      valueGetter: (_value, row: IDiagnosticTest) =>
         formatCreatedDateTime(row.created_at),
     },
     {
@@ -98,14 +98,14 @@ const LapTests = () => {
           key={`edit-${params.id}`}
           icon={<Pencil size={16} color="#2563eb" />}
           label={`Edit ${params.row.name}`}
-          onClick={() => handleEdit(params.row as ILapTest)}
+          onClick={() => handleEdit(params.row as IDiagnosticTest)}
           showInMenu={false}
         />,
         <GridActionsCellItem
           key={`delete-${params.id}`}
           icon={<Trash2 size={16} color="#dc2626" />}
           label={`Delete ${params.row.name}`}
-          onClick={() => handleDelete(params.row as ILapTest)}
+          onClick={() => handleDelete(params.row as IDiagnosticTest)}
           showInMenu={false}
         />,
       ],
@@ -114,7 +114,7 @@ const LapTests = () => {
 
   return (
     <>
-      <Head title="Lap Tests" />
+      <Head title="Diagnostic Tests" />
       <Stack sx={{ p: 4, height: '100%' }}>
         <Box
           sx={{
@@ -123,7 +123,7 @@ const LapTests = () => {
             justifyContent: 'space-between',
           }}
         >
-          <Typography variant="h5">Lap Tests</Typography>
+          <Typography variant="h5">Diagnostic Tests</Typography>
           <Box
             sx={{
               display: 'flex',
@@ -134,7 +134,7 @@ const LapTests = () => {
             <SearchBar
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search lap test"
+              placeholder="Search diagnostic test"
             />
             <Button
               onClick={handleCreate}
@@ -148,13 +148,13 @@ const LapTests = () => {
 
         <Box sx={{ flex: 1, mt: 3, minHeight: 0 }}>
           <DataGrid
-            rows={lapTests.data}
+            rows={diagnosticTests.data}
             columns={columns}
-            rowCount={lapTests.total}
+            rowCount={diagnosticTests.total}
             paginationMode="server"
             paginationModel={{
-              page: lapTests.current_page - 1,
-              pageSize: lapTests.per_page,
+              page: diagnosticTests.current_page - 1,
+              pageSize: diagnosticTests.per_page,
             }}
             onPaginationModelChange={handlePaginationModelChange}
             pageSizeOptions={[20]}
@@ -167,4 +167,4 @@ const LapTests = () => {
   );
 };
 
-export default LapTests;
+export default DiagnosticTests;

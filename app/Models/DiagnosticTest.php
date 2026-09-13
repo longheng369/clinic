@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['name', 'price', 'description'])]
-class LapTest extends Model
+class DiagnosticTest extends Model
 {
     protected function casts(): array
     {
@@ -18,6 +18,6 @@ class LapTest extends Model
 
     public function paraClinicRequestTests(): HasMany
     {
-        return $this->hasMany(ParaclinicRequestTest::class);
+        return $this->hasMany(ParaclinicRequestTest::class, 'diagnostic_test_id');
     }
 }

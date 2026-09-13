@@ -50,7 +50,7 @@ export const sidebarSections: ISidebarSection[] = [
           { label: 'Units', icon: RulerDimensionLine, path: '/settings/units' },
           { label: 'Routes', icon: Route, path: '/settings/routes' },
           { label: 'Medicine Instructions', icon: ListChecks, path: '/settings/medicine-instructions' },
-          { label: 'Lap Test', icon: FlaskConical, path: '/settings/lap-tests' },
+          { label: 'Diagnostic Test', icon: FlaskConical, path: '/settings/diagnostic-tests' },
         ],
       },
     ],

@@ -5,7 +5,7 @@ export interface IParaClinicRequest {
 
 export interface IParaClinicRequestTest {
   id?: number;
-  lab_test_id: number | null;
+  diagnostic_test_id: number | null;
   test_category: string;
   test_name: string;
   price: number | null;
@@ -14,7 +14,7 @@ export interface IParaClinicRequestTest {
 }
 
 export interface IParaClinicRequestTestFormData {
-  lab_test_id: number | null;
+  diagnostic_test_id: number | null;
   priority: string;
   instruction: string | null;
 }

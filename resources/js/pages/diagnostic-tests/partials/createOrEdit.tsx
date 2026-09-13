@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import Input from '@/components/form/input';
 import Textarea from '@/components/form/textarea';
-import { ILapTest, ILapTestFormData } from '@/interfaces/ILapTest';
+import { IDiagnosticTest, IDiagnosticTestFormData } from '@/interfaces/IDiagnosticTest';
 import { useState } from 'react';
 import { router } from '@inertiajs/react';
 import { Box, Button, DialogActions, DialogContent, Grid } from '@mui/material';
@@ -9,30 +9,30 @@ import { useToast } from '@/components/toast';
 import { useModal } from '@/components/modal';
 import { Save } from 'lucide-react';
 
-interface LapTestFormProps {
-  lapTest?: ILapTest;
+interface DiagnosticTestFormProps {
+  diagnosticTest?: IDiagnosticTest;
 }
 
-const LapTestForm = ({ lapTest }: LapTestFormProps) => {
+const DiagnosticTestForm = ({ diagnosticTest }: DiagnosticTestFormProps) => {
   const { closeModal } = useModal();
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
-  const { control, handleSubmit } = useForm<ILapTestFormData>({
-    defaultValues: lapTest,
+  const { control, handleSubmit } = useForm<IDiagnosticTestFormData>({
+    defaultValues: diagnosticTest,
   });
 
   const onSubmit = handleSubmit((data) => {
     setIsProcessing(true);
-    if (lapTest) {
+    if (diagnosticTest) {
       router.put(
-        `/settings/lap-tests/${lapTest.id}`,
+        `/settings/diagnostic-tests/${diagnosticTest.id}`,
         { ...data },
         {
           onSuccess: () => {
             closeModal();
-            toast('Lap test updated successfully!', {
+            toast('Diagnostic test updated successfully!', {
               variant: 'success',
-              description: 'The lap test has been updated.',
+              description: 'The diagnostic test has been updated.',
             });
           },
           onFinish: () => {
@@ -45,19 +45,19 @@ const LapTestForm = ({ lapTest }: LapTestFormProps) => {
     }
 
     router.post(
-      '/settings/lap-tests',
+      '/settings/diagnostic-tests',
       { ...data },
       {
         onSuccess: () => {
           closeModal();
-          toast('Lap test created successfully!', {
+          toast('Diagnostic test created successfully!', {
             variant: 'success',
-            description: 'The lap test has been created.',
+            description: 'The diagnostic test has been created.',
           });
         },
         onError: (errors) => {
           if (errors.name) {
-            toast('Unable to create lap test', {
+            toast('Unable to create diagnostic test', {
               variant: 'error',
               description: errors.name,
             });
@@ -119,4 +119,4 @@ const LapTestForm = ({ lapTest }: LapTestFormProps) => {
   );
 };
 
-export default LapTestForm;
+export default DiagnosticTestForm;

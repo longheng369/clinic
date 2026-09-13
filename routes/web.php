@@ -5,7 +5,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ConsultationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HelpController;
-use App\Http\Controllers\LapTestController;
+use App\Http\Controllers\DiagnosticTestController;
 use App\Http\Controllers\MedicationAdministrationController;
 use App\Http\Controllers\MedicationOrderController;
 use App\Http\Controllers\MedicineController;
@@ -70,11 +70,11 @@ Route::middleware(['auth'])->group(function () {
     // Setting
     Route::prefix('settings')->group(function () {
 
-        // Lap test
-        Route::get('lap-tests', [LapTestController::class, 'index'])->name('lap-tests.index');
-        Route::post('lap-tests', [LapTestController::class, 'store'])->name('lap-tests.store');
-        Route::put('lap-tests/{lapTest}', [LapTestController::class, 'update'])->name('lap-tests.update');
-        Route::delete('lap-tests/{lapTest}', [LapTestController::class, 'destroy'])->name('lap-tests.destroy');
+        // Diagnostic test
+        Route::get('diagnostic-tests', [DiagnosticTestController::class, 'index'])->name('diagnostic-tests.index');
+        Route::post('diagnostic-tests', [DiagnosticTestController::class, 'store'])->name('diagnostic-tests.store');
+        Route::put('diagnostic-tests/{diagnosticTest}', [DiagnosticTestController::class, 'update'])->name('diagnostic-tests.update');
+        Route::delete('diagnostic-tests/{diagnosticTest}', [DiagnosticTestController::class, 'destroy'])->name('diagnostic-tests.destroy');
     });
 
     Route::resource('medicines', MedicineController::class)
