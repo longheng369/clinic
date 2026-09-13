@@ -27,22 +27,15 @@ class UnitController extends Controller
     {
         Unit::create($request->validated());
 
-        return redirect()->route('units.index')
+        return redirect()->route('settings.units.index')
             ->with('success', 'Unit created.');
-    }
-
-    public function edit(Unit $unit)
-    {
-        return Inertia::render('units/edit', [
-            'unit' => $unit,
-        ]);
     }
 
     public function update(UpdateUnitRequest $request, Unit $unit)
     {
         $unit->update($request->validated());
 
-        return redirect()->route('units.index')
+        return redirect()->route('settings.units.index')
             ->with('success', 'Unit updated.');
     }
 
@@ -50,7 +43,7 @@ class UnitController extends Controller
     {
         $unit->delete();
 
-        return redirect()->route('units.index')
+        return redirect()->route('settings.units.index')
             ->with('success', 'Unit deleted.');
     }
 }
