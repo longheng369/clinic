@@ -77,7 +77,7 @@ class Patient extends Model
 
     public function paraClinicRequests(): HasMany
     {
-        return $this->hasMany(ParaclinicRequest::class);
+        return $this->hasMany(ParaClinicRequest::class);
     }
 
     public function visits(): HasMany

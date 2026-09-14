@@ -1,6 +1,6 @@
 import { router, usePage } from '@inertiajs/react';
 import { useModal } from '@/components/modal';
-import { Trash2, Plus, Eye } from 'lucide-react';
+import { Trash2, Plus, Eye, Pencil } from 'lucide-react';
 import { IParaClinicRequest } from '@/interfaces/IParaClinicRequest';
 import {
   DataGrid,
@@ -61,6 +61,14 @@ const ParaClinicByPatientTab = ({ patientId, selectedVisitId }: { patientId: num
     });
   };
 
+  const handleEdit = (request: IParaClinicRequest) => {
+    openModal({
+      title: `Edit ${request.request_number}`,
+      content: <ParaClinicForm request={request} patientId={patientId} visitId={selectedVisitId} />,
+      config: { preventClickAway: true }
+    });
+  };
+
   const openRequestForm = () => {
     openModal({
       title: 'New Para Clinic Request',
@@ -85,6 +93,18 @@ const ParaClinicByPatientTab = ({ patientId, selectedVisitId }: { patientId: num
     {
       field: 'request_date',
       headerName: 'កាលបរិច្ឆេទ',
+      flex: 1,
+      minWidth: 160,
+    },
+    {
+      field: 'clinical_reason',
+      headerName: 'ហេតុផលរបស់គ្លីនិក',
+      flex: 1,
+      minWidth: 160,
+    },
+    {
+      field: 'notes',
+      headerName: 'ចំណាំ',
       flex: 1,
       minWidth: 160,
     },
@@ -121,13 +141,20 @@ const ParaClinicByPatientTab = ({ patientId, selectedVisitId }: { patientId: num
       field: 'actions',
       type: 'actions',
       headerName: 'សកម្មភាព',
-      width: 100,
+      width: 130,
       getActions: (params) => [
         <GridActionsCellItem
           key={`view-${params.id}`}
           icon={<Eye size={16} color="#64748b" />}
           label="View request"
           onClick={() => handleView(params.row as IParaClinicRequest)}
+          showInMenu={false}
+        />,
+        <GridActionsCellItem
+          key={`edit-${params.id}`}
+          icon={<Pencil size={16} color="#2563eb" />}
+          label="Edit request"
+          onClick={() => handleEdit(params.row as IParaClinicRequest)}
           showInMenu={false}
         />,
         <GridActionsCellItem
@@ -151,7 +178,7 @@ const ParaClinicByPatientTab = ({ patientId, selectedVisitId }: { patientId: num
           justifyContent: 'space-between',
         }}
       >
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+        <Typography variant="body2">
           Para clinic test requests for this patient
         </Typography>
         <Button

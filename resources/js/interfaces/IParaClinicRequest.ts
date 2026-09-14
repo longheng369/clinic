@@ -14,26 +14,6 @@ export interface IParaClinicRequestTestFormData {
   instruction: string | null;
 }
 
-export interface IParaClinicResult {
-  id: number;
-  result_date: string | null;
-  result_summary: string | null;
-  doctor_interpretation: string | null;
-  reviewed_by: string | null;
-  reviewed_at: string | null;
-  created_at: string;
-}
-
-export interface IParaClinicAttachment {
-  id: number;
-  file_name: string;
-  file_path: string;
-  mime_type: string;
-  file_size: number;
-  uploaded_by: string | null;
-  created_at: string;
-}
-
 export interface IParaClinicRequest {
   id: number;
   request_number: string;
@@ -56,8 +36,6 @@ export interface IParaClinicRequest {
   payment_status: string;
   payment_date: string | null;
   tests: IParaClinicRequestTest[];
-  results: IParaClinicResult[];
-  attachments: IParaClinicAttachment[];
   created_by: string | null;
   created_at: string;
   updated_at: string;

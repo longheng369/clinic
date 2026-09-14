@@ -24,7 +24,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     'created_by',
     'updated_by',
 ])]
-class ParaclinicRequest extends Model
+class ParaClinicRequest extends Model
 {
     use SoftDeletes;
 
@@ -33,8 +33,8 @@ class ParaclinicRequest extends Model
     protected static function boot(): void
     {
         parent::boot();
-        static::creating(fn (ParaclinicRequest $model) => $model->created_by ??= auth()->id());
-        static::updating(fn (ParaclinicRequest $model) => $model->updated_by = auth()->id());
+        static::creating(fn (ParaClinicRequest $model) => $model->created_by ??= auth()->id());
+        static::updating(fn (ParaClinicRequest $model) => $model->updated_by = auth()->id());
     }
 
     public function patient(): BelongsTo
@@ -44,17 +44,7 @@ class ParaclinicRequest extends Model
 
     public function tests(): HasMany
     {
-        return $this->hasMany(ParaclinicRequestTest::class);
-    }
-
-    public function results(): HasMany
-    {
-        return $this->hasMany(ParaclinicResult::class);
-    }
-
-    public function attachments(): HasMany
-    {
-        return $this->hasMany(ParaclinicAttachment::class);
+        return $this->hasMany(ParaClinicRequestTest::class);
     }
 
     public function createdBy(): BelongsTo

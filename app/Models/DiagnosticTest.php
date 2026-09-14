@@ -26,6 +26,6 @@ class DiagnosticTest extends Model
 
     public function paraClinicRequestTests(): HasMany
     {
-        return $this->hasMany(ParaclinicRequestTest::class, 'diagnostic_test_id');
+        return $this->hasMany(ParaClinicRequestTest::class, 'diagnostic_test_id');
     }
 }

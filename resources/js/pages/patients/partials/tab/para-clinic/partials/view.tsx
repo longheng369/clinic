@@ -10,6 +10,13 @@ import {
 } from '@mui/material';
 import { useToast } from '@/components/toast';
 import { Skeleton } from '@mui/material';
+import {
+  FileText,
+  Stethoscope,
+  TestTube,
+  User,
+  Clock,
+} from 'lucide-react';
 
 interface ParaClinicRequestDetail {
   id: number;
@@ -46,9 +53,38 @@ const STATUS_COLORS: Record<string, 'default' | 'primary' | 'error' | 'info' | '
   Cancelled: 'error',
 };
 
+const PRIORITY_COLORS: Record<string, 'default' | 'warning' | 'error'> = {
+  Routine: 'default',
+  Urgent: 'warning',
+  STAT: 'error',
+};
+
 type Props = {
   requestId: number;
 };
+
+const SectionHeader = ({ icon, title }: { icon: React.ReactNode; title: string }) => (
+  <Grid size={{ xs: 12 }}>
+    <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 0.5 }}>
+      {icon}
+      <Typography variant="subtitle2" fontWeight={600}>
+        {title}
+      </Typography>
+    </Stack>
+    <Divider sx={{ mb: 1.5 }} />
+  </Grid>
+);
+
+const Field = ({ label, value, span = 6 }: { label: string; value: React.ReactNode; span?: number }) => (
+  <Grid size={{ xs: span }}>
+    <Typography variant="caption" color="text.secondary" fontWeight={500}>
+      {label}
+    </Typography>
+    <Typography variant="body2" sx={{ mt: 0.25 }}>
+      {value || '—'}
+    </Typography>
+  </Grid>
+);
 
 const ParaClinicView = ({ requestId }: Props) => {
   const [data, setData] = useState<ParaClinicRequestDetail | null>(null);
@@ -82,126 +118,102 @@ const ParaClinicView = ({ requestId }: Props) => {
 
   if (!data) return null;
 
+  const totalFee = data.tests.reduce((sum, t) => sum + t.price, 0);
+
   return (
-    <DialogContent sx={{ borderTop: 1, borderColor: 'divider' }}>
-      <Grid container spacing={2}>
+    <DialogContent sx={{ borderTop: 1, borderColor: 'divider', pt: 2 }}>
+      <Grid container spacing={2.5}>
         {/* Header */}
         <Grid size={{ xs: 12 }}>
-          <Stack direction="row" spacing={2} alignItems="center">
-            <Typography variant="h6" fontWeight={600}>
+          <Stack direction="row" spacing={1.5} alignItems="center" flexWrap="wrap" useFlexGap>
+            <Typography variant="h6" fontWeight={700}>
               {data.request_number}
             </Typography>
             <Chip
               size="small"
               label={data.status}
               color={STATUS_COLORS[data.status] ?? 'default'}
+              sx={{ fontWeight: 500 }}
             />
             <Chip
               size="small"
               label={data.payment_status}
               variant="outlined"
               color={data.payment_status === 'Paid' ? 'success' : 'default'}
+              sx={{ fontWeight: 500 }}
             />
           </Stack>
         </Grid>
 
         {/* General Info */}
-        <Grid size={{ xs: 12 }}>
-          <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-            General Information
-          </Typography>
-          <Divider sx={{ mb: 1 }} />
-        </Grid>
-
-        <Grid size={{ xs: 6 }}>
-          <Typography variant="caption" color="text.secondary">Request Date</Typography>
-          <Typography variant="body2">{data.request_date}</Typography>
-        </Grid>
-        <Grid size={{ xs: 6 }}>
-          <Typography variant="caption" color="text.secondary">Fee</Typography>
-          <Typography variant="body2">${data.fee.toFixed(2)}</Typography>
-        </Grid>
-        {data.external_facility_name && (
-          <Grid size={{ xs: 6 }}>
-            <Typography variant="caption" color="text.secondary">External Facility</Typography>
-            <Typography variant="body2">{data.external_facility_name}</Typography>
-          </Grid>
-        )}
-        {data.payment_date && (
-          <Grid size={{ xs: 6 }}>
-            <Typography variant="caption" color="text.secondary">Payment Date</Typography>
-            <Typography variant="body2">{data.payment_date}</Typography>
-          </Grid>
-        )}
+        <SectionHeader icon={<FileText size={16} color="text.secondary" />} title="General Information" />
+        <Field label="Request Date & Time" value={data.request_date} />
+        <Field label="Fee" value={`$${data.fee.toFixed(2)}`} />
+        <Field
+          label="External Facility"
+          value={data.external_facility_name}
+        />
+        <Field
+          label="Payment Date"
+          value={data.payment_date}
+        />
 
         {/* Clinical Info */}
-        {(data.provisional_diagnosis || data.clinical_reason || data.notes) && (
-          <>
-            <Grid size={{ xs: 12 }}>
-              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                Clinical Information
-              </Typography>
-              <Divider sx={{ mb: 1 }} />
-            </Grid>
-            {data.provisional_diagnosis && (
-              <Grid size={{ xs: 12 }}>
-                <Typography variant="caption" color="text.secondary">Provisional Diagnosis</Typography>
-                <Typography variant="body2">{data.provisional_diagnosis}</Typography>
-              </Grid>
-            )}
-            {data.clinical_reason && (
-              <Grid size={{ xs: 12 }}>
-                <Typography variant="caption" color="text.secondary">Clinical Reason</Typography>
-                <Typography variant="body2">{data.clinical_reason}</Typography>
-              </Grid>
-            )}
-            {data.notes && (
-              <Grid size={{ xs: 12 }}>
-                <Typography variant="caption" color="text.secondary">Notes</Typography>
-                <Typography variant="body2">{data.notes}</Typography>
-              </Grid>
-            )}
-          </>
+        <SectionHeader icon={<Stethoscope size={16} color="text.secondary" />} title="Clinical Information" />
+        <Field
+          label="Provisional Diagnosis"
+          value={data.provisional_diagnosis}
+          span={data.clinical_reason || data.notes ? 6 : 12}
+        />
+        <Field
+          label="Clinical Reason"
+          value={data.clinical_reason}
+          span={data.provisional_diagnosis || data.notes ? 6 : 12}
+        />
+        {data.notes && (
+          <Field label="Notes" value={data.notes} span={12} />
         )}
 
-        {/* Tests */}
-        <Grid size={{ xs: 12 }}>
-          <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-            Diagnostic Tests ({data.tests.length})
-          </Typography>
-          <Divider sx={{ mb: 1 }} />
-        </Grid>
+        {/* Diagnostic Tests */}
+        <SectionHeader icon={<TestTube size={16} color="text.secondary" />} title={`Diagnostic Tests (${data.tests.length})`} />
         <Grid size={{ xs: 12 }}>
           <Stack spacing={1}>
-            {data.tests.map((test) => (
+            {data.tests.map((test, index) => (
               <Box
                 key={test.id}
                 sx={{
                   p: 1.5,
                   border: 1,
                   borderColor: 'divider',
-                  borderRadius: 1,
-                  bgcolor: 'action.hover',
+                  borderRadius: 1.5,
+                  bgcolor: 'grey.50',
+                  '&:hover': { bgcolor: 'action.hover' },
                 }}
               >
-                <Stack direction="row" justifyContent="space-between" alignItems="center">
-                  <Stack>
-                    <Typography variant="body2" fontWeight={500}>
-                      {test.test_name}
-                    </Typography>
+                <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+                  <Stack spacing={0.5}>
                     <Stack direction="row" spacing={1} alignItems="center">
-                      <Chip size="small" label={test.priority} variant="outlined" sx={{ height: 20, fontSize: '0.7rem' }} />
-                      <Typography variant="caption" color="text.secondary">
-                        {test.test_category}
+                      <Typography variant="body2" fontWeight={600}>
+                        {index + 1}. {test.test_name}
                       </Typography>
+                      <Chip
+                        size="small"
+                        label={test.priority}
+                        color={PRIORITY_COLORS[test.priority] ?? 'default'}
+                        variant="outlined"
+                        sx={{ height: 20, fontSize: '0.7rem', fontWeight: 500 }}
+                      />
                     </Stack>
+                    <Typography variant="caption" color="text.secondary">
+                      {test.test_category}
+                    </Typography>
                     {test.instruction && (
-                      <Typography variant="caption" color="text.secondary">
+                      <Typography variant="caption" color="text.secondary" sx={{ fontStyle: 'italic' }}>
                         Instruction: {test.instruction}
                       </Typography>
                     )}
                   </Stack>
-                  <Typography variant="body2" fontWeight={500}>
+                  <Typography variant="body2" fontWeight={600} color="primary.main">
                     ${test.price.toFixed(2)}
                   </Typography>
                 </Stack>
@@ -210,18 +222,46 @@ const ParaClinicView = ({ requestId }: Props) => {
           </Stack>
         </Grid>
 
+        {/* Summary */}
+        <Grid size={{ xs: 12 }}>
+          <Box
+            sx={{
+              p: 1.5,
+              bgcolor: 'primary.50',
+              borderRadius: 1.5,
+              border: 1,
+              borderColor: 'primary.200',
+            }}
+          >
+            <Stack direction="row" justifyContent="space-between" alignItems="center">
+              <Typography variant="body2" fontWeight={600} color="primary.main">
+                Total ({data.tests.length} tests)
+              </Typography>
+              <Typography variant="body2" fontWeight={700} color="primary.main">
+                ${totalFee.toFixed(2)}
+              </Typography>
+            </Stack>
+          </Box>
+        </Grid>
+
         {/* Meta */}
         <Grid size={{ xs: 12 }}>
-          <Divider sx={{ my: 1 }} />
-          <Stack direction="row" spacing={2}>
+          <Divider sx={{ my: 0.5 }} />
+          <Stack direction="row" spacing={2} alignItems="center">
             {data.created_by && (
-              <Typography variant="caption" color="text.secondary">
-                Created by {data.created_by}
-              </Typography>
+              <Stack direction="row" spacing={0.5} alignItems="center">
+                <User size={12} color="text.secondary" />
+                <Typography variant="caption" color="text.secondary">
+                  {data.created_by}
+                </Typography>
+              </Stack>
             )}
-            <Typography variant="caption" color="text.secondary">
-              {data.created_at}
-            </Typography>
+            <Stack direction="row" spacing={0.5} alignItems="center">
+              <Clock size={12} color="text.secondary" />
+              <Typography variant="caption" color="text.secondary">
+                {data.created_at}
+              </Typography>
+            </Stack>
           </Stack>
         </Grid>
       </Grid>

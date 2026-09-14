@@ -43,9 +43,9 @@ class Visit extends Model
         return $this->hasMany(Consultation::class);
     }
 
-    public function paraclinicRequests(): HasMany
+    public function paraClinicRequests(): HasMany
     {
-        return $this->hasMany(ParaclinicRequest::class);
+        return $this->hasMany(ParaClinicRequest::class);
     }
 
     public function surveillance(): HasMany

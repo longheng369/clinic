@@ -37,6 +37,7 @@ type Props = {
 }
 
 const ParaClinicForm = ({ request, patientId, visitId }: Props) => {
+  console.log({ request });
   const { closeModal } = useModal();
   const [isProcessing, setIsProcessing] = useState(false);
   const [testPrices, setTestPrices] = useState<Record<number, number>>({});
@@ -153,6 +154,18 @@ const ParaClinicForm = ({ request, patientId, visitId }: Props) => {
     >
       <DialogContent sx={{ borderTop: 1, borderColor: 'divider' }}>
         <Grid container spacing={2}>
+          <Grid size={{ md: 12 }}>
+            <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 600 }}>
+              Status
+            </Typography>
+          </Grid>
+          <Grid size={{ md: 12 }}>
+            <Stack direction="row" spacing={1}>
+              <Button variant="outlined">Draft</Button>
+              <Button variant="outlined">Requested</Button>
+              <Button variant="outlined">Completed</Button>
+            </Stack>
+          </Grid>
           <Grid size={{ md: 12 }}>
             <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 600 }}>
               General Information

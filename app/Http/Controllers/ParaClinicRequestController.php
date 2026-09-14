@@ -4,30 +4,30 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreParaclinicRequest;
 use App\Http\Requests\UpdateParaclinicRequest;
-use App\Models\ParaclinicRequest;
+use App\Models\ParaClinicRequest;
 use App\Models\DiagnosticTest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
 class ParaClinicRequestController extends Controller
 {
-    public function show(ParaclinicRequest $paraclinicRequest): JsonResponse
+    public function show(ParaClinicRequest $paraClinicRequest): JsonResponse
     {
-        $paraclinicRequest->load(['tests.diagnosticTest', 'createdBy', 'updatedBy']);
+        $paraClinicRequest->load(['tests.diagnosticTest', 'createdBy', 'updatedBy']);
 
         return response()->json([
-            'id' => $paraclinicRequest->id,
-            'request_number' => $paraclinicRequest->request_number,
-            'request_date' => \Carbon\Carbon::parse($paraclinicRequest->request_date)->format('d-m-Y H:i'),
-            'external_facility_name' => $paraclinicRequest->external_facility_name,
-            'clinical_reason' => $paraclinicRequest->clinical_reason,
-            'provisional_diagnosis' => $paraclinicRequest->provisional_diagnosis,
-            'notes' => $paraclinicRequest->notes,
-            'status' => $paraclinicRequest->status,
-            'fee' => (float) $paraclinicRequest->fee,
-            'payment_status' => $paraclinicRequest->payment_status,
-            'payment_date' => $paraclinicRequest->payment_date,
-            'tests' => $paraclinicRequest->tests->map(fn ($t) => [
+            'id' => $paraClinicRequest->id,
+            'request_number' => $paraClinicRequest->request_number,
+            'request_date' => \Carbon\Carbon::parse($paraClinicRequest->request_date)->format('d-m-Y H:i'),
+            'external_facility_name' => $paraClinicRequest->external_facility_name,
+            'clinical_reason' => $paraClinicRequest->clinical_reason,
+            'provisional_diagnosis' => $paraClinicRequest->provisional_diagnosis,
+            'notes' => $paraClinicRequest->notes,
+            'status' => $paraClinicRequest->status,
+            'fee' => (float) $paraClinicRequest->fee,
+            'payment_status' => $paraClinicRequest->payment_status,
+            'payment_date' => $paraClinicRequest->payment_date,
+            'tests' => $paraClinicRequest->tests->map(fn ($t) => [
                 'id' => $t->id,
                 'test_name' => $t->test_name,
                 'test_category' => $t->test_category,
@@ -36,8 +36,8 @@ class ParaClinicRequestController extends Controller
                 'price' => (float) $t->price,
             ]),
             'created_by' => $paraclinicRequest->createdBy?->name,
-            'created_at' => $paraclinicRequest->created_at,
-            'updated_at' => $paraclinicRequest->updated_at,
+            'created_at' => \Carbon\Carbon::parse($paraclinicRequest->created_at)->format('d-m-Y H:i'),
+            'updated_at' => \Carbon\Carbon::parse($paraclinicRequest->updated_at)->format('d-m-Y H:i'),
         ]);
     }
 
@@ -45,7 +45,7 @@ class ParaClinicRequestController extends Controller
     {
         $requestNumber = DB::transaction(function () use ($request) {
             $today = now()->startOfDay();
-            $count = ParaclinicRequest::whereDate('created_at', $today)->lockForUpdate()->count() + 1;
+            $count = ParaClinicRequest::whereDate('created_at', $today)->lockForUpdate()->count() + 1;
             return 'PARA-'.$today->format('Ymd').'-'.str_pad($count, 4, '0', STR_PAD_LEFT);
         });
 
