@@ -143,7 +143,7 @@ class PatientController extends Controller
                         'id' => $r->id,
                         'request_number' => $r->request_number,
                         'external_facility_name' => $r->external_facility_name,
-                        'request_date' => $r->request_date ? \Carbon\Carbon::parse($r->request_date)->format('d-m-Y') : null,
+                        'request_date' => $r->request_date ? \Carbon\Carbon::parse($r->request_date)->format('d-m-Y H:i') : null,
                         'status' => $r->status,
                         'payment_status' => $r->payment_status,
                         'fee' => (float) $r->fee,

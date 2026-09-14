@@ -22,7 +22,8 @@ import {
 } from '@mui/material';
 import { useToast } from '@/components/toast';
 import { Plus, X } from 'lucide-react';
-import DatePicker from '@/components/form/date';
+import DateTimeField from '@/components/form/dateTime';
+import { useModal } from '@/components/modal';
 
 const PRIORITY_OPTIONS = ['Routine', 'Urgent', 'STAT'].map((value) => ({
   value,
@@ -36,6 +37,7 @@ type Props = {
 }
 
 const ParaClinicForm = ({ request, patientId, visitId }: Props) => {
+  const { closeModal } = useModal();
   const [isProcessing, setIsProcessing] = useState(false);
   const [testPrices, setTestPrices] = useState<Record<number, number>>({});
   const { toast } = useToast();
@@ -48,47 +50,47 @@ const ParaClinicForm = ({ request, patientId, visitId }: Props) => {
 
   const defaultTests = request?.tests?.length
     ? request.tests.map((t) => ({
-        diagnostic_test_id: t.diagnostic_test_id ?? null,
-        priority: t.priority,
-        instruction: t.instruction,
-      }))
+      diagnostic_test_id: t.diagnostic_test_id ?? null,
+      priority: t.priority,
+      instruction: t.instruction,
+    }))
     : [
-        {
-          diagnostic_test_id: null,
-          priority: 'Routine',
-          instruction: null,
-        },
-      ];
+      {
+        diagnostic_test_id: null,
+        priority: 'Routine',
+        instruction: null,
+      },
+    ];
 
   const { control, handleSubmit, watch, setValue } =
     useForm<IParaClinicRequestFormData>({
       defaultValues: request
         ? {
-            patient_id: request.patient?.id ?? null,
-            visit_id: request.visit_id,
-            external_facility_name: request.external_facility_name ?? '',
-            request_date: request.request_date,
-            clinical_reason: request.clinical_reason,
-            provisional_diagnosis: request.provisional_diagnosis,
-            notes: request.notes,
-            fee: request.fee,
-            payment_status: request.payment_status,
-            payment_date: request.payment_date,
-            tests: defaultTests,
-          }
+          patient_id: request.patient?.id ?? null,
+          visit_id: request.visit_id,
+          external_facility_name: request.external_facility_name ?? '',
+          request_date: request.request_date,
+          clinical_reason: request.clinical_reason,
+          provisional_diagnosis: request.provisional_diagnosis,
+          notes: request.notes,
+          fee: request.fee,
+          payment_status: request.payment_status,
+          payment_date: request.payment_date,
+          tests: defaultTests,
+        }
         : {
-            patient_id: patientId,
-            visit_id: visitId ?? null,
-            external_facility_name: '',
-            request_date: dayjs().format('DD-MM-YYYY'),
-            clinical_reason: '',
-            provisional_diagnosis: '',
-            notes: '',
-            fee: 0,
-            payment_status: 'Unpaid',
-            payment_date: null,
-            tests: defaultTests,
-          },
+          patient_id: patientId,
+          visit_id: visitId ?? null,
+          external_facility_name: '',
+          request_date: dayjs().format('DD-MM-YYYY HH:mm'),
+          clinical_reason: '',
+          provisional_diagnosis: '',
+          notes: '',
+          fee: 0,
+          payment_status: 'Unpaid',
+          payment_date: null,
+          tests: defaultTests,
+        },
     });
 
   const { fields, append, remove } = useFieldArray({ control, name: 'tests' });
@@ -125,6 +127,7 @@ const ParaClinicForm = ({ request, patientId, visitId }: Props) => {
       const payload = submitData(data, status ? { status } : {});
       const options = {
         onSuccess: () => {
+          closeModal();
           toast(
             `Request ${status === 'Requested' ? 'submitted' : request ? 'updated' : 'created'} successfully!`,
             { variant: 'success' },
@@ -156,10 +159,10 @@ const ParaClinicForm = ({ request, patientId, visitId }: Props) => {
             </Typography>
           </Grid>
           <Grid size={{ md: 12 }}>
-            <DatePicker
+            <DateTimeField
               control={control}
               name="request_date"
-              label="Request Date"
+              label="Request Date & Time"
               rules={{ required: 'Request date is required' }}
             />
           </Grid>
@@ -254,7 +257,8 @@ const ParaClinicForm = ({ request, patientId, visitId }: Props) => {
                       >
                         <Typography variant="body2" color="text.secondary">
                           {(() => {
-                            const testId = testsValues[index]?.diagnostic_test_id;
+                            const testId =
+                              testsValues[index]?.diagnostic_test_id;
                             return testId && testPrices[testId]
                               ? `$${testPrices[testId].toFixed(2)}`
                               : '-';
@@ -294,7 +298,7 @@ const ParaClinicForm = ({ request, patientId, visitId }: Props) => {
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button type="button" variant="outlined">
+        <Button onClick={closeModal} type="button" variant="outlined">
           Cancel
         </Button>
         <Button

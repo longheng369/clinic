@@ -6,10 +6,41 @@ use App\Http\Requests\StoreParaclinicRequest;
 use App\Http\Requests\UpdateParaclinicRequest;
 use App\Models\ParaclinicRequest;
 use App\Models\DiagnosticTest;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
 class ParaClinicRequestController extends Controller
 {
+    public function show(ParaclinicRequest $paraclinicRequest): JsonResponse
+    {
+        $paraclinicRequest->load(['tests.diagnosticTest', 'createdBy', 'updatedBy']);
+
+        return response()->json([
+            'id' => $paraclinicRequest->id,
+            'request_number' => $paraclinicRequest->request_number,
+            'request_date' => \Carbon\Carbon::parse($paraclinicRequest->request_date)->format('d-m-Y H:i'),
+            'external_facility_name' => $paraclinicRequest->external_facility_name,
+            'clinical_reason' => $paraclinicRequest->clinical_reason,
+            'provisional_diagnosis' => $paraclinicRequest->provisional_diagnosis,
+            'notes' => $paraclinicRequest->notes,
+            'status' => $paraclinicRequest->status,
+            'fee' => (float) $paraclinicRequest->fee,
+            'payment_status' => $paraclinicRequest->payment_status,
+            'payment_date' => $paraclinicRequest->payment_date,
+            'tests' => $paraclinicRequest->tests->map(fn ($t) => [
+                'id' => $t->id,
+                'test_name' => $t->test_name,
+                'test_category' => $t->test_category,
+                'priority' => $t->priority,
+                'instruction' => $t->instruction,
+                'price' => (float) $t->price,
+            ]),
+            'created_by' => $paraclinicRequest->createdBy?->name,
+            'created_at' => $paraclinicRequest->created_at,
+            'updated_at' => $paraclinicRequest->updated_at,
+        ]);
+    }
+
     public function store(StoreParaclinicRequest $request)
     {
         $requestNumber = DB::transaction(function () use ($request) {
@@ -20,7 +51,7 @@ class ParaClinicRequestController extends Controller
 
         $data = $request->safe()->except(['tests']);
         $data['fee'] = (float) ($data['fee'] ?? 0);
-        $data['request_date'] = \Carbon\Carbon::createFromFormat('d-m-Y', $data['request_date'])->format('Y-m-d');
+        $data['request_date'] = \Carbon\Carbon::createFromFormat('d-m-Y H:i', $data['request_date'])->format('Y-m-d H:i');
 
         $paraclinicRequest = ParaclinicRequest::create(array_merge($data, [
             'request_number' => $requestNumber,
@@ -46,7 +77,7 @@ class ParaClinicRequestController extends Controller
     {
         $data = $request->safe()->except(['tests']);
         $data['fee'] = (float) ($data['fee'] ?? 0);
-        $data['request_date'] = \Carbon\Carbon::createFromFormat('d-m-Y', $data['request_date'])->format('Y-m-d');
+        $data['request_date'] = \Carbon\Carbon::createFromFormat('d-m-Y H:i', $data['request_date'])->format('Y-m-d H:i');
 
         $paraclinicRequest->update($data);
 

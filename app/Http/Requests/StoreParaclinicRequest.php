@@ -12,7 +12,7 @@ class StoreParaclinicRequest extends FormRequest
             'patient_id' => ['required', 'exists:patients,id'],
             'visit_id' => ['nullable', 'exists:visits,id'],
             'external_facility_name' => ['nullable', 'string', 'max:255'],
-            'request_date' => ['required', 'date_format:d-m-Y'],
+            'request_date' => ['required', 'date_format:d-m-Y H:i'],
             'clinical_reason' => ['nullable', 'string'],
             'provisional_diagnosis' => ['nullable', 'string', 'max:255'],
             'notes' => ['nullable', 'string'],

@@ -113,6 +113,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('patients/{patient}/consultations/{consultation}', [ConsultationController::class, 'destroy'])->name('patients.consultations.destroy');
 
     // Para-clinic requests (patient detail tab)
+    Route::get('para-clinic-requests/{paraClinicRequest}', [ParaClinicRequestController::class, 'show'])->name('para-clinic-requests.show');
     Route::post('para-clinic-requests', [ParaClinicRequestController::class, 'store'])->name('para-clinic-requests.store');
     Route::put('para-clinic-requests/{paraClinicRequest}', [ParaClinicRequestController::class, 'update'])->name('para-clinic-requests.update');
     Route::delete('para-clinic-requests/{paraClinicRequest}', [ParaClinicRequestController::class, 'destroy'])->name('para-clinic-requests.destroy');

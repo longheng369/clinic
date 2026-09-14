@@ -1,6 +1,6 @@
-import { router, usePage, Link as InertiaLink } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import { useModal } from '@/components/modal';
-import { Eye, Trash2, Plus } from 'lucide-react';
+import { Trash2, Plus, Eye } from 'lucide-react';
 import { IParaClinicRequest } from '@/interfaces/IParaClinicRequest';
 import {
   DataGrid,
@@ -9,9 +9,9 @@ import {
   GridActionsCellItem,
 } from '@mui/x-data-grid';
 import { usePagination } from '@/hooks/usePagination';
-import type React from 'react';
 import { Box, Button, Chip, Typography } from '@mui/material';
 import ParaClinicForm from '@/pages/patients/partials/tab/para-clinic/partials/createOrEdit';
+import ParaClinicView from '@/pages/patients/partials/tab/para-clinic/partials/view';
 
 const STATUS_COLORS: Record<
   string,
@@ -54,10 +54,18 @@ const ParaClinicByPatientTab = ({ patientId, selectedVisitId }: { patientId: num
     });
   };
 
+  const handleView = (request: IParaClinicRequest) => {
+    openModal({
+      title: request.request_number,
+      content: <ParaClinicView requestId={request.id} />,
+    });
+  };
+
   const openRequestForm = () => {
     openModal({
       title: 'New Para Clinic Request',
       content: <ParaClinicForm patientId={patientId} visitId={selectedVisitId} />,
+      config: { preventClickAway: true }
     });
   }
 
@@ -73,34 +81,12 @@ const ParaClinicByPatientTab = ({ patientId, selectedVisitId }: { patientId: num
       headerName: 'លេខស្នើសុំ',
       flex: 1,
       minWidth: 150,
-      renderCell: (params: GridRenderCellParams<IParaClinicRequest>) => (
-        <InertiaLink
-          href={`/para-clinic-requests/${params.row.id}`}
-          style={{ color: 'inherit' }}
-        >
-          {params.value}
-        </InertiaLink>
-      ),
-    },
-    {
-      field: 'external_facility_name',
-      headerName: 'មន្ទីរពិសោធន៍',
-      flex: 1,
-      minWidth: 180,
-      renderCell: (params: GridRenderCellParams<IParaClinicRequest>) =>
-        params.value ?? (
-          <Box sx={{}}>
-            <Typography component="span" color="text.disabled">
-              &mdash;
-            </Typography>
-          </Box>
-        ),
     },
     {
       field: 'request_date',
       headerName: 'កាលបរិច្ឆេទ',
       flex: 1,
-      minWidth: 130,
+      minWidth: 160,
     },
     {
       field: 'status',
@@ -135,15 +121,13 @@ const ParaClinicByPatientTab = ({ patientId, selectedVisitId }: { patientId: num
       field: 'actions',
       type: 'actions',
       headerName: 'សកម្មភាព',
-      width: 150,
+      width: 100,
       getActions: (params) => [
         <GridActionsCellItem
           key={`view-${params.id}`}
           icon={<Eye size={16} color="#64748b" />}
           label="View request"
-          onClick={() =>
-            router.visit(`/para-clinic-requests/${params.row.id}`)
-          }
+          onClick={() => handleView(params.row as IParaClinicRequest)}
           showInMenu={false}
         />,
         <GridActionsCellItem
