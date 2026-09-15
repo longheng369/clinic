@@ -323,7 +323,7 @@ const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
           onClose={() => setPreview(null)}
           title={preview.file_name}
           fullScreen
-          scrollable
+          scroll="paper"
         >
           <Box
             component="iframe"

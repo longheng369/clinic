@@ -12,7 +12,7 @@ interface ModalProps {
   fullScreen?: boolean;
   preventClickAway?: boolean;
   preventEscape?: boolean;
-  scrollable?: boolean;
+  scroll?: 'body' | 'paper';
   contentSx?: SxProps<Theme>;
 }
 
@@ -32,7 +32,7 @@ const Modal = ({
   fullScreen = false,
   preventClickAway = false,
   preventEscape = false,
-  scrollable = false,
+  scroll = 'body',
   contentSx,
 }: ModalProps) => {
   const defaultSizes = ['sm', 'md', 'lg', 'xl'];
@@ -46,7 +46,7 @@ const Modal = ({
       fullScreen={fullScreen}
       fullWidth
       maxWidth={muiMaxWidth}
-      scroll={scrollable ? 'paper' : 'body'}
+      scroll={scroll}
       onClose={(_event, reason) => {
         if (reason === 'backdropClick' && preventClickAway) return;
         if (reason === 'escapeKeyDown' && preventEscape) return;

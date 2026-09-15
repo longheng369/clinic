@@ -16,7 +16,7 @@ interface ModalConfig {
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl';
   preventClickAway?: boolean;
   preventEscape?: boolean;
-  scrollable?: boolean;
+  scroll?: 'body' | 'paper';
 }
 
 interface DialogConfig {
@@ -143,7 +143,7 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
             onClose={handleClose}
             maxWidth={muiMaxWidth}
             fullWidth
-            scroll={dialog.config?.scrollable ? 'paper' : 'body'}
+            scroll={dialog.config?.scroll}
             role={isAlert ? 'alertdialog' : 'dialog'}
             aria-labelledby={titleId}
             aria-describedby={descriptionId}
