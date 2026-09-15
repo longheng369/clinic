@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreParaclinicRequest;
+use App\Http\Requests\StoreParaClinicRequest;
 use App\Http\Requests\UpdateParaclinicRequest;
 use App\Models\ParaClinicRequest;
 use App\Models\DiagnosticTest;
+use App\Models\ParaClinicRequestTest;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
@@ -35,40 +37,48 @@ class ParaClinicRequestController extends Controller
                 'instruction' => $t->instruction,
                 'price' => (float) $t->price,
             ]),
-            'created_by' => $paraclinicRequest->createdBy?->name,
-            'created_at' => \Carbon\Carbon::parse($paraclinicRequest->created_at)->format('d-m-Y H:i'),
-            'updated_at' => \Carbon\Carbon::parse($paraclinicRequest->updated_at)->format('d-m-Y H:i'),
+            'created_by' => $paraClinicRequest->createdBy?->name,
+            'created_at' => \Carbon\Carbon::parse($paraClinicRequest->created_at)->format('d-m-Y H:i'),
+            'updated_at' => \Carbon\Carbon::parse($paraClinicRequest->updated_at)->format('d-m-Y H:i'),
         ]);
     }
 
-    public function store(StoreParaclinicRequest $request)
+    public function store(StoreParaClinicRequest $request)
     {
-        $requestNumber = DB::transaction(function () use ($request) {
-            $today = now()->startOfDay();
-            $count = ParaClinicRequest::whereDate('created_at', $today)->lockForUpdate()->count() + 1;
-            return 'PARA-'.$today->format('Ymd').'-'.str_pad($count, 4, '0', STR_PAD_LEFT);
-        });
-
         $data = $request->safe()->except(['tests']);
+
         $data['fee'] = (float) ($data['fee'] ?? 0);
-        $data['request_date'] = \Carbon\Carbon::createFromFormat('d-m-Y H:i', $data['request_date'])->format('Y-m-d H:i');
+        $data['request_date'] = Carbon::createFromFormat(
+            'd-m-Y H:i',
+            $data['request_date']
+        )->format('Y-m-d H:i');
 
-        $paraclinicRequest = ParaclinicRequest::create(array_merge($data, [
-            'request_number' => $requestNumber,
-        ]));
+        $diagnosticTestIds = $request->input('tests', []);
 
-        foreach ($request->input('tests', []) as $test) {
-            $diagnosticTest = DiagnosticTest::find($test['diagnostic_test_id']);
+        DB::transaction(function () use ($data, $diagnosticTestIds) {
+            $today = now()->startOfDay();
 
-            $paraclinicRequest->tests()->create([
-                'diagnostic_test_id' => $diagnosticTest?->id,
-                'test_category' => 'Laboratory',
-                'test_name' => $diagnosticTest?->name ?? '',
-                'price' => (float) ($diagnosticTest?->price ?? 0),
-                'priority' => $test['priority'],
-                'instruction' => $test['instruction'] ?? null,
-            ]);
-        }
+            $count = ParaClinicRequest::whereDate('created_at', $today)
+                    ->lockForUpdate()
+                    ->count() + 1;
+
+            $data['request_number'] = 'PARA-' .
+                $today->format('Ymd') . '-' .
+                str_pad($count, 4, '0', STR_PAD_LEFT);
+
+            $paraClinicRequest = ParaClinicRequest::create($data);
+
+            $diagnosticTests = DiagnosticTest::whereIn('id', $diagnosticTestIds)->get();
+
+            foreach ($diagnosticTests as $diagnosticTest) {
+                $paraClinicRequest->tests()->create([
+                    'diagnostic_test_id' => $diagnosticTest->id,
+                    'test_category' => 'Laboratory',
+                    'test_name' => $diagnosticTest->name,
+                    'price' => (float) $diagnosticTest->price,
+                ]);
+            }
+        });
 
         return back()->with('success', 'Paraclinic request created.');
     }
@@ -98,9 +108,9 @@ class ParaClinicRequestController extends Controller
         return back()->with('success', 'Paraclinic request updated.');
     }
 
-    public function destroy(ParaclinicRequest $paraclinicRequest)
+    public function destroy(ParaclinicRequest $paraClinicRequest)
     {
-        $paraclinicRequest->delete();
+        $paraClinicRequest->delete();
 
         return back()->with('success', 'Paraclinic request deleted.');
     }

@@ -37,7 +37,6 @@ type Props = {
 }
 
 const ParaClinicForm = ({ request, patientId, visitId }: Props) => {
-  console.log({ request });
   const { closeModal } = useModal();
   const [isProcessing, setIsProcessing] = useState(false);
   const [testPrices, setTestPrices] = useState<Record<number, number>>({});
@@ -45,7 +44,7 @@ const ParaClinicForm = ({ request, patientId, visitId }: Props) => {
 
   const handleTestSelect = (option: IOption<any>) => {
     if (option.value && option.price != null) {
-      setTestPrices((prev) => ({ ...prev, [option.value]: option.price }));
+      setTestPrices((prev) => ({ ...prev, [option.value]: Number(option.price) }));
     }
   };
 
@@ -69,7 +68,6 @@ const ParaClinicForm = ({ request, patientId, visitId }: Props) => {
         ? {
           patient_id: request.patient?.id ?? null,
           visit_id: request.visit_id,
-          external_facility_name: request.external_facility_name ?? '',
           request_date: request.request_date,
           clinical_reason: request.clinical_reason,
           provisional_diagnosis: request.provisional_diagnosis,
@@ -82,13 +80,12 @@ const ParaClinicForm = ({ request, patientId, visitId }: Props) => {
         : {
           patient_id: patientId,
           visit_id: visitId ?? null,
-          external_facility_name: '',
           request_date: dayjs().format('DD-MM-YYYY HH:mm'),
           clinical_reason: '',
           provisional_diagnosis: '',
           notes: '',
           fee: 0,
-          payment_status: 'Unpaid',
+          payment_status: 'unpaid',
           payment_date: null,
           tests: defaultTests,
         },
@@ -109,28 +106,19 @@ const ParaClinicForm = ({ request, patientId, visitId }: Props) => {
     setValue('fee', totalFee);
   }, [totalFee, setValue]);
 
-  const submitData = (
-    data: IParaClinicRequestFormData,
-    extra: Record<string, string> = {},
-  ) => ({
-    ...data,
-    ...extra,
-    tests: data.tests.map(({ diagnostic_test_id, priority, instruction }) => ({
-      diagnostic_test_id,
-      priority,
-      instruction,
-    })),
-  });
+  const onSubmit = handleSubmit((data) => {
+      const payload = {
+        ...data,
+        tests: data.tests.map((t) => t.diagnostic_test_id),
+      };
 
-  const save = (status?: string) =>
-    handleSubmit((data) => {
       setIsProcessing(true);
-      const payload = submitData(data, status ? { status } : {});
+
       const options = {
         onSuccess: () => {
           closeModal();
           toast(
-            `Request ${status === 'Requested' ? 'submitted' : request ? 'updated' : 'created'} successfully!`,
+            `Request ${request ? 'updated' : 'created'} successfully!`,
             { variant: 'success' },
           );
           router.reload({ only: ['paraClinicRequests'] });
@@ -141,199 +129,151 @@ const ParaClinicForm = ({ request, patientId, visitId }: Props) => {
         },
         onFinish: () => setIsProcessing(false),
       };
+
       if (request)
         router.put(`/para-clinic-requests/${request.id}`, payload, options);
       else router.post('/para-clinic-requests', payload, options);
     });
 
   return (
-    <Box
-      component="form"
-      onSubmit={save(request ? undefined : 'Draft')}
-      noValidate
-    >
-      <DialogContent sx={{ borderTop: 1, borderColor: 'divider' }}>
-        <Grid container spacing={2}>
-          <Grid size={{ md: 12 }}>
-            <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 600 }}>
-              Status
-            </Typography>
-          </Grid>
-          <Grid size={{ md: 12 }}>
-            <Stack direction="row" spacing={1}>
-              <Button variant="outlined">Draft</Button>
-              <Button variant="outlined">Requested</Button>
-              <Button variant="outlined">Completed</Button>
-            </Stack>
-          </Grid>
-          <Grid size={{ md: 12 }}>
-            <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 600 }}>
-              General Information
-            </Typography>
-          </Grid>
-          <Grid size={{ md: 12 }}>
-            <DateTimeField
-              control={control}
-              name="request_date"
-              label="Request Date & Time"
-              rules={{ required: 'Request date is required' }}
-            />
-          </Grid>
-          <Grid size={{ md: 12 }}>
-            <Input
-              label="Diagnosis"
-              control={control}
-              name="provisional_diagnosis"
-              placeholder="Enter diagnosis"
-            />
-          </Grid>
-          <Grid size={{ md: 12 }}>
-            <Textarea
-              label="Clinical Reason"
-              control={control}
-              name="clinical_reason"
-              placeholder="Enter clinical reason"
-            />
-          </Grid>
-          <Grid size={{ md: 12 }}>
-            <Textarea
-              label="Notes"
-              control={control}
-              name="notes"
-              placeholder="Enter any additional notes"
-            />
-          </Grid>
-          <Grid size={{ md: 12 }}>
-            <Stack
-              direction="row"
-              sx={{
-                mb: 2,
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}
-            >
-              <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                Diagnostic Tests
-              </Typography>
-              <Button
-                type="button"
-                size="small"
-                onClick={() =>
-                  append({
-                    diagnostic_test_id: null,
-                    priority: 'Routine',
-                    instruction: null,
-                  })
-                }
-                variant="contained"
-                startIcon={<Plus size={14} />}
-              >
-                Add Test
-              </Button>
-            </Stack>
-          </Grid>
-          <Grid size={{ md: 12 }}>
-            <Stack spacing={2}>
-              <Stack spacing={1.5}>
-                {fields.map((field, index) => {
-                  return (
-                    <Stack
-                      key={field.id}
-                      direction="row"
-                      spacing={1.5}
-                      sx={{
-                        p: 2,
-                        border: 1,
-                        borderColor: 'divider',
-                        borderRadius: 1,
-                        alignItems: 'center',
-                      }}
-                    >
-                      <ServerAutocomplete
-                        label="Diagnostic Test"
-                        control={control}
-                        name={`tests.${index}.diagnostic_test_id` as any}
-                        model="DiagnosticTest"
-                        rules={{ required: 'Required' }}
-                        placeholder="Search test by name..."
-                        onSelect={handleTestSelect}
-                        excludeValues={selectedTestIds.filter(
-                          (id) => id !== testsValues[index]?.diagnostic_test_id,
-                        )}
-                      />
-                      <Box
-                        sx={{
-                          minWidth: 90,
-                          pt: 1,
-                          textAlign: 'right',
-                        }}
-                      >
-                        <Typography variant="body2" color="text.secondary">
-                          {(() => {
-                            const testId =
-                              testsValues[index]?.diagnostic_test_id;
-                            return testId && testPrices[testId]
-                              ? `$${testPrices[testId].toFixed(2)}`
-                              : '-';
-                          })()}
-                        </Typography>
-                      </Box>
-                      {fields.length > 1 && (
-                        <IconButton
-                          color="error"
-                          onClick={() => remove(index)}
-                          aria-label="Remove test"
-                        >
-                          <X size={16} />
-                        </IconButton>
-                      )}
-                    </Stack>
-                  );
-                })}
-              </Stack>
-            </Stack>
-          </Grid>
-          <Grid size={{ md: 12 }}>
+    <>
+      <DialogContent dividers>
+        <Stack spacing={2}>
+          <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 600 }}>
+            General Information
+          </Typography>
+          <DateTimeField
+            control={control}
+            name="request_date"
+            label="Request Date & Time"
+            rules={{ required: 'Request date is required' }}
+          />
+          <Input
+            label="Diagnosis"
+            control={control}
+            name="provisional_diagnosis"
+            placeholder="Enter diagnosis"
+          />
+          <Textarea
+            label="Clinical Reason"
+            control={control}
+            name="clinical_reason"
+            placeholder="Enter clinical reason"
+          />
+          <Textarea
+            label="Notes"
+            control={control}
+            name="notes"
+            placeholder="Enter any additional notes"
+          />
+          <Stack
+            direction="row"
+            sx={{
+              mb: 2,
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
             <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-              Billing
+              Diagnostic Tests
             </Typography>
-          </Grid>
-          <Grid size={{ md: 6 }}>
-            <Input
-              label={`Fee ($) — Auto: $${totalFee.toFixed(2)}`}
-              control={control}
-              type="number"
-              slotProps={{ htmlInput: { step: '0.01', min: '0' } }}
-              name="fee"
-              placeholder="0.00"
-            />
-          </Grid>
-        </Grid>
+            <Button
+              type="button"
+              size="small"
+              onClick={() =>
+                append({
+                  diagnostic_test_id: null,
+                })
+              }
+              variant="contained"
+              startIcon={<Plus size={14} />}
+            >
+              Add Test
+            </Button>
+          </Stack>
+          {fields.map((field, index) => {
+            return (
+              <Stack
+                key={field.id}
+                direction="row"
+                spacing={1.5}
+                sx={{
+                  p: 2,
+                  border: 1,
+                  borderColor: 'divider',
+                  borderRadius: 1,
+                  alignItems: 'center',
+                }}
+              >
+                <ServerAutocomplete
+                  label="Diagnostic Test"
+                  control={control}
+                  name={`tests.${index}.diagnostic_test_id` as any}
+                  model="DiagnosticTest"
+                  rules={{ required: 'Required' }}
+                  placeholder="Search test by name..."
+                  onSelect={handleTestSelect}
+                  excludeValues={selectedTestIds.filter(
+                    (id) => id !== testsValues[index]?.diagnostic_test_id,
+                  )}
+                />
+                <Box
+                  sx={{
+                    minWidth: 90,
+                    pt: 1,
+                    textAlign: 'right',
+                  }}
+                >
+                  <Typography variant="body2" color="text.secondary">
+                    {(() => {
+                      const testId = testsValues[index]?.diagnostic_test_id;
+                      return testId && testPrices[testId]
+                        ? `$${testPrices[testId].toFixed(2)}`
+                        : '-';
+                    })()}
+                  </Typography>
+                </Box>
+                {fields.length > 1 && (
+                  <IconButton
+                    color="error"
+                    onClick={() => remove(index)}
+                    aria-label="Remove test"
+                  >
+                    <X size={16} />
+                  </IconButton>
+                )}
+              </Stack>
+            );
+          })}
+          <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+            Billing
+          </Typography>
+          <Input
+            label={`Fee ($) — Auto: $${totalFee.toFixed(2)}`}
+            control={control}
+            type="number"
+            slotProps={{ htmlInput: { step: '0.01', min: '0' } }}
+            name="fee"
+            placeholder="0.00"
+          />
+        </Stack>
       </DialogContent>
       <DialogActions>
         <Button onClick={closeModal} type="button" variant="outlined">
           Cancel
         </Button>
-        <Button
-          type="submit"
-          color="secondary"
-          disabled={isProcessing}
-          variant="contained"
-        >
-          {request ? 'Update' : 'Save Draft'}
-        </Button>
         {!request && (
           <Button
             type="button"
             variant="contained"
-            onClick={save('Requested')}
+            onClick={onSubmit}
             disabled={isProcessing}
           >
             Submit Request
           </Button>
         )}
       </DialogActions>
-    </Box>
+    </>
   );
 };
 export default ParaClinicForm;

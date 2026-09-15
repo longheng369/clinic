@@ -65,15 +65,17 @@ const ParaClinicByPatientTab = ({ patientId, selectedVisitId }: { patientId: num
     openModal({
       title: `Edit ${request.request_number}`,
       content: <ParaClinicForm request={request} patientId={patientId} visitId={selectedVisitId} />,
-      config: { preventClickAway: true }
+      config: { preventClickAway: true, scroll: 'body' }
     });
   };
 
   const openRequestForm = () => {
     openModal({
       title: 'New Para Clinic Request',
-      content: <ParaClinicForm patientId={patientId} visitId={selectedVisitId} />,
-      config: { preventClickAway: true }
+      content: (
+        <ParaClinicForm patientId={patientId} visitId={selectedVisitId} />
+      ),
+      config: { preventClickAway: true, scroll: 'body' },
     });
   }
 

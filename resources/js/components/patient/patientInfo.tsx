@@ -26,6 +26,7 @@ const Gender = ({ gender }: { gender: string }) => {
         textTransform: 'capitalize',
         color: gender == 'male' ? 'info.main' : 'error.main',
       }}
+      component="span"
     >
       {gender}
     </Typography>

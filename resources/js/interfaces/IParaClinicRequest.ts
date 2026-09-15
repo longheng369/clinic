@@ -10,8 +10,6 @@ export interface IParaClinicRequestTest {
 
 export interface IParaClinicRequestTestFormData {
   diagnostic_test_id: number | null;
-  priority: string;
-  instruction: string | null;
 }
 
 export interface IParaClinicRequest {
@@ -44,7 +42,6 @@ export interface IParaClinicRequest {
 export interface IParaClinicRequestFormData {
   patient_id: number | null;
   visit_id: number | null;
-  external_facility_name: string;
   request_date: string;
   clinical_reason: string | null;
   provisional_diagnosis: string | null;

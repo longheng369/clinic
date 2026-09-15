@@ -4,27 +4,23 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreParaclinicRequest extends FormRequest
+class StoreParaClinicRequest extends FormRequest
 {
     public function rules(): array
     {
         return [
             'patient_id' => ['required', 'exists:patients,id'],
             'visit_id' => ['nullable', 'exists:visits,id'],
-            'external_facility_name' => ['nullable', 'string', 'max:255'],
             'request_date' => ['required', 'date_format:d-m-Y H:i'],
             'clinical_reason' => ['nullable', 'string'],
             'provisional_diagnosis' => ['nullable', 'string', 'max:255'],
             'notes' => ['nullable', 'string'],
-            'status' => ['nullable', 'in:Draft,Requested,Waiting Result,Result Received,Reviewed,Completed,Cancelled'],
+            'status' => ['nullable', 'in:requested,cancelled,completed'],
             'fee' => ['nullable', 'numeric', 'min:0'],
-            'payment_status' => ['nullable', 'in:Unpaid,Partial,Paid'],
+            'payment_status' => ['nullable', 'in:unpaid,partial,paid'],
             'payment_date' => ['nullable', 'date'],
             'tests' => ['required', 'array', 'min:1'],
-            'tests.*.diagnostic_test_id' => ['required', 'exists:diagnostic_tests,id'],
-            'tests.*.price' => ['nullable', 'numeric', 'min:0'],
-            'tests.*.priority' => ['required', 'in:Routine,Urgent,STAT'],
-            'tests.*.instruction' => ['nullable', 'string'],
+            'tests.*' => ['required', 'integer', 'exists:diagnostic_tests,id'],
         ];
     }
 }
