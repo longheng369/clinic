@@ -46,11 +46,7 @@ const Patient = () => {
 
   const handleCreate = () => {
     openModal({
-      title: (
-        <Typography variant="h5" sx={{ fontWeight: 'medium' }}>
-          New Patient
-        </Typography>
-      ),
+      title: "New Patient",
       content: <PatientForm />,
       config: { preventClickAway: true, maxWidth: '4xl' },
     });

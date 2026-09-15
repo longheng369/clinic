@@ -11,7 +11,6 @@ import {
   DialogActions,
   DialogContent,
   Grid,
-  Box,
   Button,
   Typography,
 } from '@mui/material';
@@ -251,12 +250,12 @@ const PatientForm = ({ patient }: Props) => {
   });
 
   return (
-    <Box component="form" onSubmit={onSubmit} noValidate>
-      <DialogContent sx={{ borderTop: 1, borderColor: 'divider' }}>
+    <>
+      <DialogContent dividers>
+        <Typography variant="h6" sx={{ mb: 3 }}>
+          General Information
+        </Typography>
         <Grid container spacing={3}>
-          <Grid size={{ md: 12 }}>
-            <Typography variant="h6">General Information</Typography>
-          </Grid>
           <Grid size={{ md: 6 }}>
             <Input
               control={control}
@@ -351,9 +350,11 @@ const PatientForm = ({ patient }: Props) => {
           <Grid size={{ md: 12 }}>
             <Input control={control} name="allergy" label="Allergy" />
           </Grid>
-          <Grid size={{ md: 12 }}>
-            <Typography variant="h6">Address</Typography>
-          </Grid>
+        </Grid>
+        <Typography variant="h6" sx={{ my: 3 }}>
+          Address
+        </Typography>
+        <Grid container spacing={3}>
           <Grid size={{ md: 6 }}>
             <Autocomplete
               control={control}
@@ -422,11 +423,11 @@ const PatientForm = ({ patient }: Props) => {
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button type="button" onClick={() => closeModal()} variant="outlined">
+        <Button type="button" onClick={closeModal} variant="outlined">
           Cancel
         </Button>
         <Button
-          type="submit"
+          onClick={onSubmit}
           disabled={isProcessing}
           variant="contained"
           startIcon={<Save size={16} />}
@@ -434,7 +435,7 @@ const PatientForm = ({ patient }: Props) => {
           {patient ? 'Save' : 'Create'}
         </Button>
       </DialogActions>
-    </Box>
+    </>
   );
 };
 

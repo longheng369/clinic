@@ -155,8 +155,8 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
             sx={
               customWidth
                 ? {
-                  '& .MuiDialog-paper': { maxWidth: customWidth },
-                }
+                    '& .MuiDialog-paper': { maxWidth: customWidth },
+                  }
                 : undefined
             }
           >
@@ -164,16 +164,16 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
               <div id={descriptionId}>{content}</div>
             ) : (
               <>
-                <DialogTitle id={titleId} sx={{ m: 0, p: 2, pr: 6 }}>
+                <DialogTitle id={titleId}>
                   {dialog.title}
+                  <IconButton
+                    aria-label="close"
+                    onClick={() => closeModal()}
+                    sx={{ position: 'absolute', right: 8, top: 15 }}
+                  >
+                    <X size={18} />
+                  </IconButton>
                 </DialogTitle>
-                <IconButton
-                  aria-label="close"
-                  onClick={() => closeModal()}
-                  sx={{ position: 'absolute', right: 8, top: 8 }}
-                >
-                  <X size={20} />
-                </IconButton>
                 {content}
               </>
             )}
