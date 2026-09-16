@@ -12,3 +12,9 @@ export interface IDiagnosticTestFormData {
   price: number | null;
   description: string | null;
 }
+
+export interface IDiagnosticTestAutocomplete {
+  label: string;
+  value: number;
+  price: number;
+}
