@@ -1,7 +1,7 @@
 import { Card, CardContent, Grid, Stack, Typography } from '@mui/material';
 import { type ReactNode } from 'react';
 import { IPatient } from '@/interfaces/IPatient';
-import { formatDob } from '@/utils/date';
+import { formatDob, calculateAge } from '@/utils/date';
 
 type InfoItemProps = {
   label: string;
@@ -66,7 +66,7 @@ const PatientInfo = ({ patient, compact = false, latestWeight }: Props) => (
         <Grid size={{ xs: 12, md: 4 }}>
           <InfoItem
             label="ថ្ងៃខែឆ្នាំកំណើត"
-            value={formatDob(patient.date_of_birth)}
+            value={`${formatDob(patient.date_of_birth)} (${calculateAge(patient.date_of_birth)} yrs)`}
           />
         </Grid>
         <Grid size={{ xs: 12, md: 4 }}>
