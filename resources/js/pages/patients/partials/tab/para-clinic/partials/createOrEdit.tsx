@@ -5,6 +5,7 @@ import Textarea from '@/components/form/textarea';
 import {
   IParaClinicRequest,
   IParaClinicRequestFormData,
+  IParaClinicRequestTest,
 } from '@/interfaces/IParaClinicRequest';
 import { IOption } from '@/interfaces/IOption';
 import dayjs from 'dayjs';
@@ -19,16 +20,14 @@ import {
   Stack,
   Typography,
   IconButton,
+  CircularProgress,
 } from '@mui/material';
 import { useToast } from '@/components/toast';
 import { Plus, X } from 'lucide-react';
 import DateTimeField from '@/components/form/dateTime';
 import { useModal } from '@/components/modal';
 
-const PRIORITY_OPTIONS = ['Routine', 'Urgent', 'STAT'].map((value) => ({
-  value,
-  label: value,
-}));
+const EMPTY_TEST = { diagnostic_test_id: null };
 
 type Props = {
   request?: IParaClinicRequest;
@@ -39,7 +38,11 @@ type Props = {
 const ParaClinicForm = ({ request, patientId, visitId }: Props) => {
   const { closeModal } = useModal();
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isLoading, setIsLoading] = useState(!!request);
   const [testPrices, setTestPrices] = useState<Record<number, number>>({});
+  const [testOptions, setTestOptions] = useState<
+    Record<number, IOption<number>>
+  >({});
   const { toast } = useToast();
 
   const handleTestSelect = (option: IOption<any>) => {
@@ -48,48 +51,89 @@ const ParaClinicForm = ({ request, patientId, visitId }: Props) => {
     }
   };
 
-  const defaultTests = request?.tests?.length
-    ? request.tests.map((t) => ({
-      diagnostic_test_id: t.diagnostic_test_id ?? null,
-      priority: t.priority,
-      instruction: t.instruction,
-    }))
-    : [
-      {
-        diagnostic_test_id: null,
-        priority: 'Routine',
-        instruction: null,
-      },
-    ];
-
-  const { control, handleSubmit, watch, setValue } =
+  const { control, handleSubmit, watch, setValue, reset } =
     useForm<IParaClinicRequestFormData>({
-      defaultValues: request
-        ? {
-          patient_id: request.patient?.id ?? null,
-          visit_id: request.visit_id,
-          request_date: request.request_date,
-          clinical_reason: request.clinical_reason,
-          provisional_diagnosis: request.provisional_diagnosis,
-          notes: request.notes,
-          fee: request.fee,
-          payment_status: request.payment_status,
-          payment_date: request.payment_date,
-          tests: defaultTests,
-        }
-        : {
-          patient_id: patientId,
-          visit_id: visitId ?? null,
-          request_date: dayjs().format('DD-MM-YYYY HH:mm'),
-          clinical_reason: '',
-          provisional_diagnosis: '',
-          notes: '',
-          fee: 0,
-          payment_status: 'unpaid',
-          payment_date: null,
-          tests: defaultTests,
-        },
+      defaultValues: {
+        patient_id: patientId,
+        visit_id: visitId ?? null,
+        request_date: dayjs().format('DD-MM-YYYY HH:mm'),
+        clinical_reason: '',
+        provisional_diagnosis: '',
+        notes: '',
+        fee: 0,
+        payment_status: 'unpaid',
+        payment_date: null,
+        tests: [EMPTY_TEST],
+      },
     });
+
+  // The grid row is a summary: it carries no tests, patient or visit. Load the
+  // full record so editing pre-fills instead of silently dropping them.
+  useEffect(() => {
+    if (!request) {
+      return;
+    }
+
+    const controller = new AbortController();
+
+    fetch(`/para-clinic-requests/${request.id}`, {
+      signal: controller.signal,
+      headers: { Accept: 'application/json' },
+    })
+      .then((response) => response.json())
+      .then((data: IParaClinicRequest) => {
+        const savedTests = data.tests.filter(
+          (test): test is IParaClinicRequestTest & { diagnostic_test_id: number } =>
+            test.diagnostic_test_id != null,
+        );
+
+        setTestPrices(
+          Object.fromEntries(
+            savedTests.map((test) => [
+              test.diagnostic_test_id,
+              Number(test.price ?? 0),
+            ]),
+          ),
+        );
+        setTestOptions(
+          Object.fromEntries(
+            savedTests.map((test) => [
+              test.diagnostic_test_id,
+              { value: test.diagnostic_test_id, label: test.test_name },
+            ]),
+          ),
+        );
+
+        reset({
+          patient_id: data.patient_id ?? patientId,
+          visit_id: data.visit_id,
+          request_date: data.request_date,
+          clinical_reason: data.clinical_reason,
+          provisional_diagnosis: data.provisional_diagnosis,
+          notes: data.notes,
+          fee: data.fee,
+          payment_status: data.payment_status,
+          payment_date: data.payment_date,
+          tests: savedTests.length
+            ? savedTests.map((test) => ({
+              diagnostic_test_id: test.diagnostic_test_id,
+            }))
+            : [EMPTY_TEST],
+        });
+      })
+      .catch((error) => {
+        if (error?.name !== 'AbortError') {
+          toast('Failed to load the request.', { variant: 'error' });
+        }
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) {
+          setIsLoading(false);
+        }
+      });
+
+    return () => controller.abort();
+  }, [request?.id]);
 
   const { fields, append, remove } = useFieldArray({ control, name: 'tests' });
   const testsValues = watch('tests');
@@ -134,6 +178,16 @@ const ParaClinicForm = ({ request, patientId, visitId }: Props) => {
         router.put(`/para-clinic-requests/${request.id}`, payload, options);
       else router.post('/para-clinic-requests', payload, options);
     });
+
+  if (isLoading) {
+    return (
+      <DialogContent dividers>
+        <Stack sx={{ alignItems: 'center', py: 6 }}>
+          <CircularProgress size={28} />
+        </Stack>
+      </DialogContent>
+    );
+  }
 
   return (
     <>
@@ -181,9 +235,7 @@ const ParaClinicForm = ({ request, patientId, visitId }: Props) => {
               type="button"
               size="small"
               onClick={() =>
-                append({
-                  diagnostic_test_id: null,
-                })
+                append(EMPTY_TEST)
               }
               variant="contained"
               startIcon={<Plus size={14} />}
@@ -210,6 +262,9 @@ const ParaClinicForm = ({ request, patientId, visitId }: Props) => {
                   control={control}
                   name={`tests.${index}.diagnostic_test_id` as any}
                   model="DiagnosticTest"
+                  initialOption={
+                    testOptions[testsValues[index]?.diagnostic_test_id ?? -1]
+                  }
                   rules={{ required: 'Required' }}
                   placeholder="Search test by name..."
                   onSelect={handleTestSelect}

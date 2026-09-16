@@ -4,8 +4,6 @@ export interface IParaClinicRequestTest {
   test_category: string;
   test_name: string;
   price: number | null;
-  priority: string;
-  instruction: string | null;
 }
 
 export interface IParaClinicRequestTestFormData {

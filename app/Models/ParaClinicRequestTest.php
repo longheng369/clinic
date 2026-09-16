@@ -7,12 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable([
-    'paraclinic_request_id',
+    'para_clinic_request_id',
     'diagnostic_test_id',
     'test_category',
     'test_name',
-    'priority',
-    'instruction',
     'price',
 ])]
 class ParaClinicRequestTest extends Model

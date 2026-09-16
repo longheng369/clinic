@@ -20,6 +20,8 @@ class ParaClinicRequestController extends Controller
         return response()->json([
             'id' => $paraClinicRequest->id,
             'request_number' => $paraClinicRequest->request_number,
+            'patient_id' => $paraClinicRequest->patient_id,
+            'visit_id' => $paraClinicRequest->visit_id,
             'request_date' => \Carbon\Carbon::parse($paraClinicRequest->request_date)->format('d-m-Y H:i'),
             'external_facility_name' => $paraClinicRequest->external_facility_name,
             'clinical_reason' => $paraClinicRequest->clinical_reason,
@@ -31,10 +33,9 @@ class ParaClinicRequestController extends Controller
             'payment_date' => $paraClinicRequest->payment_date,
             'tests' => $paraClinicRequest->tests->map(fn ($t) => [
                 'id' => $t->id,
+                'diagnostic_test_id' => $t->diagnostic_test_id,
                 'test_name' => $t->test_name,
                 'test_category' => $t->test_category,
-                'priority' => $t->priority,
-                'instruction' => $t->instruction,
                 'price' => (float) $t->price,
             ]),
             'created_by' => $paraClinicRequest->createdBy?->name,
@@ -68,16 +69,7 @@ class ParaClinicRequestController extends Controller
 
             $paraClinicRequest = ParaClinicRequest::create($data);
 
-            $diagnosticTests = DiagnosticTest::whereIn('id', $diagnosticTestIds)->get();
-
-            foreach ($diagnosticTests as $diagnosticTest) {
-                $paraClinicRequest->tests()->create([
-                    'diagnostic_test_id' => $diagnosticTest->id,
-                    'test_category' => 'Laboratory',
-                    'test_name' => $diagnosticTest->name,
-                    'price' => (float) $diagnosticTest->price,
-                ]);
-            }
+            $this->syncTests($paraClinicRequest, $diagnosticTestIds);
         });
 
         return back()->with('success', 'Paraclinic request created.');
@@ -89,21 +81,14 @@ class ParaClinicRequestController extends Controller
         $data['fee'] = (float) ($data['fee'] ?? 0);
         $data['request_date'] = \Carbon\Carbon::createFromFormat('d-m-Y H:i', $data['request_date'])->format('Y-m-d H:i');
 
-        $paraclinicRequest->update($data);
+        $diagnosticTestIds = $request->input('tests', []);
 
-        $paraclinicRequest->tests()->delete();
-        foreach ($request->input('tests', []) as $test) {
-            $diagnosticTest = DiagnosticTest::find($test['diagnostic_test_id']);
+        DB::transaction(function () use ($paraclinicRequest, $data, $diagnosticTestIds) {
+            $paraclinicRequest->update($data);
+            $paraclinicRequest->tests()->delete();
 
-            $paraclinicRequest->tests()->create([
-                'diagnostic_test_id' => $diagnosticTest?->id,
-                'test_category' => 'Laboratory',
-                'test_name' => $diagnosticTest?->name ?? '',
-                'price' => (float) ($diagnosticTest?->price ?? 0),
-                'priority' => $test['priority'],
-                'instruction' => $test['instruction'] ?? null,
-            ]);
-        }
+            $this->syncTests($paraclinicRequest, $diagnosticTestIds);
+        });
 
         return back()->with('success', 'Paraclinic request updated.');
     }
@@ -113,5 +98,22 @@ class ParaClinicRequestController extends Controller
         $paraClinicRequest->delete();
 
         return back()->with('success', 'Paraclinic request deleted.');
+    }
+
+    /**
+     * Snapshot the selected diagnostic tests onto the request.
+     */
+    private function syncTests(ParaClinicRequest $paraClinicRequest, array $diagnosticTestIds): void
+    {
+        $diagnosticTests = DiagnosticTest::whereIn('id', $diagnosticTestIds)->get();
+
+        foreach ($diagnosticTests as $diagnosticTest) {
+            $paraClinicRequest->tests()->create([
+                'diagnostic_test_id' => $diagnosticTest->id,
+                'test_category' => 'Laboratory',
+                'test_name' => $diagnosticTest->name,
+                'price' => (float) $diagnosticTest->price,
+            ]);
+        }
     }
 }
