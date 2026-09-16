@@ -1,4 +1,4 @@
-import { useForm } from 'react-hook-form';
+import { useForm, useController } from 'react-hook-form';
 import Input from '@/components/form/input';
 import MultiAutocomplete from '@/components/form/multiAutocomplete';
 import Textarea from '@/components/form/textarea';
@@ -10,10 +10,12 @@ import dayjs from 'dayjs';
 import { useState, useEffect } from 'react';
 import { router, useHttp } from '@inertiajs/react';
 import {
+  Autocomplete,
   Button,
   DialogActions,
   DialogContent,
   Stack,
+  TextField,
   Typography,
   CircularProgress,
 } from '@mui/material';
@@ -37,9 +39,10 @@ type Props = {
   requestId?: number;
   patientId: number;
   visitId?: number | null;
+  consultationDiagnoses?: string[];
 }
 
-const ParaClinicForm = ({ requestId, patientId, visitId }: Props) => {
+const ParaClinicForm = ({ requestId, patientId, visitId, consultationDiagnoses = [] }: Props) => {
   const { closeModal } = useModal();
   const { get } = useHttp();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -173,11 +176,21 @@ const ParaClinicForm = ({ requestId, patientId, visitId }: Props) => {
             label="Request Date & Time"
             rules={{ required: 'Request date is required' }}
           />
-          <Input
-            label="Diagnosis"
-            control={control}
-            name="provisional_diagnosis"
-            placeholder="Enter diagnosis"
+          <Autocomplete
+            freeSolo
+            options={consultationDiagnoses}
+            value={watch('provisional_diagnosis') ?? ''}
+            onChange={(_, newValue) => setValue('provisional_diagnosis', newValue ?? '')}
+            onInputChange={(_, newInputValue) => setValue('provisional_diagnosis', newInputValue)}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Diagnosis"
+                placeholder="Enter diagnosis"
+                variant="standard"
+                fullWidth
+              />
+            )}
           />
           <Textarea
             label="Clinical Reason"

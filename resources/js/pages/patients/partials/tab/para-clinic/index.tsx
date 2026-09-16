@@ -38,8 +38,9 @@ interface PaginatedData<T> {
 
 const ParaClinicByPatientTab = ({ patientId, selectedVisitId }: { patientId: number; selectedVisitId: number | null }) => {
   const { openAlert, openModal } = useModal();
-  const { paraClinicRequests } = usePage<{
+  const { paraClinicRequests, consultationDiagnoses } = usePage<{
     paraClinicRequests: PaginatedData<IParaClinicRequest>;
+    consultationDiagnoses: string[];
   }>().props;
   const { data: rows, total, current_page, per_page } = paraClinicRequests;
 
@@ -64,7 +65,7 @@ const ParaClinicByPatientTab = ({ patientId, selectedVisitId }: { patientId: num
   const handleEdit = (request: IParaClinicRequest) => {
     openModal({
       title: `Edit ${request.request_number}`,
-      content: <ParaClinicForm requestId={request.id} patientId={patientId} visitId={selectedVisitId} />,
+      content: <ParaClinicForm requestId={request.id} patientId={patientId} visitId={selectedVisitId} consultationDiagnoses={consultationDiagnoses} />,
       config: { preventClickAway: true, scroll: 'body' }
     });
   };
@@ -73,7 +74,7 @@ const ParaClinicByPatientTab = ({ patientId, selectedVisitId }: { patientId: num
     openModal({
       title: 'New Para Clinic Request',
       content: (
-        <ParaClinicForm patientId={patientId} visitId={selectedVisitId} />
+        <ParaClinicForm patientId={patientId} visitId={selectedVisitId} consultationDiagnoses={consultationDiagnoses} />
       ),
       config: { preventClickAway: true, scroll: 'body' },
     });

@@ -155,6 +155,19 @@ class PatientController extends Controller
                         'fee' => (float) $r->fee,
                     ]);
             }, 'paraClinicRequests'),
+            'consultationDiagnoses' => Inertia::defer(function () use ($selectedVisit) {
+                if (! $selectedVisit) {
+                    return [];
+                }
+
+                return $selectedVisit->consultations()
+                    ->whereNotNull('diagnosis')
+                    ->where('diagnosis', '!=', '')
+                    ->latest()
+                    ->pluck('diagnosis')
+                    ->unique()
+                    ->values();
+            }, 'paraClinicRequests'),
             'medicationOrders' => Inertia::defer(function () use ($selectedVisit) {
                 if (! $selectedVisit) {
                     return ['data' => [], 'current_page' => 1, 'last_page' => 1, 'per_page' => 10, 'total' => 0, 'from' => 0, 'to' => 0];
