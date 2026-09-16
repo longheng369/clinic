@@ -15,8 +15,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 ])]
 class ParaClinicRequestTest extends Model
 {
-    protected $table = 'para_clinic_request_tests';
-
     public function paraClinicRequest(): BelongsTo
     {
         return $this->belongsTo(ParaClinicRequest::class);

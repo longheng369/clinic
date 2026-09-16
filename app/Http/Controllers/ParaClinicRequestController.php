@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreParaClinicRequest;
-use App\Http\Requests\UpdateParaclinicRequest;
+use App\Http\Requests\UpdateParaClinicRequest;
 use App\Models\ParaClinicRequest;
 use App\Models\DiagnosticTest;
-use App\Models\ParaClinicRequestTest;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ParaClinicRequestController extends Controller
@@ -48,7 +48,6 @@ class ParaClinicRequestController extends Controller
     {
         $data = $request->safe()->except(['tests']);
 
-        $data['fee'] = (float) ($data['fee'] ?? 0);
         $data['request_date'] = Carbon::createFromFormat(
             'd-m-Y H:i',
             $data['request_date']
@@ -56,7 +55,7 @@ class ParaClinicRequestController extends Controller
 
         $diagnosticTestIds = $request->input('tests', []);
 
-        DB::transaction(function () use ($data, $diagnosticTestIds) {
+        DB::transaction(function () use (&$data, $diagnosticTestIds) {
             $today = now()->startOfDay();
 
             $count = ParaClinicRequest::whereDate('created_at', $today)
@@ -70,24 +69,28 @@ class ParaClinicRequestController extends Controller
             $paraClinicRequest = ParaClinicRequest::create($data);
 
             $this->syncTests($paraClinicRequest, $diagnosticTestIds);
+
+            $data['fee'] = $paraClinicRequest->tests()->sum('price');
+            $paraClinicRequest->update(['fee' => $data['fee']]);
         });
 
         return back()->with('success', 'Paraclinic request created.');
     }
 
-    public function update(UpdateParaclinicRequest $request, ParaclinicRequest $paraclinicRequest)
+    public function update(UpdateParaClinicRequest $request, ParaClinicRequest $paraClinicRequest)
     {
         $data = $request->safe()->except(['tests']);
-        $data['fee'] = (float) ($data['fee'] ?? 0);
-        $data['request_date'] = \Carbon\Carbon::createFromFormat('d-m-Y H:i', $data['request_date'])->format('Y-m-d H:i');
+        $data['request_date'] = Carbon::createFromFormat('d-m-Y H:i', $data['request_date'])->format('Y-m-d H:i');
 
         $diagnosticTestIds = $request->input('tests', []);
 
-        DB::transaction(function () use ($paraclinicRequest, $data, $diagnosticTestIds) {
-            $paraclinicRequest->update($data);
-            $paraclinicRequest->tests()->delete();
+        DB::transaction(function () use ($paraClinicRequest, $data, $diagnosticTestIds) {
+            $paraClinicRequest->update($data);
 
-            $this->syncTests($paraclinicRequest, $diagnosticTestIds);
+            $this->syncTests($paraClinicRequest, $diagnosticTestIds);
+
+            $fee = $paraClinicRequest->tests()->sum('price');
+            $paraClinicRequest->update(['fee' => $fee]);
         });
 
         return back()->with('success', 'Paraclinic request updated.');
@@ -100,11 +103,38 @@ class ParaClinicRequestController extends Controller
         return back()->with('success', 'Paraclinic request deleted.');
     }
 
+    public function payment(Request $request, ParaClinicRequest $paraClinicRequest)
+    {
+        $validated = $request->validate([
+            'paid_amount' => ['required', 'numeric', 'min:0'],
+        ]);
+
+        $fee = (float) $paraClinicRequest->fee;
+        $paidAmount = (float) $validated['paid_amount'];
+
+        if ($paidAmount >= $fee && $fee > 0) {
+            $paymentStatus = 'paid';
+        } elseif ($paidAmount > 0 && $paidAmount < $fee) {
+            $paymentStatus = 'partial';
+        } else {
+            $paymentStatus = 'unpaid';
+        }
+
+        $paraClinicRequest->update([
+            'payment_status' => $paymentStatus,
+            'payment_date' => $paidAmount > 0 ? now()->toDateString() : null,
+        ]);
+
+        return back()->with('success', 'Payment updated.');
+    }
+
     /**
      * Snapshot the selected diagnostic tests onto the request.
      */
     private function syncTests(ParaClinicRequest $paraClinicRequest, array $diagnosticTestIds): void
     {
+        $paraClinicRequest->tests()->delete();
+
         $diagnosticTests = DiagnosticTest::whereIn('id', $diagnosticTestIds)->get();
 
         foreach ($diagnosticTests as $diagnosticTest) {

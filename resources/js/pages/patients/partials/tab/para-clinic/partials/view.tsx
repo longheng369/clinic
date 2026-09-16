@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
   Box,
+  Button,
   Chip,
   DialogContent,
   Divider,
@@ -9,6 +10,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useToast } from '@/components/toast';
+import { useModal } from '@/components/modal';
 import { Skeleton } from '@mui/material';
 import {
   FileText,
@@ -16,7 +18,9 @@ import {
   TestTube,
   User,
   Clock,
+  CreditCard,
 } from 'lucide-react';
+import ParaClinicPayment from './payment';
 
 interface ParaClinicRequestDetail {
   id: number;
@@ -82,6 +86,7 @@ const ParaClinicView = ({ requestId }: Props) => {
   const [data, setData] = useState<ParaClinicRequestDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+  const { openModal } = useModal();
 
   useEffect(() => {
     setIsLoading(true);
@@ -112,6 +117,21 @@ const ParaClinicView = ({ requestId }: Props) => {
 
   const totalFee = data.tests.reduce((sum, t) => sum + t.price, 0);
 
+  const handlePayment = () => {
+    openModal({
+      title: `Payment — ${data.request_number}`,
+      content: (
+        <ParaClinicPayment
+          requestId={data.id}
+          fee={data.fee}
+          currentPaymentStatus={data.payment_status}
+          currentPaidAmount={data.payment_status === 'paid' ? data.fee : data.payment_status === 'partial' ? data.fee / 2 : 0}
+        />
+      ),
+      config: { maxWidth: 'sm' },
+    });
+  };
+
   return (
     <DialogContent sx={{ borderTop: 1, borderColor: 'divider', pt: 2 }}>
       <Grid container spacing={2.5}>
@@ -134,6 +154,14 @@ const ParaClinicView = ({ requestId }: Props) => {
               color={data.payment_status === 'Paid' ? 'success' : 'default'}
               sx={{ fontWeight: 500 }}
             />
+            <Button
+              size="small"
+              variant="outlined"
+              startIcon={<CreditCard size={14} />}
+              onClick={handlePayment}
+            >
+              Pay
+            </Button>
           </Stack>
         </Grid>
 

@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateParaclinicRequest extends FormRequest
+class UpdateParaClinicRequest extends FormRequest
 {
     protected function prepareForValidation(): void
     {
@@ -26,7 +26,6 @@ class UpdateParaclinicRequest extends FormRequest
             'provisional_diagnosis' => ['nullable', 'string', 'max:255'],
             'notes' => ['nullable', 'string'],
             'status' => ['nullable', 'in:requested,cancelled,completed'],
-            'fee' => ['nullable', 'numeric', 'min:0'],
             'payment_status' => ['nullable', 'in:unpaid,partial,paid'],
             'payment_date' => ['nullable', 'date'],
             'tests' => ['required', 'array', 'min:1'],

@@ -64,7 +64,7 @@ const ParaClinicByPatientTab = ({ patientId, selectedVisitId }: { patientId: num
   const handleEdit = (request: IParaClinicRequest) => {
     openModal({
       title: `Edit ${request.request_number}`,
-      content: <ParaClinicForm request={request} patientId={patientId} visitId={selectedVisitId} />,
+      content: <ParaClinicForm requestId={request.id} patientId={patientId} visitId={selectedVisitId} />,
       config: { preventClickAway: true, scroll: 'body' }
     });
   };
@@ -138,6 +138,17 @@ const ParaClinicByPatientTab = ({ patientId, selectedVisitId }: { patientId: num
             </Typography>
           </Box>
         ),
+    },
+    {
+      field: 'payment_status',
+      headerName: 'ស្ថានភាពបង់ប្រាក់',
+      flex: 1,
+      minWidth: 120,
+      renderCell: (params: GridRenderCellParams<IParaClinicRequest>) => {
+        const status = params.value as string;
+        const color = status === 'paid' ? 'success' : status === 'partial' ? 'warning' : 'default';
+        return <Chip size="small" label={status} color={color} />;
+      },
     },
     {
       field: 'actions',

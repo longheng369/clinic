@@ -28,7 +28,9 @@ class ParaClinicRequest extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'para_clinic_requests';
+    protected $casts = [
+        'fee' => 'float'
+    ];
 
     protected static function boot(): void
     {

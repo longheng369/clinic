@@ -18,7 +18,7 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { useToast } from '@/components/toast';
-import { Square, SquareCheck } from 'lucide-react';
+import { Square, SquareCheckBig } from 'lucide-react';
 import DateTimeField from '@/components/form/dateTime';
 import { useModal } from '@/components/modal';
 import { IDiagnosticTestAutocomplete } from '@/interfaces/IDiagnosticTest';
@@ -30,43 +30,36 @@ type FormData = {
   clinical_reason: string | null;
   provisional_diagnosis: string | null;
   notes: string | null;
-  fee: number | null;
-  payment_status: string;
-  payment_date: string | null;
   diagnostic_test_ids: number[];
 };
 
 type Props = {
-  request?: IParaClinicRequest;
+  requestId?: number;
   patientId: number;
   visitId?: number | null;
 }
 
-const ParaClinicForm = ({ request, patientId, visitId }: Props) => {
+const ParaClinicForm = ({ requestId, patientId, visitId }: Props) => {
   const { closeModal } = useModal();
   const { get } = useHttp();
   const [isProcessing, setIsProcessing] = useState(false);
-  const [isLoading, setIsLoading] = useState(!!request);
+  const [isLoading, setIsLoading] = useState(false);
   const [diagnosisTests, setDiagnosisTests] = useState<
     IDiagnosticTestAutocomplete[]
   >([]);
   const { toast } = useToast();
 
-  const { control, handleSubmit, watch, setValue, reset } =
-    useForm<FormData>({
-      defaultValues: {
-        patient_id: patientId,
-        visit_id: visitId ?? null,
-        request_date: dayjs().format('DD-MM-YYYY HH:mm'),
-        clinical_reason: '',
-        provisional_diagnosis: '',
-        notes: '',
-        fee: 0,
-        payment_status: 'unpaid',
-        payment_date: null,
-        diagnostic_test_ids: [],
-      },
-    });
+  const { control, handleSubmit, watch, setValue, reset } = useForm<FormData>({
+    defaultValues: {
+      patient_id: patientId,
+      visit_id: visitId ?? null,
+      request_date: dayjs().format('DD-MM-YYYY HH:mm'),
+      clinical_reason: '',
+      provisional_diagnosis: '',
+      notes: '',
+      diagnostic_test_ids: [],
+    },
+  });
 
   useEffect(() => {
     get('/autocomplete/DiagnosticTest', {
@@ -76,24 +69,26 @@ const ParaClinicForm = ({ request, patientId, visitId }: Props) => {
     });
   }, []);
 
-  // The grid row is a summary: it carries no tests, patient or visit. Load the
-  // full record so editing pre-fills instead of silently dropping them.
   useEffect(() => {
-    if (!request) {
+    if (!requestId) {
       return;
     }
 
     const controller = new AbortController();
 
-    fetch(`/para-clinic-requests/${request.id}`, {
+    fetch(`/para-clinic-requests/${requestId}`, {
       signal: controller.signal,
       headers: { Accept: 'application/json' },
     })
       .then((response) => response.json())
       .then((data: IParaClinicRequest) => {
         const savedTestIds = data.tests
-          .filter((test): test is IParaClinicRequestTest & { diagnostic_test_id: number } =>
-            test.diagnostic_test_id != null,
+          .filter(
+            (
+              test,
+            ): test is IParaClinicRequestTest & {
+              diagnostic_test_id: number;
+            } => test.diagnostic_test_id != null,
           )
           .map((test) => test.diagnostic_test_id);
 
@@ -104,9 +99,6 @@ const ParaClinicForm = ({ request, patientId, visitId }: Props) => {
           clinical_reason: data.clinical_reason,
           provisional_diagnosis: data.provisional_diagnosis,
           notes: data.notes,
-          fee: data.fee,
-          payment_status: data.payment_status,
-          payment_date: data.payment_date,
           diagnostic_test_ids: savedTestIds,
         });
       })
@@ -122,17 +114,13 @@ const ParaClinicForm = ({ request, patientId, visitId }: Props) => {
       });
 
     return () => controller.abort();
-  }, [request?.id]);
+  }, [requestId]);
 
   const diagnosticTestIds = watch('diagnostic_test_ids');
   const totalFee = diagnosticTestIds.reduce((sum, id) => {
     const test = diagnosisTests.find((t) => t.value === id);
     return sum + (test?.price ?? 0);
   }, 0);
-
-  useEffect(() => {
-    setValue('fee', totalFee);
-  }, [totalFee, setValue]);
 
   const onSubmit = handleSubmit((data) => {
     const payload = {
@@ -145,10 +133,9 @@ const ParaClinicForm = ({ request, patientId, visitId }: Props) => {
     const options = {
       onSuccess: () => {
         closeModal();
-        toast(
-          `Request ${request ? 'updated' : 'created'} successfully!`,
-          { variant: 'success' },
-        );
+        toast(`Request ${requestId ? 'updated' : 'created'} successfully!`, {
+          variant: 'success',
+        });
         router.reload({ only: ['paraClinicRequests'] });
       },
       onError: (errors: Record<string, string | string[]>) => {
@@ -158,8 +145,8 @@ const ParaClinicForm = ({ request, patientId, visitId }: Props) => {
       onFinish: () => setIsProcessing(false),
     };
 
-    if (request)
-      router.put(`/para-clinic-requests/${request.id}`, payload, options);
+    if (requestId)
+      router.put(`/para-clinic-requests/${requestId}`, payload, options);
     else router.post('/para-clinic-requests', payload, options);
   });
 
@@ -198,6 +185,12 @@ const ParaClinicForm = ({ request, patientId, visitId }: Props) => {
             name="clinical_reason"
             placeholder="Enter clinical reason"
           />
+          <Textarea
+            label="Notes"
+            control={control}
+            name="notes"
+            placeholder="Enter any additional notes"
+          />
           <MultiAutocomplete
             control={control}
             name="diagnostic_test_ids"
@@ -206,7 +199,7 @@ const ParaClinicForm = ({ request, patientId, visitId }: Props) => {
             rules={{ required: 'Please select at least one test' }}
             renderOption={(props: any, option: any, { selected }: any) => {
               const { key, ...optionProps } = props as any;
-              const SelectionIcon = selected ? SquareCheck : Square;
+              const SelectionIcon = selected ? SquareCheckBig : Square;
               const test = option as IDiagnosticTestAutocomplete;
 
               return (
@@ -226,44 +219,24 @@ const ParaClinicForm = ({ request, patientId, visitId }: Props) => {
             getOptionLabel={(option: IDiagnosticTestAutocomplete) => {
               return `${option.label} $${option.price.toFixed(2)}`;
             }}
-            getChipLabel={(option: any) => {
-              const test = option as IDiagnosticTestAutocomplete;
-              return `${test.label} $${test.price.toFixed(2)}`;
-            }}
-          />
-          <Textarea
-            label="Notes"
-            control={control}
-            name="notes"
-            placeholder="Enter any additional notes"
           />
           <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-            Billing
+            Total: ${totalFee.toFixed(2)}
           </Typography>
-          <Input
-            label={`Fee ($) — Auto: $${totalFee.toFixed(2)}`}
-            control={control}
-            type="number"
-            slotProps={{ htmlInput: { step: '0.01', min: '0' } }}
-            name="fee"
-            placeholder="0.00"
-          />
         </Stack>
       </DialogContent>
       <DialogActions>
         <Button onClick={closeModal} type="button" variant="outlined">
           Cancel
         </Button>
-        {!request && (
-          <Button
-            type="button"
-            variant="contained"
-            onClick={onSubmit}
-            disabled={isProcessing}
-          >
-            Submit Request
-          </Button>
-        )}
+        <Button
+          type="button"
+          variant="contained"
+          onClick={onSubmit}
+          disabled={isProcessing}
+        >
+          {requestId ? 'Update Request' : 'Submit Request'}
+        </Button>
       </DialogActions>
     </>
   );
