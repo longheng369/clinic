@@ -36,7 +36,7 @@ class StoreConsultationRequest extends FormRequest
             'throat_others_note' => ['nullable', 'string', 'max:65535'],
             'psychology_symptoms' => ['nullable', 'array'],
             'psychology_others_note' => ['nullable', 'string', 'max:65535'],
-            'diagnosis' => ['nullable', 'string', 'max:65535'],
+            'diagnosis' => ['required', 'string', 'max:65535'],
             'note' => ['nullable', 'string', 'max:65535'],
             'fee' => ['nullable', 'numeric', 'min:0'],
         ];

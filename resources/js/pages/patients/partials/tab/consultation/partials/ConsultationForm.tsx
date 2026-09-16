@@ -161,6 +161,7 @@ const ConsultationForm = ({ control, viewOnly }: Props) => {
           label="Diagnosis"
           placeholder="Enter diagnosis"
           disabled={viewOnly}
+          rules={{ required: 'Diagnosis is required' }}
         />
       </Grid>
 
