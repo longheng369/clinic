@@ -44,7 +44,9 @@ class AutocompleteController extends Controller
 
         $extraColumns = $class::autocompleteExtra();
 
-        $results = $query->limit(empty($ids) ? 25 : count($ids))->get()->map(function ($record) use ($extraColumns) {
+        $fetchAll = $request->boolean('all');
+
+        $results = $query->limit($fetchAll ? 1000 : (empty($ids) ? 25 : count($ids)))->get()->map(function ($record) use ($extraColumns) {
             $result = [
                 'value' => $record->id,
                 'label' => $record->autocompleteLabel(),

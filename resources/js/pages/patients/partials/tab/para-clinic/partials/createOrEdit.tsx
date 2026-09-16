@@ -62,7 +62,7 @@ const ParaClinicForm = ({ requestId, patientId, visitId }: Props) => {
   });
 
   useEffect(() => {
-    get('/autocomplete/DiagnosticTest', {
+    get('/autocomplete/DiagnosticTest?all=true', {
       onSuccess: (response) => {
         setDiagnosisTests(response as IDiagnosticTestAutocomplete[]);
       },
