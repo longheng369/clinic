@@ -38,9 +38,10 @@ type Props = {
   className?: string;
   gridClassName?: string;
   compact?: boolean;
+  latestWeight?: number | null;
 };
 
-const PatientInfo = ({ patient, compact = false }: Props) => (
+const PatientInfo = ({ patient, compact = false, latestWeight }: Props) => (
   <Card variant="outlined" sx={{ height: 'fit-content' }}>
     <CardContent
       sx={{ p: compact ? 2 : 3, '&:last-child': { pb: compact ? 2 : 3 } }}
@@ -97,6 +98,12 @@ const PatientInfo = ({ patient, compact = false }: Props) => (
         </Grid>
         <Grid size={{ xs: 12, md: 4 }}>
           <InfoItem label="អាលែកហ្ស៊ី" value={patient.allergy} />
+        </Grid>
+        <Grid size={{ xs: 12, md: 4 }}>
+          <InfoItem
+            label="ទម្ងន់"
+            value={latestWeight != null ? `${latestWeight} kg` : null}
+          />
         </Grid>
       </Grid>
     </CardContent>

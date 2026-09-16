@@ -90,10 +90,16 @@ class PatientController extends Controller
 
         $selectedVisitId = $selectedVisit?->id;
 
+        $latestWeight = $patient->consultations()
+            ->whereNotNull('weight')
+            ->latest()
+            ->value('weight');
+
         return Inertia::render('patients/show', [
             'patient' => $patient,
             'selectedVisit' => $selectedVisit,
             'allVisits' => $allVisits,
+            'latestWeight' => $latestWeight ? (float) $latestWeight : null,
             'consultations' => Inertia::defer(function () use ($patient, $selectedVisitId) {
                 return $patient->consultations()
                     ->with('createdBy')

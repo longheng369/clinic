@@ -67,10 +67,11 @@ type Props = {
 const PatientShow = ({ patient }: Props) => {
   const params = new URLSearchParams(window.location.search);
   const tabFromUrl = params.get('tab');
-  const { selectedVisit, allVisits, prescription } = usePage<{
+  const { selectedVisit, allVisits, prescription, latestWeight } = usePage<{
     selectedVisit: IVisitWithMetaData | null;
     allVisits: IVisit[];
     prescription: IPrescription | null;
+    latestWeight: number | null;
   }>().props;
 
   const visibleTabs =
@@ -190,7 +191,7 @@ const PatientShow = ({ patient }: Props) => {
         }}
       >
         <Box sx={{ mb: 3 }}>
-          <PatientInfo patient={patient} />
+          <PatientInfo patient={patient} latestWeight={latestWeight} />
         </Box>
 
         {selectedVisit ? (
