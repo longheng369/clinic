@@ -8,7 +8,6 @@ use App\Models\ParaClinicRequest;
 use App\Models\DiagnosticTest;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ParaClinicRequestController extends Controller
@@ -101,31 +100,6 @@ class ParaClinicRequestController extends Controller
         $paraClinicRequest->delete();
 
         return back()->with('success', 'Paraclinic request deleted.');
-    }
-
-    public function payment(Request $request, ParaClinicRequest $paraClinicRequest)
-    {
-        $validated = $request->validate([
-            'paid_amount' => ['required', 'numeric', 'min:0'],
-        ]);
-
-        $fee = (float) $paraClinicRequest->fee;
-        $paidAmount = (float) $validated['paid_amount'];
-
-        if ($paidAmount >= $fee && $fee > 0) {
-            $paymentStatus = 'paid';
-        } elseif ($paidAmount > 0 && $paidAmount < $fee) {
-            $paymentStatus = 'partial';
-        } else {
-            $paymentStatus = 'unpaid';
-        }
-
-        $paraClinicRequest->update([
-            'payment_status' => $paymentStatus,
-            'payment_date' => $paidAmount > 0 ? now()->toDateString() : null,
-        ]);
-
-        return back()->with('success', 'Payment updated.');
     }
 
     /**

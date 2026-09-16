@@ -140,17 +140,6 @@ const ParaClinicByPatientTab = ({ patientId, selectedVisitId }: { patientId: num
         ),
     },
     {
-      field: 'payment_status',
-      headerName: 'ស្ថានភាពបង់ប្រាក់',
-      flex: 1,
-      minWidth: 120,
-      renderCell: (params: GridRenderCellParams<IParaClinicRequest>) => {
-        const status = params.value as string;
-        const color = status === 'paid' ? 'success' : status === 'partial' ? 'warning' : 'default';
-        return <Chip size="small" label={status} color={color} />;
-      },
-    },
-    {
       field: 'actions',
       type: 'actions',
       headerName: 'សកម្មភាព',
