@@ -34,8 +34,6 @@ interface ParaClinicRequestDetail {
     id: number;
     test_name: string;
     test_category: string;
-    priority: string;
-    instruction: string | null;
     price: number;
   }[];
   created_by: string | null;
@@ -51,12 +49,6 @@ const STATUS_COLORS: Record<string, 'default' | 'primary' | 'error' | 'info' | '
   Reviewed: 'primary',
   Completed: 'success',
   Cancelled: 'error',
-};
-
-const PRIORITY_COLORS: Record<string, 'default' | 'warning' | 'error'> = {
-  Routine: 'default',
-  Urgent: 'warning',
-  STAT: 'error',
 };
 
 type Props = {
@@ -192,26 +184,12 @@ const ParaClinicView = ({ requestId }: Props) => {
               >
                 <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
                   <Stack spacing={0.5}>
-                    <Stack direction="row" spacing={1} alignItems="center">
-                      <Typography variant="body2" fontWeight={600}>
-                        {index + 1}. {test.test_name}
-                      </Typography>
-                      <Chip
-                        size="small"
-                        label={test.priority}
-                        color={PRIORITY_COLORS[test.priority] ?? 'default'}
-                        variant="outlined"
-                        sx={{ height: 20, fontSize: '0.7rem', fontWeight: 500 }}
-                      />
-                    </Stack>
+                    <Typography variant="body2" fontWeight={600}>
+                      {index + 1}. {test.test_name}
+                    </Typography>
                     <Typography variant="caption" color="text.secondary">
                       {test.test_category}
                     </Typography>
-                    {test.instruction && (
-                      <Typography variant="caption" color="text.secondary" sx={{ fontStyle: 'italic' }}>
-                        Instruction: {test.instruction}
-                      </Typography>
-                    )}
                   </Stack>
                   <Typography variant="body2" fontWeight={600} color="primary.main">
                     ${test.price.toFixed(2)}

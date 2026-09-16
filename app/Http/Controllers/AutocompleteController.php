@@ -20,9 +20,21 @@ class AutocompleteController extends Controller
         $q = trim((string) $request->query('search', ''));
         $columns = $class::autocompleteSearchable();
 
+        $ids = array_slice(
+            array_filter(
+                array_map('trim', explode(',', (string) $request->query('ids', ''))),
+                fn ($id) => $id !== ''
+            ),
+            0,
+            25
+        );
+
         $query = $class::query();
 
-        if ($q !== '' && !empty($columns)) {
+        // Resolving known keys (edit form pre-fill) ignores the search term.
+        if (!empty($ids)) {
+            $query->whereKey($ids);
+        } elseif ($q !== '' && !empty($columns)) {
             $query->where(function ($query) use ($columns, $q) {
                 foreach ($columns as $column) {
                     $query->orWhere($column, 'like', "%{$q}%");
@@ -32,7 +44,7 @@ class AutocompleteController extends Controller
 
         $extraColumns = $class::autocompleteExtra();
 
-        $results = $query->limit(25)->get()->map(function ($record) use ($extraColumns) {
+        $results = $query->limit(empty($ids) ? 25 : count($ids))->get()->map(function ($record) use ($extraColumns) {
             $result = [
                 'value' => $record->id,
                 'label' => $record->autocompleteLabel(),

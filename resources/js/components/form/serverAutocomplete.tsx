@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Autocomplete, CircularProgress, TextField } from '@mui/material';
 import {
   useController,
@@ -19,12 +19,24 @@ type Props<T extends FieldValues = FieldValues> = {
   label: string;
   apiUrl?: string;
   model?: string;
+  /**
+   * Known option for the current value. When omitted, a pre-filled value is
+   * resolved from the endpoint so edit forms still show the label and extras.
+   */
   initialOption?: IOption<string | number>;
   placeholder?: string;
   disabled?: boolean;
+  /**
+   * Called with the full option (label plus any extra columns) whenever the
+   * option behind the current value becomes known — on user selection and on
+   * pre-fill resolution.
+   */
   onSelect?: (option: IOption<any>) => void;
   excludeValues?: (string | number)[];
 };
+
+const isEmptyValue = (value: unknown) =>
+  value === null || value === undefined || value === '';
 
 const ServerAutocomplete = <T extends FieldValues = FieldValues>({
   control,
@@ -47,6 +59,9 @@ const ServerAutocomplete = <T extends FieldValues = FieldValues>({
   const [searchQuery, setSearchQuery] = useState('');
   const [isEditingSearch, setIsEditingSearch] = useState(false);
   const [options, setOptions] = useState<IOption<any>[]>([]);
+  const [resolvedOption, setResolvedOption] = useState<IOption<any> | null>(
+    null,
+  );
   const [isLoading, setIsLoading] = useState(false);
 
   const endpoint = apiUrl ?? (model ? `/autocomplete/${model}` : null);
@@ -63,6 +78,9 @@ const ServerAutocomplete = <T extends FieldValues = FieldValues>({
     [initialOptionLabel, initialOptionValue],
   );
 
+  const onSelectRef = useRef(onSelect);
+  onSelectRef.current = onSelect;
+
   const selectedOption = useMemo(() => {
     const matchedOption =
       options.find((option) => option.value === field.value) ?? null;
@@ -78,8 +96,12 @@ const ServerAutocomplete = <T extends FieldValues = FieldValues>({
       return normalizedInitialOption;
     }
 
+    if (resolvedOption && resolvedOption.value === field.value) {
+      return resolvedOption;
+    }
+
     return null;
-  }, [field.value, normalizedInitialOption, options]);
+  }, [field.value, normalizedInitialOption, options, resolvedOption]);
 
   useEffect(() => {
     if (!endpoint) {
@@ -122,6 +144,56 @@ const ServerAutocomplete = <T extends FieldValues = FieldValues>({
     };
   }, [searchQuery, endpoint, normalizedInitialOption]);
 
+  // Pre-fill: turn a bare value (edit form) into a full option with its label
+  // and extra columns.
+  useEffect(() => {
+    const value = field.value;
+
+    if (isEmptyValue(value)) {
+      setResolvedOption(null);
+      return;
+    }
+
+    if (
+      resolvedOption?.value === value ||
+      normalizedInitialOption?.value === value
+    ) {
+      return;
+    }
+
+    const knownOption = options.find((option) => option.value === value);
+
+    if (knownOption) {
+      setResolvedOption(knownOption);
+      return;
+    }
+
+    if (!endpoint) {
+      return;
+    }
+
+    const controller = new AbortController();
+
+    fetch(`${endpoint}?ids=${encodeURIComponent(String(value))}`, {
+      signal: controller.signal,
+    })
+      .then((response) => response.json())
+      .then((data: IOption<any>[]) => {
+        const option = data.find((item) => item.value === value) ?? null;
+
+        if (option) {
+          setResolvedOption(option);
+          onSelectRef.current?.(option);
+        }
+      })
+      .catch(() => undefined);
+
+    return () => controller.abort();
+    // `options` is read as a cache only; refetching on every search result
+    // would be wasteful and the id lookup is already value-scoped.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [endpoint, field.value, normalizedInitialOption]);
+
   useEffect(() => {
     if (isEditingSearch) {
       return;
@@ -132,11 +204,7 @@ const ServerAutocomplete = <T extends FieldValues = FieldValues>({
       return;
     }
 
-    if (
-      field.value === null ||
-      field.value === undefined ||
-      field.value === ''
-    ) {
+    if (isEmptyValue(field.value)) {
       setInputValue('');
     }
   }, [field.value, isEditingSearch, selectedOption?.label]);
@@ -157,6 +225,7 @@ const ServerAutocomplete = <T extends FieldValues = FieldValues>({
           setSearchQuery('');
           setIsEditingSearch(false);
           setOptions(normalizedInitialOption ? [normalizedInitialOption] : []);
+          setResolvedOption(null);
           field.onChange(null);
           setOpen(false);
           return;
@@ -178,6 +247,7 @@ const ServerAutocomplete = <T extends FieldValues = FieldValues>({
       }}
       onChange={(_, value) => {
         field.onChange(value?.value ?? null);
+        setResolvedOption(value ?? null);
         setInputValue(value?.label ?? '');
         setSearchQuery('');
         setIsEditingSearch(false);

@@ -114,7 +114,7 @@ class DatabaseSeeder extends Seeder
         }
 
         foreach (DiagnosticTest::all() as $diagnosticTest) {
-            DB::table('paraclinic_request_tests')
+            DB::table('para_clinic_request_tests')
                 ->where('test_name', $diagnosticTest->name)
                 ->whereNull('diagnostic_test_id')
                 ->update(['diagnostic_test_id' => $diagnosticTest->id]);
