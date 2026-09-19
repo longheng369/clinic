@@ -18,6 +18,8 @@ export function useDebouncedSearch({
 }: Options) {
   const [searchTerm, setSearchTerm] = useState(searchProp ?? '');
 
+  const serializedExtraParams = JSON.stringify(extraParams ?? {});
+
   useEffect(() => {
     const timeout = setTimeout(() => {
       if ((searchTerm || '') === (searchProp || '')) return;
@@ -29,7 +31,8 @@ export function useDebouncedSearch({
         params.search = searchTerm;
         params.page = 1;
       }
-      if (extraParams) Object.assign(params, extraParams);
+      const parsed = JSON.parse(serializedExtraParams) as Record<string, string | number> | null;
+      if (parsed && Object.keys(parsed).length > 0) Object.assign(params, parsed);
 
       router.get(route, params, {
         preserveState: true,
@@ -38,7 +41,7 @@ export function useDebouncedSearch({
     }, delay);
 
     return () => clearTimeout(timeout);
-  }, [searchTerm, searchProp, delay, extraParams, onBeforeNavigate]);
+  }, [searchTerm, searchProp, delay, serializedExtraParams, onBeforeNavigate]);
 
   return { searchTerm, setSearchTerm };
 }
