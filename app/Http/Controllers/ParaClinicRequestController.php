@@ -56,14 +56,16 @@ class ParaClinicRequestController extends Controller
 
         DB::transaction(function () use (&$data, $diagnosticTestIds) {
             $today = now()->startOfDay();
+            $prefix = 'PARA-' . $today->format('Ymd') . '-';
 
-            $count = ParaClinicRequest::whereDate('created_at', $today)
+            $lastSequence = ParaClinicRequest::where('request_number', 'like', $prefix . '%')
                     ->lockForUpdate()
-                    ->count() + 1;
+                    ->pluck('request_number')
+                    ->map(fn ($n) => (int) substr($n, -4))
+                    ->push(0)
+                    ->max() + 1;
 
-            $data['request_number'] = 'PARA-' .
-                $today->format('Ymd') . '-' .
-                str_pad($count, 4, '0', STR_PAD_LEFT);
+            $data['request_number'] = $prefix . str_pad($lastSequence, 4, '0', STR_PAD_LEFT);
 
             $paraClinicRequest = ParaClinicRequest::create($data);
 
