@@ -116,7 +116,7 @@ class PatientController extends Controller
                         'created_by' => $c->createdBy?->name,
                         'created_at' => $c->created_at,
                     ]);
-            }, 'consultations'),
+            }),
             'surveillance' => Inertia::defer(function () use ($patient, $selectedVisitId) {
                 return $patient->surveillance()
                     ->with('createdBy')
@@ -137,7 +137,7 @@ class PatientController extends Controller
                         'created_by' => $s->createdBy?->name,
                         'created_at' => $s->created_at,
                     ]);
-            }, 'surveillance'),
+            }),
             'paraClinicRequests' => Inertia::defer(function () use ($patient, $selectedVisitId) {
                 return $patient->paraClinicRequests()
                     ->with(['tests'])
@@ -154,7 +154,7 @@ class PatientController extends Controller
                         'payment_status' => $r->payment_status,
                         'fee' => (float) $r->fee,
                     ]);
-            }, 'paraClinicRequests'),
+            }),
             'consultationDiagnoses' => Inertia::defer(function () use ($selectedVisit) {
                 if (! $selectedVisit) {
                     return [];
@@ -167,7 +167,7 @@ class PatientController extends Controller
                     ->pluck('diagnosis')
                     ->unique()
                     ->values();
-            }, 'paraClinicRequests'),
+            }),
             'medicationOrders' => Inertia::defer(function () use ($selectedVisit) {
                 if (! $selectedVisit) {
                     return ['data' => [], 'current_page' => 1, 'last_page' => 1, 'per_page' => 10, 'total' => 0, 'from' => 0, 'to' => 0];
@@ -206,7 +206,7 @@ class PatientController extends Controller
                             'note' => $a->note,
                         ])->values(),
                     ]);
-            }, 'medication'),
+            }),
             'activeVisits' => Inertia::defer(function () use ($patient) {
                 return Visit::where('patient_id', $patient->id)
                     ->where('status', 'active')
@@ -219,11 +219,11 @@ class PatientController extends Controller
                         'visit_date' => $v->visit_date,
                         'created_by' => $v->createdBy?->name,
                     ]);
-            }, 'medication'),
-            'medicines' => Inertia::defer(fn () => Medicine::with('unit')->orderBy('name')->get(['id', 'name', 'unit_id', 'dosage']), 'medicines'),
-            'units' => Inertia::defer(fn () => Unit::orderBy('name')->get(['id', 'name']), 'medicines'),
-            'medicationRoutes' => Inertia::defer(fn () => MedicationRoute::orderBy('name')->get(['id', 'name']), 'medicines'),
-            'medicineInstructions' => Inertia::defer(fn () => MedicineInstruction::orderBy('name')->get(['id', 'name']), 'medicines'),
+            }),
+            'medicines' => Inertia::defer(fn () => Medicine::with('unit')->orderBy('name')->get(['id', 'name', 'unit_id', 'dosage'])),
+            'units' => Inertia::defer(fn () => Unit::orderBy('name')->get(['id', 'name'])),
+            'medicationRoutes' => Inertia::defer(fn () => MedicationRoute::orderBy('name')->get(['id', 'name'])),
+            'medicineInstructions' => Inertia::defer(fn () => MedicineInstruction::orderBy('name')->get(['id', 'name'])),
             'prescription' => Inertia::defer(function () use ($selectedVisit) {
                 if (! $selectedVisit) {
                     return null;
@@ -259,20 +259,7 @@ class PatientController extends Controller
                         'medicine_instruction_id' => $i->medicine_instruction_id,
                     ])->values(),
                 ];
-            }, 'prescription'),
-            'consultationDiagnoses' => Inertia::defer(function () use ($selectedVisit) {
-                if (! $selectedVisit) {
-                    return [];
-                }
-
-                return $selectedVisit->consultations()
-                    ->whereNotNull('diagnosis')
-                    ->where('diagnosis', '!=', '')
-                    ->latest()
-                    ->pluck('diagnosis')
-                    ->unique()
-                    ->values();
-            }, 'prescription'),
+            }),
             'vaccinations' => Inertia::defer(function () use ($patient) {
                 return $patient->vaccinations()
                     ->with(['vaccine', 'administeredBy'])
@@ -288,26 +275,26 @@ class PatientController extends Controller
                         'administered_by' => $v->administeredBy?->name,
                         'created_at' => $v->created_at,
                     ]);
-            }, 'vaccination'),
-            'vaccines' => Inertia::defer(fn () => Vaccine::orderBy('name')->get(['id', 'name']), 'vaccination'),
+            }),
+            'vaccines' => Inertia::defer(fn () => Vaccine::orderBy('name')->get(['id', 'name'])),
             'vaccineCard' => Inertia::defer(function () use ($patient) {
                 return Vaccine::orderBy('name')->get(['id', 'name', 'rules'])->map(fn ($v) => array_merge(
                     ['vaccine' => ['id' => $v->id, 'name' => $v->name]],
                     $patient->nextDoseForVaccine($v),
                 ));
-            }, 'vaccination'),
+            }),
             'vaccinationAlerts' => Inertia::defer(function () use ($patient) {
                 return Vaccine::orderBy('name')->get(['id', 'name', 'rules'])->map(fn ($v) => array_merge(
                     ['vaccine' => ['id' => $v->id, 'name' => $v->name]],
                     $patient->nextDoseForVaccine($v),
                 ))->filter(fn ($item) => $item['next_dose_due_date'] !== null && Carbon::parse($item['next_dose_due_date'])->lte(Carbon::now()->addDays(7)))->values();
-            }, 'vaccination'),
+            }),
             'attachments' => Inertia::defer(function () use ($patient, $selectedVisit) {
                 return $selectedVisit
                     ? $selectedVisit->attachments()->with('uploadedBy')->latest()->get()
                     : $patient->attachments()->with('uploadedBy')->latest()->get();
-            }, 'attachment'),
-            'billing' => Inertia::defer(fn () => $selectedVisit?->billingSummary(), 'billing'),
+            }),
+            'billing' => Inertia::defer(fn () => $selectedVisit?->billingSummary()),
         ]);
     }
 
