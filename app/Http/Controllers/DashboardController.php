@@ -15,7 +15,9 @@ class DashboardController extends Controller
         $today = Carbon::now()->startOfDay();
         $weekEnd = Carbon::now()->addDays(7)->endOfDay();
 
-        $patients = Patient::with('vaccinations.vaccine')->get();
+        $patients = Patient::whereHas('vaccinations', function ($q) use ($today) {
+            $q->where('administered_date', '>=', $today->subDays(90));
+        })->with('vaccinations.vaccine')->get();
         $vaccines = Vaccine::orderBy('name')->get(['id', 'name', 'rules']);
 
         $dueAlerts = [];
