@@ -42,8 +42,9 @@ const MedicineForm = ({ medicine, units }: MedicineFormProps) => {
   });
 
   useEffect(() => {
+    const controller = new AbortController();
     setCategoriesLoading(true);
-    fetch('/api/categories')
+    fetch('/api/categories', { signal: controller.signal })
       .then((res) => {
         if (!res.ok) throw new Error('Failed to load categories');
         return res.json();
@@ -53,10 +54,13 @@ const MedicineForm = ({ medicine, units }: MedicineFormProps) => {
           data.map((item) => ({ value: item.id, label: item.name })),
         );
       })
-      .catch(() => {
-        toast('Failed to load categories', { variant: 'error' });
+      .catch((err) => {
+        if (err?.name !== 'AbortError') {
+          toast('Failed to load categories', { variant: 'error' });
+        }
       })
       .finally(() => setCategoriesLoading(false));
+    return () => controller.abort();
   }, []);
 
   const onSubmit = handleSubmit((data) => {

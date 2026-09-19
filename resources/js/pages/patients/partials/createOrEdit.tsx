@@ -86,8 +86,8 @@ const getDefaultPatientValues = (patient?: IPatient): IPatientFormData => {
   };
 };
 
-const fetchGazetteers = async (endpoint: string): Promise<IGazetteer[]> => {
-  const response = await fetch(endpoint);
+const fetchGazetteers = async (endpoint: string, signal?: AbortSignal): Promise<IGazetteer[]> => {
+  const response = await fetch(endpoint, { signal });
 
   if (!response.ok) {
     throw new Error(`Failed to load ${endpoint}`);
@@ -114,23 +114,15 @@ const PatientForm = ({ patient }: Props) => {
   const communeCode = watch('commune_code');
 
   useEffect(() => {
-    let cancelled = false;
-
-    void fetchGazetteers('/gazetteers/provinces')
+    const controller = new AbortController();
+    void fetchGazetteers('/gazetteers/provinces', controller.signal)
       .then((data) => {
-        if (!cancelled) {
-          setProvinces(data);
-        }
+        setProvinces(data);
       })
       .catch(() => {
-        if (!cancelled) {
-          setProvinces([]);
-        }
+        setProvinces([]);
       });
-
-    return () => {
-      cancelled = true;
-    };
+    return () => controller.abort();
   }, []);
 
   useEffect(() => {
@@ -138,24 +130,15 @@ const PatientForm = ({ patient }: Props) => {
       setDistricts([]);
       return;
     }
-
-    let cancelled = false;
-
-    void fetchGazetteers(`/gazetteers/districts/${provinceCode}`)
+    const controller = new AbortController();
+    void fetchGazetteers(`/gazetteers/districts/${provinceCode}`, controller.signal)
       .then((data) => {
-        if (!cancelled) {
-          setDistricts(data);
-        }
+        setDistricts(data);
       })
       .catch(() => {
-        if (!cancelled) {
-          setDistricts([]);
-        }
+        setDistricts([]);
       });
-
-    return () => {
-      cancelled = true;
-    };
+    return () => controller.abort();
   }, [provinceCode]);
 
   useEffect(() => {
@@ -163,24 +146,15 @@ const PatientForm = ({ patient }: Props) => {
       setCommunes([]);
       return;
     }
-
-    let cancelled = false;
-
-    void fetchGazetteers(`/gazetteers/communes/${districtCode}`)
+    const controller = new AbortController();
+    void fetchGazetteers(`/gazetteers/communes/${districtCode}`, controller.signal)
       .then((data) => {
-        if (!cancelled) {
-          setCommunes(data);
-        }
+        setCommunes(data);
       })
       .catch(() => {
-        if (!cancelled) {
-          setCommunes([]);
-        }
+        setCommunes([]);
       });
-
-    return () => {
-      cancelled = true;
-    };
+    return () => controller.abort();
   }, [districtCode]);
 
   useEffect(() => {
@@ -188,24 +162,15 @@ const PatientForm = ({ patient }: Props) => {
       setVillages([]);
       return;
     }
-
-    let cancelled = false;
-
-    void fetchGazetteers(`/gazetteers/villages/${communeCode}`)
+    const controller = new AbortController();
+    void fetchGazetteers(`/gazetteers/villages/${communeCode}`, controller.signal)
       .then((data) => {
-        if (!cancelled) {
-          setVillages(data);
-        }
+        setVillages(data);
       })
       .catch(() => {
-        if (!cancelled) {
-          setVillages([]);
-        }
+        setVillages([]);
       });
-
-    return () => {
-      cancelled = true;
-    };
+    return () => controller.abort();
   }, [communeCode]);
 
   const onSubmit = handleSubmit((data) => {

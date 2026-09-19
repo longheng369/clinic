@@ -84,16 +84,22 @@ const ParaClinicView = ({ requestId }: Props) => {
   const { toast } = useToast();
 
   useEffect(() => {
+    const controller = new AbortController();
     setIsLoading(true);
-    fetch(`/para-clinic-requests/${requestId}`)
+    fetch(`/para-clinic-requests/${requestId}`, { signal: controller.signal })
       .then((res) => {
         if (!res.ok) throw new Error('Failed to load');
         return res.json();
       })
       .then(setData)
-      .catch(() => toast('Failed to load request details.', { variant: 'error' }))
+      .catch((err) => {
+        if (err?.name !== 'AbortError') {
+          toast('Failed to load request details.', { variant: 'error' });
+        }
+      })
       .finally(() => setIsLoading(false));
-  }, [requestId, toast]);
+    return () => controller.abort();
+  }, [requestId]);
 
   if (isLoading) {
     return (
