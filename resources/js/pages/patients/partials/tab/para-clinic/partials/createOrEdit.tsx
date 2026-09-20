@@ -1,7 +1,7 @@
-import { useForm, useController } from 'react-hook-form';
-import Input from '@/components/form/input';
+import { useForm } from 'react-hook-form';
 import MultiAutocomplete from '@/components/form/multiAutocomplete';
 import Textarea from '@/components/form/textarea';
+import Select from '@/components/form/select';
 import {
   IParaClinicRequest,
   IParaClinicRequestTest,
@@ -32,6 +32,7 @@ type FormData = {
   clinical_reason: string | null;
   provisional_diagnosis: string | null;
   notes: string | null;
+  status: string;
   diagnostic_test_ids: number[];
 };
 
@@ -60,6 +61,7 @@ const ParaClinicForm = ({ requestId, patientId, visitId, consultationDiagnoses =
       clinical_reason: '',
       provisional_diagnosis: '',
       notes: '',
+      status: 'requested',
       diagnostic_test_ids: [],
     },
   });
@@ -102,6 +104,7 @@ const ParaClinicForm = ({ requestId, patientId, visitId, consultationDiagnoses =
           clinical_reason: data.clinical_reason,
           provisional_diagnosis: data.provisional_diagnosis,
           notes: data.notes,
+          status: data.status,
           diagnostic_test_ids: savedTestIds,
         });
       })
@@ -204,6 +207,22 @@ const ParaClinicForm = ({ requestId, patientId, visitId, consultationDiagnoses =
             name="notes"
             placeholder="Enter any additional notes"
           />
+          {requestId && (
+            <Select
+              control={control}
+              name="status"
+              label="Status"
+              options={[
+                { value: 'draft', label: 'Draft' },
+                { value: 'requested', label: 'Requested' },
+                { value: 'waiting_result', label: 'Waiting Result' },
+                { value: 'result_received', label: 'Result Received' },
+                { value: 'reviewed', label: 'Reviewed' },
+                { value: 'completed', label: 'Completed' },
+                { value: 'cancelled', label: 'Cancelled' },
+              ]}
+            />
+          )}
           <MultiAutocomplete
             control={control}
             name="diagnostic_test_ids"

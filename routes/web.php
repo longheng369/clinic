@@ -117,6 +117,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('para-clinic-requests', [ParaClinicRequestController::class, 'store'])->name('para-clinic-requests.store');
     Route::put('para-clinic-requests/{paraClinicRequest}', [ParaClinicRequestController::class, 'update'])->name('para-clinic-requests.update');
     Route::delete('para-clinic-requests/{paraClinicRequest}', [ParaClinicRequestController::class, 'destroy'])->name('para-clinic-requests.destroy');
+    Route::patch('para-clinic-requests/{paraClinicRequest}/status', [ParaClinicRequestController::class, 'updateStatus'])->name('para-clinic-requests.update-status');
 
     Route::post('patients/{patient}/medications', [MedicationOrderController::class, 'store'])->name('patients.medications.store');
     Route::put('patients/{patient}/medications/{medicationOrder}', [MedicationOrderController::class, 'update'])->name('patients.medications.update');

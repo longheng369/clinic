@@ -92,6 +92,20 @@ class ParaClinicRequestController extends Controller
         return back()->with('success', 'Paraclinic request deleted.');
     }
 
+    public function updateStatus(ParaClinicRequest $paraClinicRequest)
+    {
+        $validStatuses = ['draft', 'requested', 'waiting_result', 'result_received', 'reviewed', 'completed', 'cancelled'];
+        $status = request()->input('status');
+
+        if (!in_array($status, $validStatuses)) {
+            return back()->withErrors(['status' => 'Invalid status.']);
+        }
+
+        $paraClinicRequest->update(['status' => $status]);
+
+        return back()->with('success', 'Status updated.');
+    }
+
     /**
      * Snapshot the selected diagnostic tests onto the request.
      */

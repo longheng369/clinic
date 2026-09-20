@@ -25,7 +25,7 @@ class UpdateParaClinicRequest extends FormRequest
             'clinical_reason' => ['nullable', 'string'],
             'provisional_diagnosis' => ['nullable', 'string', 'max:255'],
             'notes' => ['nullable', 'string'],
-            'status' => ['nullable', 'in:requested,cancelled,completed'],
+            'status' => ['nullable', 'in:draft,requested,waiting_result,result_received,reviewed,completed,cancelled'],
             'payment_status' => ['nullable', 'in:unpaid,partial,paid'],
             'payment_date' => ['nullable', 'date'],
             'tests' => ['required', 'array', 'min:1'],

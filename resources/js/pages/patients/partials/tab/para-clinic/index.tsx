@@ -17,13 +17,13 @@ const STATUS_COLORS: Record<
   string,
   'default' | 'primary' | 'error' | 'info' | 'success' | 'warning'
 > = {
-  Draft: 'default',
-  Requested: 'info',
-  'Waiting Result': 'warning',
-  'Result Received': 'success',
-  Reviewed: 'primary',
-  Completed: 'success',
-  Cancelled: 'error',
+  draft: 'default',
+  requested: 'info',
+  waiting_result: 'warning',
+  result_received: 'success',
+  reviewed: 'primary',
+  completed: 'success',
+  cancelled: 'error',
 };
 
 interface PaginatedData<T> {
