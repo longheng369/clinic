@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 #[Fillable([
     'request_number',
@@ -35,7 +36,24 @@ class ParaClinicRequest extends Model
     protected static function boot(): void
     {
         parent::boot();
-        static::creating(fn (ParaClinicRequest $model) => $model->created_by ??= auth()->id());
+        static::creating(function (ParaClinicRequest $model) {
+            $model->created_by ??= auth()->id();
+
+            if (! $model->request_number) {
+                $model->request_number = DB::transaction(function () {
+                    $prefix = 'PARA-' . now()->startOfDay()->format('Ymd') . '-';
+
+                    $lastSequence = ParaClinicRequest::where('request_number', 'like', $prefix . '%')
+                        ->lockForUpdate()
+                        ->pluck('request_number')
+                        ->map(fn ($n) => (int) substr($n, -4))
+                        ->push(0)
+                        ->max() + 1;
+
+                    return $prefix . str_pad($lastSequence, 4, '0', STR_PAD_LEFT);
+                });
+            }
+        });
         static::updating(fn (ParaClinicRequest $model) => $model->updated_by = auth()->id());
     }
 

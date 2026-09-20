@@ -55,18 +55,6 @@ class ParaClinicRequestController extends Controller
         $diagnosticTestIds = $request->input('tests', []);
 
         DB::transaction(function () use (&$data, $diagnosticTestIds) {
-            $today = now()->startOfDay();
-            $prefix = 'PARA-' . $today->format('Ymd') . '-';
-
-            $lastSequence = ParaClinicRequest::where('request_number', 'like', $prefix . '%')
-                    ->lockForUpdate()
-                    ->pluck('request_number')
-                    ->map(fn ($n) => (int) substr($n, -4))
-                    ->push(0)
-                    ->max() + 1;
-
-            $data['request_number'] = $prefix . str_pad($lastSequence, 4, '0', STR_PAD_LEFT);
-
             $paraClinicRequest = ParaClinicRequest::create($data);
 
             $this->syncTests($paraClinicRequest, $diagnosticTestIds);
