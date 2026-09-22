@@ -4,6 +4,7 @@ import { useModal } from '@/components/modal';
 import { Pencil, Trash2, Plus } from 'lucide-react';
 import VaccineForm from './partials/createOrEdit';
 import { IVaccine } from '@/interfaces/IVaccine';
+import { IUnit } from '@/interfaces/IUnit';
 import { Box, Button, Typography } from '@mui/material';
 import { useState } from 'react';
 import SearchBar from '@/components/searchBar';
@@ -29,9 +30,10 @@ interface PaginatedData<T> {
 const Vaccine = () => {
   const { openModal, closeModal, openAlert } = useModal();
 
-  const { vaccines, search: searchProp } = usePage<{
+  const { vaccines, search: searchProp, units } = usePage<{
     vaccines: PaginatedData<IVaccine>;
     search: string | null;
+    units: IUnit[];
   }>().props;
 
   const { searchTerm, setSearchTerm } = useDebouncedSearch({
@@ -50,15 +52,23 @@ const Vaccine = () => {
   const handleCreate = () => {
     openModal({
       title: 'New Vaccine',
-      content: <VaccineForm onClose={() => closeModal()} />,
-      config: { preventClickAway: true, maxWidth: '2xl' },
+      content: (
+        <VaccineForm units={units} onClose={() => closeModal()} />
+      ),
+      config: { preventClickAway: true, maxWidth: '4xl' },
     });
   };
 
   const handleEdit = (vaccine: IVaccine) => {
     openModal({
       title: `Edit ${vaccine.name}`,
-      content: <VaccineForm vaccine={vaccine} onClose={() => closeModal()} />,
+      content: (
+        <VaccineForm
+          vaccine={vaccine}
+          units={units}
+          onClose={() => closeModal()}
+        />
+      ),
       config: { preventClickAway: true, maxWidth: '2xl' },
     });
   };
@@ -74,15 +84,21 @@ const Vaccine = () => {
   };
 
   const summarizeRules = (vaccine: IVaccine): string => {
-    const ruleCount = vaccine.rules.length;
-    const totalDoses = vaccine.rules.reduce(
-      (sum, r) => sum + r.doses.length,
-      0,
-    );
+    const ruleCount = vaccine.dose_rules.length;
     if (ruleCount === 1) {
-      return `${totalDoses} dose${totalDoses > 1 ? 's' : ''}`;
+      const rule = vaccine.dose_rules[0];
+      const formatAge = (months: number, ageUnit: string) => {
+        if (ageUnit === 'year') return `${months / 12}y`;
+        if (ageUnit === 'day') return `${months * 30}d`;
+        return `${months}m`;
+      };
+      const minAgeText = formatAge(rule.min_age, rule.age_unit);
+      const maxAgeText = rule.max_age
+        ? formatAge(rule.max_age, rule.age_unit)
+        : 'no limit';
+      return `${minAgeText} - ${maxAgeText}`;
     }
-    return `${ruleCount} age rules, ${totalDoses} doses total`;
+    return `${ruleCount} age rules`;
   };
 
   const handlePaginationChange = (model: GridPaginationModel) => {

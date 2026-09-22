@@ -27,6 +27,7 @@ const Select = <T extends FieldValues = FieldValues>({
   name,
   rules,
   options,
+  fullWidth = true,
   ...rest
 }: Props<T>) => {
   const { field, fieldState } = useController({
@@ -37,9 +38,9 @@ const Select = <T extends FieldValues = FieldValues>({
 
   return (
     <FormControl
-      variant="standard"
-      fullWidth
-      size="small"
+      variant={rest.variant ?? "standard"}
+      fullWidth={fullWidth}
+      size={rest.size ?? "small"}
       error={!!fieldState.error}
       required={!!rules?.required}
     >
@@ -48,8 +49,8 @@ const Select = <T extends FieldValues = FieldValues>({
         labelId={name}
         {...field}
         {...rest}
-        size="small"
-        variant="standard"
+        size={rest.size ?? "small"}
+        variant={rest.variant ?? 'standard'}
       >
         {options.map((opt) => (
           <MenuItem key={opt.value} value={opt.value}>

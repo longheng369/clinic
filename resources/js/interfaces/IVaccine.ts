@@ -1,26 +1,42 @@
-export interface IVaccineDose {
+export interface IVaccineDoseRule {
+  id?: number;
   dose_number: number;
-  interval_days: number;
-}
-
-export interface IVaccineRule {
-  min_age_months: number;
-  max_age_months: number | null;
-  doses: IVaccineDose[];
+  age_unit: 'day' | 'month' | 'year';
+  min_age: number;
+  max_age: number | null;
+  amount: number;
+  unit_id: number;
 }
 
 export interface IVaccine {
   id: number;
   name: string;
   description: string | null;
-  rules: IVaccineRule[];
+  dose_rules: IVaccineDoseRule[];
   created_by: string | null;
   created_at: string;
   updated_at: string;
 }
 
+type AgeUnit = 'day' | 'month' | 'year';
+
+export interface IVaccineDoseRuleFormData {
+   amount: number;
+   amount_unit_id: number;
+   interval_from_previous_dose?: number;
+   interval_from_previous_dose_unit?: AgeUnit;
+}
+
+export interface IVaccineAgeRuleFormData {
+   min_age: number | null;
+   min_age_unit: AgeUnit;
+   max_age: number | null;
+   max_age_unit: AgeUnit;
+   dose_rules: IVaccineDoseRuleFormData[];
+}
+
 export interface IVaccineFormData {
   name: string;
   description: string | null;
-  rules: IVaccineRule[];
+  age_rules: IVaccineAgeRuleFormData[];
 }

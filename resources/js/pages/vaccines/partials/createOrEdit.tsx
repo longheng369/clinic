@@ -3,15 +3,15 @@ import {
   useFieldArray,
   type Control,
   type UseFormRegister,
+  type UseFormWatch,
 } from 'react-hook-form';
 import type { FormDataConvertible } from '@inertiajs/core';
 import Input from '@/components/form/input-deprecated';
+import Select from '@/components/form/select';
 import Textarea from '@/components/form/textarea';
-import {
-  IVaccine,
-  IVaccineFormData,
-  IVaccineRule,
-} from '@/interfaces/IVaccine';
+import { IVaccine, IVaccineFormData } from '@/interfaces/IVaccine';
+import { IUnit } from '@/interfaces/IUnit';
+import { IOption } from '@/interfaces/IOption';
 import { useState } from 'react';
 import { router } from '@inertiajs/react';
 import { useToast } from '@/components/toast';
@@ -19,33 +19,47 @@ import { Plus, Trash2 } from 'lucide-react';
 import {
   Box,
   Button,
-  IconButton,
   Paper,
   Stack,
   TextField,
   Typography,
 } from '@mui/material';
+import ValueWithUnit from './valueWithUnit';
+import DoseRule from './doseRule';
 
 interface VaccineFormProps {
   vaccine?: IVaccine;
+  units: IUnit[];
   onClose: () => void;
 }
 
-const defaultRule: IVaccineRule = {
-  min_age_months: 0,
-  max_age_months: null,
-  doses: [{ dose_number: 1, interval_days: 0 }],
+const AGE_UNIT_OPTIONS: IOption<string>[] = [
+  { label: 'Day', value: 'day' },
+  { label: 'Month', value: 'month' },
+  { label: 'Year', value: 'year' },
+];
+
+const convertToMonths = (value: number, ageUnit: string): number => {
+  switch (ageUnit) {
+    case 'year':
+      return value * 12;
+    case 'day':
+      return Math.round(value / 30);
+    default:
+      return value;
+  }
 };
 
-const VaccineForm = ({ vaccine, onClose }: VaccineFormProps) => {
+const VaccineForm = ({ vaccine, units, onClose }: VaccineFormProps) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
-  const { control, handleSubmit, register } = useForm<IVaccineFormData>({
-    defaultValues: vaccine ?? {
-      name: '',
-      description: '',
-      rules: [defaultRule],
-    },
+  const { control, handleSubmit, register, watch } = useForm<IVaccineFormData>({
+    defaultValues: vaccine
+      ? { ...vaccine }
+      : {
+        name: '',
+        description: '',
+      },
   });
 
   const {
@@ -54,58 +68,72 @@ const VaccineForm = ({ vaccine, onClose }: VaccineFormProps) => {
     remove: removeRule,
   } = useFieldArray({
     control,
-    name: 'rules',
+    name: 'age_rules',
   });
 
   const onSubmit = handleSubmit((data) => {
-    setIsProcessing(true);
-    const payload = {
-      name: data.name,
-      description: data.description ?? '',
-      rules: data.rules,
-    };
+    console.log({data})
+    // return;
+    // setIsProcessing(true);
+    // const payload = {
+    //   name: data.name,
+    //   description: data.description ?? '',
+    //   dose_rules: data.dose_rules.map((rule) => ({
+    //     ...rule,
+    //     min_age: convertToMonths(rule.min_age, rule.age_unit),
+    //     max_age:
+    //       rule.max_age !== null
+    //         ? convertToMonths(rule.max_age, rule.age_unit)
+    //         : null,
+    //   })),
+    // };
 
-    if (vaccine) {
-      router.put(
-        `/vaccines/${vaccine.id}`,
-        payload as unknown as Record<string, FormDataConvertible>,
-        {
-          onSuccess: () => {
-            onClose();
-            toast('Vaccine updated successfully!', {
-              variant: 'success',
-              description: 'The vaccine has been updated.',
-            });
-          },
-          onFinish: () => setIsProcessing(false),
-        },
-      );
-      return;
-    }
+    // if (vaccine) {
+    //   router.put(
+    //     `/vaccines/${vaccine.id}`,
+    //     payload as unknown as Record<string, FormDataConvertible>,
+    //     {
+    //       onSuccess: () => {
+    //         onClose();
+    //         toast('Vaccine updated successfully!', {
+    //           variant: 'success',
+    //           description: 'The vaccine has been updated.',
+    //         });
+    //       },
+    //       onFinish: () => setIsProcessing(false),
+    //     },
+    //   );
+    //   return;
+    // }
 
-    router.post(
-      '/vaccines',
-      payload as unknown as Record<string, FormDataConvertible>,
-      {
-        onSuccess: () => {
-          onClose();
-          toast('Vaccine created successfully!', {
-            variant: 'success',
-            description: 'The vaccine has been created.',
-          });
-        },
-        onError: (errors) => {
-          if (errors.name) {
-            toast('Unable to create vaccine', {
-              variant: 'error',
-              description: errors.name,
-            });
-          }
-        },
-        onFinish: () => setIsProcessing(false),
-      },
-    );
+    // router.post(
+    //   '/vaccines',
+    //   payload as unknown as Record<string, FormDataConvertible>,
+    //   {
+    //     onSuccess: () => {
+    //       onClose();
+    //       toast('Vaccine created successfully!', {
+    //         variant: 'success',
+    //         description: 'The vaccine has been created.',
+    //       });
+    //     },
+    //     onError: (errors) => {
+    //       if (errors.name) {
+    //         toast('Unable to create vaccine', {
+    //           variant: 'error',
+    //           description: errors.name,
+    //         });
+    //       }
+    //     },
+    //     onFinish: () => setIsProcessing(false),
+    //   },
+    // );
   });
+
+  const unitOptions: IOption<number>[] = units.map((u) => ({
+    label: u.name,
+    value: u.id,
+  }));
 
   return (
     <Box
@@ -123,6 +151,7 @@ const VaccineForm = ({ vaccine, onClose }: VaccineFormProps) => {
           rules={{ required: 'This field is required' }}
         />
         <Textarea label="Description" control={control} name="description" />
+
         <Paper variant="outlined" sx={{ p: 2 }}>
           <Stack
             direction="row"
@@ -132,32 +161,42 @@ const VaccineForm = ({ vaccine, onClose }: VaccineFormProps) => {
               justifyContent: 'space-between',
             }}
           >
-            <Typography variant="subtitle2">
-              Age Rules &amp; Dose Schedule
-            </Typography>
+            <Typography variant="subtitle2">Dose Rules</Typography>
             <Button
               type="button"
               variant="outlined"
               size="small"
-              onClick={() => appendRule(defaultRule)}
+              onClick={() =>
+                appendRule({
+                  min_age: 0,
+                  min_age_unit: 'day',
+                  max_age: null,
+                  max_age_unit: 'day',
+                  dose_rules: []
+                })
+              }
               startIcon={<Plus size={16} />}
             >
               Add Age Rule
             </Button>
           </Stack>
           <Stack spacing={2}>
-            {ruleFields.map((ruleField, ruleIndex) => (
+            {ruleFields.map((ruleField, ageRuleIndex) => (
               <RuleBlock
                 key={ruleField.id}
                 control={control}
                 register={register}
-                ruleIndex={ruleIndex}
-                onRemove={() => removeRule(ruleIndex)}
+                ageRuleIndex={ageRuleIndex}
+                watch={watch}
+                unitOptions={unitOptions}
+                onRemove={() => removeRule(ageRuleIndex)}
                 canRemove={ruleFields.length > 1}
+                units={units}
               />
             ))}
           </Stack>
         </Paper>
+        <Typography>Note: Leave max age empty for the unlimit</Typography>
       </Stack>
       <Stack
         direction="row"
@@ -183,146 +222,38 @@ const VaccineForm = ({ vaccine, onClose }: VaccineFormProps) => {
 interface RuleBlockProps {
   control: Control<IVaccineFormData>;
   register: UseFormRegister<IVaccineFormData>;
-  ruleIndex: number;
+  ageRuleIndex: number;
+  watch: UseFormWatch<IVaccineFormData>;
+  unitOptions: IOption<number>[];
   onRemove: () => void;
   canRemove: boolean;
+  units: IUnit[];
 }
 
 const RuleBlock = ({
   control,
-  register,
-  ruleIndex,
+  units,
+  ageRuleIndex,
+  unitOptions,
   onRemove,
-  canRemove,
 }: RuleBlockProps) => {
-  const {
-    fields: doseFields,
-    append: appendDose,
-    remove: removeDose,
-  } = useFieldArray({
-    control,
-    name: `rules.${ruleIndex}.doses` as const,
-  });
-
   return (
     <Paper variant="outlined" sx={{ p: 2, bgcolor: 'action.hover' }}>
-      <Stack
-        direction="row"
-        sx={{ mb: 1.5, alignItems: 'center', justifyContent: 'space-between' }}
-      >
-        <Typography variant="subtitle2">Age Rule #{ruleIndex + 1}</Typography>
-        {canRemove && (
-          <Button
-            type="button"
-            color="error"
-            size="small"
-            startIcon={<Trash2 size={14} />}
-            onClick={onRemove}
-          >
-            Remove
-          </Button>
-        )}
-      </Stack>
-
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 2 }}>
-        <TextField
-          label="Min Age (months)"
-          type="number"
-          size="small"
-          fullWidth
-          slotProps={{ htmlInput: { min: 0 } }}
-          {...register(`rules.${ruleIndex}.min_age_months`, {
-            required: 'Required',
-            valueAsNumber: true,
-          })}
-        />
-        <TextField
-          label="Max Age (months) — leave empty for no limit"
-          type="number"
-          size="small"
-          fullWidth
-          slotProps={{ htmlInput: { min: 0 } }}
-          {...register(`rules.${ruleIndex}.max_age_months`, {
-            setValueAs: (value) =>
-              value === '' || value === null ? null : Number(value),
-          })}
-        />
-      </Stack>
-
       <Stack>
-        <Stack
-          direction="row"
-          sx={{ mb: 1, alignItems: 'center', justifyContent: 'space-between' }}
-        >
-          <Typography variant="overline">Doses</Typography>
-          <Button
-            type="button"
-            size="small"
-            startIcon={<Plus size={12} />}
-            onClick={() =>
-              appendDose({
-                dose_number: doseFields.length + 1,
-                interval_days: 0,
-              })
-            }
-          >
-            Add Dose
-          </Button>
-        </Stack>
-        <Stack spacing={1}>
-          {doseFields.map((doseField, doseIndex) => (
-            <Stack
-              key={doseField.id}
-              direction="row"
-              spacing={1}
-              sx={{ alignItems: 'center' }}
-            >
-              <Typography variant="body2" sx={{ minWidth: 24 }}>
-                #{doseIndex + 1}
-              </Typography>
-              <input
-                type="hidden"
-                {...register(
-                  `rules.${ruleIndex}.doses.${doseIndex}.dose_number`,
-                  { valueAsNumber: true },
-                )}
-              />
-              <TextField
-                label="Interval (days)"
-                type="number"
-                size="small"
-                fullWidth
-                slotProps={{ htmlInput: { min: 0 } }}
-                {...register(
-                  `rules.${ruleIndex}.doses.${doseIndex}.interval_days`,
-                  { required: 'Required', valueAsNumber: true },
-                )}
-              />
-              <TextField
-                label="Due (approx)"
-                size="small"
-                fullWidth
-                value={
-                  doseIndex === 0
-                    ? 'Birth'
-                    : `Day ${doseFields[doseIndex]?.interval_days ?? 0}`
-                }
-                slotProps={{ input: { readOnly: true } }}
-              />
-              {doseFields.length > 1 && (
-                <IconButton
-                  type="button"
-                  color="error"
-                  size="small"
-                  onClick={() => removeDose(doseIndex)}
-                  aria-label="Remove dose"
-                >
-                  <Trash2 size={14} />
-                </IconButton>
-              )}
-            </Stack>
-          ))}
-        </Stack>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Typography sx={{ fontWeight: 'bold' }}>Rule #{ageRuleIndex + 1}</Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography>Min Age</Typography>
+              <ValueWithUnit control={control} name={`age_rules.${ageRuleIndex}.min_age`} selectionName={`age_rules.${ageRuleIndex}.min_age_unit`} />
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography>Max Age</Typography>
+              <ValueWithUnit control={control} name={`age_rules.${ageRuleIndex}.max_age`} selectionName={`age_rules.${ageRuleIndex}.max_age_unit`} />
+            </Box>
+          </Box>
+        </Box>
+        <DoseRule control={control} ageRuleIndex={ageRuleIndex} units={units} />
       </Stack>
     </Paper>
   );

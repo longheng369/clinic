@@ -20,6 +20,7 @@ const Input = <T extends FieldValues = FieldValues>({
   control,
   name,
   rules,
+  fullWidth= true,
   ...rest
 }: Props<T>) => {
   const { field, fieldState } = useController({
@@ -30,10 +31,10 @@ const Input = <T extends FieldValues = FieldValues>({
 
   return (
     <TextField
-      fullWidth
+      fullWidth={fullWidth}
       {...rest}
       size="small"
-      variant="standard"
+      variant={rest.variant ?? 'standard'}
       {...field}
       required={!!rules?.required}
       error={!!fieldState.error}
