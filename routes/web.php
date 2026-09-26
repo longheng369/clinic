@@ -81,7 +81,7 @@ Route::middleware(['auth'])->group(function () {
         ->only(['index', 'store', 'edit', 'update', 'destroy']);
 
     Route::resource('vaccines', VaccineController::class)
-        ->only(['index', 'store', 'edit', 'update', 'destroy']);
+        ->only(['index', 'store', 'update', 'destroy']);
 
     Route::resource('patients', PatientController::class)
         ->only(['index', 'store', 'edit', 'update', 'destroy']);

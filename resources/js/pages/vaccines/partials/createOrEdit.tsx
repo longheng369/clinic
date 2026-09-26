@@ -7,21 +7,18 @@ import {
 } from 'react-hook-form';
 import type { FormDataConvertible } from '@inertiajs/core';
 import Input from '@/components/form/input-deprecated';
-import Select from '@/components/form/select';
 import Textarea from '@/components/form/textarea';
 import { IVaccine, IVaccineFormData } from '@/interfaces/IVaccine';
 import { IUnit } from '@/interfaces/IUnit';
-import { IOption } from '@/interfaces/IOption';
 import { useState } from 'react';
 import { router } from '@inertiajs/react';
 import { useToast } from '@/components/toast';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import {
   Box,
   Button,
   Paper,
   Stack,
-  TextField,
   Typography,
 } from '@mui/material';
 import ValueWithUnit from './valueWithUnit';
@@ -32,23 +29,6 @@ interface VaccineFormProps {
   units: IUnit[];
   onClose: () => void;
 }
-
-const AGE_UNIT_OPTIONS: IOption<string>[] = [
-  { label: 'Day', value: 'day' },
-  { label: 'Month', value: 'month' },
-  { label: 'Year', value: 'year' },
-];
-
-const convertToMonths = (value: number, ageUnit: string): number => {
-  switch (ageUnit) {
-    case 'year':
-      return value * 12;
-    case 'day':
-      return Math.round(value / 30);
-    default:
-      return value;
-  }
-};
 
 const VaccineForm = ({ vaccine, units, onClose }: VaccineFormProps) => {
   const [isProcessing, setIsProcessing] = useState(false);
@@ -72,68 +52,61 @@ const VaccineForm = ({ vaccine, units, onClose }: VaccineFormProps) => {
   });
 
   const onSubmit = handleSubmit((data) => {
-    console.log({data})
-    // return;
-    // setIsProcessing(true);
-    // const payload = {
-    //   name: data.name,
-    //   description: data.description ?? '',
-    //   dose_rules: data.dose_rules.map((rule) => ({
-    //     ...rule,
-    //     min_age: convertToMonths(rule.min_age, rule.age_unit),
-    //     max_age:
-    //       rule.max_age !== null
-    //         ? convertToMonths(rule.max_age, rule.age_unit)
-    //         : null,
-    //   })),
-    // };
+    setIsProcessing(true);
+    const payload = {
+      name: data.name,
+      description: data.description ?? '',
+      age_rules: data.age_rules.map((rule) => ({
+        ...(rule.id && { id: rule.id }),
+        min_age: rule.min_age,
+        min_age_unit: rule.min_age_unit,
+        max_age: rule.max_age,
+        max_age_unit: rule.max_age_unit,
+        dose_rules: rule.dose_rules,
+      })),
+    };
 
-    // if (vaccine) {
-    //   router.put(
-    //     `/vaccines/${vaccine.id}`,
-    //     payload as unknown as Record<string, FormDataConvertible>,
-    //     {
-    //       onSuccess: () => {
-    //         onClose();
-    //         toast('Vaccine updated successfully!', {
-    //           variant: 'success',
-    //           description: 'The vaccine has been updated.',
-    //         });
-    //       },
-    //       onFinish: () => setIsProcessing(false),
-    //     },
-    //   );
-    //   return;
-    // }
+    if (vaccine) {
+      router.put(
+        `/vaccines/${vaccine.id}`,
+        payload as unknown as Record<string, FormDataConvertible>,
+        {
+          onSuccess: () => {
+            onClose();
+            toast('Vaccine updated successfully!', {
+              variant: 'success',
+              description: 'The vaccine has been updated.',
+            });
+          },
+          onFinish: () => setIsProcessing(false),
+        },
+      );
+      return;
+    }
 
-    // router.post(
-    //   '/vaccines',
-    //   payload as unknown as Record<string, FormDataConvertible>,
-    //   {
-    //     onSuccess: () => {
-    //       onClose();
-    //       toast('Vaccine created successfully!', {
-    //         variant: 'success',
-    //         description: 'The vaccine has been created.',
-    //       });
-    //     },
-    //     onError: (errors) => {
-    //       if (errors.name) {
-    //         toast('Unable to create vaccine', {
-    //           variant: 'error',
-    //           description: errors.name,
-    //         });
-    //       }
-    //     },
-    //     onFinish: () => setIsProcessing(false),
-    //   },
-    // );
+    router.post(
+      '/vaccines',
+      payload as unknown as Record<string, FormDataConvertible>,
+      {
+        onSuccess: () => {
+          onClose();
+          toast('Vaccine created successfully!', {
+            variant: 'success',
+            description: 'The vaccine has been created.',
+          });
+        },
+        onError: (errors) => {
+          if (errors.name) {
+            toast('Unable to create vaccine', {
+              variant: 'error',
+              description: errors.name,
+            });
+          }
+        },
+        onFinish: () => setIsProcessing(false),
+      },
+    );
   });
-
-  const unitOptions: IOption<number>[] = units.map((u) => ({
-    label: u.name,
-    value: u.id,
-  }));
 
   return (
     <Box
@@ -188,7 +161,6 @@ const VaccineForm = ({ vaccine, units, onClose }: VaccineFormProps) => {
                 register={register}
                 ageRuleIndex={ageRuleIndex}
                 watch={watch}
-                unitOptions={unitOptions}
                 onRemove={() => removeRule(ageRuleIndex)}
                 canRemove={ruleFields.length > 1}
                 units={units}
@@ -224,7 +196,6 @@ interface RuleBlockProps {
   register: UseFormRegister<IVaccineFormData>;
   ageRuleIndex: number;
   watch: UseFormWatch<IVaccineFormData>;
-  unitOptions: IOption<number>[];
   onRemove: () => void;
   canRemove: boolean;
   units: IUnit[];
@@ -234,8 +205,6 @@ const RuleBlock = ({
   control,
   units,
   ageRuleIndex,
-  unitOptions,
-  onRemove,
 }: RuleBlockProps) => {
   return (
     <Paper variant="outlined" sx={{ p: 2, bgcolor: 'action.hover' }}>

@@ -1,6 +1,5 @@
 import {
   Calendar,
-  ClipboardList,
   FlaskConical,
   Folder,
   LayoutDashboard,

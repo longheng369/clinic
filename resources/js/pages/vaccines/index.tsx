@@ -69,7 +69,7 @@ const Vaccine = () => {
           onClose={() => closeModal()}
         />
       ),
-      config: { preventClickAway: true, maxWidth: '2xl' },
+      config: { preventClickAway: true, maxWidth: '4xl' },
     });
   };
 
@@ -84,17 +84,17 @@ const Vaccine = () => {
   };
 
   const summarizeRules = (vaccine: IVaccine): string => {
-    const ruleCount = vaccine.dose_rules.length;
+    const ruleCount = vaccine.age_rules.length;
     if (ruleCount === 1) {
-      const rule = vaccine.dose_rules[0];
-      const formatAge = (months: number, ageUnit: string) => {
-        if (ageUnit === 'year') return `${months / 12}y`;
-        if (ageUnit === 'day') return `${months * 30}d`;
-        return `${months}m`;
+      const rule = vaccine.age_rules[0];
+      const formatAge = (value: number, unit: string) => {
+        if (unit === 'year') return `${value}y`;
+        if (unit === 'day') return `${value}d`;
+        return `${value}m`;
       };
-      const minAgeText = formatAge(rule.min_age, rule.age_unit);
+      const minAgeText = formatAge(rule.min_age, rule.min_age_unit);
       const maxAgeText = rule.max_age
-        ? formatAge(rule.max_age, rule.age_unit)
+        ? formatAge(rule.max_age, rule.max_age_unit)
         : 'no limit';
       return `${minAgeText} - ${maxAgeText}`;
     }

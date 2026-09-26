@@ -1,9 +1,7 @@
-import Autocomplete from '@/components/form/autocomplete'
 import Input from '@/components/form/input';
 import Select from '@/components/form/select';
 import { IOption } from '@/interfaces/IOption';
-import { Box, FormControl, InputLabel, MenuItem } from '@mui/material'
-import React from 'react'
+import { Box } from '@mui/material'
 import { FieldValues, Control, Path, RegisterOptions } from 'react-hook-form';
 
 type Props<T extends FieldValues = FieldValues> = {
@@ -54,7 +52,7 @@ const ValueWithUnit = <T extends FieldValues>({ control, selectionName, name, se
           borderRadius: 0
         }}
         options={selectionOptions ?? [
-          { label: 'None', value: '' },
+          { label: 'Empty', value: '' },
           { label: 'Day', value: 'day' },
           { label: 'Month', value: 'month' },
           { label: 'Year', value: 'year' },

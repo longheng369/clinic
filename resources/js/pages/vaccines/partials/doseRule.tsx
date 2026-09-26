@@ -1,7 +1,7 @@
 import { Box, Button, IconButton, Stack, Typography } from '@mui/material';
 import ValueWithUnit from './valueWithUnit';
 import { Control, useFieldArray } from 'react-hook-form';
-import { Minus, Plus, Trash } from 'lucide-react';
+import { Plus, Trash } from 'lucide-react';
 import { IVaccineFormData } from '@/interfaces/IVaccine';
 import { IUnit } from '@/interfaces/IUnit';
 

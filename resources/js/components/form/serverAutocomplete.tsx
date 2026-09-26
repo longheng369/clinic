@@ -189,8 +189,7 @@ const ServerAutocomplete = <T extends FieldValues = FieldValues>({
       .catch(() => undefined);
 
     return () => controller.abort();
-    // `options` is read as a cache only; refetching on every search result
-    // would be wasteful and the id lookup is already value-scoped.
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [endpoint, field.value, normalizedInitialOption]);
 
