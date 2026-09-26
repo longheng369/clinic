@@ -65,17 +65,18 @@ const ServerAutocomplete = <T extends FieldValues = FieldValues>({
   const [isLoading, setIsLoading] = useState(false);
 
   const endpoint = apiUrl ?? (model ? `/autocomplete/${model}` : null);
+  const hasInitialOption = initialOption != null;
   const initialOptionValue = initialOption?.value ?? null;
   const initialOptionLabel = initialOption?.label ?? '';
   const normalizedInitialOption = useMemo(
     () =>
-      initialOption
+      hasInitialOption
         ? {
           value: initialOptionValue,
           label: initialOptionLabel,
         }
         : null,
-    [initialOptionLabel, initialOptionValue],
+    [hasInitialOption, initialOptionLabel, initialOptionValue],
   );
 
   const onSelectRef = useRef(onSelect);
@@ -193,20 +194,22 @@ const ServerAutocomplete = <T extends FieldValues = FieldValues>({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [endpoint, field.value, normalizedInitialOption]);
 
+  const selectedOptionLabel = selectedOption?.label;
+
   useEffect(() => {
     if (isEditingSearch) {
       return;
     }
 
-    if (selectedOption) {
-      setInputValue(selectedOption.label);
+    if (selectedOptionLabel !== undefined) {
+      setInputValue(selectedOptionLabel);
       return;
     }
 
     if (isEmptyValue(field.value)) {
       setInputValue('');
     }
-  }, [field.value, isEditingSearch, selectedOption?.label]);
+  }, [field.value, isEditingSearch, selectedOptionLabel]);
 
   return (
     <Autocomplete

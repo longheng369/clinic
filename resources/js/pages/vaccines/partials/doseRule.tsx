@@ -29,16 +29,32 @@ const DoseRule = ({ control, ageRuleIndex, units }: Props) => {
   }
 
   return (
-    <Stack spacing={1} sx={{ mt: 1 }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+    <Box>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', my: 2 }}>
         <Typography sx={{ fontSize: 18, fontWeight: 'medium' }}>Doses</Typography>
-        <Button onClick={handleAppend} startIcon={<Plus size={16}/>} variant='contained' color='secondary' size='small'>New Dose</Button>
+        <Button
+          onClick={handleAppend}
+          startIcon={<Plus size={16}/>}
+          variant='contained'
+          color='secondary'
+          size='small'
+        >
+          New Dose
+        </Button>
       </Box>
-
-      {fields.map((field, doseRuleIndex) => (
-        <DoseRow key={field.id} control={control} ageRuleIndex={ageRuleIndex} doseRuleIndex={doseRuleIndex} units={units} onRemove={() => remove(doseRuleIndex)} />
-      ))}
-    </Stack>
+      <Stack spacing={1}>
+        {fields.map((field, doseRuleIndex) => (
+          <DoseRow
+            key={field.id}
+            control={control}
+            ageRuleIndex={ageRuleIndex}
+            doseRuleIndex={doseRuleIndex}
+            units={units}
+            onRemove={() => remove(doseRuleIndex)}
+          />
+        ))}
+      </Stack>
+    </Box>
   );
 }
 
@@ -57,7 +73,11 @@ const DoseRow = ({ control, doseRuleIndex, ageRuleIndex, onRemove, units }: Dose
       {doseRuleIndex > 0 && (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Typography>Interval</Typography>
-          <ValueWithUnit control={control} name={`age_rules.${ageRuleIndex}.dose_rules.${doseRuleIndex}.interval_from_previous_dose`} selectionName={`age_rules.${ageRuleIndex}.dose_rules.${doseRuleIndex}.interval_from_previous_dose_unit`} />
+          <ValueWithUnit
+            control={control}
+            name={`age_rules.${ageRuleIndex}.dose_rules.${doseRuleIndex}.interval_from_previous_dose`}
+            selectionName={`age_rules.${ageRuleIndex}.dose_rules.${doseRuleIndex}.interval_from_previous_dose_unit`}
+          />
         </Box>
       )}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

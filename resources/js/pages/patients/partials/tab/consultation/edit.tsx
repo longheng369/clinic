@@ -59,7 +59,7 @@ const EditConsultation = ({
       note: consultation.note ?? '',
       fee: consultation.fee,
     });
-  }, [consultation]);
+  }, [consultation, reset]);
 
   const onSubmit = handleSubmit((data) => {
     setIsProcessing(true);

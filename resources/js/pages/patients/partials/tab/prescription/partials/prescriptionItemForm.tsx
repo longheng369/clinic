@@ -79,7 +79,7 @@ const PrescriptionItemForm: FC<Props> = ({
     } else {
       setValue('unit', '', { shouldValidate: true });
     }
-  }, [medicineId, medicines, setValue]);
+  }, [medicineId, medicines, setValue, watch]);
 
   const onSubmit = (values: PrescriptionItemFormValues) => {
     const medicine = medicines.find((option) => option.id === values.medicine);

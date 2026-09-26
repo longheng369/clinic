@@ -56,7 +56,7 @@ const ShowConsultation = ({
       note: consultation.note ?? '',
       fee: consultation.fee,
     });
-  }, [consultation]);
+  }, [consultation, reset]);
 
   return (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>

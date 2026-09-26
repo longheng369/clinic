@@ -69,7 +69,7 @@ const Vaccine = () => {
           onClose={() => closeModal()}
         />
       ),
-      config: { preventClickAway: true, maxWidth: '4xl' },
+      config: { preventClickAway: true, maxWidth: '4xl', scroll: 'body' },
     });
   };
 

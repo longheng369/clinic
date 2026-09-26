@@ -61,7 +61,7 @@ const MedicineForm = ({ medicine, units }: MedicineFormProps) => {
       })
       .finally(() => setCategoriesLoading(false));
     return () => controller.abort();
-  }, []);
+  }, [toast]);
 
   const onSubmit = handleSubmit((data) => {
     setIsProcessing(true);

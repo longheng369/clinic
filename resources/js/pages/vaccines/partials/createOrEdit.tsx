@@ -1,10 +1,4 @@
-import {
-  useForm,
-  useFieldArray,
-  type Control,
-  type UseFormRegister,
-  type UseFormWatch,
-} from 'react-hook-form';
+import { useForm, useFieldArray } from 'react-hook-form';
 import type { FormDataConvertible } from '@inertiajs/core';
 import Input from '@/components/form/input-deprecated';
 import Textarea from '@/components/form/textarea';
@@ -15,14 +9,12 @@ import { router } from '@inertiajs/react';
 import { useToast } from '@/components/toast';
 import { Plus } from 'lucide-react';
 import {
-  Box,
-  Button,
+  Button, DialogActions, DialogContent,
   Paper,
   Stack,
   Typography,
 } from '@mui/material';
-import ValueWithUnit from './valueWithUnit';
-import DoseRule from './doseRule';
+import AgeRule from "@/pages/vaccines/partials/ageRule";
 
 interface VaccineFormProps {
   vaccine?: IVaccine;
@@ -33,7 +25,7 @@ interface VaccineFormProps {
 const VaccineForm = ({ vaccine, units, onClose }: VaccineFormProps) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
-  const { control, handleSubmit, register, watch } = useForm<IVaccineFormData>({
+  const { control, handleSubmit } = useForm<IVaccineFormData>({
     defaultValues: vaccine
       ? { ...vaccine }
       : {
@@ -109,13 +101,11 @@ const VaccineForm = ({ vaccine, units, onClose }: VaccineFormProps) => {
   });
 
   return (
-    <Box
-      component="form"
-      onSubmit={onSubmit}
-      sx={{ borderTop: 1, borderColor: 'divider' }}
-      noValidate
-    >
-      <Stack spacing={2} sx={{ p: 3 }}>
+    <>
+      <DialogContent
+        dividers
+        sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+      >
         <Input
           label="Name"
           control={control}
@@ -137,15 +127,19 @@ const VaccineForm = ({ vaccine, units, onClose }: VaccineFormProps) => {
             <Typography variant="subtitle2">Dose Rules</Typography>
             <Button
               type="button"
-              variant="outlined"
+              variant="contained"
               size="small"
+              color="info"
               onClick={() =>
                 appendRule({
                   min_age: 0,
                   min_age_unit: 'day',
                   max_age: null,
                   max_age_unit: 'day',
-                  dose_rules: []
+                  dose_rules: [{
+                    amount: 0,
+                    amount_unit_id: 1
+                  }],
                 })
               }
               startIcon={<Plus size={16} />}
@@ -153,78 +147,33 @@ const VaccineForm = ({ vaccine, units, onClose }: VaccineFormProps) => {
               Add Age Rule
             </Button>
           </Stack>
-          <Stack spacing={2}>
-            {ruleFields.map((ruleField, ageRuleIndex) => (
-              <RuleBlock
-                key={ruleField.id}
-                control={control}
-                register={register}
-                ageRuleIndex={ageRuleIndex}
-                watch={watch}
-                onRemove={() => removeRule(ageRuleIndex)}
-                canRemove={ruleFields.length > 1}
-                units={units}
-              />
-            ))}
-          </Stack>
+          {ruleFields.length === 0 ? (
+            <Typography sx={{ textAlign: 'center', color: 'gray' }}>No age rules yet</Typography>
+          ) : (
+            <Stack spacing={2}>
+              {ruleFields.map((ruleField, ageRuleIndex) => (
+                <AgeRule
+                  key={ruleField.id}
+                  control={control}
+                  ageRuleIndex={ageRuleIndex}
+                  onRemove={() => removeRule(ageRuleIndex)}
+                  units={units}
+                />
+              ))}
+            </Stack>
+          )}
         </Paper>
         <Typography>Note: Leave max age empty for the unlimit</Typography>
-      </Stack>
-      <Stack
-        direction="row"
-        spacing={1}
-        sx={{
-          p: 2,
-          borderTop: 1,
-          borderColor: 'divider',
-          justifyContent: 'flex-end',
-        }}
-      >
+      </DialogContent>
+      <DialogActions>
         <Button type="button" onClick={onClose} variant="outlined">
           Cancel
         </Button>
-        <Button type="submit" disabled={isProcessing} variant="contained">
+        <Button onClick={onSubmit} disabled={isProcessing} variant="contained">
           {vaccine ? 'Save' : 'Create'}
         </Button>
-      </Stack>
-    </Box>
-  );
-};
-
-interface RuleBlockProps {
-  control: Control<IVaccineFormData>;
-  register: UseFormRegister<IVaccineFormData>;
-  ageRuleIndex: number;
-  watch: UseFormWatch<IVaccineFormData>;
-  onRemove: () => void;
-  canRemove: boolean;
-  units: IUnit[];
-}
-
-const RuleBlock = ({
-  control,
-  units,
-  ageRuleIndex,
-}: RuleBlockProps) => {
-  return (
-    <Paper variant="outlined" sx={{ p: 2, bgcolor: 'action.hover' }}>
-      <Stack>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography sx={{ fontWeight: 'bold' }}>Rule #{ageRuleIndex + 1}</Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Typography>Min Age</Typography>
-              <ValueWithUnit control={control} name={`age_rules.${ageRuleIndex}.min_age`} selectionName={`age_rules.${ageRuleIndex}.min_age_unit`} />
-            </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Typography>Max Age</Typography>
-              <ValueWithUnit control={control} name={`age_rules.${ageRuleIndex}.max_age`} selectionName={`age_rules.${ageRuleIndex}.max_age_unit`} />
-            </Box>
-          </Box>
-        </Box>
-        <DoseRule control={control} ageRuleIndex={ageRuleIndex} units={units} />
-      </Stack>
-    </Paper>
+      </DialogActions>
+    </>
   );
 };
 

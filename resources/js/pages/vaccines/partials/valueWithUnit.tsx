@@ -15,20 +15,26 @@ type Props<T extends FieldValues = FieldValues> = {
   selectionOptions?: IOption<any>[];
 }
 
-const ValueWithUnit = <T extends FieldValues>({ control, selectionName, name, selectionOptions }: Props<T>) => {
-
+const ValueWithUnit = <T extends FieldValues>({
+  control,
+  selectionName,
+  name,
+  selectionOptions,
+  rules,
+}: Props<T>) => {
   return (
     <Box sx={{ display: 'flex' }}>
       <Input
         control={control}
         name={name}
-        size='small'
-        type='number'
+        size="small"
+        type="number"
         fullWidth={false}
+        rules={rules}
         sx={{
-          width: 100
+          width: 100,
         }}
-        variant='outlined'
+        variant="outlined"
         slotProps={{
           input: {
             sx: {
@@ -37,29 +43,32 @@ const ValueWithUnit = <T extends FieldValues>({ control, selectionName, name, se
               '&:hover fieldset': {
                 borderRight: '1px solid',
               },
-            }
-          }
+            },
+          },
         }}
       />
       <Select
+        label="Unit"
         control={control}
         name={selectionName}
-        size='small'
-        variant='outlined'
+        size="small"
+        variant="outlined"
         fullWidth={false}
         sx={{
           width: 100,
-          borderRadius: 0
+          borderRadius: 0,
         }}
-        options={selectionOptions ?? [
-          { label: 'Empty', value: '' },
-          { label: 'Day', value: 'day' },
-          { label: 'Month', value: 'month' },
-          { label: 'Year', value: 'year' },
-        ]}
+        rules={rules}
+        options={
+          selectionOptions ?? [
+            { label: 'Day', value: 'day' },
+            { label: 'Month', value: 'month' },
+            { label: 'Year', value: 'year' },
+          ]
+        }
       />
     </Box>
-  )
-}
+  );
+};
 
 export default ValueWithUnit

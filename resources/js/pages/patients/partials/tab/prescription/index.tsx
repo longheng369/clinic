@@ -100,7 +100,7 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
 
   useEffect(() => {
     setIsEditing(!prescription);
-  }, [prescription?.id, selectedVisit?.id]);
+  }, [prescription, selectedVisit?.id]);
 
   const availableMedicineOptions = useMemo(() => {
     const existingMedicineIds = new Set(

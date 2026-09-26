@@ -41,7 +41,7 @@ export function useDebouncedSearch({
     }, delay);
 
     return () => clearTimeout(timeout);
-  }, [searchTerm, searchProp, delay, serializedExtraParams, onBeforeNavigate]);
+  }, [route, searchTerm, searchProp, delay, serializedExtraParams, onBeforeNavigate]);
 
   return { searchTerm, setSearchTerm };
 }

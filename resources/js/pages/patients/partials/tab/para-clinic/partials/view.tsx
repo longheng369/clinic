@@ -53,7 +53,7 @@ const ParaClinicView = ({ requestId }: Props) => {
       .finally(() => setIsLoading(false));
 
     return () => controller.abort();
-  }, [requestId]);
+  }, [requestId, toast]);
 
   if (isLoading) {
     return (

@@ -72,7 +72,7 @@ const ParaClinicForm = ({ requestId, patientId, visitId, consultationDiagnoses =
         setDiagnosisTests(response as IDiagnosticTestAutocomplete[]);
       },
     });
-  }, []);
+  }, [get]);
 
   useEffect(() => {
     if (!requestId) {
@@ -120,7 +120,7 @@ const ParaClinicForm = ({ requestId, patientId, visitId, consultationDiagnoses =
       });
 
     return () => controller.abort();
-  }, [requestId]);
+  }, [requestId, patientId, reset, toast]);
 
   const diagnosticTestIds = watch('diagnostic_test_ids');
   const totalFee = diagnosticTestIds.reduce((sum, id) => {
