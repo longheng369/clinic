@@ -128,12 +128,6 @@ const Vaccine = () => {
       flex: 2,
       minWidth: 240,
       sortable: false,
-      renderCell: (params) =>
-        params.value ?? (
-          <Typography component="span" sx={{ color: 'text.disabled' }}>
-            &mdash;
-          </Typography>
-        ),
     },
     {
       field: 'schedule',

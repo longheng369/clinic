@@ -38,6 +38,7 @@ const DoseRule = ({ control, ageRuleIndex, units }: Props) => {
           variant='contained'
           color='secondary'
           size='small'
+          sx={{ borderRadius: 0 }}
         >
           New Dose
         </Button>
@@ -67,6 +68,21 @@ type DoseRowProps = {
 }
 
 const DoseRow = ({ control, doseRuleIndex, ageRuleIndex, onRemove, units }: DoseRowProps) => {
+  const validateAmount = (value: unknown): true | string => {
+    const amount = Number(value);
+    if (!Number.isFinite(amount)) return 'Amount must be a number';
+    if (amount <= 0) return 'Amount must be greater than 0';
+    return true;
+  };
+
+  const validateInterval = (value: unknown): true | string => {
+    const interval = Number(value);
+    if (!Number.isFinite(interval)) return 'Interval must be a number';
+    if (interval < 0) return 'Interval cannot be negative';
+    if (!Number.isInteger(interval)) return 'Interval must be a whole number';
+    return true;
+  };
+
   return (
     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: 1, borderColor: 'divider', p: 1 }}>
       <Typography>Dose {doseRuleIndex + 1}</Typography>
@@ -77,6 +93,13 @@ const DoseRow = ({ control, doseRuleIndex, ageRuleIndex, onRemove, units }: Dose
             control={control}
             name={`age_rules.${ageRuleIndex}.dose_rules.${doseRuleIndex}.interval_from_previous_dose`}
             selectionName={`age_rules.${ageRuleIndex}.dose_rules.${doseRuleIndex}.interval_from_previous_dose_unit`}
+            rules={{
+              required: 'Interval is required',
+              validate: {
+                nonNegative: validateInterval,
+              },
+            }}
+            selectionRules={{ required: 'Select a unit' }}
           />
         </Box>
       )}
@@ -87,6 +110,13 @@ const DoseRow = ({ control, doseRuleIndex, ageRuleIndex, onRemove, units }: Dose
           name={`age_rules.${ageRuleIndex}.dose_rules.${doseRuleIndex}.amount`}
           selectionName={`age_rules.${ageRuleIndex}.dose_rules.${doseRuleIndex}.amount_unit_id`}
           selectionOptions={units.map((u) => ({ label: u.name, value: u.id }))}
+          rules={{
+            required: 'Amount is required',
+            validate: {
+              positive: validateAmount,
+            },
+          }}
+          selectionRules={{ required: 'Select a unit' }}
         />
         <IconButton onClick={onRemove} color='error'>
           <Trash size={16} />

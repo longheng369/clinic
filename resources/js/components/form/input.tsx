@@ -21,6 +21,7 @@ const Input = <T extends FieldValues = FieldValues>({
   name,
   rules,
   fullWidth= true,
+  type,
   ...rest
 }: Props<T>) => {
   const { field, fieldState } = useController({
@@ -36,6 +37,13 @@ const Input = <T extends FieldValues = FieldValues>({
       size="small"
       variant={rest.variant ?? 'standard'}
       {...field}
+      onChange={(event) => {
+        const value = event.target.value;
+
+        field.onChange(
+          type === 'number' ? (value === '' ? null : Number(value)) : value,
+        );
+      }}
       required={!!rules?.required}
       error={!!fieldState.error}
       helperText={fieldState.error?.message}

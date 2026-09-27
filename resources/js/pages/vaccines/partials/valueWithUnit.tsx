@@ -4,14 +4,17 @@ import { IOption } from '@/interfaces/IOption';
 import { Box } from '@mui/material'
 import { FieldValues, Control, Path, RegisterOptions } from 'react-hook-form';
 
+type FieldRules<T extends FieldValues> = Omit<
+  RegisterOptions<T, Path<T>>,
+  'valueAsDate' | 'setValueAs' | 'disabled'
+>;
+
 type Props<T extends FieldValues = FieldValues> = {
   control: Control<T>;
   name: Path<T>;
-  rules?: Omit<
-    RegisterOptions<T, Path<T>>,
-    'valueAsDate' | 'setValueAs' | 'disabled'
-  >;
+  rules?: FieldRules<T>;
   selectionName: Path<T>;
+  selectionRules?: FieldRules<T>;
   selectionOptions?: IOption<any>[];
 }
 
@@ -21,16 +24,18 @@ const ValueWithUnit = <T extends FieldValues>({
   name,
   selectionOptions,
   rules,
+  selectionRules,
 }: Props<T>) => {
   return (
     <Box sx={{ display: 'flex' }}>
       <Input
+        label="Amount"
         control={control}
         name={name}
         size="small"
         type="number"
         fullWidth={false}
-        rules={rules}
+        rules={{ ...rules, valueAsNumber: true }}
         sx={{
           width: 100,
         }}
@@ -58,7 +63,7 @@ const ValueWithUnit = <T extends FieldValues>({
           width: 100,
           borderRadius: 0,
         }}
-        rules={rules}
+        rules={selectionRules}
         options={
           selectionOptions ?? [
             { label: 'Day', value: 'day' },
