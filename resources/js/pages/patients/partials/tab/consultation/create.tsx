@@ -3,7 +3,6 @@ import { ArrowLeft } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import ConsultationForm from './partials/ConsultationForm';
-import { useToast } from '@/components/toast';
 import { IConsultationFormData } from '@/interfaces/IConsultation';
 import type { IPatient } from '@/interfaces/IPatient';
 import { Box, Button, IconButton, Paper, Typography } from '@mui/material';
@@ -16,7 +15,6 @@ const CreateConsultation = ({
   visitId: number | null;
 }) => {
   const [isProcessing, setIsProcessing] = useState(false);
-  const { toast } = useToast();
   const { control, handleSubmit } = useForm<IConsultationFormData>({
     defaultValues: {
       weight: null,
@@ -58,7 +56,6 @@ const CreateConsultation = ({
       { ...data, visit_id: visitId },
       {
         onSuccess: () => {
-          toast('Consultation created!', { variant: 'success' });
           router.visit(
             `/patients/${patient.id}?visit=${visitId ?? ''}&tab=consultation`,
           );

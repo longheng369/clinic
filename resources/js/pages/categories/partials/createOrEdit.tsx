@@ -30,10 +30,6 @@ const CategoryForm = ({ category }: CategoryFormProps) => {
         {
           onSuccess: () => {
             closeModal();
-            toast('Category updated successfully!', {
-              variant: 'success',
-              description: 'The category has been updated.',
-            });
           },
           onFinish: () => {
             setIsProcessing(false);
@@ -50,10 +46,6 @@ const CategoryForm = ({ category }: CategoryFormProps) => {
       {
         onSuccess: () => {
           closeModal();
-          toast('Category created successfully!', {
-            variant: 'success',
-            description: 'The category has been created.',
-          });
         },
         onError: (errors) => {
           if (errors.name) {

@@ -1,11 +1,13 @@
 import {
   createContext,
   useContext,
+  useEffect,
   useRef,
   useState,
   useCallback,
   type ReactNode,
 } from 'react';
+import { router } from '@inertiajs/react';
 import { Box } from '@mui/material';
 import Toast, {
   type ToastVariant,
@@ -52,6 +54,26 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
     setToasts((prev) => [...prev, data]);
     return id;
   }, []);
+
+  const lastFlashRef = useRef<{ message: string; time: number } | null>(null);
+
+  useEffect(() => {
+    return router.on('success', (event) => {
+      const flash = (event.detail.page.props as { flash?: { success?: string | null; error?: string | null } }).flash;
+      const success = flash?.success;
+      const error = flash?.error;
+      if (!success && !error) return;
+
+      const message = success ?? error ?? '';
+      const now = Date.now();
+      const last = lastFlashRef.current;
+      if (last?.message === message && now - last.time < 1500) return;
+      lastFlashRef.current = { message, time: now };
+
+      if (success) toast(success, { variant: 'success' });
+      if (error) toast(error, { variant: 'error' });
+    });
+  }, [toast]);
 
   return (
     <ToastContext.Provider value={{ toast, dismiss }}>

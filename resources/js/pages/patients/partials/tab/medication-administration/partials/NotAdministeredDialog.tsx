@@ -80,7 +80,6 @@ const NotAdministeredDialog = ({
       {
         onSuccess: () => {
           onClose();
-          toast(`Dose recorded as ${variant}.`, { variant: 'success' });
         },
         onError: (errors) => {
           const message = Object.values(errors)[0];

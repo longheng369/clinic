@@ -33,10 +33,6 @@ const MedicineInstructionForm = ({ medicineInstruction }: MedicineInstructionFor
         {
           onSuccess: () => {
             closeModal();
-            toast('Medicine instruction updated successfully!', {
-              variant: 'success',
-              description: 'The medicine instruction has been updated.',
-            });
           },
           onFinish: () => {
             setIsProcessing(false);
@@ -53,10 +49,6 @@ const MedicineInstructionForm = ({ medicineInstruction }: MedicineInstructionFor
       {
         onSuccess: () => {
           closeModal();
-          toast('Medicine instruction created successfully!', {
-            variant: 'success',
-            description: 'The medicine instruction has been created.',
-          });
         },
         onError: (errors) => {
           if (errors.name) {

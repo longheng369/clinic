@@ -85,9 +85,6 @@ const AppointmentForm = ({ appointment, readOnly = false }: Props) => {
     const options = {
       onSuccess: () => {
         closeModal();
-        toast(`Appointment ${appointment ? 'updated' : 'created'} successfully!`, {
-          variant: 'success',
-        });
       },
       onError: (errors: Record<string, string>) => {
         if (errors.patient_id) {

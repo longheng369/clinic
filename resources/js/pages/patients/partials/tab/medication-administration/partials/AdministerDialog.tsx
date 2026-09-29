@@ -52,7 +52,6 @@ const AdministerDialog = ({
       {
         onSuccess: () => {
           onClose();
-          toast('Dose administered successfully.', { variant: 'success' });
         },
         onError: (errors) => {
           const message = Object.values(errors)[0];

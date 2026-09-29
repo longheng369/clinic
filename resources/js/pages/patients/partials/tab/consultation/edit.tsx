@@ -3,7 +3,6 @@ import { ArrowLeft } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { useState, useEffect } from 'react';
 import ConsultationForm from './partials/ConsultationForm';
-import { useToast } from '@/components/toast';
 import {
   type IConsultation,
   type IConsultationFormData,
@@ -19,7 +18,6 @@ const EditConsultation = ({
   consultation: IConsultation;
 }) => {
   const [isProcessing, setIsProcessing] = useState(false);
-  const { toast } = useToast();
   const { control, handleSubmit, reset } = useForm<IConsultationFormData>();
 
   useEffect(() => {
@@ -68,7 +66,6 @@ const EditConsultation = ({
       { ...data },
       {
         onSuccess: () => {
-          toast('Consultation updated!', { variant: 'success' });
           router.visit(`/patients/${patient.id}?tab=consultation`);
         },
         onFinish: () => setIsProcessing(false),

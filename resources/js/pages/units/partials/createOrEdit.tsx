@@ -30,10 +30,6 @@ const UnitForm = ({ unit }: UnitFormProps) => {
         {
           onSuccess: () => {
             closeModal();
-            toast('Unit updated successfully!', {
-              variant: 'success',
-              description: 'The unit has been updated.',
-            });
           },
           onFinish: () => {
             setIsProcessing(false);
@@ -50,10 +46,6 @@ const UnitForm = ({ unit }: UnitFormProps) => {
       {
         onSuccess: () => {
           closeModal();
-          toast('Unit created successfully!', {
-            variant: 'success',
-            description: 'The unit has been created.',
-          });
         },
         onError: (errors) => {
           if (errors.name) {

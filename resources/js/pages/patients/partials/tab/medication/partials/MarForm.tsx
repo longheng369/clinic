@@ -9,7 +9,6 @@ import {
 } from '@/interfaces/IMedicationOrder';
 import { useState } from 'react';
 import { router } from '@inertiajs/react';
-import { useToast } from '@/components/toast';
 
 const INTERVAL_OPTIONS = [
   { value: 'QD', label: 'QD (Once daily)' },
@@ -45,7 +44,6 @@ const MarForm = ({
   onClose,
 }: MedicationFormProps) => {
   const [isProcessing, setIsProcessing] = useState(false);
-  const { toast } = useToast();
 
   const now = new Date();
   now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
@@ -101,7 +99,6 @@ const MarForm = ({
         {
           onSuccess: () => {
             onClose();
-            toast('Medication updated!', { variant: 'success' });
           },
           onFinish: () => setIsProcessing(false),
         },
@@ -113,7 +110,6 @@ const MarForm = ({
         {
           onSuccess: () => {
             onClose();
-            toast('Added to drug chart!', { variant: 'success' });
           },
           onFinish: () => setIsProcessing(false),
         },

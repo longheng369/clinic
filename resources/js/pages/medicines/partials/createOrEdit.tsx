@@ -70,12 +70,6 @@ const MedicineForm = ({ medicine, units }: MedicineFormProps) => {
         `/medicines/${medicine.id}`,
         { ...data },
         {
-          onSuccess: () => {
-            toast('Medicine updated successfully!', {
-              variant: 'success',
-              description: 'The medicine has been updated.',
-            });
-          },
           onFinish: () => {
             closeModal();
             setIsProcessing(false);
@@ -90,12 +84,6 @@ const MedicineForm = ({ medicine, units }: MedicineFormProps) => {
       '/medicines',
       { ...data },
       {
-        onSuccess: () => {
-          toast('Medicine created successfully!', {
-            variant: 'success',
-            description: 'The medicine has been created.',
-          });
-        },
         onError: (errors) => {
           if (errors.name) {
             toast('Unable to create medicine', {

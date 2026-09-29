@@ -112,8 +112,6 @@ const PatientShow = ({ patient }: Props) => {
           `/visits/${visitId}/close`,
           {},
           {
-            onSuccess: () =>
-              toast('Visit closed successfully.', { variant: 'success' }),
             onError: (errors) => {
               const message = Object.values(errors)[0];
               toast(
@@ -148,9 +146,6 @@ const PatientShow = ({ patient }: Props) => {
       `/patients/${patient.id}/visits`,
       {},
       {
-        onSuccess: () => {
-          toast('New visit started!', { variant: 'success' });
-        },
         onError: () => {
           toast('Unable to start a new visit.', { variant: 'error' });
         },

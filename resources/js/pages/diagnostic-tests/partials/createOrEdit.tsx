@@ -30,10 +30,6 @@ const DiagnosticTestForm = ({ diagnosticTest }: DiagnosticTestFormProps) => {
         {
           onSuccess: () => {
             closeModal();
-            toast('Diagnostic test updated successfully!', {
-              variant: 'success',
-              description: 'The diagnostic test has been updated.',
-            });
           },
           onFinish: () => {
             setIsProcessing(false);
@@ -50,10 +46,6 @@ const DiagnosticTestForm = ({ diagnosticTest }: DiagnosticTestFormProps) => {
       {
         onSuccess: () => {
           closeModal();
-          toast('Diagnostic test created successfully!', {
-            variant: 'success',
-            description: 'The diagnostic test has been created.',
-          });
         },
         onError: (errors) => {
           if (errors.name) {

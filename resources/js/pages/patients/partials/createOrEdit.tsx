@@ -6,7 +6,7 @@ import DateInput from '@/components/form/date';
 import Autocomplete from '@/components/form/autocomplete';
 import { IPatient, IPatientFormData } from '@/interfaces/IPatient';
 import { router } from '@inertiajs/react';
-import { useToast } from '@/components/toast';
+
 import {
   DialogActions,
   DialogContent,
@@ -105,7 +105,6 @@ const PatientForm = ({ patient }: Props) => {
   const [districts, setDistricts] = useState<IGazetteer[]>([]);
   const [communes, setCommunes] = useState<IGazetteer[]>([]);
   const [villages, setVillages] = useState<IGazetteer[]>([]);
-  const { toast } = useToast();
   const { control, handleSubmit, watch, setValue } = useForm<IPatientFormData>({
     defaultValues: getDefaultPatientValues(patient),
   });
@@ -182,10 +181,6 @@ const PatientForm = ({ patient }: Props) => {
         {
           onSuccess: () => {
             closeModal();
-            toast('Patient updated successfully!', {
-              variant: 'success',
-              description: 'The patient has been updated.',
-            });
           },
           onFinish: () => {
             setIsProcessing(false);
@@ -202,10 +197,6 @@ const PatientForm = ({ patient }: Props) => {
       {
         onSuccess: () => {
           closeModal();
-          toast('Patient created successfully!', {
-            variant: 'success',
-            description: 'The patient has been created.',
-          });
         },
         onFinish: () => {
           setIsProcessing(false);

@@ -1,7 +1,6 @@
 import { Box, Typography, Paper, Button, TextField } from '@mui/material';
 import { router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
-import { useToast } from '@/components/toast';
 import { DollarSign, Receipt, CreditCard, Calculator } from 'lucide-react';
 
 interface BillingData {
@@ -30,7 +29,6 @@ const formatCurrency = (val: number) => `$${val.toFixed(2)}`;
 
 const BillingTab = ({ visitId }: Props) => {
   const { billing } = usePage<{ billing: BillingData | null }>().props;
-  const { toast } = useToast();
 
   const [paidAmount, setPaidAmount] = useState(billing?.paid_amount ?? 0);
   const [isSaving, setIsSaving] = useState(false);
@@ -62,9 +60,6 @@ const BillingTab = ({ visitId }: Props) => {
         paid_amount: paidAmount,
       },
       {
-        onSuccess: () => {
-          toast('Billing updated.', { variant: 'success' });
-        },
         onFinish: () => setIsSaving(false),
       },
     );
@@ -81,9 +76,6 @@ const BillingTab = ({ visitId }: Props) => {
         payment_status: 'Paid',
       },
       {
-        onSuccess: () => {
-          toast('Visit marked as paid.', { variant: 'success' });
-        },
         onFinish: () => setIsSaving(false),
       },
     );

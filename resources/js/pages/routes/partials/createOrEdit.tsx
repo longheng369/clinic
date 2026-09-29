@@ -33,10 +33,6 @@ const MedicationRouteForm = ({ medicationRoute }: MedicationRouteFormProps) => {
         {
           onSuccess: () => {
             closeModal();
-            toast('Route updated successfully!', {
-              variant: 'success',
-              description: 'The route has been updated.',
-            });
           },
           onFinish: () => {
             setIsProcessing(false);
@@ -53,10 +49,6 @@ const MedicationRouteForm = ({ medicationRoute }: MedicationRouteFormProps) => {
       {
         onSuccess: () => {
           closeModal();
-          toast('Route created successfully!', {
-            variant: 'success',
-            description: 'The route has been created.',
-          });
         },
         onError: (errors) => {
           if (errors.name) {

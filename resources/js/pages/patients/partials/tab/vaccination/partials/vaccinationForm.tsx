@@ -43,17 +43,6 @@ const VaccinationForm = ({
     const options = {
       onSuccess: () => {
         onClose();
-        toast(
-          vaccination
-            ? 'Vaccination updated!'
-            : 'Vaccination recorded!',
-          {
-            variant: 'success',
-            description: vaccination
-              ? 'The vaccination has been updated.'
-              : 'The vaccination has been recorded.',
-          },
-        );
       },
       onError: (errors: Record<string, string>) => {
         if (errors.vaccine_id) {

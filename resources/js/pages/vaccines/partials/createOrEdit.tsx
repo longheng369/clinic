@@ -121,12 +121,6 @@ const VaccineForm = ({ vaccine, units, onClose }: VaccineFormProps) => {
     const options = {
       onSuccess: () => {
         onClose();
-        toast(vaccine ? 'Vaccine updated successfully!' : 'Vaccine created successfully!', {
-          variant: 'success',
-          description: vaccine
-            ? 'The vaccine has been updated.'
-            : 'The vaccine has been created.',
-        });
       },
       onError: (errors: Record<string, string>) => {
         applyServerErrors(
@@ -203,6 +197,9 @@ const VaccineForm = ({ vaccine, units, onClose }: VaccineFormProps) => {
               variant="contained"
               size="small"
               color="info"
+              sx={{
+                borderRadius: 0
+              }}
               onClick={() => {
                 appendRule({
                   min_age: 0,
@@ -246,7 +243,6 @@ const VaccineForm = ({ vaccine, units, onClose }: VaccineFormProps) => {
             {ageRulesError}
           </Typography>
         )}
-        <Typography>Note: Leave max age empty for the unlimit</Typography>
       </DialogContent>
       <DialogActions>
         <Button type="button" onClick={onClose} variant="outlined">

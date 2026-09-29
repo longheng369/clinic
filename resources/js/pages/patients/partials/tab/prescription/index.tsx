@@ -198,9 +198,6 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
     const options = {
       onSuccess: () => {
         setIsEditing(false);
-        toast(prescription ? 'Prescription updated.' : 'Prescription saved.', {
-          variant: 'success',
-        });
       },
       onError: () => {
         toast('Unable to save prescription.', { variant: 'error' });

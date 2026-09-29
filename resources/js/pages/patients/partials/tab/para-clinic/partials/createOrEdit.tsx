@@ -139,9 +139,6 @@ const ParaClinicForm = ({ requestId, patientId, visitId, consultationDiagnoses =
     const options = {
       onSuccess: () => {
         closeModal();
-        toast(`Request ${requestId ? 'updated' : 'created'} successfully!`, {
-          variant: 'success',
-        });
         router.reload({ only: ['paraClinicRequests'] });
       },
       onError: (errors: Record<string, string | string[]>) => {

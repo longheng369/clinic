@@ -48,12 +48,6 @@ const SurveillanceForm = ({
     const options = {
       onSuccess: () => {
         onClose();
-        toast(
-          surveillance
-            ? 'Surveillance record updated!'
-            : 'Surveillance record created!',
-          { variant: 'success' },
-        );
       },
       onError: (errors: Record<string, string>) => {
         const msg =

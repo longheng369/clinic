@@ -139,8 +139,6 @@ const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
     }
 
     router.post(`/patients/${patientId}/attachments`, formData, {
-      onSuccess: () =>
-        toast('File uploaded successfully!', { variant: 'success' }),
       onError: (errors) => {
         const msg = Object.values(errors).join(', ') || 'Failed to upload file';
         toast(msg, { variant: 'error' });
