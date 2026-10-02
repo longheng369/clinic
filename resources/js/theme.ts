@@ -44,8 +44,7 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: '"Poppins", "Siemreap", system-ui, sans-serif',
-    fontSize: 14,
+    fontFamily: '"Roboto Variable", "Siemreap", system-ui, sans-serif',
     h4: { fontWeight: 700 },
     h5: { fontWeight: 700 },
     h6: { fontWeight: 700 },

@@ -109,9 +109,6 @@ const MedicineForm = ({ medicine, units }: MedicineFormProps) => {
               control={control}
               name="name"
               label="Name"
-              sx={{
-                fontFamily: 'Poppins',
-              }}
               rules={{ required: 'This field is required' }}
             />
           </Grid>

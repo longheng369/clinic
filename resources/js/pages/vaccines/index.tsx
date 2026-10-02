@@ -190,12 +190,7 @@ const Vaccine = () => {
             justifyContent: 'space-between',
           }}
         >
-          <Box>
-            <Typography variant="h5">Vaccines</Typography>
-            <Typography variant="body1" color="textSecondary">
-              Manage vaccine definitions and dose schedules
-            </Typography>
-          </Box>
+          <Typography variant="h5">ការគ្រប់គ្រងវ៉ាក់សាំង</Typography>
           <Box
             sx={{
               display: 'flex',

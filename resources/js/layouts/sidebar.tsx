@@ -149,7 +149,6 @@ const Sidebar = () => {
           <ListItemText
             primary={t(item.label)}
             sx={{ my: 0 }}
-            slotProps={{ primary: { sx: { fontSize: 14, fontWeight: 500 } } }}
           />
           {renderBadge(item.badge, isActive)}
         </ListItemButton>
@@ -249,8 +248,6 @@ const Sidebar = () => {
           <Box sx={{ minWidth: 0 }}>
             <Typography
               sx={{
-                fontSize: 14,
-                fontWeight: 500,
                 color: theme.palette.text.primary,
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
@@ -261,7 +258,6 @@ const Sidebar = () => {
             </Typography>
             <Typography
               sx={{
-                fontSize: 12,
                 color: theme.palette.text.secondary,
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
@@ -288,7 +284,7 @@ const Sidebar = () => {
           }}
         >
           <LogOut size={18} />
-          <Typography sx={{ fontSize: 14 }}>{t('common.logout')}</Typography>
+          <Typography>{t('common.logout')}</Typography>
         </ListItemButton>
       </Box>
     </Box>

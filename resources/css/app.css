@@ -1,14 +1,10 @@
-@import '@fontsource/poppins/300.css';
-@import '@fontsource/poppins/400.css';
-@import '@fontsource/poppins/500.css';
-@import '@fontsource/poppins/600.css';
-@import '@fontsource/poppins/700.css';
+@import '@fontsource-variable/roboto';
 @import '@fontsource/moul';
 @import '@fontsource/siemreap';
 @import '@fontsource-variable/inter';
 
 :root {
-    font-family: 'Poppins', 'Siemreap', ui-sans-serif, system-ui, sans-serif;
+    font-family: 'Roboto Variable', 'Siemreap', ui-sans-serif, system-ui, sans-serif;
     background: #efefef;
     font-synthesis: none;
     text-rendering: optimizeLegibility;
@@ -16,6 +12,7 @@
 
 html {
     font-family: inherit;
+    font-size: 14px;
 }
 
 body {
