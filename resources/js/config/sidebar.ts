@@ -15,36 +15,36 @@ import type { ISidebarSection } from '@/interfaces/ISidebar';
 
 export const sidebarSections: ISidebarSection[] = [
   {
-    title: 'Menu',
+    title: 'sidebar.menu',
     items: [
-      { label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
-      { label: 'Patients', icon: Users, path: '/patients' },
+      { label: 'sidebar.dashboard', icon: LayoutDashboard, path: '/dashboard' },
+      { label: 'sidebar.patients', icon: Users, path: '/patients' },
       {
-        label: 'Appointments',
+        label: 'sidebar.appointments',
         icon: Calendar,
         path: '/appointments',
       },
     ],
   },
   {
-    title: 'Clinic',
+    title: 'sidebar.clinic',
     items: [
-      { label: 'Medicines', icon: Pill, path: '/medicines' },
-      { label: 'Vaccines', icon: Syringe, path: '/vaccines' },
+      { label: 'sidebar.medicines', icon: Pill, path: '/medicines' },
+      { label: 'sidebar.vaccines', icon: Syringe, path: '/vaccines' },
     ],
   },
   {
-    title: 'Setting',
+    title: 'sidebar.setting',
     items: [
       {
-        label: 'Settings',
+        label: 'sidebar.settings',
         icon: Settings,
         children: [
-          { label: 'Category', icon: Folder, path: '/settings/categories' },
-          { label: 'Units', icon: RulerDimensionLine, path: '/settings/units' },
-          { label: 'Routes', icon: Route, path: '/settings/routes' },
-          { label: 'Medicine Instructions', icon: ListChecks, path: '/settings/medicine-instructions' },
-          { label: 'Diagnostic Test', icon: FlaskConical, path: '/settings/diagnostic-tests' },
+          { label: 'sidebar.categories', icon: Folder, path: '/settings/categories' },
+          { label: 'sidebar.units', icon: RulerDimensionLine, path: '/settings/units' },
+          { label: 'sidebar.routes', icon: Route, path: '/settings/routes' },
+          { label: 'sidebar.medicineInstructions', icon: ListChecks, path: '/settings/medicine-instructions' },
+          { label: 'sidebar.diagnosticTests', icon: FlaskConical, path: '/settings/diagnostic-tests' },
         ],
       },
     ],

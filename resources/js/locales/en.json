@@ -1,0 +1,32 @@
+{
+  "common": {
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "close": "Close",
+    "previous": "Previous",
+    "next": "Next",
+    "pageOf": "Page {{current}} of {{total}}",
+    "noResults": "No results found",
+    "emptyDescription": "Get started by creating a new entry.",
+    "logout": "Logout",
+    "user": "User",
+    "toggleLanguage": "ខ្មែរ",
+    "search": "Search..."
+  },
+  "sidebar": {
+    "menu": "Menu",
+    "clinic": "Clinic",
+    "setting": "Setting",
+    "dashboard": "Dashboard",
+    "patients": "Patients",
+    "appointments": "Appointments",
+    "medicines": "Medicines",
+    "vaccines": "Vaccines",
+    "settings": "Settings",
+    "categories": "Category",
+    "units": "Units",
+    "routes": "Routes",
+    "medicineInstructions": "Medicine Instructions",
+    "diagnosticTests": "Diagnostic Test"
+  }
+}

@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { Link as InertiaLink, usePage, router } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import { sidebarSections } from '@/config/sidebar';
+import { setLang } from '@/i18n';
 import type { ISidebarOption } from '@/interfaces/ISidebar';
 import { LogOut, ChevronDown, ChevronRight } from 'lucide-react';
 import { alpha, useTheme } from '@mui/material/styles';
 import {
   Avatar,
   Box,
+  Button,
   Collapse,
   List,
   ListItem,
@@ -28,6 +31,7 @@ SidebarLink.displayName = 'SidebarLink';
 
 const Sidebar = () => {
   const theme = useTheme();
+  const { t, i18n } = useTranslation();
   const { url, props: pageProps } = usePage();
   const user = pageProps.auth?.user;
   const pathname = url.split('?')[0];
@@ -35,7 +39,7 @@ const Sidebar = () => {
   const [expandedSections, setExpandedSections] = useState<
     Record<string, boolean>
   >({
-    Settings: true,
+    'sidebar.settings': true,
   });
 
   const toggleSection = (label: string) => {
@@ -110,7 +114,7 @@ const Sidebar = () => {
               <ListItemIcon sx={{ color: 'inherit' }}>
                 {Icon && <Icon size={16} />}
               </ListItemIcon>
-              <ListItemText primary={item.label} sx={{ my: 0 }} />
+              <ListItemText primary={t(item.label)} sx={{ my: 0 }} />
               {isExpanded ? (
                 <ChevronDown size={16} />
               ) : (
@@ -143,7 +147,7 @@ const Sidebar = () => {
             {Icon && <Icon size={16} />}
           </ListItemIcon>
           <ListItemText
-            primary={item.label}
+            primary={t(item.label)}
             sx={{ my: 0 }}
             slotProps={{ primary: { sx: { fontSize: 14, fontWeight: 500 } } }}
           />
@@ -176,7 +180,7 @@ const Sidebar = () => {
           gap: 1.5,
           px: 3,
           py: 2.5,
-          justifyContent: 'flex-start',
+          justifyContent: 'space-between',
         }}
       >
         <Box
@@ -185,6 +189,13 @@ const Sidebar = () => {
           alt="Hospital logo"
           sx={{ width: 50, height: 50, objectFit: 'contain', flexShrink: 0 }}
         />
+        <Button
+          size="small"
+          variant="outlined"
+          onClick={() => setLang(i18n.language === 'km' ? 'en' : 'km')}
+        >
+          {t('common.toggleLanguage')}
+        </Button>
       </Box>
 
       <Box component="nav" sx={{ flex: 1, overflowY: 'auto', px: 2 }}>
@@ -199,7 +210,7 @@ const Sidebar = () => {
                 color: theme.palette.text.secondary,
               }}
             >
-              {section.title}
+              {t(section.title)}
             </Typography>
             <List>{section.items.map((item) => renderSidebarItem(item))}</List>
           </Box>
@@ -246,7 +257,7 @@ const Sidebar = () => {
                 whiteSpace: 'nowrap',
               }}
             >
-              {user?.name ?? 'User'}
+              {user?.name ?? t('common.user')}
             </Typography>
             <Typography
               sx={{
@@ -277,7 +288,7 @@ const Sidebar = () => {
           }}
         >
           <LogOut size={18} />
-          <Typography sx={{ fontSize: 14 }}>Logout</Typography>
+          <Typography sx={{ fontSize: 14 }}>{t('common.logout')}</Typography>
         </ListItemButton>
       </Box>
     </Box>

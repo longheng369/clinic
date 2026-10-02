@@ -1,0 +1,32 @@
+{
+  "common": {
+    "confirm": "បញ្ជាក់",
+    "cancel": "បោះបង់",
+    "close": "បិទ",
+    "previous": "មុន",
+    "next": "បន្ទាប់",
+    "pageOf": "ទំព័រ {{current}} នៃ {{total}}",
+    "noResults": "មិនមានលទ្ធផល",
+    "emptyDescription": "ចាប់ផ្តើមដោយបង្កើតបញ្ជីថ្មី។",
+    "logout": "ចាកចេញ",
+    "user": "អ្នកប្រើប្រាស់",
+    "toggleLanguage": "English",
+    "search": "ស្វែងរក..."
+  },
+  "sidebar": {
+    "menu": "ម៉ឺនុយ",
+    "clinic": "គ្លីនិក",
+    "setting": "ការកំណត់",
+    "dashboard": "ផ្ទាំងគ្រប់គ្រង",
+    "patients": "អ្នកជំងឺ",
+    "appointments": "ការណាត់ជួប",
+    "medicines": "ថ្នាំ",
+    "vaccines": "វ៉ាក់សាំង",
+    "settings": "ការកំណត់",
+    "categories": "ប្រភេទ",
+    "units": "ឯកតា",
+    "routes": "ផ្លូវរបស់ថ្នាំ",
+    "medicineInstructions": "ការណែនាំប្រើថ្នាំ",
+    "diagnosticTests": "តេស្តរោគវិនិយោគ"
+  }
+}

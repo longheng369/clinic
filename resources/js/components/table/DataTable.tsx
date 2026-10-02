@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import { FolderOpen } from 'lucide-react';
 import { type ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import Pagination from '@/components/table/Pagination';
 import { PaginationMeta } from '@/interfaces/IPagination';
 
@@ -39,13 +40,18 @@ const DataTable = <T,>({
   data,
   keyExtractor,
   columns,
-  emptyMessage = 'No results found',
-  emptyDescription = 'Get started by creating a new entry.',
+  emptyMessage,
+  emptyDescription,
   pagination,
   baseUrl = '',
   only,
   onRowClick,
-}: Props<T>) => (
+}: Props<T>) => {
+  const { t } = useTranslation();
+  const emptyText = emptyMessage ?? t('common.noResults');
+  const emptyHint = emptyDescription ?? t('common.emptyDescription');
+
+  return (
     <>
       <TableContainer
         component={Paper}
@@ -76,10 +82,10 @@ const DataTable = <T,>({
                       color="text.secondary"
                       sx={{ fontWeight: 500 }}
                     >
-                      {emptyMessage}
+                      {emptyText}
                     </Typography>
                     <Typography variant="caption" color="text.disabled">
-                      {emptyDescription}
+                      {emptyHint}
                     </Typography>
                   </Stack>
                 </TableCell>
@@ -108,5 +114,6 @@ const DataTable = <T,>({
       )}
     </>
   );
+};
 
 export default DataTable;

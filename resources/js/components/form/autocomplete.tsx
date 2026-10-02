@@ -1,5 +1,6 @@
 import { IOption } from '@/interfaces/IOption';
 import { Autocomplete as MuiAutoComplete, TextField } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import {
   useController,
   type Control,
@@ -29,11 +30,12 @@ const Autocomplete = <T extends FieldValues = FieldValues>({
   rules,
   label,
   options,
-  placeholder = 'Search...',
+  placeholder,
   disabled,
   disableClearable,
   onChange,
 }: Props<T>) => {
+  const { t } = useTranslation();
   const { field, fieldState } = useController({ control, name, rules });
 
   const selectedOption =
@@ -53,14 +55,14 @@ const Autocomplete = <T extends FieldValues = FieldValues>({
       isOptionEqualToValue={(option, selected) =>
         option.value === selected?.value
       }
-      noOptionsText="No results found."
+      noOptionsText={t('common.noResults')}
       size="small"
       renderInput={(params) => (
         <TextField
           {...params}
           variant="standard"
           label={label}
-          placeholder={placeholder}
+          placeholder={placeholder ?? t('common.search')}
           required={!!rules?.required}
           error={!!fieldState.error}
           helperText={fieldState.error?.message}

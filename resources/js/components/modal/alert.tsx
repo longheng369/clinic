@@ -7,6 +7,7 @@ import {
   Typography,
 } from '@mui/material';
 import { AlertCircle, AlertTriangle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export type AlertVariant = 'danger' | 'warning' | 'info';
 
@@ -31,12 +32,13 @@ const Alert = ({
   message,
   description,
   variant = 'info',
-  confirmLabel = 'Confirm',
-  cancelLabel = 'Cancel',
+  confirmLabel,
+  cancelLabel,
   onConfirm,
   onCancel,
   onClose,
 }: AlertProps) => {
+  const { t } = useTranslation();
   const Icon = variant === 'info' ? AlertCircle : AlertTriangle;
 
   const handleConfirm = () => {
@@ -91,14 +93,14 @@ const Alert = ({
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 3 }}>
         <Button variant="outlined" color="inherit" onClick={handleCancel}>
-          {cancelLabel}
+          {cancelLabel ?? t('common.cancel')}
         </Button>
         <Button
           variant="contained"
           color={severityMap[variant]}
           onClick={handleConfirm}
         >
-          {confirmLabel}
+          {confirmLabel ?? t('common.confirm')}
         </Button>
       </DialogActions>
     </>

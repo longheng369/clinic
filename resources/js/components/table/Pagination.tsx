@@ -1,5 +1,6 @@
 import { Box, Button, Stack, Typography } from '@mui/material';
 import { Link } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { PaginationMeta } from '@/interfaces/IPagination';
 import type { ElementType } from 'react';
@@ -13,6 +14,7 @@ type Props = {
 };
 
 const Pagination = ({ meta, baseUrl, only }: Props) => {
+  const { t } = useTranslation();
   const separator = baseUrl.includes('?') ? '&' : '?';
   const link = (page: number) => `${baseUrl}${separator}page=${page}`;
 
@@ -27,7 +29,10 @@ const Pagination = ({ meta, baseUrl, only }: Props) => {
       }}
     >
       <Typography variant="body2" color="text.secondary">
-        Page {meta.current_page} of {meta.last_page}
+        {t('common.pageOf', {
+          current: meta.current_page,
+          total: meta.last_page,
+        })}
       </Typography>
       <Box
         sx={{
@@ -46,7 +51,7 @@ const Pagination = ({ meta, baseUrl, only }: Props) => {
           size="small"
           startIcon={<ChevronLeft size={16} />}
         >
-          Previous
+          {t('common.previous')}
         </Button>
         {Array.from({ length: meta.last_page }, (_, index) => index + 1).map(
           (page) => (
@@ -74,7 +79,7 @@ const Pagination = ({ meta, baseUrl, only }: Props) => {
           size="small"
           endIcon={<ChevronRight size={16} />}
         >
-          Next
+          {t('common.next')}
         </Button>
       </Box>
     </Stack>

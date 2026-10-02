@@ -1,4 +1,5 @@
 import { Autocomplete, TextField } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import {
   useController,
   type Control,
@@ -31,12 +32,13 @@ const MultiAutocomplete = <T extends FieldValues = FieldValues>({
   rules,
   label,
   options,
-  placeholder = 'Search...',
+  placeholder,
   disabled,
   renderOption,
   getOptionLabel,
   renderValue,
 }: Props<T>) => {
+  const { t } = useTranslation();
   const { field, fieldState } = useController({ control, name, rules });
 
   const selectedOptions = options.filter((opt) =>
@@ -53,14 +55,14 @@ const MultiAutocomplete = <T extends FieldValues = FieldValues>({
       getOptionLabel={getOptionLabel ?? ((option: any) => option.label)}
       isOptionEqualToValue={(option: any, value: any) => option.value === value.value}
       onChange={(_: any, value: any) => field.onChange(value.map((opt: any) => opt.value))}
-      noOptionsText="No results found."
+      noOptionsText={t('common.noResults')}
       renderOption={renderOption}
       renderValue={renderValue}
       renderInput={(params) => (
         <TextField
           {...params}
           label={label}
-          placeholder={placeholder}
+          placeholder={placeholder ?? t('common.search')}
           required={!!rules?.required}
           error={!!fieldState.error}
           helperText={fieldState.error?.message}
