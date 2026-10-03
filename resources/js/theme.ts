@@ -1,4 +1,5 @@
 import { createTheme } from '@mui/material/styles';
+import type {} from '@mui/x-data-grid/themeAugmentation';
 
 const theme = createTheme({
   palette: {
@@ -54,6 +55,14 @@ const theme = createTheme({
     },
   },
   components: {
+    MuiDataGrid: {
+      styleOverrides: {
+        root: {
+          fontFamily: 'inherit',
+          fontSize: '1rem',
+        },
+      },
+    },
     MuiButton: {
       styleOverrides: {
         root: {
