@@ -11,7 +11,9 @@
     "logout": "Logout",
     "user": "User",
     "toggleLanguage": "ខ្មែរ",
-    "search": "Search..."
+    "search": "Search...",
+    "required": "This field is required",
+    "save": "Save"
   },
   "sidebar": {
     "menu": "Menu",
@@ -28,5 +30,28 @@
     "routes": "Routes",
     "medicineInstructions": "Medicine Instructions",
     "diagnosticTests": "Diagnostic Test"
+  },
+  "categories": {
+    "title": "Categories",
+    "createTitle": "New Category",
+    "editTitle": "Edit Category",
+    "deleteMessage": "Delete this category?",
+    "deleteDescription": "This action cannot be undone.",
+    "delete": "Delete",
+    "columnName": "Name",
+    "columnDescription": "Description",
+    "columnCreated": "Created",
+    "columnActions": "Actions",
+    "editAction": "Edit {{name}}",
+    "deleteAction": "Delete {{name}}",
+    "searchPlaceholder": "Search category",
+    "new": "New",
+    "name": "Name",
+    "namePlaceholder": "Enter name",
+    "description": "Description",
+    "createError": "Unable to create category",
+    "created": "Category created.",
+    "updated": "Category updated.",
+    "deleted": "Category deleted."
   }
 }

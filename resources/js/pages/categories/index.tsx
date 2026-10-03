@@ -15,8 +15,10 @@ import SearchBar from '@/components/searchBar';
 import { formatCreatedDateTime } from '@/utils/date';
 import { Box, Typography, Button, Stack } from '@mui/material';
 import { IPagination } from '@/interfaces/IPagination';
+import { useTranslation } from 'react-i18next';
 
 const Category = () => {
+  const { t } = useTranslation();
   const { openModal, openAlert } = useModal();
   const { categories, search: searchProp } = usePage<{
     categories: IPagination<ICategory>;
@@ -34,7 +36,7 @@ const Category = () => {
 
   const handleCreate = () => {
     openModal({
-      title: 'New Category',
+      title: t('categories.createTitle'),
       content: <CategoryForm />,
       config: { preventClickAway: true, maxWidth: 'sm' },
     });
@@ -42,7 +44,7 @@ const Category = () => {
 
   const handleEdit = (category: ICategory) => {
     openModal({
-      title: "Edit Category",
+      title: t('categories.editTitle'),
       content: <CategoryForm category={category} />,
       config: { preventClickAway: true, maxWidth: 'sm' },
     });
@@ -50,10 +52,10 @@ const Category = () => {
 
   const handleDelete = (category: ICategory) => {
     openAlert({
-      message: 'Delete this category?',
-      description: 'This action cannot be undone.',
+      message: t('categories.deleteMessage'),
+      description: t('categories.deleteDescription'),
       variant: 'danger',
-      confirmLabel: 'Delete',
+      confirmLabel: t('categories.delete'),
       onConfirm: () => router.delete(`/settings/categories/${category.id}`),
     });
   };
@@ -61,19 +63,19 @@ const Category = () => {
   const columns: GridColDef[] = [
     {
       field: 'name',
-      headerName: 'ឈ្មោះ',
+      headerName: t('categories.columnName'),
       flex: 1,
       minWidth: 180,
     },
     {
       field: 'description',
-      headerName: 'ការពិពណ៌នា',
+      headerName: t('categories.columnDescription'),
       flex: 1,
       minWidth: 220
     },
     {
       field: 'created_at',
-      headerName: 'បានបង្កើត',
+      headerName: t('categories.columnCreated'),
       flex: 1,
       minWidth: 180,
       valueGetter: (_value, row: ICategory) =>
@@ -82,20 +84,20 @@ const Category = () => {
     {
       field: 'actions',
       type: 'actions',
-      headerName: 'សកម្មភាព',
+      headerName: t('categories.columnActions'),
       width: 150,
       getActions: (params) => [
         <GridActionsCellItem
           key={`edit-${params.id}`}
           icon={<Pencil size={16} color="#2563eb" />}
-          label={`Edit ${params.row.name}`}
+          label={t('categories.editAction', { name: params.row.name })}
           onClick={() => handleEdit(params.row as ICategory)}
           showInMenu={false}
         />,
         <GridActionsCellItem
           key={`delete-${params.id}`}
           icon={<Trash2 size={16} color="#dc2626" />}
-          label={`Delete ${params.row.name}`}
+          label={t('categories.deleteAction', { name: params.row.name })}
           onClick={() => handleDelete(params.row as ICategory)}
           showInMenu={false}
         />,
@@ -105,7 +107,7 @@ const Category = () => {
 
   return (
     <>
-      <Head title="Categories" />
+      <Head title={t('categories.title')} />
       <Stack
         sx={{ p: 4, height: '100%' }}
       >
@@ -116,7 +118,7 @@ const Category = () => {
             justifyContent: 'space-between',
           }}
         >
-          <Typography variant="h5">Categories</Typography>
+          <Typography variant="h5">{t('categories.title')}</Typography>
           <Box
             sx={{
               display: 'flex',
@@ -127,14 +129,14 @@ const Category = () => {
             <SearchBar
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search category"
+              placeholder={t('categories.searchPlaceholder')}
             />
             <Button
               onClick={handleCreate}
               variant="contained"
               startIcon={<Plus size={16} />}
             >
-              New
+              {t('categories.new')}
             </Button>
           </Box>
         </Box>

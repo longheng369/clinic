@@ -7,11 +7,13 @@
     "next": "បន្ទាប់",
     "pageOf": "ទំព័រ {{current}} នៃ {{total}}",
     "noResults": "មិនមានលទ្ធផល",
-    "emptyDescription": "ចាប់ផ្តើមដោយបង្កើតបញ្ជីថ្មី។",
+    "emptyDescription": "ចាប់ផ្តើមដោយបង្កើតបញ្ជីថ្មី",
     "logout": "ចាកចេញ",
     "user": "អ្នកប្រើប្រាស់",
     "toggleLanguage": "English",
-    "search": "ស្វែងរក..."
+    "search": "ស្វែងរក...",
+    "required": "វាលនេះទាមទារការបំពេញ",
+    "save": "រក្សាទុក"
   },
   "sidebar": {
     "menu": "ម៉ឺនុយ",
@@ -28,5 +30,28 @@
     "routes": "ផ្លូវរបស់ថ្នាំ",
     "medicineInstructions": "ការណែនាំប្រើថ្នាំ",
     "diagnosticTests": "ការធ្វើតេស្តរោគវិនិច្ឆ័យ"
+  },
+  "categories": {
+    "title": "ប្រភេទ",
+    "createTitle": "ប្រភេទថ្មី",
+    "editTitle": "កែប្រែប្រភេទ",
+    "deleteMessage": "តើលុបប្រភេទនេះមែនឬទេ?",
+    "deleteDescription": "សកម្មភាពនេះមិនអាចត្រឡប់ក្រោយវិញបានទេ",
+    "delete": "លុប",
+    "columnName": "ឈ្មោះ",
+    "columnDescription": "ការពិពណ៌នា",
+    "columnCreated": "បានបង្កើត",
+    "columnActions": "សកម្មភាព",
+    "editAction": "កែប្រែ {{name}}",
+    "deleteAction": "លុប {{name}}",
+    "searchPlaceholder": "ស្វែងរកប្រភេទ",
+    "new": "ថ្មី",
+    "name": "ឈ្មោះ",
+    "namePlaceholder": "បញ្ចូលឈ្មោះ",
+    "description": "ការពិពណ៌នា",
+    "createError": "មិនអាចបង្កើតប្រភេទបានទេ",
+    "created": "បានបង្កើតប្រភេទ",
+    "updated": "បានកែប្រែប្រភេទ",
+    "deleted": "បានលុបប្រភេទ"
   }
 }

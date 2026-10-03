@@ -9,6 +9,7 @@ import {
 } from 'react';
 import { router } from '@inertiajs/react';
 import { Box } from '@mui/material';
+import i18n from '@/i18n';
 import Toast, {
   type ToastVariant,
   type ToastData,
@@ -70,8 +71,8 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
       if (last?.message === message && now - last.time < 1500) return;
       lastFlashRef.current = { message, time: now };
 
-      if (success) toast(success, { variant: 'success' });
-      if (error) toast(error, { variant: 'error' });
+      if (success) toast(i18n.t(success), { variant: 'success' });
+      if (error) toast(i18n.t(error), { variant: 'error' });
     });
   }, [toast]);
 

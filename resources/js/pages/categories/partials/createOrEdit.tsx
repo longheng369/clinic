@@ -8,12 +8,14 @@ import { Box, Button, DialogActions, DialogContent, Grid } from '@mui/material';
 import { useToast } from '@/components/toast';
 import { useModal } from '@/components/modal';
 import { Save } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface CategoryFormProps {
   category?: ICategory;
 }
 
 const CategoryForm = ({ category }: CategoryFormProps) => {
+  const { t } = useTranslation();
   const { closeModal } = useModal();
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
@@ -49,7 +51,7 @@ const CategoryForm = ({ category }: CategoryFormProps) => {
         },
         onError: (errors) => {
           if (errors.name) {
-            toast('Unable to create category', {
+            toast(t('categories.createError'), {
               variant: 'error',
               description: errors.name,
             });
@@ -68,16 +70,16 @@ const CategoryForm = ({ category }: CategoryFormProps) => {
         <Grid container spacing={2}>
           <Grid size={{ md: 12 }}>
             <Input
-              label="Name"
+              label={t('categories.name')}
               control={control}
-              placeholder="Enter name"
+              placeholder={t('categories.namePlaceholder')}
               name="name"
-              rules={{ required: 'This field is required' }}
+              rules={{ required: t('common.required') }}
             />
           </Grid>
           <Grid size={{ md: 12 }}>
             <Textarea
-              label="Description"
+              label={t('categories.description')}
               control={control}
               name="description"
             />
@@ -86,7 +88,7 @@ const CategoryForm = ({ category }: CategoryFormProps) => {
       </DialogContent>
       <DialogActions>
         <Button type="button" onClick={() => closeModal()} variant="outlined">
-          Cancel
+          {t('common.cancel')}
         </Button>
         <Button
           type="submit"
@@ -94,7 +96,7 @@ const CategoryForm = ({ category }: CategoryFormProps) => {
           variant="contained"
           startIcon={<Save size={16} />}
         >
-          Save
+          {t('common.save')}
         </Button>
       </DialogActions>
     </Box>

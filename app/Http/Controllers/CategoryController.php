@@ -28,7 +28,7 @@ class CategoryController extends Controller
         Category::create($request->validated());
 
         return redirect()->route('settings.categories.index')
-            ->with('success', 'Category created.');
+            ->with('success', 'categories.created');
     }
 
     public function update(UpdateCategoryRequest $request, Category $category)
@@ -36,7 +36,7 @@ class CategoryController extends Controller
         $category->update($request->validated());
 
         return redirect()->route('settings.categories.index')
-            ->with('success', 'Category updated.');
+            ->with('success', 'categories.updated');
     }
 
     public function destroy(Category $category)
@@ -44,7 +44,7 @@ class CategoryController extends Controller
         $category->delete();
 
         return redirect()->route('settings.categories.index')
-            ->with('success', 'Category deleted.');
+            ->with('success', 'categories.deleted');
     }
 
     public function search(Request $request)
