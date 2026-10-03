@@ -69,7 +69,7 @@
     "columnName": "Name",
     "columnDescription": "Description",
     "columnSchedule": "Schedule",
-    "columnCreated": "Created",
+    "columnCreated": "Created date",
     "columnActions": "Actions",
     "searchPlaceholder": "Search vaccine",
     "noLimit": "no limit",

@@ -4,12 +4,12 @@ import { useModal } from '@/components/modal';
 import { Trash2, Plus, IdCard, Pencil } from 'lucide-react';
 import VaccinationForm from './partials/vaccinationForm';
 import VaccineCard from '../VaccineCard';
-import VaccinationAlertBanner from '../VaccinationAlertBanner';
 import { IPatient } from '@/interfaces/IPatient';
 import {
   IPatientVaccination,
   IVaccineCardItem,
   IVaccinationAlert,
+  IVaccineOption,
 } from '@/interfaces/IPatientVaccination';
 import {
   DataGrid,
@@ -45,7 +45,7 @@ const VaccinationTab = ({ patient }: VaccinationTabProps) => {
   const { openModal, closeModal, openAlert } = useModal();
   const { vaccinations, vaccines, vaccineCard, vaccinationAlerts } = usePage<{
     vaccinations: PaginatedData<IPatientVaccination>;
-    vaccines: { id: number; name: string }[];
+    vaccines: IVaccineOption[];
     vaccineCard: IVaccineCardItem[];
     vaccinationAlerts: IVaccinationAlert[];
   }>().props;
@@ -195,8 +195,6 @@ const VaccinationTab = ({ patient }: VaccinationTabProps) => {
 
   return (
     <Box>
-      <VaccinationAlertBanner alerts={vaccinationAlerts} />
-
       <Box
         sx={{
           mb: 2,

@@ -85,24 +85,6 @@ const Vaccine = () => {
     });
   };
 
-  const summarizeRules = (vaccine: IVaccine): string => {
-    const ruleCount = vaccine.age_rules.length;
-    if (ruleCount === 1) {
-      const rule = vaccine.age_rules[0];
-      const formatAge = (value: number, unit: string) => {
-        if (unit === 'year') return t('vaccines.ageValueYear', { value });
-        if (unit === 'day') return t('vaccines.ageValueDay', { value });
-        return t('vaccines.ageValueMonth', { value });
-      };
-      const minAgeText = formatAge(rule.min_age, rule.min_age_unit);
-      const maxAgeText = rule.max_age
-        ? formatAge(rule.max_age, rule.max_age_unit)
-        : t('vaccines.noLimit');
-      return `${minAgeText} - ${maxAgeText}`;
-    }
-    return t('vaccines.ageRules', { rules: ruleCount });
-  };
-
   const handlePaginationChange = (model: GridPaginationModel) => {
     setPaginationModel(model);
     router.get(
@@ -130,18 +112,6 @@ const Vaccine = () => {
       flex: 2,
       minWidth: 240,
       sortable: false,
-    },
-    {
-      field: 'schedule',
-      headerName: t('vaccines.columnSchedule'),
-      flex: 1,
-      minWidth: 220,
-      sortable: false,
-      renderCell: (params) => (
-        <Typography component="span" variant="body2" color="text.secondary">
-          {summarizeRules(params.row)}
-        </Typography>
-      ),
     },
     {
       field: 'created_at',

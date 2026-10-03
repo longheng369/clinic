@@ -69,7 +69,7 @@
     "columnName": "ឈ្មោះ",
     "columnDescription": "ការពិពណ៌នា",
     "columnSchedule": "កាលវិភាគ",
-    "columnCreated": "បានបង្កើត",
+    "columnCreated": "កាលបរិច្ឆេទបង្កើត",
     "columnActions": "សកម្មភាព",
     "searchPlaceholder": "ស្វែងរកវ៉ាក់សាំង",
     "noLimit": "គ្មានដែនកំណត់",
@@ -108,8 +108,8 @@
     "intervalRequired": "ចន្លោះពេលត្រូវការបំពេញ",
     "amountRequired": "ចំនួនត្រូវការបំពេញ",
     "amountGreaterThanZero": "ចំនួនត្រូវធំជាង 0",
-    "created": "បានបង្កើតវ៉ាក់សាំង។",
-    "updated": "បានកែប្រែវ៉ាក់សាំង។",
-    "deleted": "បានលុបវ៉ាក់សាំង។"
+    "created": "បានបង្កើតវ៉ាក់សាំង",
+    "updated": "បានកែប្រែវ៉ាក់សាំង",
+    "deleted": "បានលុបវ៉ាក់សាំង"
   }
 }
