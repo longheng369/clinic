@@ -53,9 +53,9 @@ const Category = () => {
   const handleDelete = (category: ICategory) => {
     openAlert({
       message: t('categories.deleteMessage'),
-      description: t('categories.deleteDescription'),
+      description: t('common.deleteDescription'),
       variant: 'danger',
-      confirmLabel: t('categories.delete'),
+      confirmLabel: t('common.delete'),
       onConfirm: () => router.delete(`/settings/categories/${category.id}`),
     });
   };

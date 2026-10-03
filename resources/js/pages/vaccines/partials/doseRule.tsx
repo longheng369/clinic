@@ -4,6 +4,7 @@ import { Control, useFieldArray } from 'react-hook-form';
 import { Plus, Trash } from 'lucide-react';
 import { IVaccineFormData } from '@/interfaces/IVaccine';
 import { IUnit } from '@/interfaces/IUnit';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   control: Control<IVaccineFormData>;
@@ -12,6 +13,7 @@ type Props = {
 }
 
 const DoseRule = ({ control, ageRuleIndex, units }: Props) => {
+  const { t } = useTranslation();
   const {
     fields,
     append,
@@ -31,7 +33,7 @@ const DoseRule = ({ control, ageRuleIndex, units }: Props) => {
   return (
     <Box>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', my: 2 }}>
-        <Typography sx={{ fontSize: 18, fontWeight: 'medium' }}>Doses</Typography>
+        <Typography sx={{ fontSize: 18, fontWeight: 'medium' }}>{t('vaccines.doses')}</Typography>
         <Button
           onClick={handleAppend}
           startIcon={<Plus size={16}/>}
@@ -40,7 +42,7 @@ const DoseRule = ({ control, ageRuleIndex, units }: Props) => {
           size='small'
           sx={{ borderRadius: 0 }}
         >
-          New Dose
+          {t('vaccines.newDose')}
         </Button>
       </Box>
       <Stack spacing={1}>
@@ -68,55 +70,57 @@ type DoseRowProps = {
 }
 
 const DoseRow = ({ control, doseRuleIndex, ageRuleIndex, onRemove, units }: DoseRowProps) => {
+  const { t } = useTranslation();
+
   const validateAmount = (value: unknown): true | string => {
     const amount = Number(value);
-    if (!Number.isFinite(amount)) return 'Amount must be a number';
-    if (amount <= 0) return 'Amount must be greater than 0';
+    if (!Number.isFinite(amount)) return t('vaccines.mustBeNumber', { label: t('vaccines.amount') });
+    if (amount <= 0) return t('vaccines.amountGreaterThanZero');
     return true;
   };
 
   const validateInterval = (value: unknown): true | string => {
     const interval = Number(value);
-    if (!Number.isFinite(interval)) return 'Interval must be a number';
-    if (interval < 0) return 'Interval cannot be negative';
-    if (!Number.isInteger(interval)) return 'Interval must be a whole number';
+    if (!Number.isFinite(interval)) return t('vaccines.mustBeNumber', { label: t('vaccines.interval') });
+    if (interval < 0) return t('vaccines.cannotBeNegative', { label: t('vaccines.interval') });
+    if (!Number.isInteger(interval)) return t('vaccines.mustBeWholeNumber', { label: t('vaccines.interval') });
     return true;
   };
 
   return (
     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: 1, borderColor: 'divider', p: 1 }}>
-      <Typography>Dose {doseRuleIndex + 1}</Typography>
+      <Typography>{t('vaccines.doseRow', { number: doseRuleIndex + 1 })}</Typography>
       {doseRuleIndex > 0 && (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography>Interval</Typography>
+          <Typography>{t('vaccines.interval')}</Typography>
           <ValueWithUnit
             control={control}
             name={`age_rules.${ageRuleIndex}.dose_rules.${doseRuleIndex}.interval_from_previous_dose`}
             selectionName={`age_rules.${ageRuleIndex}.dose_rules.${doseRuleIndex}.interval_from_previous_dose_unit`}
             rules={{
-              required: 'Interval is required',
+              required: t('vaccines.intervalRequired'),
               validate: {
                 nonNegative: validateInterval,
               },
             }}
-            selectionRules={{ required: 'Select a unit' }}
+            selectionRules={{ required: t('common.selectUnit') }}
           />
         </Box>
       )}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <Typography>Amount</Typography>
+        <Typography>{t('vaccines.amount')}</Typography>
         <ValueWithUnit
           control={control}
           name={`age_rules.${ageRuleIndex}.dose_rules.${doseRuleIndex}.amount`}
           selectionName={`age_rules.${ageRuleIndex}.dose_rules.${doseRuleIndex}.amount_unit_id`}
           selectionOptions={units.map((u) => ({ label: u.name, value: u.id }))}
           rules={{
-            required: 'Amount is required',
+            required: t('vaccines.amountRequired'),
             validate: {
               positive: validateAmount,
             },
           }}
-          selectionRules={{ required: 'Select a unit' }}
+          selectionRules={{ required: t('common.selectUnit') }}
         />
         <IconButton onClick={onRemove} color='error'>
           <Trash size={16} />

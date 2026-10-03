@@ -5,6 +5,7 @@ import type { Control } from 'react-hook-form';
 import { IVaccineFormData } from '@/interfaces/IVaccine';
 import { IUnit } from '@/interfaces/IUnit';
 import { MoveRight, Trash } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   control: Control<IVaccineFormData>;
@@ -24,11 +25,13 @@ const AgeRule = ({
   onRemove,
   units,
 }: Props) => {
+  const { t } = useTranslation();
+
   const validateWholeNumber = (label: string) => (value: unknown): true | string => {
     const number = Number(value);
-    if (!Number.isFinite(number)) return `${label} must be a number`;
-    if (number < 0) return `${label} cannot be negative`;
-    if (!Number.isInteger(number)) return `${label} must be a whole number`;
+    if (!Number.isFinite(number)) return t('vaccines.mustBeNumber', { label });
+    if (number < 0) return t('vaccines.cannotBeNegative', { label });
+    if (!Number.isInteger(number)) return t('vaccines.mustBeWholeNumber', { label });
     return true;
   };
 
@@ -40,19 +43,19 @@ const AgeRule = ({
     if (raw === null || raw === undefined || raw === '') return true;
 
     const max = Number(raw);
-    if (!Number.isFinite(max)) return 'Max age must be a number';
-    if (max < 0) return 'Max age cannot be negative';
-    if (!Number.isInteger(max)) return 'Max age must be a whole number';
+    if (!Number.isFinite(max)) return t('vaccines.mustBeNumber', { label: t('vaccines.maxAge') });
+    if (max < 0) return t('vaccines.cannotBeNegative', { label: t('vaccines.maxAge') });
+    if (!Number.isInteger(max)) return t('vaccines.mustBeWholeNumber', { label: t('vaccines.maxAge') });
 
     const rule = formValues.age_rules?.[ageRuleIndex];
     if (!rule) return true;
-    if (!rule.max_age_unit) return 'Select a unit for max age';
+    if (!rule.max_age_unit) return t('vaccines.selectUnitMaxAge');
 
     const min = rule.min_age as number | string | null | undefined;
     if (min === null || min === undefined || min === '') return true;
 
     if (toDays(max, rule.max_age_unit) < toDays(min, rule.min_age_unit)) {
-      return 'Max age must be greater than or equal to min age';
+      return t('vaccines.maxAgeGteMinAge');
     }
 
     return true;
@@ -70,7 +73,7 @@ const AgeRule = ({
         }}
       >
         <Typography sx={{ fontWeight: '600', color: 'white' }}>
-          Age Rule #{ageRuleIndex + 1}
+          {t('vaccines.ageRuleHeader', { index: ageRuleIndex + 1 })}
         </Typography>
         <IconButton color="default" onClick={onRemove}>
           <Trash size={16} color="white" />
@@ -86,23 +89,23 @@ const AgeRule = ({
         >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Typography>Min Age</Typography>
+              <Typography>{t('vaccines.minAge')}</Typography>
               <ValueWithUnit
                 control={control}
                 name={`age_rules.${ageRuleIndex}.min_age`}
                 selectionName={`age_rules.${ageRuleIndex}.min_age_unit`}
                 rules={{
-                  required: 'Min age is required',
+                  required: t('vaccines.minAgeRequired'),
                   validate: {
-                    nonNegative: validateWholeNumber('Min age'),
+                    nonNegative: validateWholeNumber(t('vaccines.minAge')),
                   },
                 }}
-                selectionRules={{ required: 'Select a unit' }}
+                selectionRules={{ required: t('common.selectUnit') }}
               />
             </Box>
             <MoveRight />
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Typography>Max Age</Typography>
+              <Typography>{t('vaccines.maxAge')}</Typography>
               <ValueWithUnit
                 control={control}
                 name={`age_rules.${ageRuleIndex}.max_age`}

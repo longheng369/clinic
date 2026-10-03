@@ -48,7 +48,7 @@ class VaccineController extends Controller
         });
 
         return redirect()->route('vaccines.index')
-            ->with('success', 'Vaccine created.');
+            ->with('success', 'vaccines.created');
     }
 
     public function update(UpdateVaccineRequest $request, Vaccine $vaccine)
@@ -84,7 +84,7 @@ class VaccineController extends Controller
         });
 
         return redirect()->route('vaccines.index')
-            ->with('success', 'Vaccine updated.');
+            ->with('success', 'vaccines.updated');
     }
 
     public function destroy(Vaccine $vaccine)
@@ -92,6 +92,6 @@ class VaccineController extends Controller
         $vaccine->delete();
 
         return redirect()->route('vaccines.index')
-            ->with('success', 'Vaccine deleted.');
+            ->with('success', 'vaccines.deleted');
     }
 }

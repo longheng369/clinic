@@ -16,6 +16,7 @@ import {
   type GridColDef,
   type GridPaginationModel,
 } from '@mui/x-data-grid';
+import { useTranslation } from 'react-i18next';
 
 interface PaginatedData<T> {
   data: T[];
@@ -28,6 +29,7 @@ interface PaginatedData<T> {
 }
 
 const Vaccine = () => {
+  const { t } = useTranslation();
   const { openModal, closeModal, openAlert } = useModal();
 
   const { vaccines, search: searchProp, units } = usePage<{
@@ -51,7 +53,7 @@ const Vaccine = () => {
 
   const handleCreate = () => {
     openModal({
-      title: 'New Vaccine',
+      title: t('vaccines.new'),
       content: (
         <VaccineForm units={units} onClose={() => closeModal()} />
       ),
@@ -61,7 +63,7 @@ const Vaccine = () => {
 
   const handleEdit = (vaccine: IVaccine) => {
     openModal({
-      title: `Edit ${vaccine.name}`,
+      title: t('vaccines.editTitle', { name: vaccine.name }),
       content: (
         <VaccineForm
           vaccine={vaccine}
@@ -75,10 +77,10 @@ const Vaccine = () => {
 
   const handleDelete = (vaccine: IVaccine) => {
     openAlert({
-      message: 'Delete this vaccine?',
-      description: 'This action cannot be undone.',
+      message: t('vaccines.deleteMessage'),
+      description: t('common.deleteDescription'),
       variant: 'danger',
-      confirmLabel: 'Delete',
+      confirmLabel: t('common.delete'),
       onConfirm: () => router.delete(`/vaccines/${vaccine.id}`),
     });
   };
@@ -88,17 +90,17 @@ const Vaccine = () => {
     if (ruleCount === 1) {
       const rule = vaccine.age_rules[0];
       const formatAge = (value: number, unit: string) => {
-        if (unit === 'year') return `${value}y`;
-        if (unit === 'day') return `${value}d`;
-        return `${value}m`;
+        if (unit === 'year') return t('vaccines.ageValueYear', { value });
+        if (unit === 'day') return t('vaccines.ageValueDay', { value });
+        return t('vaccines.ageValueMonth', { value });
       };
       const minAgeText = formatAge(rule.min_age, rule.min_age_unit);
       const maxAgeText = rule.max_age
         ? formatAge(rule.max_age, rule.max_age_unit)
-        : 'no limit';
+        : t('vaccines.noLimit');
       return `${minAgeText} - ${maxAgeText}`;
     }
-    return `${ruleCount} age rules`;
+    return t('vaccines.ageRules', { rules: ruleCount });
   };
 
   const handlePaginationChange = (model: GridPaginationModel) => {
@@ -117,21 +119,21 @@ const Vaccine = () => {
   const columns: GridColDef<IVaccine>[] = [
     {
       field: 'name',
-      headerName: 'ឈ្មោះ',
+      headerName: t('vaccines.columnName'),
       flex: 1,
       minWidth: 180,
       sortable: false,
     },
     {
       field: 'description',
-      headerName: 'ការពិពណ៌នា',
+      headerName: t('vaccines.columnDescription'),
       flex: 2,
       minWidth: 240,
       sortable: false,
     },
     {
       field: 'schedule',
-      headerName: 'កាលវិភាគ',
+      headerName: t('vaccines.columnSchedule'),
       flex: 1,
       minWidth: 220,
       sortable: false,
@@ -143,7 +145,7 @@ const Vaccine = () => {
     },
     {
       field: 'created_at',
-      headerName: 'បានបង្កើត',
+      headerName: t('vaccines.columnCreated'),
       width: 200,
       sortable: false,
       renderCell: (params) => formatCreatedDateTime(params.row.created_at),
@@ -151,20 +153,20 @@ const Vaccine = () => {
     {
       field: 'actions',
       type: 'actions',
-      headerName: 'សកម្មភាព',
+      headerName: t('vaccines.columnActions'),
       width: 150,
       getActions: (params) => [
         <GridActionsCellItem
           key={`edit-${params.id}`}
           icon={<Pencil size={16} color="#2563eb" />}
-          label="Edit"
+          label={t('common.edit')}
           onClick={() => handleEdit(params.row)}
           showInMenu={false}
         />,
         <GridActionsCellItem
           key={`delete-${params.id}`}
           icon={<Trash2 size={16} color="#dc2626" />}
-          label="Delete"
+          label={t('common.delete')}
           onClick={() => handleDelete(params.row)}
           showInMenu={false}
         />,
@@ -179,7 +181,7 @@ const Vaccine = () => {
 
   return (
     <>
-      <Head title="Vaccines" />
+      <Head title={t('vaccines.title')} />
       <Box
         sx={{ p: 4, height: '100%', display: 'flex', flexDirection: 'column' }}
       >
@@ -190,7 +192,7 @@ const Vaccine = () => {
             justifyContent: 'space-between',
           }}
         >
-          <Typography variant="h5">ការគ្រប់គ្រងវ៉ាក់សាំង</Typography>
+          <Typography variant="h5">{t('vaccines.heading')}</Typography>
           <Box
             sx={{
               display: 'flex',
@@ -202,14 +204,14 @@ const Vaccine = () => {
             <SearchBar
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search vaccine"
+              placeholder={t('vaccines.searchPlaceholder')}
             />
             <Button
               onClick={handleCreate}
               variant="contained"
               startIcon={<Plus size={16} />}
             >
-              New Vaccine
+              {t('vaccines.new')}
             </Button>
           </Box>
         </Box>

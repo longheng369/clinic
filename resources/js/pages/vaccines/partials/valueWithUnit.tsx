@@ -3,6 +3,7 @@ import Select from '@/components/form/select';
 import { IOption } from '@/interfaces/IOption';
 import { Box } from '@mui/material'
 import { FieldValues, Control, Path, RegisterOptions } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
 type FieldRules<T extends FieldValues> = Omit<
   RegisterOptions<T, Path<T>>,
@@ -26,10 +27,12 @@ const ValueWithUnit = <T extends FieldValues>({
   rules,
   selectionRules,
 }: Props<T>) => {
+  const { t } = useTranslation();
+
   return (
     <Box sx={{ display: 'flex' }}>
       <Input
-        label="Amount"
+        label={t('vaccines.amount')}
         control={control}
         name={name}
         size="small"
@@ -53,7 +56,7 @@ const ValueWithUnit = <T extends FieldValues>({
         }}
       />
       <Select
-        label="Unit"
+        label={t('vaccines.unit')}
         control={control}
         name={selectionName}
         size="small"
@@ -66,9 +69,9 @@ const ValueWithUnit = <T extends FieldValues>({
         rules={selectionRules}
         options={
           selectionOptions ?? [
-            { label: 'Day', value: 'day' },
-            { label: 'Month', value: 'month' },
-            { label: 'Year', value: 'year' },
+            { label: t('common.day'), value: 'day' },
+            { label: t('common.month'), value: 'month' },
+            { label: t('common.year'), value: 'year' },
           ]
         }
       />

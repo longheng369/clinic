@@ -12,11 +12,11 @@ import { Plus } from 'lucide-react';
 import {
   Box,
   Button, DialogActions, DialogContent,
-  Paper,
   Stack,
   Typography,
 } from '@mui/material';
 import AgeRule from "@/pages/vaccines/partials/ageRule";
+import { useTranslation } from 'react-i18next';
 
 interface VaccineFormProps {
   vaccine?: IVaccine;
@@ -41,6 +41,7 @@ const buildIntervalPayload = (dose: IVaccineDoseRuleFormData) => {
 };
 
 const VaccineForm = ({ vaccine, units, onClose }: VaccineFormProps) => {
+  const { t } = useTranslation();
   const [isProcessing, setIsProcessing] = useState(false);
   const [ageRulesError, setAgeRulesError] = useState<string | null>(null);
   const { toast } = useToast();
@@ -53,10 +54,10 @@ const VaccineForm = ({ vaccine, units, onClose }: VaccineFormProps) => {
     defaultValues: vaccine
       ? { ...vaccine }
       : {
-          name: '',
-          description: '',
-          age_rules: [],
-        },
+        name: '',
+        description: '',
+        age_rules: [],
+      },
   });
 
   const {
@@ -94,7 +95,7 @@ const VaccineForm = ({ vaccine, units, onClose }: VaccineFormProps) => {
 
   const onSubmit = handleSubmit((data) => {
     if (!data.age_rules || data.age_rules.length === 0) {
-      setAgeRulesError('Add at least one age rule');
+      setAgeRulesError(t('vaccines.ageRulesAtLeastOne'));
       return;
     }
 
@@ -125,7 +126,7 @@ const VaccineForm = ({ vaccine, units, onClose }: VaccineFormProps) => {
       onError: (errors: Record<string, string>) => {
         applyServerErrors(
           errors,
-          vaccine ? 'Unable to update vaccine' : 'Unable to create vaccine',
+          vaccine ? t('vaccines.updateError') : t('vaccines.createError'),
         );
       },
       onFinish: () => setIsProcessing(false),
@@ -154,30 +155,30 @@ const VaccineForm = ({ vaccine, units, onClose }: VaccineFormProps) => {
         sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
       >
         <Input
-          label="Name"
+          label={t('vaccines.name')}
           control={control}
-          placeholder="Enter vaccine name"
+          placeholder={t('vaccines.namePlaceholder')}
           name="name"
           rules={{
-            required: 'Name is required',
+            required: t('vaccines.nameRequired'),
             minLength: {
               value: 2,
-              message: 'Name must be at least 2 characters',
+              message: t('vaccines.nameMinLength'),
             },
             maxLength: {
               value: 255,
-              message: 'Name must be at most 255 characters',
+              message: t('vaccines.nameMaxLength'),
             },
           }}
         />
         <Textarea
-          label="Description"
+          label={t('vaccines.description')}
           control={control}
           name="description"
           rules={{
             maxLength: {
               value: 2000,
-              message: 'Description must be at most 2000 characters',
+              message: t('vaccines.descriptionMaxLength'),
             },
           }}
         />
@@ -191,7 +192,7 @@ const VaccineForm = ({ vaccine, units, onClose }: VaccineFormProps) => {
               justifyContent: 'space-between',
             }}
           >
-            <Typography variant="subtitle2">Dose Rules</Typography>
+            <Typography variant="subtitle2">{t('vaccines.doseRules')}</Typography>
             <Button
               type="button"
               variant="contained"
@@ -217,12 +218,12 @@ const VaccineForm = ({ vaccine, units, onClose }: VaccineFormProps) => {
               }}
               startIcon={<Plus size={16} />}
             >
-              Add Age Rule
+              {t('vaccines.addAgeRule')}
             </Button>
           </Stack>
           {ruleFields.length === 0 ? (
             <Typography sx={{ textAlign: 'center', color: 'gray' }}>
-              No age rules yet
+              {t('vaccines.noAgeRulesYet')}
             </Typography>
           ) : (
             <Stack spacing={2}>
@@ -246,14 +247,14 @@ const VaccineForm = ({ vaccine, units, onClose }: VaccineFormProps) => {
       </DialogContent>
       <DialogActions>
         <Button type="button" onClick={onClose} variant="outlined">
-          Cancel
+          {t('common.cancel')}
         </Button>
         <Button
           onClick={onSubmit}
           disabled={isProcessing || !isDirty}
           variant="contained"
         >
-          {vaccine ? 'Save' : 'Create'}
+          {vaccine ? t('common.save') : t('common.create')}
         </Button>
       </DialogActions>
     </>
