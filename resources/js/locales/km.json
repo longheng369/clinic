@@ -22,6 +22,8 @@
     "day": "ថ្ងៃ",
     "month": "ខែ",
     "year": "ឆ្នាំ",
+    "date": "កាលបរិច្ឆេទ",
+    "createdDate": "កាលបរិច្ឆេទបង្កើត",
     "note": "កំណត់ចំណាំ",
     "createdBy": "អ្នកបង្កើត",
     "action": "សកម្មភាព"
@@ -104,6 +106,27 @@
       "commune": "ឃុំ/សង្កាត់",
       "village": "ភូមិ",
       "onlyKhmerCharacters": "សូមបញ្ចូលតែអក្សរខ្មែរ"
+    },
+    "show": {
+      "tabs": {
+        "consultation": "ការពិគ្រោះយោបល់",
+        "prescription": "វេជ្ជបញ្ជា",
+        "paraClinic": "ផ្នែកគ្លីនិកជំនួយ",
+        "vaccination": "ការចាក់វ៉ាក់សាំង",
+        "attachment": "ឯកសារភ្ជាប់",
+        "billing": "ការចេញវិក្កយបត្រ",
+        "medicationOrders": "ការបញ្ជាឱ្យប្រើប្រាស់ថ្នាំ",
+        "medicationAdministration": "ការផ្តល់ថ្នាំ",
+        "surveillance": "ការឃ្លាំមើល"
+      },
+      "visitType": "ប្រភេទនៃការមកជួប"
+    },
+    "consultation": {
+      "newConsultation": "ការពិគ្រោះយោបល់ថ្មី",
+      "colChiefComplaint": "ការត្អូញត្អែរចម្បង",
+      "colDiagnosis": "រោគវិនិច្ឆ័យ",
+      "colWeight": "ទម្ងន់",
+      "colFee": "ថ្លៃសេវា"
     }
   },
   "vaccines": {

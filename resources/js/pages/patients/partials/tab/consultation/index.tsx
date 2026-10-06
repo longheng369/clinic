@@ -51,7 +51,7 @@ const ConsultationTab = ({
   const columns: GridColDef[] = [
     {
       field: 'created_at',
-      headerName: t('patients.consultation.colDate'),
+      headerName: t('common.createdDate'),
       flex: 1,
       minWidth: 150,
       valueGetter: (_value, row: IConsultation) =>
@@ -157,12 +157,9 @@ const ConsultationTab = ({
           mb: 2,
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between',
+          justifyContent: 'end',
         }}
       >
-        <Typography variant="body2">
-          {t('patients.consultation.subtitle')}
-        </Typography>
         <Button
           component={InertiaLink as React.ElementType}
           href={`/patients/${patientId}/consultations/create${visitId ? `?visit=${visitId}` : ''}`}
