@@ -2,6 +2,7 @@ import { Head, router } from '@inertiajs/react';
 import { ArrowLeft } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import ConsultationForm from './partials/ConsultationForm';
 import { IConsultationFormData } from '@/interfaces/IConsultation';
 import type { IPatient } from '@/interfaces/IPatient';
@@ -14,6 +15,7 @@ const CreateConsultation = ({
   patient: IPatient;
   visitId: number | null;
 }) => {
+  const { t } = useTranslation();
   const [isProcessing, setIsProcessing] = useState(false);
   const { control, handleSubmit } = useForm<IConsultationFormData>({
     defaultValues: {
@@ -67,7 +69,7 @@ const CreateConsultation = ({
 
   return (
     <>
-      <Head title="New Consultation" />
+      <Head title={t('patients.consultation.newConsultation')} />
       <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
         <Box
           sx={{
@@ -85,7 +87,7 @@ const CreateConsultation = ({
               router.visit(`/patients/${patient.id}?tab=consultation`)
             }
             size="small"
-            aria-label="Back"
+            aria-label={t('patients.shared.back')}
             sx={{ color: 'text.secondary' }}
           >
             <ArrowLeft size={20} />
@@ -95,7 +97,7 @@ const CreateConsultation = ({
               variant="h6"
               sx={{ fontWeight: 700, color: 'text.primary' }}
             >
-              New Consultation
+              {t('patients.consultation.newConsultation')}
             </Typography>
             <Typography
               variant="body1"
@@ -126,14 +128,14 @@ const CreateConsultation = ({
                     router.visit(`/patients/${patient.id}?tab=consultation`)
                   }
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </Button>
                 <Button
                   type="submit"
                   variant="contained"
                   disabled={isProcessing}
                 >
-                  Create Consultation
+                  {t('patients.consultation.createConsultation')}
                 </Button>
               </Box>
             </Box>

@@ -48,9 +48,6 @@ export default function Login({
             }}
           />
           <Typography variant="h5">Welcome back</Typography>
-          <Typography color="text.secondary" variant="body1">
-            Sign in to your clinic account
-          </Typography>
         </Stack>
         {status && <Alert severity="info">{status}</Alert>}
         <Box component="form" onSubmit={submit}>

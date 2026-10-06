@@ -28,6 +28,7 @@ import {
 import VisitHistory from './partials/visitHistory';
 import { IVisit, IVisitWithMetaData } from '@/interfaces/IVisit';
 import { useToast } from '@/components/toast';
+import { useTranslation } from 'react-i18next';
 import theme from '@/theme';
 
 type Tab =
@@ -43,19 +44,23 @@ type Tab =
   | 'billing';
 
 const ALL_TABS: { key: Tab; label: string; requiresIpd?: boolean }[] = [
-  { key: 'consultation', label: 'Consultation' },
-  { key: 'prescription', label: 'Prescription' },
-  { key: 'para-clinic', label: 'Para clinic' },
-  { key: 'vaccination', label: 'Vaccination' },
-  { key: 'attachment', label: 'Attachment' },
-  { key: 'billing', label: 'Billing & Payment' },
-  { key: 'medication-orders', label: 'Medication Orders', requiresIpd: true },
+  { key: 'consultation', label: 'patients.show.tabs.consultation' },
+  { key: 'prescription', label: 'patients.show.tabs.prescription' },
+  { key: 'para-clinic', label: 'patients.show.tabs.paraClinic' },
+  { key: 'vaccination', label: 'patients.show.tabs.vaccination' },
+  { key: 'attachment', label: 'patients.show.tabs.attachment' },
+  { key: 'billing', label: 'patients.show.tabs.billing' },
   {
-    key: 'medication-administration',
-    label: 'Medication Administration',
+    key: 'medication-orders',
+    label: 'patients.show.tabs.medicationOrders',
     requiresIpd: true,
   },
-  { key: 'surveillance', label: 'Surveillance', requiresIpd: true },
+  {
+    key: 'medication-administration',
+    label: 'patients.show.tabs.medicationAdministration',
+    requiresIpd: true,
+  },
+  { key: 'surveillance', label: 'patients.show.tabs.surveillance', requiresIpd: true },
 ];
 
 const DRAWER_WIDTH = '380px';
@@ -86,6 +91,7 @@ const PatientShow = ({ patient }: Props) => {
   });
   const { openAlert } = useModal();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [isVisitDrawerOpen, setVisitDrawerOpen] = useState(false);
   const [isStartingVisit, setIsStartingVisit] = useState(false);
 
@@ -93,20 +99,20 @@ const PatientShow = ({ patient }: Props) => {
 
   const handleAdmit = (visitId: number) => {
     openAlert({
-      message: 'Admit patient to IPD?',
-      description: 'This will change the visit type to Inpatient.',
+      message: t('patients.show.admitTitle'),
+      description: t('patients.show.admitDescription'),
       variant: 'info',
-      confirmLabel: 'Admit',
+      confirmLabel: t('patients.show.admit'),
       onConfirm: () => router.patch(`/visits/${visitId}/admit`),
     });
   };
 
   const handleClose = (visitId: number) => {
     openAlert({
-      message: 'Close this visit?',
-      description: 'The visit will be marked as closed.',
+      message: t('patients.show.closeVisitTitle'),
+      description: t('patients.show.closeVisitDescription'),
       variant: 'warning',
-      confirmLabel: 'Close',
+      confirmLabel: t('common.close'),
       onConfirm: () =>
         router.patch(
           `/visits/${visitId}/close`,
@@ -117,7 +123,7 @@ const PatientShow = ({ patient }: Props) => {
               toast(
                 typeof message === 'string'
                   ? message
-                  : 'Unable to close visit.',
+                  : t('patients.show.unableToCloseVisit'),
                 { variant: 'error' },
               );
             },
@@ -147,7 +153,7 @@ const PatientShow = ({ patient }: Props) => {
       {},
       {
         onError: () => {
-          toast('Unable to start a new visit.', { variant: 'error' });
+          toast(t('patients.show.unableToStartVisit'), { variant: 'error' });
         },
         onFinish: () => setIsStartingVisit(false),
       },
@@ -172,7 +178,10 @@ const PatientShow = ({ patient }: Props) => {
       }}
     >
       <Head
-        title={`Patient - ${patient.khmer_first_name} ${patient.khmer_last_name}`}
+        title={t('patients.show.title', {
+          khmer_first_name: patient.khmer_first_name,
+          khmer_last_name: patient.khmer_last_name,
+        })}
       />
 
       <Box
@@ -230,7 +239,7 @@ const PatientShow = ({ patient }: Props) => {
               sx={{ borderColor: '#e2e8f0' }}
             />
             <Typography component="span" sx={{ fontSize: 14 }}>
-              {selectedVisit.type} Visit
+              {t('patients.show.visitType', { type: selectedVisit.type })}
             </Typography>
             <Divider
               orientation="vertical"
@@ -251,7 +260,9 @@ const PatientShow = ({ patient }: Props) => {
                   component="span"
                   sx={{ color: 'text.secondary', fontSize: 14 }}
                 >
-                  by {selectedVisit.created_by.name}
+                  {t('patients.shared.by', {
+                    name: selectedVisit.created_by.name,
+                  })}
                 </Typography>
               </>
             )}
@@ -264,7 +275,7 @@ const PatientShow = ({ patient }: Props) => {
                 onClick={handleStartNewVisit}
                 disabled={isStartingVisit}
               >
-                Start New Visit
+                {t('patients.show.startNewVisit')}
               </Button>
             )}
           </Paper>
@@ -282,7 +293,7 @@ const PatientShow = ({ patient }: Props) => {
             }}
           >
             <Typography sx={{ color: 'text.secondary', fontSize: 14 }}>
-              No visits recorded
+              {t('patients.show.noVisits')}
             </Typography>
             {!hasActiveVisit && (
               <Button
@@ -292,7 +303,7 @@ const PatientShow = ({ patient }: Props) => {
                 onClick={handleStartNewVisit}
                 disabled={isStartingVisit}
               >
-                Start New Visit
+                {t('patients.show.startNewVisit')}
               </Button>
             )}
           </Paper>
@@ -308,7 +319,11 @@ const PatientShow = ({ patient }: Props) => {
                 scrollButtons="auto"
               >
                 {visibleTabs.map((tab) => (
-                  <Tab key={tab.key} value={tab.key} label={tab.label} />
+                  <Tab
+                    key={tab.key}
+                    value={tab.key}
+                    label={t(tab.label)}
+                  />
                 ))}
               </Tabs>
             </Box>
@@ -331,7 +346,7 @@ const PatientShow = ({ patient }: Props) => {
             }}
           >
             <Typography color="text.secondary">
-              Select a visit or start a new one to begin.
+              {t('patients.show.selectVisit')}
             </Typography>
           </Box>
         )}
@@ -340,7 +355,9 @@ const PatientShow = ({ patient }: Props) => {
       <Button
         variant="contained"
         aria-label={
-          isVisitDrawerOpen ? 'Close visit history' : 'Open visit history'
+          isVisitDrawerOpen
+            ? t('patients.show.ariaCloseHistory')
+            : t('patients.show.ariaOpenHistory')
         }
         aria-expanded={isVisitDrawerOpen}
         aria-controls="patient-visit-history"
@@ -368,7 +385,7 @@ const PatientShow = ({ patient }: Props) => {
         }}
       >
         <Box component="span" className="visit-history-label">
-          Visit History
+          {t('patients.show.visitHistory')}
         </Box>
       </Button>
 
@@ -395,7 +412,7 @@ const PatientShow = ({ patient }: Props) => {
           >
             <History />
             <Typography variant="h6" sx={{ textAlign: 'center', py: 1 }}>
-              Visit History
+              {t('patients.show.visitHistory')}
             </Typography>
           </Box>
           <Divider />

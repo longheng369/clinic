@@ -1,5 +1,6 @@
 import { Box } from '@mui/material';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AlertTriangle, Clock, X } from 'lucide-react';
 import { IVaccinationAlert } from '@/interfaces/IPatientVaccination';
 
@@ -8,6 +9,7 @@ interface VaccinationAlertBannerProps {
 }
 
 const VaccinationAlertBanner = ({ alerts }: VaccinationAlertBannerProps) => {
+  const { t } = useTranslation();
   const [dismissed, setDismissed] = useState(false);
 
   if (dismissed || alerts.length === 0) return null;
@@ -25,17 +27,20 @@ const VaccinationAlertBanner = ({ alerts }: VaccinationAlertBannerProps) => {
         <Box>
           <AlertTriangle size={20} />
           <Box>
-            <Box>Vaccination Alerts</Box>
+            <Box>{t('patients.vaccination.alertsTitle')}</Box>
             {overdue.length > 0 && (
               <Box>
-                <Box>Overdue</Box>
+                <Box>{t('patients.shared.status.overdue')}</Box>
                 <Box>
                   {overdue.map((a) => (
                     <Box key={`${a.vaccine.id}-${a.next_dose_number}`}>
                       <AlertTriangle size={12} />
                       <Box>
-                        <strong>{a.vaccine.name}</strong> — Dose{' '}
-                        {a.next_dose_number} was due {a.next_dose_due_date}
+                        {t('patients.vaccination.alertOverdueDose', {
+                          vaccine: a.vaccine,
+                          next_dose_number: a.next_dose_number,
+                          next_dose_due_date: a.next_dose_due_date,
+                        })}
                       </Box>
                     </Box>
                   ))}
@@ -44,14 +49,17 @@ const VaccinationAlertBanner = ({ alerts }: VaccinationAlertBannerProps) => {
             )}
             {upcoming.length > 0 && (
               <Box>
-                <Box>Due Soon</Box>
+                <Box>{t('patients.vaccination.dueSoon')}</Box>
                 <Box>
                   {upcoming.map((a) => (
                     <Box key={`${a.vaccine.id}-${a.next_dose_number}`}>
                       <Clock size={12} />
                       <Box>
-                        <strong>{a.vaccine.name}</strong> — Dose{' '}
-                        {a.next_dose_number} due {a.next_dose_due_date}
+                        {t('patients.vaccination.alertDueSoonDose', {
+                          vaccine: a.vaccine,
+                          next_dose_number: a.next_dose_number,
+                          next_dose_due_date: a.next_dose_due_date,
+                        })}
                       </Box>
                     </Box>
                   ))}

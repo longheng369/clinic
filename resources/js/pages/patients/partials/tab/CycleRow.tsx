@@ -1,5 +1,6 @@
 import { Box } from '@mui/material';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ChevronDown } from 'lucide-react';
 import type { IMedicationAdministration } from '@/interfaces/IMedicationAdministration';
 import DoseRow from './DoseRow';
@@ -28,6 +29,7 @@ const CycleRow = ({
   visitId,
   orderStatus,
 }: CycleRowProps) => {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(() => {
     return administrations.some((d) => d.status === 'pending');
   });
@@ -71,7 +73,7 @@ const CycleRow = ({
           }}
         >
           <Box sx={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>
-            Cycle {cycleNo}
+            {t('patients.vaccination.cycleTitle', { cycleNo })}
           </Box>
           {hasPending && (
             <Box
@@ -111,7 +113,15 @@ const CycleRow = ({
             return (
               <Box
                 key={admin.id}
-                title={`Dose ${admin.administration_no ?? '?'}: ${admin.status}${isOverdue ? ' (overdue)' : ''}`}
+                title={t(
+                  isOverdue
+                    ? 'patients.vaccination.doseTooltipOverdue'
+                    : 'patients.vaccination.doseTooltip',
+                  {
+                    no: admin.administration_no ?? '?',
+                    status: t(`patients.shared.status.${admin.status}`),
+                  },
+                )}
                 sx={{
                   width: 24,
                   height: 24,

@@ -21,7 +21,10 @@
     "selectUnit": "Select a unit",
     "day": "Day",
     "month": "Month",
-    "year": "Year"
+    "year": "Year",
+    "note": "Note",
+    "createdBy": "Created By",
+    "action": "Action"
   },
   "sidebar": {
     "menu": "Menu",
@@ -58,9 +61,52 @@
     "createError": "Unable to create category",
     "created": "Category created.",
     "updated": "Category updated.",
-    "deleted": "Category deleted."
-  },
-  "vaccines": {
+"deleted": "Category deleted."
+},
+"patients": {
+    "shared": {
+        "form": {
+            "generalInformation": "General Information"
+        }
+    },
+    "list": {
+        "title": "Patient List",
+        "newPatient": "New Patient",
+        "deleteTitle": "Delete Patient",
+        "searchPlaceholder": "Search patients",
+        "colKhmerName": "Khmer Name",
+        "colEnglishName": "English Name",
+        "colPhone": "Phone",
+        "colGender": "Gender",
+        "colDob": "DOB",
+        "colBloodGroup": "Blood Group",
+        "colActions": "Actions",
+        "viewAction": "View {{khmer_first_name}}",
+        "editAction": "Edit {{khmer_first_name}}",
+        "deleteAction": "Delete {{khmer_first_name}}"
+    },
+    "form": {
+        "khmerFirstName": "Khmer First Name",
+        "khmerLastName": "Khmer Last Name",
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "dateOfBirth": "Date of Birth",
+        "phoneNumber": "Phone Number",
+        "gender": "Gender",
+        "male": "Male",
+        "female": "Female",
+        "bloodGroup": "Blood Group",
+        "nationalId": "National ID",
+        "allergy": "Allergy",
+        "address": "Address",
+        "province": "Province",
+        "district": "District",
+        "commune": "Commune",
+        "village": "Village",
+        "onlyKhmerCharacters": "Only Khmer characters allowed"
+    }
+},
+"vaccines": {
     "heading": "Vaccine Management",
     "title": "Vaccines",
     "new": "New Vaccine",
@@ -78,6 +124,9 @@
     "ageValueMonth": "{{value}}m",
     "ageValueDay": "{{value}}d",
     "name": "Name",
+    "vaccineName": "Vaccine name",
+    "dose": "Dose",
+    "administeredDate": "Administered Date",
     "namePlaceholder": "Enter vaccine name",
     "nameRequired": "Name is required",
     "nameMinLength": "Name must be at least 2 characters",
@@ -110,6 +159,49 @@
     "amountGreaterThanZero": "Amount must be greater than 0",
     "created": "Vaccine created.",
     "updated": "Vaccine updated.",
-    "deleted": "Vaccine deleted."
+    "deleted": "Vaccine deleted.",
+    "patients": {
+      "list": {
+        "title": "Patient List",
+        "newPatient": "New Patient",
+        "deleteTitle": "Delete Patient",
+        "searchPlaceholder": "Search patients",
+        "colKhmerName": "Khmer Name",
+        "colEnglishName": "English Name",
+        "colPhone": "Phone",
+        "colGender": "Gender",
+        "colDob": "DOB",
+        "colBloodGroup": "Blood Group",
+        "colActions": "Actions",
+        "viewAction": "View {{khmer_first_name}}",
+        "editAction": "Edit {{khmer_first_name}}",
+        "deleteAction": "Delete {{khmer_first_name}}"
+      },
+      "form": {
+        "khmerFirstName": "Khmer First Name",
+        "khmerLastName": "Khmer Last Name",
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "dateOfBirth": "Date of Birth",
+        "phoneNumber": "Phone Number",
+        "gender": "Gender",
+        "male": "Male",
+        "female": "Female",
+        "bloodGroup": "Blood Group",
+        "nationalId": "National ID",
+        "allergy": "Allergy",
+        "address": "Address",
+        "province": "Province",
+        "district": "District",
+        "commune": "Commune",
+        "village": "Village",
+        "onlyKhmerCharacters": "Only Khmer characters allowed"
+      },
+      "shared": {
+        "form": {
+          "generalInformation": "General Information"
+        }
+      }
+    }
   }
 }

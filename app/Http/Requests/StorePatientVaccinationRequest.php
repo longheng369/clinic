@@ -2,10 +2,13 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Requests\Concerns\ValidatesPatientVaccinationPayload;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StorePatientVaccinationRequest extends FormRequest
 {
+    use ValidatesPatientVaccinationPayload;
+
     public function rules(): array
     {
         return [

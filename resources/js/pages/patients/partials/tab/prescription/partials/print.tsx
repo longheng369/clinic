@@ -15,6 +15,7 @@ import PatientField from '@/pages/patients/partials/tab/prescription/partials/Pa
 import NoPrint from '@/components/print/noPrint';
 import { calculateAge, formatDob } from '@/utils/date';
 import { IPrescription } from '@/interfaces/IPrescription';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   onClose: () => void;
@@ -35,6 +36,7 @@ const Print = ({
   diagnoses,
   instructionOptions,
 }: Props) => {
+  const { t } = useTranslation();
   return (
     <Box className="prescription-printable">
       <Box>
@@ -54,7 +56,7 @@ const Print = ({
             startIcon={<Printer size={16} />}
             onClick={() => window.print()}
           >
-            Print Again
+            {t('patients.prescription.printAgain')}
           </Button>
           <Button
             onClick={onClose}
@@ -62,7 +64,7 @@ const Print = ({
             variant="contained"
             color="error"
           >
-            Close
+            {t('common.close')}
           </Button>
         </NoPrint>
 
@@ -96,7 +98,7 @@ const Print = ({
             value={`${patient.khmer_first_name} ${patient.khmer_last_name}`}
           />
           <PatientField
-            label="Full Name"
+            label={t('patients.prescription.fullName')}
             value={`${patient.first_name} ${patient.last_name}`}
           />
           <PatientField
@@ -112,7 +114,7 @@ const Print = ({
               prescription?.created_at ?? new Date().toISOString(),
             )}
           />
-          <PatientField label="Diagnosis" value={diagnoses.join(', ')} />
+          <PatientField label={t('patients.shared.form.diagnosis')} value={diagnoses.join(', ')} />
         </div>
 
         <TableContainer sx={{ mt: 1 }}>

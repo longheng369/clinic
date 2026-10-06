@@ -18,6 +18,7 @@ import {
   GridActionsCellItem,
 } from '@mui/x-data-grid';
 import { usePagination } from '@/hooks/usePagination';
+import { useTranslation } from 'react-i18next';
 
 interface PaginatedData<T> {
   data: T[];
@@ -43,18 +44,19 @@ const formatDate = (date: string) =>
 
 const VaccinationTab = ({ patient }: VaccinationTabProps) => {
   const { openModal, closeModal, openAlert } = useModal();
-  const { vaccinations, vaccines, vaccineCard, vaccinationAlerts } = usePage<{
+  const { vaccinations, vaccines, vaccineCard } = usePage<{
     vaccinations: PaginatedData<IPatientVaccination>;
     vaccines: IVaccineOption[];
     vaccineCard: IVaccineCardItem[];
     vaccinationAlerts: IVaccinationAlert[];
   }>().props;
+  const { t } = useTranslation();
 
   const { data: rows, total, current_page, per_page } = vaccinations;
 
   const handleCreate = () => {
     openModal({
-      title: 'Record Vaccination',
+      title: t('patients.vaccination.recordVaccination'),
       content: (
         <VaccinationForm
           patientId={patient.id}
@@ -68,7 +70,7 @@ const VaccinationTab = ({ patient }: VaccinationTabProps) => {
 
   const handleShowCard = () => {
     openModal({
-      title: 'Vaccination Card',
+      title: t('patients.vaccination.cardTitle'),
       content: <VaccineCard patient={patient} cardData={vaccineCard} />,
       config: { maxWidth: '3xl' },
     });
@@ -76,7 +78,7 @@ const VaccinationTab = ({ patient }: VaccinationTabProps) => {
 
   const handleEdit = (v: IPatientVaccination) => {
     openModal({
-      title: 'Edit Vaccination Record',
+      title: t('patients.vaccination.editTitle'),
       content: (
         <VaccinationForm
           patientId={patient.id}
@@ -91,10 +93,10 @@ const VaccinationTab = ({ patient }: VaccinationTabProps) => {
 
   const handleDelete = (v: IPatientVaccination) => {
     openAlert({
-      message: 'Delete this vaccination record?',
-      description: 'This action cannot be undone.',
+      message: t('patients.vaccination.deleteMessage'),
+      description: t('common.deleteDescription'),
       variant: 'danger',
-      confirmLabel: 'Delete',
+      confirmLabel: t('common.delete'),
       onConfirm: () =>
         router.delete(`/patients/${patient.id}/vaccinations/${v.id}`),
     });
@@ -112,10 +114,11 @@ const VaccinationTab = ({ patient }: VaccinationTabProps) => {
   const columns: GridColDef[] = [
     {
       field: 'vaccine.name',
-      headerName: 'វ៉ាក់សាំង',
+      headerName: t('vaccines.vaccineName'),
       flex: 1,
       minWidth: 180,
-      valueGetter: (_value, row: IPatientVaccination) => row.vaccine?.name ?? null,
+      valueGetter: (_value, row: IPatientVaccination) =>
+        row.vaccine?.name ?? null,
       renderCell: (params: GridRenderCellParams<IPatientVaccination>) =>
         params.value ?? (
           <Typography component="span" color="text.disabled">
@@ -125,14 +128,15 @@ const VaccinationTab = ({ patient }: VaccinationTabProps) => {
     },
     {
       field: 'dose_number',
-      headerName: 'ដូស',
+      headerName: t('vaccines.dose'),
       flex: 1,
       minWidth: 80,
-      valueGetter: (_value, row: IPatientVaccination) => `ដូស ${row.dose_number}`,
+      valueGetter: (_value, row: IPatientVaccination) =>
+        t('patients.vaccination.doseCell', { dose_number: row.dose_number }),
     },
     {
       field: 'administered_date',
-      headerName: 'កាលបរិច្ឆេទចាក់',
+      headerName: t('vaccines.administeredDate'),
       flex: 1,
       minWidth: 140,
       valueGetter: (_value, row: IPatientVaccination) =>
@@ -140,7 +144,7 @@ const VaccinationTab = ({ patient }: VaccinationTabProps) => {
     },
     {
       field: 'administered_by',
-      headerName: 'អ្នកចាក់',
+      headerName: t('common.createdBy'),
       flex: 1,
       minWidth: 130,
       renderCell: (params: GridRenderCellParams<IPatientVaccination>) =>
@@ -152,7 +156,7 @@ const VaccinationTab = ({ patient }: VaccinationTabProps) => {
     },
     {
       field: 'notes',
-      headerName: 'កំណត់ចំណាំ',
+      headerName: t('common.note'),
       flex: 1,
       minWidth: 160,
       renderCell: (params: GridRenderCellParams<IPatientVaccination>) =>
@@ -165,27 +169,27 @@ const VaccinationTab = ({ patient }: VaccinationTabProps) => {
     {
       field: 'actions',
       type: 'actions',
-      headerName: 'សកម្មភាព',
+      headerName: t('common.action'),
       width: 150,
       getActions: (params) => [
         <GridActionsCellItem
           key={`card-${params.id}`}
           icon={<IdCard size={16} color="#64748b" />}
-          label="Show vaccination card"
+          label={t('patients.vaccination.showCardAction')}
           onClick={handleShowCard}
           showInMenu={false}
         />,
         <GridActionsCellItem
           key={`edit-${params.id}`}
           icon={<Pencil size={16} color="#2563eb" />}
-          label="Edit vaccination"
+          label={t('patients.vaccination.editAction')}
           onClick={() => handleEdit(params.row as IPatientVaccination)}
           showInMenu={false}
         />,
         <GridActionsCellItem
           key={`delete-${params.id}`}
           icon={<Trash2 size={16} color="#dc2626" />}
-          label="Delete vaccination"
+          label={t('patients.vaccination.deleteAction')}
           onClick={() => handleDelete(params.row as IPatientVaccination)}
           showInMenu={false}
         />,
@@ -203,8 +207,8 @@ const VaccinationTab = ({ patient }: VaccinationTabProps) => {
           justifyContent: 'space-between',
         }}
       >
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          Vaccination records for this patient
+        <Typography>
+          {t('patients.vaccination.subtitle')}
         </Typography>
         <Box sx={{ display: 'flex', gap: 1 }}>
           <Button
@@ -212,7 +216,7 @@ const VaccinationTab = ({ patient }: VaccinationTabProps) => {
             startIcon={<Plus size={16} />}
             variant="contained"
           >
-            Record Vaccination
+            {t('patients.vaccination.recordVaccination')}
           </Button>
         </Box>
       </Box>

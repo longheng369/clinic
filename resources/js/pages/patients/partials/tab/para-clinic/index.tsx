@@ -11,7 +11,8 @@ import {
 import { usePagination } from '@/hooks/usePagination';
 import { Box, Button, Chip, Typography } from '@mui/material';
 import ParaClinicForm from '@/pages/patients/partials/tab/para-clinic/partials/createOrEdit';
-import ParaClinicView from '@/pages/patients/partials/tab/para-clinic/partials/view';
+import ParaClinicView, { STATUS_OPTIONS } from '@/pages/patients/partials/tab/para-clinic/partials/view';
+import { useTranslation } from 'react-i18next';
 
 const STATUS_COLORS: Record<
   string,
@@ -37,6 +38,7 @@ interface PaginatedData<T> {
 }
 
 const ParaClinicByPatientTab = ({ patientId, selectedVisitId }: { patientId: number; selectedVisitId: number | null }) => {
+  const { t } = useTranslation();
   const { openAlert, openModal } = useModal();
   const { paraClinicRequests, consultationDiagnoses } = usePage<{
     paraClinicRequests: PaginatedData<IParaClinicRequest>;
@@ -46,10 +48,10 @@ const ParaClinicByPatientTab = ({ patientId, selectedVisitId }: { patientId: num
 
   const handleDelete = (request: IParaClinicRequest) => {
     openAlert({
-      message: 'Delete this para clinic request?',
-      description: 'This action cannot be undone.',
+      message: t('patients.paraClinic.deleteConfirm'),
+      description: t('common.deleteDescription'),
       variant: 'danger',
-      confirmLabel: 'Delete',
+      confirmLabel: t('common.delete'),
       onConfirm: () =>
         router.delete(`/para-clinic-requests/${request.id}`),
     });
@@ -64,7 +66,9 @@ const ParaClinicByPatientTab = ({ patientId, selectedVisitId }: { patientId: num
 
   const handleEdit = (request: IParaClinicRequest) => {
     openModal({
-      title: `Edit ${request.request_number}`,
+      title: t('patients.paraClinic.editTitle', {
+        request_number: request.request_number,
+      }),
       content: <ParaClinicForm requestId={request.id} patientId={patientId} visitId={selectedVisitId} consultationDiagnoses={consultationDiagnoses} />,
       config: { preventClickAway: true, scroll: 'body' }
     });
@@ -72,7 +76,7 @@ const ParaClinicByPatientTab = ({ patientId, selectedVisitId }: { patientId: num
 
   const openRequestForm = () => {
     openModal({
-      title: 'New Para Clinic Request',
+      title: t('patients.paraClinic.newRequestTitle'),
       content: (
         <ParaClinicForm patientId={patientId} visitId={selectedVisitId} consultationDiagnoses={consultationDiagnoses} />
       ),
@@ -89,44 +93,48 @@ const ParaClinicByPatientTab = ({ patientId, selectedVisitId }: { patientId: num
   const columns: GridColDef[] = [
     {
       field: 'request_number',
-      headerName: 'លេខស្នើសុំ',
+      headerName: t('patients.paraClinic.colRequestNumber'),
       flex: 1,
       minWidth: 150,
     },
     {
       field: 'request_date',
-      headerName: 'កាលបរិច្ឆេទ',
+      headerName: t('patients.paraClinic.colRequestDate'),
       flex: 1,
       minWidth: 160,
     },
     {
       field: 'clinical_reason',
-      headerName: 'ហេតុផលរបស់គ្លីនិក',
+      headerName: t('patients.paraClinic.colClinicalReason'),
       flex: 1,
       minWidth: 160,
     },
     {
       field: 'notes',
-      headerName: 'ចំណាំ',
+      headerName: t('common.note'),
       flex: 1,
       minWidth: 160,
     },
     {
       field: 'status',
-      headerName: 'ស្ថានភាព',
+      headerName: t('patients.paraClinic.colStatus'),
       flex: 1,
       minWidth: 140,
       renderCell: (params: GridRenderCellParams<IParaClinicRequest>) => (
         <Chip
           size="small"
-          label={params.value}
+          label={
+            STATUS_OPTIONS[params.value]
+              ? t(STATUS_OPTIONS[params.value])
+              : params.value
+          }
           color={STATUS_COLORS[params.value] ?? 'default'}
         />
       ),
     },
     {
       field: 'fee',
-      headerName: 'ចំនួនទឹកប្រាក់',
+      headerName: t('patients.paraClinic.colFee'),
       flex: 1,
       minWidth: 130,
       valueGetter: (_: never, row: IParaClinicRequest) =>
@@ -143,13 +151,13 @@ const ParaClinicByPatientTab = ({ patientId, selectedVisitId }: { patientId: num
     {
       field: 'actions',
       type: 'actions',
-      headerName: 'សកម្មភាព',
+      headerName: t('common.action'),
       width: 130,
       getActions: (params) => [
         <GridActionsCellItem
           key={`view-${params.id}`}
           icon={<Eye size={16} color="#64748b" />}
-          label="View request"
+          label={t('patients.paraClinic.viewRequest')}
           onClick={() => handleView(params.row as IParaClinicRequest)}
           showInMenu={false}
         />,

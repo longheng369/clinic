@@ -1,13 +1,14 @@
 import { Box } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import type { IMedicationAdministration } from '@/interfaces/IMedicationAdministration';
 
 const DOSE_STATUS: Record<string, { label: string; className: string }> = {
-  pending: { label: 'Pending', className: 'bg-blue-100 text-blue-700' },
-  provided: { label: 'Provided', className: 'bg-green-100 text-green-700' },
-  missed: { label: 'Missed', className: 'bg-orange-100 text-orange-700' },
-  refused: { label: 'Refused', className: 'bg-purple-100 text-purple-700' },
-  cancelled: { label: 'Cancelled', className: 'bg-gray-100 text-gray-500' },
-  overdue: { label: 'Overdue', className: 'bg-red-100 text-red-700' },
+  pending: { label: 'patients.shared.status.pending', className: 'bg-blue-100 text-blue-700' },
+  provided: { label: 'patients.shared.status.provided', className: 'bg-green-100 text-green-700' },
+  missed: { label: 'patients.shared.status.missed', className: 'bg-orange-100 text-orange-700' },
+  refused: { label: 'patients.shared.status.refused', className: 'bg-purple-100 text-purple-700' },
+  cancelled: { label: 'patients.shared.status.cancelled', className: 'bg-gray-100 text-gray-500' },
+  overdue: { label: 'patients.shared.status.overdue', className: 'bg-red-100 text-red-700' },
 };
 
 function getEffectiveStatus(administration: IMedicationAdministration): string {
@@ -25,6 +26,7 @@ interface DoseStatusBadgeProps {
 }
 
 const DoseStatusBadge = ({ administration }: DoseStatusBadgeProps) => {
+  const { t } = useTranslation();
   const effective = getEffectiveStatus(administration);
   const badge = DOSE_STATUS[effective];
 
@@ -41,7 +43,7 @@ const DoseStatusBadge = ({ administration }: DoseStatusBadgeProps) => {
         whiteSpace: 'nowrap',
       }}
     >
-      {badge.label}
+      {t(badge.label)}
     </Box>
   );
 };

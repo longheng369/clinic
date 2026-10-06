@@ -2,6 +2,7 @@ import { Head, router } from '@inertiajs/react';
 import { ArrowLeft, Pencil } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import ConsultationForm from './partials/ConsultationForm';
 import type {
   IConsultation,
@@ -17,6 +18,7 @@ const ShowConsultation = ({
   patient: IPatient;
   consultation: IConsultation;
 }) => {
+  const { t } = useTranslation();
   const { control, reset } = useForm<IConsultationFormData>();
 
   useEffect(() => {
@@ -60,7 +62,7 @@ const ShowConsultation = ({
 
   return (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <Head title="Consultation Details" />
+      <Head title={t('patients.consultation.detailsTitle')} />
       <Box
         sx={{
           borderBottom: '1px solid #cbd5e1',
@@ -78,7 +80,7 @@ const ShowConsultation = ({
               router.visit(`/patients/${patient.id}?tab=consultation`)
             }
             size="small"
-            aria-label="Back"
+            aria-label={t('patients.shared.back')}
             sx={{ color: 'text.secondary' }}
           >
             <ArrowLeft size={20} />
@@ -88,10 +90,10 @@ const ShowConsultation = ({
               variant="h6"
               sx={{ fontWeight: 700, color: 'text.primary' }}
             >
-              Consultation Details
+              {t('patients.consultation.detailsTitle')}
             </Typography>
             <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-              Patient:{' '}
+              {t('patients.consultation.patient')}{' '}
               <Box
                 component="span"
                 sx={{ fontWeight: 500, fontFamily: 'var(--font-khmer)' }}
@@ -110,7 +112,7 @@ const ShowConsultation = ({
             )
           }
         >
-          Edit
+          {t('common.edit')}
         </Button>
       </Box>
       <Box sx={{ p: { xs: 2, md: 4 }, flex: 1, overflowY: 'auto' }}>

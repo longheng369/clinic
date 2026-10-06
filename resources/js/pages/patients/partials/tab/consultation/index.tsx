@@ -9,6 +9,7 @@ import {
   GridActionsCellItem,
 } from '@mui/x-data-grid';
 import { usePagination } from '@/hooks/usePagination';
+import { useTranslation } from 'react-i18next';
 import type React from 'react';
 import { formatCreatedDateTime } from '@/utils/date';
 import { Box, Button, Typography } from '@mui/material';
@@ -22,6 +23,7 @@ const ConsultationTab = ({
   visitId: number | null;
 }) => {
   const { openAlert } = useModal();
+  const { t } = useTranslation();
   const { consultations } = usePage<{
     consultations: IPagination<IConsultation>;
   }>().props;
@@ -29,10 +31,10 @@ const ConsultationTab = ({
 
   const handleDelete = (consultation: IConsultation) => {
     openAlert({
-      message: 'Delete this consultation?',
-      description: 'This action cannot be undone.',
+      message: t('patients.consultation.deleteConfirm'),
+      description: t('common.deleteDescription'),
       variant: 'danger',
-      confirmLabel: 'Delete',
+      confirmLabel: t('common.delete'),
       onConfirm: () =>
         router.delete(
           `/patients/${patientId}/consultations/${consultation.id}`,
@@ -49,7 +51,7 @@ const ConsultationTab = ({
   const columns: GridColDef[] = [
     {
       field: 'created_at',
-      headerName: 'កាលបរិច្ឆេទ',
+      headerName: t('patients.consultation.colDate'),
       flex: 1,
       minWidth: 150,
       valueGetter: (_value, row: IConsultation) =>
@@ -57,7 +59,7 @@ const ConsultationTab = ({
     },
     {
       field: 'chief_complaint',
-      headerName: 'រោគសញ្ញាចំបង',
+      headerName: t('patients.consultation.colChiefComplaint'),
       flex: 2,
       minWidth: 220,
       renderCell: (params: GridRenderCellParams<IConsultation>) => (
@@ -77,7 +79,7 @@ const ConsultationTab = ({
     },
     {
       field: 'diagnosis',
-      headerName: 'រោគវិនិច្ឆ័យ',
+      headerName: t('patients.consultation.colDiagnosis'),
       flex: 1,
       minWidth: 150,
       renderCell: (params: GridRenderCellParams<IConsultation>) =>
@@ -85,7 +87,7 @@ const ConsultationTab = ({
     },
     {
       field: 'weight',
-      headerName: 'ទម្ងន់ (គីឡូក្រាម)',
+      headerName: t('patients.consultation.colWeight'),
       flex: 1,
       minWidth: 120,
       renderCell: (params: GridRenderCellParams<IConsultation>) =>
@@ -93,7 +95,7 @@ const ConsultationTab = ({
     },
     {
       field: 'fee',
-      headerName: 'តម្លៃ ($)',
+      headerName: t('patients.consultation.colFee'),
       flex: 1,
       minWidth: 110,
       valueGetter: (_: never, row: IConsultation) =>
@@ -103,7 +105,7 @@ const ConsultationTab = ({
     },
     {
       field: 'created_by',
-      headerName: 'អ្នកកត់ត្រា',
+      headerName: t('common.createdBy'),
       flex: 1,
       minWidth: 130,
       renderCell: (params: GridRenderCellParams<IConsultation>) =>
@@ -112,13 +114,13 @@ const ConsultationTab = ({
     {
       field: 'actions',
       type: 'actions',
-      headerName: 'សកម្មភាព',
+      headerName: t('common.action'),
       width: 150,
       getActions: (params) => [
         <GridActionsCellItem
           key={`view-${params.id}`}
           icon={<Eye size={16} color="#64748b" />}
-          label="View consultation"
+          label={t('patients.consultation.actionView')}
           onClick={() =>
             router.visit(
               `/patients/${patientId}/consultations/${params.row.id}`,
@@ -129,7 +131,7 @@ const ConsultationTab = ({
         <GridActionsCellItem
           key={`edit-${params.id}`}
           icon={<Pencil size={16} color="#2563eb" />}
-          label="Edit consultation"
+          label={t('patients.consultation.actionEdit')}
           onClick={() =>
             router.visit(
               `/patients/${patientId}/consultations/${params.row.id}/edit`,
@@ -140,7 +142,7 @@ const ConsultationTab = ({
         <GridActionsCellItem
           key={`delete-${params.id}`}
           icon={<Trash2 size={16} color="#dc2626" />}
-          label="Delete consultation"
+          label={t('patients.consultation.actionDelete')}
           onClick={() => handleDelete(params.row as IConsultation)}
           showInMenu={false}
         />,
@@ -159,7 +161,7 @@ const ConsultationTab = ({
         }}
       >
         <Typography variant="body2">
-          Consultation records for this patient
+          {t('patients.consultation.subtitle')}
         </Typography>
         <Button
           component={InertiaLink as React.ElementType}
@@ -167,7 +169,7 @@ const ConsultationTab = ({
           variant="contained"
           startIcon={<Plus size={16} />}
         >
-          New Consultation
+          {t('patients.consultation.newConsultation')}
         </Button>
       </Box>
 

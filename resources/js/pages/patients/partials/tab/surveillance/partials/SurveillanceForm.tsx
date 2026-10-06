@@ -11,6 +11,7 @@ import { router } from '@inertiajs/react';
 import { useToast } from '@/components/toast';
 import Autocomplete from '@/components/form/autocomplete';
 import { O2_OPTIONS } from '@/config/surveillance';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   patientId: number;
@@ -29,6 +30,7 @@ const SurveillanceForm = ({
 }: Props) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
+  const { t } = useTranslation();
   const { control, handleSubmit } = useForm<ISurveillanceFormData>({
     defaultValues: {
       visit_id: surveillance?.visit_id ?? defaultVisitId ?? undefined,
@@ -52,7 +54,7 @@ const SurveillanceForm = ({
       onError: (errors: Record<string, string>) => {
         const msg =
           Object.values(errors).join(', ') ||
-          'Failed to save surveillance record';
+          t('patients.surveillance.saveError');
         toast(msg, { variant: 'error' });
       },
       onFinish: () => setIsProcessing(false),
@@ -77,15 +79,15 @@ const SurveillanceForm = ({
             <Input
               control={control}
               name="systolic"
-              label="Systolic (mmHg)"
+              label={t('patients.surveillance.systolicLabel')}
               type="number"
-              placeholder="e.g. 120"
+              placeholder={t('patients.surveillance.systolicPlaceholder')}
               disabled={viewOnly}
               slotProps={{ htmlInput: { min: 0, max: 300 } }}
               rules={{
-                required: 'Required',
-                min: { value: 0, message: 'Min 0' },
-                max: { value: 300, message: 'Max 300' },
+                required: t('patients.shared.form.required'),
+                min: { value: 0, message: t('patients.shared.form.min', { min: 0 }) },
+                max: { value: 300, message: t('patients.shared.form.max', { max: 300 }) },
               }}
             />
           </Grid>
@@ -93,15 +95,15 @@ const SurveillanceForm = ({
             <Input
               control={control}
               name="diastolic"
-              label="Diastolic (mmHg)"
+              label={t('patients.surveillance.diastolicLabel')}
               type="number"
-              placeholder="e.g. 80"
+              placeholder={t('patients.surveillance.diastolicPlaceholder')}
               disabled={viewOnly}
               slotProps={{ htmlInput: { min: 0, max: 200 } }}
               rules={{
-                required: 'Required',
-                min: { value: 0, message: 'Min 0' },
-                max: { value: 200, message: 'Max 200' },
+                required: t('patients.shared.form.required'),
+                min: { value: 0, message: t('patients.shared.form.min', { min: 0 }) },
+                max: { value: 200, message: t('patients.shared.form.max', { max: 200 }) },
               }}
             />
           </Grid>
@@ -109,15 +111,15 @@ const SurveillanceForm = ({
             <Input
               control={control}
               name="pulse"
-              label="Pulse (bpm)"
+              label={t('patients.surveillance.pulseLabel')}
               type="number"
-              placeholder="e.g. 72"
+              placeholder={t('patients.surveillance.pulsePlaceholder')}
               disabled={viewOnly}
               slotProps={{ htmlInput: { min: 0, max: 300 } }}
               rules={{
-                required: 'Required',
-                min: { value: 0, message: 'Min 0' },
-                max: { value: 300, message: 'Max 300' },
+                required: t('patients.shared.form.required'),
+                min: { value: 0, message: t('patients.shared.form.min', { min: 0 }) },
+                max: { value: 300, message: t('patients.shared.form.max', { max: 300 }) },
               }}
             />
           </Grid>
@@ -125,15 +127,15 @@ const SurveillanceForm = ({
             <Input
               control={control}
               name="temperature"
-              label="Temperature (°C)"
+              label={t('patients.surveillance.temperatureLabel')}
               type="number"
-              placeholder="e.g. 36.5"
+              placeholder={t('patients.surveillance.temperaturePlaceholder')}
               disabled={viewOnly}
               slotProps={{ htmlInput: { min: 30, max: 45, step: '0.1' } }}
               rules={{
-                required: 'Required',
-                min: { value: 30, message: 'Min 30' },
-                max: { value: 45, message: 'Max 45' },
+                required: t('patients.shared.form.required'),
+                min: { value: 30, message: t('patients.shared.form.min', { min: 30 }) },
+                max: { value: 45, message: t('patients.shared.form.max', { max: 45 }) },
               }}
             />
           </Grid>
@@ -141,15 +143,15 @@ const SurveillanceForm = ({
             <Input
               control={control}
               name="rr"
-              label="RR (breaths/min)"
+              label={t('patients.surveillance.rrLabel')}
               type="number"
-              placeholder="e.g. 16"
+              placeholder={t('patients.surveillance.rrPlaceholder')}
               disabled={viewOnly}
               slotProps={{ htmlInput: { min: 0, max: 100 } }}
               rules={{
-                required: 'Required',
-                min: { value: 0, message: 'Min 0' },
-                max: { value: 100, message: 'Max 100' },
+                required: t('patients.shared.form.required'),
+                min: { value: 0, message: t('patients.shared.form.min', { min: 0 }) },
+                max: { value: 100, message: t('patients.shared.form.max', { max: 100 }) },
               }}
             />
           </Grid>
@@ -157,14 +159,14 @@ const SurveillanceForm = ({
             <Input
               control={control}
               name="spo2"
-              label="SpO₂ (%)"
+              label={t('patients.surveillance.spo2Label')}
               type="number"
-              placeholder="e.g. 98"
+              placeholder={t('patients.surveillance.spo2Placeholder')}
               disabled={viewOnly}
               slotProps={{ htmlInput: { min: 0, max: 100 } }}
               rules={{
-                min: { value: 0, message: 'Min 0' },
-                max: { value: 100, message: 'Max 100' },
+                min: { value: 0, message: t('patients.shared.form.min', { min: 0 }) },
+                max: { value: 100, message: t('patients.shared.form.max', { max: 100 }) },
               }}
             />
           </Grid>
@@ -172,7 +174,7 @@ const SurveillanceForm = ({
             <Autocomplete
               control={control}
               name="o2_supply"
-              label="O₂ Supply"
+              label={t('patients.surveillance.o2SupplyLabel')}
               options={O2_OPTIONS}
             />
           </Grid>
@@ -180,20 +182,25 @@ const SurveillanceForm = ({
             <Textarea
               control={control}
               name="note"
-              label="Note"
-              placeholder="Optional notes..."
+              label={t('common.note')}
+              placeholder={t('patients.surveillance.notePlaceholder')}
               disabled={viewOnly}
-              rules={{ maxLength: { value: 1000, message: 'Max 1000 characters' } }}
+              rules={{
+                maxLength: {
+                  value: 1000,
+                  message: t('patients.surveillance.noteMaxLength'),
+                },
+              }}
             />
           </Grid>
         </Grid>
       </DialogContent>
       <DialogActions>
         <Button type="button" variant="outlined" onClick={onClose}>
-          Cancel
+          {t('common.cancel')}
         </Button>
         <Button type="submit" variant="contained" disabled={isProcessing}>
-          {surveillance ? 'Save' : 'Create'}
+          {surveillance ? t('common.save') : t('common.create')}
         </Button>
       </DialogActions>
     </Box>

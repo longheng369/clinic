@@ -24,6 +24,7 @@ import { Square, SquareCheckBig } from 'lucide-react';
 import DateTimeField from '@/components/form/dateTime';
 import { useModal } from '@/components/modal';
 import { IDiagnosticTestAutocomplete } from '@/interfaces/IDiagnosticTest';
+import { useTranslation } from 'react-i18next';
 
 type FormData = {
   patient_id: number | null;
@@ -44,6 +45,7 @@ type Props = {
 }
 
 const ParaClinicForm = ({ requestId, patientId, visitId, consultationDiagnoses = [] }: Props) => {
+  const { t } = useTranslation();
   const { closeModal } = useModal();
   const { get } = useHttp();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -110,7 +112,7 @@ const ParaClinicForm = ({ requestId, patientId, visitId, consultationDiagnoses =
       })
       .catch((error) => {
         if (error?.name !== 'AbortError') {
-          toast('Failed to load the request.', { variant: 'error' });
+          toast(t('patients.paraClinic.loadFailed'), { variant: 'error' });
         }
       })
       .finally(() => {
@@ -143,7 +145,7 @@ const ParaClinicForm = ({ requestId, patientId, visitId, consultationDiagnoses =
       },
       onError: (errors: Record<string, string | string[]>) => {
         const msg = Object.values(errors).flat().join(', ');
-        toast(msg || 'Failed to save request.', { variant: 'error' });
+        toast(msg || t('patients.paraClinic.saveFailed'), { variant: 'error' });
       },
       onFinish: () => setIsProcessing(false),
     };
@@ -168,13 +170,13 @@ const ParaClinicForm = ({ requestId, patientId, visitId, consultationDiagnoses =
       <DialogContent dividers>
         <Stack spacing={2}>
           <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 600 }}>
-            General Information
+            {t('patients.shared.form.generalInformation')}
           </Typography>
           <DateTimeField
             control={control}
             name="request_date"
-            label="Request Date & Time"
-            rules={{ required: 'Request date is required' }}
+            label={t('patients.paraClinic.requestDateTime')}
+            rules={{ required: t('patients.paraClinic.requestDateRequired') }}
           />
           <Autocomplete
             freeSolo
@@ -185,47 +187,47 @@ const ParaClinicForm = ({ requestId, patientId, visitId, consultationDiagnoses =
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Diagnosis"
-                placeholder="Enter diagnosis"
+                label={t('patients.shared.form.diagnosis')}
+                placeholder={t('patients.shared.form.enterDiagnosis')}
                 variant="standard"
                 fullWidth
               />
             )}
           />
           <Textarea
-            label="Clinical Reason"
+            label={t('patients.paraClinic.clinicalReason')}
             control={control}
             name="clinical_reason"
-            placeholder="Enter clinical reason"
+            placeholder={t('patients.paraClinic.enterClinicalReason')}
           />
           <Textarea
-            label="Notes"
+            label={t('patients.shared.form.notes')}
             control={control}
             name="notes"
-            placeholder="Enter any additional notes"
+            placeholder={t('patients.paraClinic.enterNotes')}
           />
           {requestId && (
             <Select
               control={control}
               name="status"
-              label="Status"
+              label={t('patients.paraClinic.statusLabel')}
               options={[
-                { value: 'draft', label: 'Draft' },
-                { value: 'requested', label: 'Requested' },
-                { value: 'waiting_result', label: 'Waiting Result' },
-                { value: 'result_received', label: 'Result Received' },
-                { value: 'reviewed', label: 'Reviewed' },
-                { value: 'completed', label: 'Completed' },
-                { value: 'cancelled', label: 'Cancelled' },
+                { value: 'draft', label: t('patients.paraClinic.status.draft') },
+                { value: 'requested', label: t('patients.paraClinic.status.requested') },
+                { value: 'waiting_result', label: t('patients.paraClinic.status.waitingResult') },
+                { value: 'result_received', label: t('patients.paraClinic.status.resultReceived') },
+                { value: 'reviewed', label: t('patients.paraClinic.status.reviewed') },
+                { value: 'completed', label: t('patients.shared.status.completed') },
+                { value: 'cancelled', label: t('patients.shared.status.cancelled') },
               ]}
             />
           )}
           <MultiAutocomplete
             control={control}
             name="diagnostic_test_ids"
-            label="Diagnostic Tests"
+            label={t('patients.paraClinic.diagnosticTests')}
             options={diagnosisTests}
-            rules={{ required: 'Please select at least one test' }}
+            rules={{ required: t('patients.paraClinic.selectTest') }}
             renderOption={(props: any, option: any, { selected }: any) => {
               const { key, ...optionProps } = props as any;
               const SelectionIcon = selected ? SquareCheckBig : Square;
@@ -250,13 +252,13 @@ const ParaClinicForm = ({ requestId, patientId, visitId, consultationDiagnoses =
             }}
           />
           <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-            Total: ${totalFee.toFixed(2)}
+            {t('patients.shared.form.total', { amount: totalFee.toFixed(2) })}
           </Typography>
         </Stack>
       </DialogContent>
       <DialogActions>
         <Button onClick={closeModal} type="button" variant="outlined">
-          Cancel
+          {t('common.cancel')}
         </Button>
         <Button
           type="button"
@@ -264,7 +266,7 @@ const ParaClinicForm = ({ requestId, patientId, visitId, consultationDiagnoses =
           onClick={onSubmit}
           disabled={isProcessing}
         >
-          {requestId ? 'Update Request' : 'Submit Request'}
+          {requestId ? t('patients.paraClinic.update') : t('patients.paraClinic.submit')}
         </Button>
       </DialogActions>
     </>

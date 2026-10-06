@@ -33,8 +33,10 @@ class PatientVaccinationController extends Controller
 
     public function store(StorePatientVaccinationRequest $request, Patient $patient)
     {
+        $validatedData = $request->validated();
+
         $vaccination = $patient->vaccinations()->create(array_merge(
-            $request->validated(),
+            $validatedData,
             ['administered_by' => auth()->id()]
         ));
 

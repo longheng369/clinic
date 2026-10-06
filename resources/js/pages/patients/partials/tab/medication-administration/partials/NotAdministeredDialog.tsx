@@ -5,6 +5,7 @@ import Select from '@/components/form/select';
 import { router } from '@inertiajs/react';
 import { useToast } from '@/components/toast';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import type { IMedicationOrder } from '@/interfaces/IMedicationOrder';
 import type { IMedicationAdministration } from '@/interfaces/IMedicationAdministration';
@@ -48,19 +49,22 @@ const NotAdministeredDialog = ({
   variant,
   onClose,
 }: NotAdministeredDialogProps) => {
+  const { t } = useTranslation();
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
 
   const reasons = variant === 'missed' ? MISSED_REASONS : REFUSED_REASONS;
   const title =
-    variant === 'missed' ? 'Record Missed Dose' : 'Record Refused Dose';
+    variant === 'missed'
+      ? t('patients.medicationAdministration.recordMissed')
+      : t('patients.medicationAdministration.recordRefused');
   const endpoint = variant === 'missed' ? 'missed' : 'refused';
 
   const { control, handleSubmit } = useForm<NotAdministeredFormData>({
     defaultValues: { reason: '', note: '' },
   });
 
-  const medicineName = order.medicine?.name ?? 'Unknown';
+  const medicineName = order.medicine?.name ?? t('patients.shared.unknown');
   const scheduledTime = new Date(
     administration.scheduled_at,
   ).toLocaleTimeString('en-US', {
@@ -86,7 +90,9 @@ const NotAdministeredDialog = ({
           toast(
             typeof message === 'string'
               ? message
-              : `Unable to record ${variant} dose.`,
+              : t('patients.medicationAdministration.recordDoseError', {
+                variant,
+              }),
             { variant: 'error' },
           );
         },
@@ -123,38 +129,43 @@ const NotAdministeredDialog = ({
               }}
             >
               <Box>
-                Medicine: <strong>{medicineName}</strong>
+                {t('patients.medicationAdministration.labelMedicine')}{' '}
+                <strong>{medicineName}</strong>
               </Box>
               <Box>
-                Dose:{' '}
+                {t('patients.medicationAdministration.labelDose')}{' '}
                 <strong>
                   {order.dosage} {order.unit}
                 </strong>
               </Box>
               <Box>
-                Route: <strong>{order.route?.name}</strong>
+                {t('patients.medicationAdministration.labelRoute')}{' '}
+                <strong>{order.route?.name}</strong>
               </Box>
               <Box>
-                Scheduled: <strong>{scheduledTime}</strong>
+                {t('patients.medicationAdministration.labelScheduled')}{' '}
+                <strong>{scheduledTime}</strong>
               </Box>
             </Box>
           </Box>
 
           {/* Reason */}
           <Select
-            label="Reason"
+            label={t('patients.medicationAdministration.reason')}
             control={control}
             name="reason"
             options={reasons}
-            rules={{ required: 'Please select a reason' }}
+            rules={{
+              required: t('patients.medicationAdministration.selectReason'),
+            }}
           />
 
           {/* Notes */}
           <Input
-            label="Notes (optional)"
+            label={t('patients.medicationAdministration.notesOptional')}
             control={control}
             name="note"
-            placeholder="Additional details..."
+            placeholder={t('patients.medicationAdministration.detailsPlaceholder')}
             multiline
             rows={2}
           />

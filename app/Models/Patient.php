@@ -97,18 +97,13 @@ class Patient extends Model
 
     public function nextDoseForVaccine(Vaccine $vaccine): array
     {
-        $ageMonths = $this->age_in_months;
+        $ageDays = (int) $this->date_of_birth->diffInDays(now());
 
-        $rules = $vaccine->rules ?? [];
-        $rule = null;
-        foreach ($rules as $r) {
-            if ($ageMonths >= $r['min_age_months'] && ($r['max_age_months'] === null || $ageMonths <= $r['max_age_months'])) {
-                $rule = $r;
-                break;
-            }
-        }
+        $rule = $vaccine->ageRules
+            ->sortBy(fn (VaccineAgeRule $r) => VaccineAgeRule::toDays($r->min_age, $r->min_age_unit))
+            ->first(fn (VaccineAgeRule $r) => $r->coversAgeInDays($ageDays));
 
-        if (! $rule) {
+        if (!$rule) {
             return [
                 'eligible' => false,
                 'doses_completed' => 0,
@@ -118,13 +113,15 @@ class Patient extends Model
             ];
         }
 
-        $totalDoses = count($rule['doses']);
-        $lastVaccination = $this->vaccinations()
-            ->where('vaccine_id', $vaccine->id)
-            ->latest('id')
-            ->first();
+        $doseRules = array_values($rule->dose_rules ?? []);
+        $totalDoses = count($doseRules);
 
-        $dosesCompleted = $lastVaccination?->dose_number ?? 0;
+        $vaccinations = $this->vaccinations()
+            ->where('vaccine_id', $vaccine->id)
+            ->orderBy('id')
+            ->get();
+
+        $dosesCompleted = min((int) $vaccinations->max('dose_number'), $totalDoses);
 
         if ($dosesCompleted >= $totalDoses) {
             return [
@@ -137,13 +134,7 @@ class Patient extends Model
         }
 
         $nextDoseNumber = $dosesCompleted + 1;
-        $nextDoseDef = null;
-        foreach ($rule['doses'] as $d) {
-            if ($d['dose_number'] === $nextDoseNumber) {
-                $nextDoseDef = $d;
-                break;
-            }
-        }
+        $nextDoseDef = $doseRules[$nextDoseNumber - 1] ?? null;
 
         if (! $nextDoseDef) {
             return [
@@ -158,8 +149,11 @@ class Patient extends Model
         if ($dosesCompleted === 0) {
             $dueDate = now();
         } else {
-            $dueDate = Carbon::parse($lastVaccination->administered_date)
-                ->addDays($nextDoseDef['interval_days']);
+            $dueDate = Carbon::parse($vaccinations->last()->administered_date)
+                ->addDays((int) round(VaccineAgeRule::toDays(
+                    $nextDoseDef['interval_from_previous_dose'] ?? 0,
+                    $nextDoseDef['interval_from_previous_dose_unit'] ?? null,
+                )));
         }
 
         return [

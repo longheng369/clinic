@@ -3,6 +3,7 @@ import { router } from '@inertiajs/react';
 import type { IMedicationAdministration } from '@/interfaces/IMedicationAdministration';
 import { getEffectiveStatus } from '../../DoseStatusBadge';
 import { formatCreatedDateTime } from '@/utils/date';
+import { useTranslation } from 'react-i18next';
 
 interface MarGridCellProps {
   administration: IMedicationAdministration | null;
@@ -36,6 +37,8 @@ const MarGridCell = ({
   visitId,
   orderStatus,
 }: MarGridCellProps) => {
+  const { t } = useTranslation();
+
   if (!administration) {
     return (
       <Box
@@ -78,7 +81,9 @@ const MarGridCell = ({
     tooltipParts.push(`#${administration.administration_no}`);
   tooltipParts.push(formatCreatedDateTime(administration.scheduled_at));
   if (administration.status === 'provided' && administration.administered_by) {
-    tooltipParts.push(`by ${administration.administered_by}`);
+    tooltipParts.push(
+      t('patients.shared.by', { name: administration.administered_by }),
+    );
     if (administration.unit_price != null)
       tooltipParts.push(`$${Number(administration.unit_price).toFixed(2)}`);
   }

@@ -6,6 +6,7 @@ import { IMedicationOrder } from '@/interfaces/IMedicationOrder';
 import { IMedicationAdministration } from '@/interfaces/IMedicationAdministration';
 import Pagination from '@/components/table/Pagination';
 import { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import MedicationOrderCard from './partials/MedicationOrderCard';
 import AdministerDialog from './partials/AdministerDialog';
 import NotAdministeredDialog from './partials/NotAdministeredDialog';
@@ -26,6 +27,7 @@ type Props = {
 };
 
 const MedicationAdministrationTab = ({ visitId }: Props) => {
+  const { t } = useTranslation();
   const { medicationOrders } = usePage<{
     medicationOrders: PaginatedData<IMedicationOrder>;
   }>().props;
@@ -48,7 +50,7 @@ const MedicationAdministrationTab = ({ visitId }: Props) => {
     administration: IMedicationAdministration,
   ) => {
     openModal({
-      title: 'Confirm Medication Administration',
+      title: t('patients.medicationAdministration.confirmTitle'),
       content: (
         <AdministerDialog
           order={order}
@@ -67,7 +69,9 @@ const MedicationAdministrationTab = ({ visitId }: Props) => {
     variant: 'missed' | 'refused',
   ) => {
     const title =
-      variant === 'missed' ? 'Record Missed Dose' : 'Record Refused Dose';
+      variant === 'missed'
+        ? t('patients.medicationAdministration.recordMissed')
+        : t('patients.medicationAdministration.recordRefused');
     openModal({
       title,
       content: (
@@ -85,7 +89,9 @@ const MedicationAdministrationTab = ({ visitId }: Props) => {
 
   const handleViewHistory = (order: IMedicationOrder) => {
     openModal({
-      title: `Administration History - ${order.medicine?.name ?? 'Medication'}`,
+      title: t('patients.medicationAdministration.historyTitle', {
+        name: order.medicine?.name ?? t('patients.medication.title'),
+      }),
       content: (
         <AdministrationHistoryDialog
           order={order}
@@ -119,7 +125,7 @@ const MedicationAdministrationTab = ({ visitId }: Props) => {
           <Box
             component="input"
             type="text"
-            placeholder="Search medicine..."
+            placeholder={t('patients.shared.form.searchMedicine')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             sx={{
@@ -144,12 +150,12 @@ const MedicationAdministrationTab = ({ visitId }: Props) => {
       {filteredData.length === 0 ? (
         <Box sx={{ textAlign: 'center', py: 6 }}>
           <Box sx={{ fontSize: 18, fontWeight: 600, color: '#475569', mb: 1 }}>
-            No medications to administer
+            {t('patients.medicationAdministration.emptyTitle')}
           </Box>
           <Box sx={{ color: '#94a3b8', fontSize: 14 }}>
             {searchTerm
-              ? 'Try a different search term.'
-              : 'Add medication orders from the Medication Orders tab.'}
+              ? t('patients.shared.form.tryDifferentSearch')
+              : t('patients.medicationAdministration.emptyHint')}
           </Box>
         </Box>
       ) : (

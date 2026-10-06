@@ -1,5 +1,6 @@
 import { usePage } from '@inertiajs/react';
 import { router } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import { useModal } from '@/components/modal';
 import { Pencil, Plus, Printer, Save, Stethoscope, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
@@ -36,6 +37,7 @@ type Props = {
 };
 
 const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
+  const { t } = useTranslation();
   const { openModal, closeModal } = useModal();
   const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
@@ -115,7 +117,7 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
     if (!isEditing) return;
 
     openModal({
-      title: 'Add Medicine',
+      title: t('patients.shared.form.addMedicine'),
       content: (
         <MedicineItemForm
           medicines={availableMedicineOptions}
@@ -137,7 +139,7 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
 
     const item = fields[index];
     openModal({
-      title: 'Edit Medicine',
+      title: t('patients.prescription.editMedicine'),
       content: (
         <MedicineItemForm
           medicines={medicines}
@@ -169,7 +171,7 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
       (item) => !item.medicine?.id || !item.unit?.name,
     );
     if (hasInvalidItem) {
-      toast('Each medicine must have a medicine and unit selected.', {
+      toast(t('patients.prescription.invalidItem'), {
         variant: 'error',
       });
       return;
@@ -200,7 +202,7 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
         setIsEditing(false);
       },
       onError: () => {
-        toast('Unable to save prescription.', { variant: 'error' });
+        toast(t('patients.prescription.saveFailed'), { variant: 'error' });
       },
       onFinish: () => setIsSaving(false),
     };
@@ -219,9 +221,9 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
   if (!selectedVisit) {
     return (
       <Box>
-        <Typography component="h3">Prescriptions</Typography>
+        <Typography component="h3">{t('patients.prescription.title')}</Typography>
         <Typography component="p" sx={{ mt: 0.5 }}>
-          Select a visit to manage prescriptions.
+          {t('patients.prescription.selectVisit')}
         </Typography>
       </Box>
     );
@@ -239,7 +241,7 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
           textAlign: 'center',
         }}
       >
-        <Typography>No Prescription</Typography>
+        <Typography>{t('patients.prescription.emptyTitle')}</Typography>
 
         <Typography
           component="p"
@@ -249,7 +251,7 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
             mb: 3,
           }}
         >
-          This visit doesn&apos;t have a prescription yet.
+          {t('patients.prescription.emptyDescription')}
         </Typography>
 
         <Button
@@ -257,7 +259,7 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
           onClick={openAddModal}
           startIcon={<Plus size={16} />}
         >
-          Start Prescription
+          {t('patients.prescription.start')}
         </Button>
       </Box>
     );
@@ -335,14 +337,14 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
                     startIcon={<Printer size={16} />}
                     onClick={() => setOpenPrint(true)}
                   >
-                    Print
+                    {t('patients.prescription.print')}
                   </Button>
                   <Button
                     variant="contained"
                     startIcon={<Pencil size={16} />}
                     onClick={() => setIsEditing(true)}
                   >
-                    Edit
+                    {t('common.edit')}
                   </Button>
                 </Box>
               ) : (
@@ -354,7 +356,7 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
                       onClick={cancelEditing}
                       disabled={isSaving}
                     >
-                      Cancel
+                      {t('common.cancel')}
                     </Button>
                   )}
                   <Button
@@ -363,7 +365,7 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
                     onClick={savePrescription}
                     disabled={isSaving}
                   >
-                    Save
+                    {t('common.save')}
                   </Button>
                   <Button
                     onClick={openAddModal}
@@ -372,7 +374,7 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
                     startIcon={<Plus size={16} />}
                     disabled={isSaving}
                   >
-                    Add Medicine
+                    {t('patients.shared.form.addMedicine')}
                   </Button>
                 </Box>
               )}
@@ -394,7 +396,7 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
                 value: `${calculateAge(patient.date_of_birth)} ឆ្នាំ`,
               },
               {
-                label: 'Name',
+                label: t('patients.prescription.name'),
                 value: `${patient.last_name} ${patient.first_name}`,
               },
               {
@@ -416,7 +418,7 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
                 ),
               },
               {
-                label: 'Diagnosis',
+                label: t('patients.shared.form.diagnosis'),
                 value: consultationDiagnoses.join(', '),
               },
             ].map((info) => (

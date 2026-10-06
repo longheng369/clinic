@@ -8,6 +8,7 @@ import { IMedicationOrder } from '@/interfaces/IMedicationOrder';
 import { IPatient } from '@/interfaces/IPatient';
 import Pagination from '@/components/table/Pagination';
 import { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { IVisitWithMetaData } from '@/interfaces/IVisit';
 
 interface PaginatedData<T> {
@@ -27,6 +28,7 @@ type Props = {
 };
 
 const MedicationTab = ({ patientId, patient, selectedVisit }: Props) => {
+  const { t } = useTranslation();
   const { openModal, closeModal } = useModal();
   const { medicationOrders, activeVisits, medicines, medicationRoutes } = usePage<{
     medicationOrders: PaginatedData<IMedicationOrder>;
@@ -53,15 +55,15 @@ const MedicationTab = ({ patientId, patient, selectedVisit }: Props) => {
   if (!selectedVisit) {
     return (
       <Box>
-        <Box>Medication</Box>
-        <Box>Select a visit to view medications.</Box>
+        <Box>{t('patients.medication.title')}</Box>
+        <Box>{t('patients.medication.selectVisit')}</Box>
       </Box>
     );
   }
 
   const handleCreate = () => {
     openModal({
-      title: 'Add to Drug Chart',
+      title: t('patients.shared.form.addToDrugChart'),
       content: (
         <MarForm
           patientId={patientId}
@@ -78,7 +80,7 @@ const MedicationTab = ({ patientId, patient, selectedVisit }: Props) => {
 
   const handleEdit = (order: IMedicationOrder) => {
     openModal({
-      title: 'Edit Prescription',
+      title: t('patients.shared.form.editPrescription'),
       content: (
         <MarForm
           patientId={patientId}
@@ -103,16 +105,16 @@ const MedicationTab = ({ patientId, patient, selectedVisit }: Props) => {
         startIcon={<Plus size={16} />}
         variant="contained"
       >
-        Add Medicine
+        {t('patients.shared.form.addMedicine')}
       </Button>
 
       {filteredData.length === 0 ? (
         <Box>
-          <Box>No prescriptions found</Box>
+          <Box>{t('patients.medication.noPrescriptions')}</Box>
           <Box>
             {searchTerm
-              ? 'Try a different search term.'
-              : 'Add medication to the drug chart for this patient.'}
+              ? t('patients.shared.form.tryDifferentSearch')
+              : t('patients.medication.emptyHint')}
           </Box>
         </Box>
       ) : (

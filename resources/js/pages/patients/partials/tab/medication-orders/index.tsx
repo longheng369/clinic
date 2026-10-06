@@ -7,6 +7,7 @@ import MedicationOrderGroup from '../MedicationOrderGroup';
 import { IMedicationOrder } from '@/interfaces/IMedicationOrder';
 import Pagination from '@/components/table/Pagination';
 import { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface PaginatedData<T> {
   data: T[];
@@ -24,6 +25,7 @@ type Props = {
 };
 
 const MedicationOrdersTab = ({ patientId, visitId }: Props) => {
+  const { t } = useTranslation();
   const { openModal, closeModal } = useModal();
   const { medicationOrders, activeVisits, medicines, medicationRoutes } = usePage<{
     medicationOrders: PaginatedData<IMedicationOrder>;
@@ -51,7 +53,7 @@ const MedicationOrdersTab = ({ patientId, visitId }: Props) => {
 
   const handleCreate = () => {
     openModal({
-      title: 'Add to Drug Chart',
+      title: t('patients.shared.form.addToDrugChart'),
       content: (
         <MarForm
           patientId={patientId}
@@ -68,7 +70,7 @@ const MedicationOrdersTab = ({ patientId, visitId }: Props) => {
 
   const handleEdit = (order: IMedicationOrder) => {
     openModal({
-      title: 'Edit Prescription',
+      title: t('patients.shared.form.editPrescription'),
       content: (
         <MarForm
           patientId={patientId}
@@ -115,7 +117,7 @@ const MedicationOrdersTab = ({ patientId, visitId }: Props) => {
           <Box
             component="input"
             type="text"
-            placeholder="Search medicine..."
+            placeholder={t('patients.shared.form.searchMedicine')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             sx={{
@@ -139,19 +141,19 @@ const MedicationOrdersTab = ({ patientId, visitId }: Props) => {
           startIcon={<Plus size={16} />}
           variant="contained"
         >
-          Add Medicine
+          {t('patients.shared.form.addMedicine')}
         </Button>
       </Box>
 
       {filteredData.length === 0 ? (
         <Box sx={{ textAlign: 'center', py: 6 }}>
           <Box sx={{ fontSize: 18, fontWeight: 600, color: '#475569', mb: 1 }}>
-            No medication orders found
+            {t('patients.medicationOrders.emptyTitle')}
           </Box>
           <Box sx={{ color: '#94a3b8', fontSize: 14 }}>
             {searchTerm
-              ? 'Try a different search term.'
-              : 'Add medication to the drug chart for this patient.'}
+              ? t('patients.shared.form.tryDifferentSearch')
+              : t('patients.medication.emptyHint')}
           </Box>
         </Box>
       ) : (

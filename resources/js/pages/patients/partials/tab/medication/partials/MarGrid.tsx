@@ -9,12 +9,13 @@ import MarGridCell from './MarGridCell';
 import { Button } from '@/components/ui/button';
 import IconButton from '@/components/button/iconButton';
 import { formatDob } from '@/utils/date';
+import { useTranslation } from 'react-i18next';
 
 const ORDER_STATUS: Record<string, { label: string; className: string }> = {
-  active: { label: 'Active', className: 'bg-green-100 text-green-700' },
-  on_hold: { label: 'On Hold', className: 'bg-amber-100 text-amber-700' },
-  stopped: { label: 'Stopped', className: 'bg-red-100 text-red-700' },
-  completed: { label: 'Completed', className: 'bg-blue-100 text-blue-700' },
+  active: { label: 'patients.shared.status.active', className: 'bg-green-100 text-green-700' },
+  on_hold: { label: 'patients.shared.status.onHold', className: 'bg-amber-100 text-amber-700' },
+  stopped: { label: 'patients.shared.status.stopped', className: 'bg-red-100 text-red-700' },
+  completed: { label: 'patients.shared.status.completed', className: 'bg-blue-100 text-blue-700' },
 };
 
 const DOSE_TIMES: Record<string, string[]> = {
@@ -121,17 +122,21 @@ const MarTable = ({
   showActions = true,
 }: MarGridProps) => {
   const { openAlert } = useModal();
+  const { t } = useTranslation();
 
   const allAdministrations = orders.flatMap((m) => m.administrations);
   const dateColumns = buildDateRange(allAdministrations);
   const initialsMap = collectInitials(orders);
 
+  const orderName = (m: IMedicationOrder) =>
+    m.medicine?.name ?? t('patients.medication.medicationFallback');
+
   const handleStop = (m: IMedicationOrder) => {
     openAlert({
-      message: `Stop ${m.medicine?.name ?? 'medication'}?`,
-      description: 'All pending doses will be cancelled.',
+      message: t('patients.shared.order.stopTitle', { name: orderName(m) }),
+      description: t('patients.shared.order.stopDesc'),
       variant: 'danger',
-      confirmLabel: 'Stop',
+      confirmLabel: t('patients.shared.action.stop'),
       onConfirm: () =>
         router.post(`/visits/${visitId}/medications/${m.id}/stop`, {}),
     });
@@ -139,10 +144,12 @@ const MarTable = ({
 
   const handleContinue = (m: IMedicationOrder) => {
     openAlert({
-      message: `Continue ${m.medicine?.name ?? 'medication'}?`,
-      description: `A new treatment cycle will begin (Cycle ${m.cycle_no + 1}).`,
+      message: t('patients.shared.order.continueTitle', { name: orderName(m) }),
+      description: t('patients.shared.order.continueDesc', {
+        cycleNo: m.cycle_no + 1,
+      }),
       variant: 'info',
-      confirmLabel: 'Continue',
+      confirmLabel: t('patients.shared.action.continue'),
       onConfirm: () =>
         router.post(`/visits/${visitId}/medications/${m.id}/continue`, {}),
     });
@@ -150,10 +157,10 @@ const MarTable = ({
 
   const handleHold = (m: IMedicationOrder) => {
     openAlert({
-      message: `Place ${m.medicine?.name ?? 'medication'} on hold?`,
-      description: 'Doses cannot be administered while on hold.',
+      message: t('patients.shared.order.holdTitle', { name: orderName(m) }),
+      description: t('patients.shared.order.holdDesc'),
       variant: 'warning',
-      confirmLabel: 'Hold',
+      confirmLabel: t('patients.shared.action.hold'),
       onConfirm: () =>
         router.post(`/visits/${visitId}/medications/${m.id}/hold`, {}),
     });
@@ -186,12 +193,18 @@ const MarTable = ({
         </Box>
         {patient.first_name && (
           <Box>
-            ({patient.last_name ? `${patient.last_name} ` : ''}
-            {patient.first_name})
+            {t('patients.medication.nameLatin', {
+              last_name: patient.last_name ? `${patient.last_name} ` : '',
+              first_name: patient.first_name,
+            })}
           </Box>
         )}
         <Box sx={{ color: '#cbd5e1' }}>&middot;</Box>
-        <Box>DOB: {formatDob(patient.date_of_birth)}</Box>
+        <Box>
+          {t('patients.medication.dob', {
+            date: formatDob(patient.date_of_birth),
+          })}
+        </Box>
         {patient.blood_group && (
           <>
             <Box sx={{ color: '#cbd5e1' }}>&middot;</Box>
@@ -201,7 +214,9 @@ const MarTable = ({
         {patient.allergy && (
           <>
             <Box sx={{ color: '#cbd5e1' }}>&middot;</Box>
-            <Box sx={{ color: '#ef4444' }}>Allergy: {patient.allergy}</Box>
+            <Box sx={{ color: '#ef4444' }}>
+              {t('patients.medication.allergy', { allergy: patient.allergy })}
+            </Box>
           </>
         )}
         {dateColumns.length > 0 && (
@@ -240,7 +255,7 @@ const MarTable = ({
                   fontSize: 12,
                 }}
               >
-                Medication
+                {t('patients.medication.title')}
               </th>
               {dateColumns.map((dateKey) => (
                 <th
@@ -265,7 +280,8 @@ const MarTable = ({
             {orders.map((order) => {
               const statusBadge =
                 ORDER_STATUS[order.status] ?? ORDER_STATUS.active;
-              const medicineName = order.medicine?.name ?? 'Unknown';
+              const medicineName =
+                order.medicine?.name ?? t('patients.shared.unknown');
               const unitPrice = order.medicine?.unit_price;
 
               const hasAdministrationActivity = order.administrations.some(
@@ -342,7 +358,7 @@ const MarTable = ({
                               fontWeight: 500,
                             }}
                           >
-                            {statusBadge.label}
+                            {t(statusBadge.label)}
                           </Box>
                         </Box>
                         <Box
@@ -365,7 +381,11 @@ const MarTable = ({
                           {unitPrice != null && (
                             <>
                               <Box>&middot;</Box>
-                              <Box>${Number(unitPrice).toFixed(2)}/dose</Box>
+                              <Box>
+                                {t('patients.shared.order.pricePerDose', {
+                                  price: Number(unitPrice).toFixed(2),
+                                })}
+                              </Box>
                             </>
                           )}
                         </Box>
@@ -373,7 +393,9 @@ const MarTable = ({
                           <Box
                             sx={{ fontSize: 11, color: '#94a3b8', mt: 0.25 }}
                           >
-                            Dr. {order.created_by}
+                            {t('patients.shared.order.doctor', {
+                              name: order.created_by,
+                            })}
                           </Box>
                         )}
                         {order.notes && (
@@ -398,8 +420,8 @@ const MarTable = ({
                             {canEdit && (
                               <IconButton
                                 onClick={() => onEdit?.(order)}
-                                aria-label="Edit order"
-                                title="Edit"
+                                aria-label={t('patients.shared.order.editOrder')}
+                                title={t('common.edit')}
                               >
                                 <Pencil size={14} />
                               </IconButton>
@@ -411,14 +433,14 @@ const MarTable = ({
                                   size="sm"
                                   onClick={() => handleHold(order)}
                                 >
-                                  <Pause size={14} /> Hold
+                                  <Pause size={14} /> {t('patients.shared.action.hold')}
                                 </Button>
                                 <Button
                                   variant="destructive"
                                   size="sm"
                                   onClick={() => handleStop(order)}
                                 >
-                                  <StopCircle size={14} /> Stop
+                                  <StopCircle size={14} /> {t('patients.shared.action.stop')}
                                 </Button>
                               </>
                             )}
@@ -429,14 +451,14 @@ const MarTable = ({
                                   size="sm"
                                   onClick={() => handleResume(order)}
                                 >
-                                  <Play size={14} /> Resume
+                                  <Play size={14} /> {t('patients.shared.action.resume')}
                                 </Button>
                                 <Button
                                   variant="destructive"
                                   size="sm"
                                   onClick={() => handleStop(order)}
                                 >
-                                  <StopCircle size={14} /> Stop
+                                  <StopCircle size={14} /> {t('patients.shared.action.stop')}
                                 </Button>
                               </>
                             )}
@@ -447,20 +469,20 @@ const MarTable = ({
                                   size="sm"
                                   onClick={() => handleContinue(order)}
                                 >
-                                  <RotateCcw size={14} /> Continue
+                                  <RotateCcw size={14} /> {t('patients.shared.action.continue')}
                                 </Button>
                                 <Button
                                   variant="destructive"
                                   size="sm"
                                   onClick={() => handleStop(order)}
                                 >
-                                  <StopCircle size={14} /> Stop
+                                  <StopCircle size={14} /> {t('patients.shared.action.stop')}
                                 </Button>
                               </>
                             )}
                             {order.status === 'stopped' && (
                               <Box sx={{ fontSize: 11, color: '#94a3b8' }}>
-                                Stopped
+                                {t('patients.shared.status.stopped')}
                               </Box>
                             )}
                           </Box>
@@ -516,7 +538,9 @@ const MarTable = ({
             flexWrap: 'wrap',
           }}
         >
-          <Box sx={{ fontWeight: 600, color: '#475569' }}>Initials:</Box>
+          <Box sx={{ fontWeight: 600, color: '#475569' }}>
+            {t('patients.medication.initialsLegend')}
+          </Box>
           {Array.from(initialsMap.entries()).map(([initials, name], i) => (
             <Box
               key={initials}
@@ -524,8 +548,8 @@ const MarTable = ({
             >
               {i > 0 && <Box sx={{ color: '#cbd5e1' }}>&middot;</Box>}
               <Box sx={{ fontWeight: 600, color: '#334155' }}>
-                {initials}
-              </Box> = {name}
+                {t('patients.medication.initialsEntry', { initials, name })}
+              </Box>
             </Box>
           ))}
         </Box>

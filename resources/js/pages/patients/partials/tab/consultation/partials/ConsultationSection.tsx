@@ -1,4 +1,5 @@
 import { useController, type Control, type Path } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import Input from '@/components/form/input';
 import Checkbox from '@/components/form/checkbox';
 import CheckboxGroup from '@/components/form/checkboxGroup';
@@ -36,14 +37,15 @@ const ConsultationSection = ({
   control,
   disabled,
 }: SectionProps) => {
+  const { t } = useTranslation();
   const hasNormalOption = options.some((option) => option.value === 'NORMAL');
   const checkboxOptions = options
     .filter((option) => option.value !== 'NORMAL')
     .map((option) => ({
       value: option.value,
       colSpan: option.colSpan,
-      text: option.text && <Box sx={{}}>{option.text}</Box>,
-      label: option.label && <Box sx={{}}>{option.label}</Box>,
+      text: option.text && <Box sx={{}}>{t(option.text)}</Box>,
+      label: option.label && <Box sx={{}}>{t(option.label)}</Box>,
     }));
   const othersName = OTHER_FIELD_MAP[name] as Path<IConsultationFormData>;
   const { field: othersField } = useController({ control, name: othersName });
@@ -71,7 +73,13 @@ const ConsultationSection = ({
               value="NORMAL"
               exclusive
               disabled={disabled}
-              label={<Box sx={{}}>Normal</Box>}
+              label={
+                <Box sx={{}}>
+                  {t(
+                    'patients.consultation.template.respiratorySymptoms.normal',
+                  )}
+                </Box>
+              }
               size="small"
               sx={{ p: 0.5 }}
               onCheckedChange={(checked) => {
@@ -92,8 +100,8 @@ const ConsultationSection = ({
         <Input
           control={control}
           name={othersName}
-          label="Others"
-          placeholder="Specify other symptoms..."
+          label={t('patients.consultation.form.others')}
+          placeholder={t('patients.consultation.form.specifyOtherSymptoms')}
           disabled={disabled}
         />
       </Box>

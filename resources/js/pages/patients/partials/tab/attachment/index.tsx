@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { IVisitWithMetaData } from '@/interfaces/IVisit';
 import { formatCreatedDateTime } from '@/utils/date';
+import { useTranslation } from 'react-i18next';
 
 interface Attachment {
   id: number;
@@ -43,7 +44,7 @@ const fileMeta = (type: string) => {
       icon: <Image size={20} />,
       bg: '#eff6ff',
       color: '#2563eb',
-      label: 'Image',
+      label: 'patients.attachment.image',
     };
   }
   if (type.includes('pdf')) {
@@ -51,14 +52,14 @@ const fileMeta = (type: string) => {
       icon: <FileText size={20} />,
       bg: '#fef2f2',
       color: '#dc2626',
-      label: 'PDF',
+      label: 'patients.attachment.pdf',
     };
   }
   return {
     icon: <File size={20} />,
     bg: '#f1f5f9',
     color: '#64748b',
-    label: 'File',
+    label: 'patients.attachment.file',
   };
 };
 
@@ -74,6 +75,7 @@ type Props = {
 };
 
 const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const { openAlert } = useModal();
   const [isUploading, setIsUploading] = useState(false);
@@ -86,7 +88,7 @@ const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
     if (!file) return;
 
     if (file.size > 20 * 1024 * 1024) {
-      toast('The file is too large. Maximum allowed size is 20 MB.', {
+      toast(t('patients.attachment.tooLarge'), {
         variant: 'error',
       });
       e.target.value = '';
@@ -113,7 +115,7 @@ const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
     ];
 
     if (!file.type && !file.name.includes('.')) {
-      toast('Unrecognized file. Please choose a file with a known extension.', {
+      toast(t('patients.attachment.unrecognized'), {
         variant: 'error',
       });
       e.target.value = '';
@@ -123,10 +125,7 @@ const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
     const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
 
     if (!ALLOWED_EXTENSIONS.includes(ext)) {
-      toast(
-        'This file type is not supported. Allowed types: images (JPG, PNG, GIF, WEBP, BMP), PDF, Office documents (Word, Excel, PowerPoint), CSV, TXT, and ZIP.',
-        { variant: 'error' },
-      );
+      toast(t('patients.attachment.unsupported'), { variant: 'error' });
       e.target.value = '';
       return;
     }
@@ -140,7 +139,7 @@ const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
 
     router.post(`/patients/${patientId}/attachments`, formData, {
       onError: (errors) => {
-        const msg = Object.values(errors).join(', ') || 'Failed to upload file';
+        const msg = Object.values(errors).join(', ') || t('patients.attachment.uploadFailed');
         toast(msg, { variant: 'error' });
       },
       onFinish: () => setIsUploading(false),
@@ -151,10 +150,10 @@ const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
 
   const handleDelete = (attachment: Attachment) => {
     openAlert({
-      message: 'Delete this attachment?',
-      description: 'This action cannot be undone.',
+      message: t('patients.attachment.deleteConfirm'),
+      description: t('common.deleteDescription'),
       variant: 'danger',
-      confirmLabel: 'Delete',
+      confirmLabel: t('common.delete'),
       onConfirm: () =>
         router.delete(`/patients/${patientId}/attachments/${attachment.id}`),
     });
@@ -163,7 +162,7 @@ const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
   const columns: GridColDef[] = [
     {
       field: 'file_name',
-      headerName: 'File',
+      headerName: t('patients.attachment.colFile'),
       flex: 1,
       minWidth: 250,
       renderCell: (params: GridRenderCellParams<Attachment>) => {
@@ -211,15 +210,15 @@ const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
     },
     {
       field: 'file_type',
-      headerName: 'Type',
+      headerName: t('patients.attachment.colType'),
       flex: 1,
       minWidth: 110,
       renderCell: (params: GridRenderCellParams<Attachment>) =>
-        fileMeta(params.row.file_type).label,
+        t(fileMeta(params.row.file_type).label),
     },
     {
       field: 'file_size',
-      headerName: 'Size',
+      headerName: t('patients.attachment.colSize'),
       flex: 1,
       minWidth: 100,
       renderCell: (params: GridRenderCellParams<Attachment>) =>
@@ -227,7 +226,7 @@ const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
     },
     {
       field: 'uploaded_by',
-      headerName: 'Uploaded By',
+      headerName: t('patients.attachment.colUploadedBy'),
       flex: 1,
       minWidth: 140,
       renderCell: (params: GridRenderCellParams<Attachment>) =>
@@ -239,7 +238,7 @@ const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
     },
     {
       field: 'created_at',
-      headerName: 'Date',
+      headerName: t('patients.attachment.colDate'),
       flex: 1,
       minWidth: 120,
       renderCell: (params: GridRenderCellParams<Attachment>) =>
@@ -248,20 +247,20 @@ const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
     {
       field: 'actions',
       type: 'actions',
-      headerName: 'Actions',
+      headerName: t('patients.attachment.actions'),
       width: 110,
       getActions: (params) => [
         <GridActionsCellItem
           key={`view-${params.id}`}
           icon={<Eye size={16} color="#64748b" />}
-          label="Preview"
+          label={t('patients.attachment.preview')}
           onClick={() => setPreview(params.row as Attachment)}
           showInMenu={false}
         />,
         <GridActionsCellItem
           key={`delete-${params.id}`}
           icon={<Trash2 size={16} color="#dc2626" />}
-          label="Delete"
+          label={t('common.delete')}
           onClick={() => handleDelete(params.row as Attachment)}
           showInMenu={false}
         />,
@@ -280,7 +279,7 @@ const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
         }}
       >
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          Attachments for this patient belong to selected visit
+          {t('patients.attachment.subtitle')}
         </Typography>
         <Button
           variant="contained"
@@ -294,7 +293,7 @@ const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
           onClick={() => inputRef.current?.click()}
           disabled={isUploading}
         >
-          {isUploading ? 'Uploading…' : 'New Attachment'}
+          {isUploading ? t('patients.attachment.uploading') : t('patients.attachment.new')}
         </Button>
       </Box>
 
@@ -383,8 +382,7 @@ const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
                 <File size={32} />
               </Box>
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                Preview not available for this file type, please download file
-                instead.
+                {t('patients.attachment.previewUnavailable')}
               </Typography>
               <Button
                 variant="outlined"
@@ -394,7 +392,7 @@ const AttachmentsTab = ({ patientId, selectedVisit }: Props) => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Download file
+                {t('patients.attachment.download')}
               </Button>
             </Box>
           )}

@@ -15,6 +15,16 @@ export interface IPatientVaccinationFormData {
   notes: string;
 }
 
+export interface IVaccineOption {
+  id: number;
+  name: string;
+  eligible: boolean;
+  doses_completed: number;
+  total_doses: number;
+  next_dose_number: number | null;
+  next_dose_due_date: string | null;
+}
+
 export interface IVaccineCardItem {
   vaccine: { id: number; name: string };
   eligible: boolean;

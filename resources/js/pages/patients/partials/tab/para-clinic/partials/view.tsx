@@ -2,19 +2,20 @@ import { useEffect, useState } from 'react';
 import { Chip, DialogContent, Stack, CircularProgress } from '@mui/material';
 import { useToast } from '@/components/toast';
 import { IParaClinicRequest } from '@/interfaces/IParaClinicRequest';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   requestId: number;
 };
 
-const STATUS_OPTIONS: Record<string, string> = {
-  draft: 'Draft',
-  requested: 'Requested',
-  waiting_result: 'Waiting Result',
-  result_received: 'Result Received',
-  reviewed: 'Reviewed',
-  completed: 'Completed',
-  cancelled: 'Cancelled',
+export const STATUS_OPTIONS: Record<string, string> = {
+  draft: 'patients.paraClinic.status.draft',
+  requested: 'patients.paraClinic.status.requested',
+  waiting_result: 'patients.paraClinic.status.waitingResult',
+  result_received: 'patients.paraClinic.status.resultReceived',
+  reviewed: 'patients.paraClinic.status.reviewed',
+  completed: 'patients.shared.status.completed',
+  cancelled: 'patients.shared.status.cancelled',
 };
 
 const STATUS_COLORS: Record<string, 'default' | 'primary' | 'error' | 'info' | 'success' | 'warning'> = {
@@ -28,6 +29,7 @@ const STATUS_COLORS: Record<string, 'default' | 'primary' | 'error' | 'info' | '
 };
 
 const ParaClinicView = ({ requestId }: Props) => {
+  const { t } = useTranslation();
   const [data, setData] = useState<IParaClinicRequest | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
@@ -47,7 +49,7 @@ const ParaClinicView = ({ requestId }: Props) => {
       .then(setData)
       .catch((err) => {
         if (err?.name !== 'AbortError') {
-          toast('Failed to load request details.', { variant: 'error' });
+          toast(t('patients.paraClinic.loadDetailsFailed'), { variant: 'error' });
         }
       })
       .finally(() => setIsLoading(false));
@@ -75,37 +77,53 @@ const ParaClinicView = ({ requestId }: Props) => {
       <Stack spacing={3}>
         <Chip
           size="small"
-          label={STATUS_OPTIONS[data.status] ?? data.status}
+          label={
+            STATUS_OPTIONS[data.status]
+              ? t(STATUS_OPTIONS[data.status])
+              : data.status
+          }
           color={STATUS_COLORS[data.status] ?? 'default'}
           sx={{ fontWeight: 500, alignSelf: 'flex-start' }}
         />
 
-        <p className="text-base font-semibold">General Information</p>
+        <p className="text-base font-semibold">
+          {t('patients.shared.form.generalInformation')}
+        </p>
 
         <div className="space-y-3">
           <div className="border-b border-gray-200 pb-2">
-            <p className="text-xs text-gray-500">Request Date & Time</p>
+            <p className="text-xs text-gray-500">
+              {t('patients.paraClinic.requestDateTime')}
+            </p>
             <p className="text-sm text-gray-900">{data.request_date || '—'}</p>
           </div>
 
           <div className="border-b border-gray-200 pb-2">
-            <p className="text-xs text-gray-500">Diagnosis</p>
+            <p className="text-xs text-gray-500">
+              {t('patients.shared.form.diagnosis')}
+            </p>
             <p className="text-sm text-gray-900">{data.provisional_diagnosis || '—'}</p>
           </div>
 
           <div className="border-b border-gray-200 pb-2">
-            <p className="text-xs text-gray-500">Clinical Reason</p>
+            <p className="text-xs text-gray-500">
+              {t('patients.paraClinic.clinicalReason')}
+            </p>
             <p className="text-sm text-gray-900">{data.clinical_reason || '—'}</p>
           </div>
 
           <div className="border-b border-gray-200 pb-2">
-            <p className="text-xs text-gray-500">Notes</p>
+            <p className="text-xs text-gray-500">
+              {t('patients.shared.form.notes')}
+            </p>
             <p className="text-sm text-gray-900">{data.notes || '—'}</p>
           </div>
         </div>
 
         <div>
-          <p className="text-xs text-gray-500 mb-1.5">Diagnostic Tests</p>
+          <p className="text-xs text-gray-500 mb-1.5">
+            {t('patients.paraClinic.diagnosticTests')}
+          </p>
           {tests.length > 0 ? (
             <Stack spacing={1}>
               {tests.map((test) => (
@@ -126,7 +144,7 @@ const ParaClinicView = ({ requestId }: Props) => {
         </div>
 
         <p className="text-base font-semibold pt-1 border-t border-gray-200">
-          Total: ${totalFee.toFixed(2)}
+          {t('patients.shared.form.total', { amount: totalFee.toFixed(2) })}
         </p>
       </Stack>
     </DialogContent>

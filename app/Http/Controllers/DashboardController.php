@@ -18,7 +18,7 @@ class DashboardController extends Controller
         $patients = Patient::whereHas('vaccinations', function ($q) use ($today) {
             $q->where('administered_date', '>=', $today->subDays(90));
         })->with('vaccinations.vaccine')->get();
-        $vaccines = Vaccine::orderBy('name')->get(['id', 'name', 'rules']);
+        $vaccines = Vaccine::with('ageRules')->orderBy('name')->get(['id', 'name']);
 
         $dueAlerts = [];
 

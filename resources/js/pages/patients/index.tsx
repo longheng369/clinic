@@ -12,6 +12,7 @@ import {
 } from '@mui/x-data-grid';
 import { usePagination } from '@/hooks/usePagination';
 import { useDebouncedSearch } from '@/hooks/useDebouncedSearch';
+import { useTranslation } from 'react-i18next';
 import SearchBar from '@/components/searchBar';
 import { formatDob } from '@/utils/date';
 import { Box, Typography, Button } from '@mui/material';
@@ -28,6 +29,7 @@ interface PaginatedData<T> {
 
 const Patient = () => {
   const { openModal, openAlert } = useModal();
+  const { t } = useTranslation();
 
   const { patients, search: searchProp } = usePage<{
     patients: PaginatedData<IPatient>;
@@ -46,7 +48,7 @@ const Patient = () => {
 
   const handleCreate = () => {
     openModal({
-      title: "New Patient",
+      title: t('patients.list.newPatient'),
       content: <PatientForm />,
       config: { preventClickAway: true, maxWidth: '4xl' },
     });
@@ -56,7 +58,7 @@ const Patient = () => {
     openModal({
       title: (
         <Typography variant="h5" sx={{ fontWeight: 'medium' }}>
-          Edit{' '}
+          {t('common.edit')}{' '}
           <Typography
             variant="h6"
             component="span"
@@ -73,10 +75,10 @@ const Patient = () => {
 
   const handleDelete = (patient: IPatient) => {
     openAlert({
-      message: 'Delete this patient?',
-      description: 'This action cannot be undone.',
+      message: t('patients.list.deleteTitle'),
+      description: t('common.deleteDescription'),
       variant: 'danger',
-      confirmLabel: 'Delete',
+      confirmLabel: t('common.delete'),
       onConfirm: () => router.delete(`/patients/${patient.id}`),
     });
   };
@@ -84,7 +86,7 @@ const Patient = () => {
   const columns: GridColDef[] = [
     {
       field: 'khmer_name',
-      headerName: 'ឈ្មោះខ្មែរ',
+      headerName: t('patients.list.colKhmerName'),
       flex: 1,
       minWidth: 180,
       valueGetter: (_value, row: IPatient) =>
@@ -92,7 +94,7 @@ const Patient = () => {
     },
     {
       field: 'english_name',
-      headerName: 'ឈ្មោះជាភាសាអង់គ្លេស',
+      headerName: t('patients.list.colEnglishName'),
       flex: 1,
       minWidth: 180,
       valueGetter: (_value, row: IPatient) =>
@@ -108,13 +110,13 @@ const Patient = () => {
     },
     {
       field: 'phone_number',
-      headerName: 'លេខទូរស័ព្ទ',
+      headerName: t('patients.list.colPhone'),
       flex: 1,
       minWidth: 130,
     },
     {
       field: 'gender',
-      headerName: 'ភេទ',
+      headerName: t('patients.list.colGender'),
       flex: 1,
       minWidth: 90,
       renderCell: (params: GridRenderCellParams<IPatient>) => (
@@ -131,14 +133,14 @@ const Patient = () => {
     },
     {
       field: 'date_of_birth',
-      headerName: 'ថ្ងៃខែឆ្នាំកំណើត',
+      headerName: t('patients.list.colDob'),
       flex: 1,
       minWidth: 130,
       valueGetter: (_value, row: IPatient) => formatDob(row.date_of_birth),
     },
     {
       field: 'blood_group',
-      headerName: 'ប្រភេទឈាម',
+      headerName: t('patients.list.colBloodGroup'),
       flex: 1,
       minWidth: 110,
       renderCell: (params: GridRenderCellParams<IPatient>) =>
@@ -151,27 +153,33 @@ const Patient = () => {
     {
       field: 'actions',
       type: 'actions',
-      headerName: 'សកម្មភាព',
+      headerName: t('patients.list.colActions'),
       width: 150,
       getActions: (params) => [
         <GridActionsCellItem
           key={`view-${params.id}`}
           icon={<Eye size={16} color="#64748b" />}
-          label={`View ${params.row.khmer_first_name}`}
+          label={t('patients.list.viewAction', {
+            khmer_first_name: params.row.khmer_first_name,
+          })}
           onClick={() => router.visit(`/patients/${params.id}`)}
           showInMenu={false}
         />,
         <GridActionsCellItem
           key={`edit-${params.id}`}
           icon={<Pencil size={16} color="#2563eb" />}
-          label={`Edit ${params.row.khmer_first_name}`}
+          label={t('patients.list.editAction', {
+            khmer_first_name: params.row.khmer_first_name,
+          })}
           onClick={() => handleEdit(params.row as IPatient)}
           showInMenu={false}
         />,
         <GridActionsCellItem
           key={`delete-${params.id}`}
           icon={<Trash2 size={16} color="#dc2626" />}
-          label={`Delete ${params.row.khmer_first_name}`}
+          label={t('patients.list.deleteAction', {
+            khmer_first_name: params.row.khmer_first_name,
+          })}
           onClick={() => handleDelete(params.row as IPatient)}
           showInMenu={false}
         />,
@@ -181,7 +189,7 @@ const Patient = () => {
 
   return (
     <>
-      <Head title="Patients" />
+      <Head title={t('patients.list.title')} />
       <Box
         sx={{ p: 4, height: '100%', display: 'flex', flexDirection: 'column' }}
       >
@@ -192,12 +200,7 @@ const Patient = () => {
             justifyContent: 'space-between',
           }}
         >
-          <Box>
-            <Typography variant="h5">Patients</Typography>
-            <Typography variant="body1" color="textSecondary">
-              Manage your clinic patients
-            </Typography>
-          </Box>
+          <Typography variant="h5">{t('patients.list.title')}</Typography>
           <Box
             sx={{
               display: 'flex',
@@ -207,16 +210,17 @@ const Patient = () => {
             }}
           >
             <SearchBar
+              sx={{ width: 350 }}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search patient"
+              placeholder={t('patients.list.searchPlaceholder')}
             />
             <Button
               onClick={handleCreate}
               variant="contained"
               startIcon={<Plus size={16} />}
             >
-              New Patient
+              {t('patients.list.newPatient')}
             </Button>
           </Box>
         </Box>

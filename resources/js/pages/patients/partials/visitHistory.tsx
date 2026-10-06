@@ -1,6 +1,7 @@
 import { IVisit, IVisitWithMetaData } from '@/interfaces/IVisit';
 import { formatCreatedDateTime } from '@/utils/date';
 import { Button, Chip, List, ListItemButton, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   allVisits: IVisit[];
@@ -22,6 +23,8 @@ const VisitHistory = ({
   onAdmit,
   onClose,
 }: Props) => {
+  const { t } = useTranslation();
+
   if (allVisits.length === 0) {
     return (
       <Typography
@@ -32,7 +35,7 @@ const VisitHistory = ({
           fontSize: 14,
         }}
       >
-        No visits recorded
+        {t('patients.show.noVisits')}
       </Typography>
     );
   }
@@ -86,7 +89,7 @@ const VisitHistory = ({
                       onAdmit(v.id);
                     }}
                   >
-                    Admit
+                    {t('patients.show.admit')}
                   </Button>
                 )}
                 <Button
@@ -98,7 +101,7 @@ const VisitHistory = ({
                     onClose(v.id);
                   }}
                 >
-                  Close
+                  {t('common.close')}
                 </Button>
               </>
             )}

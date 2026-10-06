@@ -4,6 +4,7 @@ import Input from '@/components/form/input';
 import { router } from '@inertiajs/react';
 import { useToast } from '@/components/toast';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { ShieldCheck } from 'lucide-react';
 import type { IMedicationOrder } from '@/interfaces/IMedicationOrder';
@@ -26,6 +27,7 @@ const AdministerDialog = ({
   visitId,
   onClose,
 }: AdministerDialogProps) => {
+  const { t } = useTranslation();
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
 
@@ -33,7 +35,7 @@ const AdministerDialog = ({
     defaultValues: { note: '' },
   });
 
-  const medicineName = order.medicine?.name ?? 'Unknown';
+  const medicineName = order.medicine?.name ?? t('patients.shared.unknown');
   const scheduledTime = new Date(
     administration.scheduled_at,
   ).toLocaleTimeString('en-US', {
@@ -58,7 +60,7 @@ const AdministerDialog = ({
           toast(
             typeof message === 'string'
               ? message
-              : 'Unable to administer dose.',
+              : t('patients.medicationAdministration.administerError'),
             { variant: 'error' },
           );
         },
@@ -85,7 +87,7 @@ const AdministerDialog = ({
             >
               <ShieldCheck size={16} color="#16a34a" />
               <Box sx={{ fontSize: 13, fontWeight: 600, color: '#166534' }}>
-                Verify Before Administering
+                {t('patients.medicationAdministration.verifyTitle')}
               </Box>
             </Box>
             <Box
@@ -100,13 +102,14 @@ const AdministerDialog = ({
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Box sx={{ color: '#16a34a' }}>&#10003;</Box>
                 <Box>
-                  Medicine: <strong>{medicineName}</strong>
+                  {t('patients.medicationAdministration.labelMedicine')}{' '}
+                  <strong>{medicineName}</strong>
                 </Box>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Box sx={{ color: '#16a34a' }}>&#10003;</Box>
                 <Box>
-                  Dose:{' '}
+                  {t('patients.medicationAdministration.labelDose')}{' '}
                   <strong>
                     {order.dosage} {order.unit}
                   </strong>
@@ -115,13 +118,15 @@ const AdministerDialog = ({
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Box sx={{ color: '#16a34a' }}>&#10003;</Box>
                 <Box>
-                  Route: <strong>{order.route?.name}</strong>
+                  {t('patients.medicationAdministration.labelRoute')}{' '}
+                  <strong>{order.route?.name}</strong>
                 </Box>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Box sx={{ color: '#16a34a' }}>&#10003;</Box>
                 <Box>
-                  Scheduled: <strong>{scheduledTime}</strong>
+                  {t('patients.medicationAdministration.labelScheduled')}{' '}
+                  <strong>{scheduledTime}</strong>
                 </Box>
               </Box>
             </Box>
@@ -129,10 +134,10 @@ const AdministerDialog = ({
 
           {/* Notes */}
           <Input
-            label="Notes (optional)"
+            label={t('patients.medicationAdministration.notesOptional')}
             control={control}
             name="note"
-            placeholder="Any observations..."
+            placeholder={t('patients.medicationAdministration.observationsPlaceholder')}
             multiline
             rows={2}
           />
@@ -140,10 +145,10 @@ const AdministerDialog = ({
       </DialogContent>
       <DialogActions>
         <Button type="button" onClick={onClose} variant="outline">
-          Cancel
+          {t('common.cancel')}
         </Button>
         <Button type="submit" disabled={isProcessing} variant="default">
-          Confirm Administer
+          {t('patients.medicationAdministration.confirmAdminister')}
         </Button>
       </DialogActions>
     </Box>

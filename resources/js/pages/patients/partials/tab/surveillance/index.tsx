@@ -14,6 +14,7 @@ import { formatCreatedDateTime } from '@/utils/date';
 import { Box, Typography, Button } from '@mui/material';
 import SurveillanceForm from './partials/SurveillanceForm';
 import { O2_OPTIONS } from '@/config/surveillance';
+import { useTranslation } from 'react-i18next';
 
 interface PaginatedData<T> {
   data: T[];
@@ -35,11 +36,12 @@ const SurveillanceTab = ({ patientId, visitId }: Props) => {
   const { surveillance } = usePage<{
     surveillance: PaginatedData<ISurveillance>;
   }>().props;
+  const { t } = useTranslation();
   const { data: rows, total, current_page, per_page } = surveillance;
 
   const handleCreate = () => {
     openModal({
-      title: 'New Surveillance Record',
+      title: t('patients.surveillance.createTitle'),
       content: (
         <SurveillanceForm
           patientId={patientId}
@@ -53,7 +55,7 @@ const SurveillanceTab = ({ patientId, visitId }: Props) => {
 
   const handleEdit = (s: ISurveillance) => {
     openModal({
-      title: 'Edit Surveillance Record',
+      title: t('patients.surveillance.editTitle'),
       content: (
         <SurveillanceForm
           patientId={patientId}
@@ -68,10 +70,10 @@ const SurveillanceTab = ({ patientId, visitId }: Props) => {
 
   const handleDelete = (s: ISurveillance) => {
     openAlert({
-      message: 'Delete this surveillance record?',
-      description: 'This action cannot be undone.',
+      message: t('patients.surveillance.deleteMessage'),
+      description: t('common.deleteDescription'),
       variant: 'danger',
-      confirmLabel: 'Delete',
+      confirmLabel: t('common.delete'),
       onConfirm: () =>
         router.delete(`/patients/${patientId}/surveillance/${s.id}`),
     });
@@ -90,7 +92,7 @@ const SurveillanceTab = ({ patientId, visitId }: Props) => {
   const columns: GridColDef[] = [
     {
       field: 'created_at',
-      headerName: 'កាលបរិច្ឆេទ',
+      headerName: t('patients.surveillance.colDate'),
       flex: 1,
       minWidth: 150,
       valueGetter: (_value, row: ISurveillance) =>
@@ -98,7 +100,7 @@ const SurveillanceTab = ({ patientId, visitId }: Props) => {
     },
     {
       field: 'blood_pressure',
-      headerName: 'សម្ពាធឈាម',
+      headerName: t('patients.surveillance.colBloodPressure'),
       flex: 1,
       minWidth: 120,
       valueGetter: (_value, row: ISurveillance) =>
@@ -106,26 +108,26 @@ const SurveillanceTab = ({ patientId, visitId }: Props) => {
     },
     {
       field: 'pulse',
-      headerName: 'ជីពចរ',
+      headerName: t('patients.surveillance.colPulse'),
       flex: 1,
       minWidth: 90,
     },
     {
       field: 'temperature',
-      headerName: 'សីតុណ្ហភាព',
+      headerName: t('patients.surveillance.colTemperature'),
       flex: 1,
       minWidth: 110,
       valueGetter: (_value, row: ISurveillance) => row.temperature.toFixed(1),
     },
     {
       field: 'rr',
-      headerName: 'ដង្ហើម',
+      headerName: t('patients.surveillance.colRespiratoryRate'),
       flex: 1,
       minWidth: 90,
     },
     {
       field: 'spo2',
-      headerName: 'អុកស៊ីសែន',
+      headerName: t('patients.surveillance.colSpo2'),
       flex: 1,
       minWidth: 90,
       renderCell: (params: GridRenderCellParams<ISurveillance>) =>
@@ -137,7 +139,7 @@ const SurveillanceTab = ({ patientId, visitId }: Props) => {
     },
     {
       field: 'o2_supply',
-      headerName: 'ការផ្គត់ផ្គង់ O₂',
+      headerName: t('patients.surveillance.colO2Supply'),
       flex: 1,
       minWidth: 250,
       renderCell: (params: GridRenderCellParams<ISurveillance>) =>
@@ -149,7 +151,7 @@ const SurveillanceTab = ({ patientId, visitId }: Props) => {
     },
     {
       field: 'note',
-      headerName: 'កំណត់ចំណាំ',
+      headerName: t('patients.surveillance.colNote'),
       flex: 1,
       minWidth: 150,
       renderCell: (params: GridRenderCellParams<ISurveillance>) =>
@@ -161,7 +163,7 @@ const SurveillanceTab = ({ patientId, visitId }: Props) => {
     },
     {
       field: 'created_by',
-      headerName: 'អ្នកកត់ត្រា',
+      headerName: t('patients.surveillance.colCreatedBy'),
       flex: 1,
       minWidth: 130,
       renderCell: (params: GridRenderCellParams<ISurveillance>) =>
@@ -170,20 +172,20 @@ const SurveillanceTab = ({ patientId, visitId }: Props) => {
     {
       field: 'actions',
       type: 'actions',
-      headerName: 'សកម្មភាព',
+      headerName: t('patients.surveillance.colActions'),
       width: 150,
       getActions: (params) => [
         <GridActionsCellItem
           key={`edit-${params.id}`}
           icon={<Pencil size={16} color="#2563eb" />}
-          label="Edit surveillance"
+          label={t('patients.surveillance.editAction')}
           onClick={() => handleEdit(params.row as ISurveillance)}
           showInMenu={false}
         />,
         <GridActionsCellItem
           key={`delete-${params.id}`}
           icon={<Trash2 size={16} color="#dc2626" />}
-          label="Delete surveillance"
+          label={t('patients.surveillance.deleteAction')}
           onClick={() => handleDelete(params.row as ISurveillance)}
           showInMenu={false}
         />,
@@ -202,14 +204,14 @@ const SurveillanceTab = ({ patientId, visitId }: Props) => {
         }}
       >
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          Vital signs and surveillance records
+          {t('patients.surveillance.subtitle')}
         </Typography>
         <Button
           variant="contained"
           startIcon={<Plus size={16} />}
           onClick={handleCreate}
         >
-          New Record
+          {t('patients.surveillance.newRecord')}
         </Button>
       </Box>
 

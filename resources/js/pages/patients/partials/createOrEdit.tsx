@@ -18,6 +18,7 @@ import { useModal } from '@/components/modal';
 import { IGazetteer } from '@/interfaces/IGazetteer';
 import { getGazetteerInfo } from '@/utils/gazetteer';
 import { Save } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const BLOOD_GROUPS = [
   { value: 'A+', label: 'A+' },
@@ -100,6 +101,7 @@ const fetchGazetteers = async (endpoint: string, signal?: AbortSignal): Promise<
 
 const PatientForm = ({ patient }: Props) => {
   const { closeModal } = useModal();
+  const { t } = useTranslation();
   const [isProcessing, setIsProcessing] = useState(false);
   const [provinces, setProvinces] = useState<IGazetteer[]>([]);
   const [districts, setDistricts] = useState<IGazetteer[]>([]);
@@ -209,23 +211,23 @@ const PatientForm = ({ patient }: Props) => {
     <>
       <DialogContent dividers>
         <Typography variant="h6" sx={{ mb: 3 }}>
-          General Information
+          {t('patients.shared.form.generalInformation')}
         </Typography>
         <Grid container spacing={3}>
           <Grid size={{ md: 6 }}>
             <Input
               control={control}
               name="khmer_first_name"
-              label="Khmer First Name"
+              label={t('patients.form.khmerFirstName')}
               sx={{
                 '& .MuiInputBase-input': { fontFamily: 'var(--font-khmer)' },
               }}
               slotProps={{ htmlInput: { spellCheck: false } }}
               rules={{
-                required: 'This field is required',
+                required: t('common.required'),
                 pattern: {
                   value: /^[\u1780-\u17FF\s]+$/,
-                  message: 'Only Khmer characters are allowed',
+                  message: t('patients.form.onlyKhmerCharacters'),
                 },
               }}
             />
@@ -234,16 +236,16 @@ const PatientForm = ({ patient }: Props) => {
             <Input
               control={control}
               name="khmer_last_name"
-              label="Khmer Last Name"
+              label={t('patients.form.khmerLastName')}
               sx={{
                 '& .MuiInputBase-input': { fontFamily: 'var(--font-khmer)' },
               }}
               slotProps={{ htmlInput: { spellCheck: false } }}
               rules={{
-                required: 'This field is required',
+                required: t('common.required'),
                 pattern: {
                   value: /^[\u1780-\u17FF\s]+$/,
-                  message: 'Only Khmer characters are allowed',
+                  message: t('patients.form.onlyKhmerCharacters'),
                 },
               }}
             />
@@ -252,7 +254,7 @@ const PatientForm = ({ patient }: Props) => {
             <Input
               control={control}
               name="first_name"
-              label="First Name (English)"
+              label={t('patients.form.firstName')}
               slotProps={{ htmlInput: { spellCheck: false } }}
             />
           </Grid>
@@ -260,7 +262,7 @@ const PatientForm = ({ patient }: Props) => {
             <Input
               control={control}
               name="last_name"
-              label="Last Name (English)"
+              label={t('patients.form.lastName')}
               slotProps={{ htmlInput: { spellCheck: false } }}
             />
           </Grid>
@@ -268,27 +270,27 @@ const PatientForm = ({ patient }: Props) => {
             <DateInput
               control={control}
               name="date_of_birth"
-              label="Date of Birth"
-              rules={{ required: 'This field is required' }}
+              label={t('patients.form.dateOfBirth')}
+              rules={{ required: t('common.required') }}
             />
           </Grid>
           <Grid size={{ md: 6 }}>
             <Input
               control={control}
               name="phone_number"
-              label="Phone Number"
-              rules={{ required: 'This field is required' }}
+              label={t('patients.form.phoneNumber')}
+              rules={{ required: t('common.required') }}
             />
           </Grid>
           <Grid size={{ md: 6 }}>
             <Select
               control={control}
               name="gender"
-              label="Gender"
-              rules={{ required: 'This field is required' }}
+              label={t('patients.form.gender')}
+              rules={{ required: t('common.required') }}
               options={[
-                { value: 'male', label: 'Male' },
-                { value: 'female', label: 'Female' },
+                { value: 'male', label: t('patients.form.male') },
+                { value: 'female', label: t('patients.form.female') },
               ]}
             />
           </Grid>
@@ -296,26 +298,34 @@ const PatientForm = ({ patient }: Props) => {
             <Select
               control={control}
               name="blood_group"
-              label="Blood Group"
+              label={t('patients.form.bloodGroup')}
               options={BLOOD_GROUPS}
             />
           </Grid>
           <Grid size={{ md: 6 }}>
-            <Input control={control} name="national_id" label="National ID" />
+            <Input
+              control={control}
+              name="national_id"
+              label={t('patients.form.nationalId')}
+            />
           </Grid>
           <Grid size={{ md: 12 }}>
-            <Input control={control} name="allergy" label="Allergy" />
+            <Input
+              control={control}
+              name="allergy"
+              label={t('patients.form.allergy')}
+            />
           </Grid>
         </Grid>
         <Typography variant="h6" sx={{ my: 3 }}>
-          Address
+          {t('patients.form.address')}
         </Typography>
         <Grid container spacing={3}>
           <Grid size={{ md: 6 }}>
             <Autocomplete
               control={control}
               name="province_code"
-              label="Province"
+              label={t('patients.form.province')}
               options={provinces.map((province) => ({
                 value: province.code,
                 label: province.name_in_khmer,
@@ -332,7 +342,7 @@ const PatientForm = ({ patient }: Props) => {
             <Autocomplete
               control={control}
               name="district_code"
-              label="District"
+              label={t('patients.form.district')}
               options={districts.map((district) => ({
                 value: district.code,
                 label: district.name_in_khmer,
@@ -349,7 +359,7 @@ const PatientForm = ({ patient }: Props) => {
             <Autocomplete
               control={control}
               name="commune_code"
-              label="Commune"
+              label={t('patients.form.commune')}
               options={communes.map((commune) => ({
                 value: commune.code,
                 label: commune.name_in_khmer,
@@ -365,7 +375,7 @@ const PatientForm = ({ patient }: Props) => {
             <Autocomplete
               control={control}
               name="village_code"
-              label="Village"
+              label={t('patients.form.village')}
               options={villages.map((village) => ({
                 value: village.code,
                 label: village.name_in_khmer,
@@ -380,7 +390,7 @@ const PatientForm = ({ patient }: Props) => {
       </DialogContent>
       <DialogActions>
         <Button type="button" onClick={closeModal} variant="outlined">
-          Cancel
+          {t('common.cancel')}
         </Button>
         <Button
           onClick={onSubmit}
@@ -388,7 +398,7 @@ const PatientForm = ({ patient }: Props) => {
           variant="contained"
           startIcon={<Save size={16} />}
         >
-          {patient ? 'Save' : 'Create'}
+          {patient ? t('common.save') : t('common.create')}
         </Button>
       </DialogActions>
     </>

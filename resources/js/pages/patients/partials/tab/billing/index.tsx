@@ -2,6 +2,7 @@ import { Box, Typography, Paper, Button, TextField } from '@mui/material';
 import { router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import { DollarSign, Receipt, CreditCard, Calculator } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface BillingData {
   consultation_fees: number;
@@ -20,14 +21,15 @@ type Props = {
 };
 
 const PAYMENT_STATUS: Record<string, { label: string; className: string }> = {
-  Unpaid: { label: 'Unpaid', className: 'bg-red-100 text-red-700' },
-  Partial: { label: 'Partial', className: 'bg-amber-100 text-amber-700' },
-  Paid: { label: 'Paid', className: 'bg-green-100 text-green-700' },
+  Unpaid: { label: 'patients.shared.status.unpaid', className: 'bg-red-100 text-red-700' },
+  Partial: { label: 'patients.shared.status.partial', className: 'bg-amber-100 text-amber-700' },
+  Paid: { label: 'patients.shared.status.paid', className: 'bg-green-100 text-green-700' },
 };
 
 const formatCurrency = (val: number) => `$${val.toFixed(2)}`;
 
 const BillingTab = ({ visitId }: Props) => {
+  const { t } = useTranslation();
   const { billing } = usePage<{ billing: BillingData | null }>().props;
 
   const [paidAmount, setPaidAmount] = useState(billing?.paid_amount ?? 0);
@@ -38,10 +40,10 @@ const BillingTab = ({ visitId }: Props) => {
       <Box sx={{ textAlign: 'center', py: 6 }}>
         <Receipt size={40} style={{ color: '#cbd5e1', marginBottom: 8 }} />
         <Box sx={{ fontSize: 18, fontWeight: 600, color: '#475569', mb: 1 }}>
-          No billing data
+          {t('patients.billing.noData')}
         </Box>
         <Box sx={{ color: '#94a3b8', fontSize: 14 }}>
-          Select an active visit to view billing information.
+          {t('patients.billing.selectVisit')}
         </Box>
       </Box>
     );
@@ -93,10 +95,10 @@ const BillingTab = ({ visitId }: Props) => {
       >
         <Box>
           <Typography sx={{ fontSize: 18, fontWeight: 600, color: '#1e293b' }}>
-            Billing Summary
+            {t('patients.billing.summary')}
           </Typography>
           <Typography sx={{ fontSize: 13, color: '#94a3b8', mt: 0.5 }}>
-            All charges for this visit
+            {t('patients.billing.subtitle')}
           </Typography>
         </Box>
         <Box
@@ -110,7 +112,7 @@ const BillingTab = ({ visitId }: Props) => {
             fontWeight: 600,
           }}
         >
-          {statusBadge.label}
+          {t(statusBadge.label)}
         </Box>
       </Box>
 
@@ -126,7 +128,7 @@ const BillingTab = ({ visitId }: Props) => {
             letterSpacing: '0.05em',
           }}
         >
-          Charge Breakdown
+          {t('patients.billing.chargeBreakdown')}
         </Typography>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
           <Box
@@ -147,7 +149,7 @@ const BillingTab = ({ visitId }: Props) => {
                 }}
               />
               <Typography sx={{ fontSize: 14, color: '#475569' }}>
-                Consultation Fees
+                {t('patients.billing.consultationFees')}
               </Typography>
             </Box>
             <Typography
@@ -174,7 +176,7 @@ const BillingTab = ({ visitId }: Props) => {
                 }}
               />
               <Typography sx={{ fontSize: 14, color: '#475569' }}>
-                Medication Costs
+                {t('patients.billing.medicationCosts')}
               </Typography>
             </Box>
             <Typography
@@ -201,7 +203,7 @@ const BillingTab = ({ visitId }: Props) => {
                 }}
               />
               <Typography sx={{ fontSize: 14, color: '#475569' }}>
-                Paraclinic Costs
+                {t('patients.billing.paraclinicCosts')}
               </Typography>
             </Box>
             <Typography
@@ -227,7 +229,7 @@ const BillingTab = ({ visitId }: Props) => {
                 }}
               />
               <Typography sx={{ fontSize: 14, color: '#475569' }}>
-                Prescription Costs
+                {t('patients.billing.prescriptionCosts')}
               </Typography>
             </Box>
             <Typography
@@ -255,13 +257,13 @@ const BillingTab = ({ visitId }: Props) => {
                 letterSpacing: '0.05em',
               }}
             >
-              Totals
+              {t('patients.billing.totals')}
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Typography sx={{ fontSize: 13, color: '#64748b' }}>
-                Fee
+                {t('patients.billing.fee')}
               </Typography>
               <Typography
                 sx={{ fontSize: 14, fontWeight: 600, color: '#1e293b' }}
@@ -284,7 +286,7 @@ const BillingTab = ({ visitId }: Props) => {
                 letterSpacing: '0.05em',
               }}
             >
-              Payment
+              {t('patients.billing.payment')}
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
@@ -296,7 +298,7 @@ const BillingTab = ({ visitId }: Props) => {
               }}
             >
               <Typography sx={{ fontSize: 13, color: '#64748b' }}>
-                Paid
+                {t('patients.shared.status.paid')}
               </Typography>
               <TextField
                 size="small"
@@ -328,7 +330,7 @@ const BillingTab = ({ visitId }: Props) => {
               <Typography
                 sx={{ fontSize: 14, fontWeight: 600, color: '#1e293b' }}
               >
-                Balance
+                {t('patients.billing.balance')}
               </Typography>
               <Typography
                 sx={{
@@ -342,7 +344,7 @@ const BillingTab = ({ visitId }: Props) => {
             </Box>
             {billing.payment_date && (
               <Typography sx={{ fontSize: 12, color: '#94a3b8', mt: 1 }}>
-                Last payment:{' '}
+                {t('patients.billing.lastPayment')}{' '}
                 {new Date(billing.payment_date).toLocaleDateString('en-US', {
                   month: 'short',
                   day: '2-digit',
@@ -362,7 +364,7 @@ const BillingTab = ({ visitId }: Props) => {
           onClick={handleSave}
           disabled={isSaving}
         >
-          Save Changes
+          {t('patients.billing.saveChanges')}
         </Button>
         <Button
           variant="outlined"
@@ -370,7 +372,7 @@ const BillingTab = ({ visitId }: Props) => {
           onClick={handleMarkPaid}
           disabled={isSaving}
         >
-          Mark as Fully Paid
+          {t('patients.billing.markFullyPaid')}
         </Button>
       </Box>
     </Box>

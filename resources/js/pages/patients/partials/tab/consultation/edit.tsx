@@ -2,6 +2,7 @@ import { Head, router } from '@inertiajs/react';
 import { ArrowLeft } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import ConsultationForm from './partials/ConsultationForm';
 import {
   type IConsultation,
@@ -17,6 +18,7 @@ const EditConsultation = ({
   patient: IPatient;
   consultation: IConsultation;
 }) => {
+  const { t } = useTranslation();
   const [isProcessing, setIsProcessing] = useState(false);
   const { control, handleSubmit, reset } = useForm<IConsultationFormData>();
 
@@ -75,7 +77,7 @@ const EditConsultation = ({
 
   return (
     <>
-      <Head title="Edit Consultation" />
+      <Head title={t('patients.consultation.editConsultation')} />
       <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
         <Box
           sx={{
@@ -94,7 +96,7 @@ const EditConsultation = ({
               router.visit(`/patients/${patient.id}?tab=consultation`)
             }
             size="small"
-            aria-label="Back"
+            aria-label={t('patients.shared.back')}
             sx={{ color: 'text.secondary' }}
           >
             <ArrowLeft size={20} />
@@ -104,10 +106,10 @@ const EditConsultation = ({
               variant="h6"
               sx={{ fontWeight: 700, color: 'text.primary' }}
             >
-              Edit Consultation
+              {t('patients.consultation.editConsultation')}
             </Typography>
             <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-              Patient:{' '}
+              {t('patients.consultation.patient')}{' '}
               <Box
                 component="span"
                 sx={{ fontWeight: 500, fontFamily: 'var(--font-khmer)' }}
@@ -138,14 +140,14 @@ const EditConsultation = ({
                     router.visit(`/patients/${patient.id}?tab=consultation`)
                   }
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </Button>
                 <Button
                   type="submit"
                   variant="contained"
                   disabled={isProcessing}
                 >
-                  Update Consultation
+                  {t('patients.consultation.updateConsultation')}
                 </Button>
               </Box>
             </Box>

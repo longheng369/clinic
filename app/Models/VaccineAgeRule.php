@@ -22,4 +22,28 @@ class VaccineAgeRule extends Model
     {
         return $this->belongsTo(Vaccine::class);
     }
+
+    public static function toDays(int|float|string|null $value, ?string $unit): float
+    {
+        if ($value === null || $value === '') {
+            return 0.0;
+        }
+
+        return (float) $value * match (strtolower($unit ?? '')) {
+            'year' => 365.0,
+            'month' => 30.0,
+            'day' => 1.0,
+            default => 1.0,
+        };
+    }
+
+    public function coversAgeInDays(int|float $ageDays): bool
+    {
+        if ($ageDays < self::toDays($this->min_age, $this->min_age_unit)) {
+            return false;
+        }
+
+        return $this->max_age === null
+            || $ageDays <= self::toDays($this->max_age, $this->max_age_unit);
+    }
 }

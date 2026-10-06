@@ -68,7 +68,7 @@ class AppointmentController extends Controller
 
     public function patientVaccineAlerts(Patient $patient)
     {
-        $vaccines = Vaccine::orderBy('name')->get(['id', 'name', 'rules']);
+        $vaccines = Vaccine::with('ageRules')->orderBy('name')->get(['id', 'name']);
         $alerts = [];
 
         foreach ($vaccines as $vaccine) {
@@ -94,7 +94,7 @@ class AppointmentController extends Controller
         $vaccineAlerts = null;
 
         if ($patient) {
-            $vaccines = Vaccine::orderBy('name')->get(['id', 'name', 'rules']);
+            $vaccines = Vaccine::with('ageRules')->orderBy('name')->get(['id', 'name']);
             $alerts = [];
             foreach ($vaccines as $vaccine) {
                 $nextDose = $patient->nextDoseForVaccine($vaccine);

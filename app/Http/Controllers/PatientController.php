@@ -44,7 +44,7 @@ class PatientController extends Controller
         Patient::create($request->validated());
 
         return redirect()->route('patients.index')
-            ->with('success', 'Patient created.');
+            ->with('success', 'patients.created');
     }
 
     public function show(Request $request, Patient $patient)
@@ -276,15 +276,18 @@ class PatientController extends Controller
                         'created_at' => $v->created_at,
                     ]);
             }),
-            'vaccines' => Inertia::defer(fn () => Vaccine::orderBy('name')->get(['id', 'name'])),
+            'vaccines' => Inertia::defer(fn () => Vaccine::with('ageRules')->orderBy('name')->get(['id', 'name'])->map(fn ($v) => array_merge(
+                ['id' => $v->id, 'name' => $v->name],
+                $patient->nextDoseForVaccine($v),
+            ))),
             'vaccineCard' => Inertia::defer(function () use ($patient) {
-                return Vaccine::orderBy('name')->get(['id', 'name', 'rules'])->map(fn ($v) => array_merge(
+                return Vaccine::with('ageRules')->orderBy('name')->get(['id', 'name'])->map(fn ($v) => array_merge(
                     ['vaccine' => ['id' => $v->id, 'name' => $v->name]],
                     $patient->nextDoseForVaccine($v),
                 ));
             }),
             'vaccinationAlerts' => Inertia::defer(function () use ($patient) {
-                return Vaccine::orderBy('name')->get(['id', 'name', 'rules'])->map(fn ($v) => array_merge(
+                return Vaccine::with('ageRules')->orderBy('name')->get(['id', 'name'])->map(fn ($v) => array_merge(
                     ['vaccine' => ['id' => $v->id, 'name' => $v->name]],
                     $patient->nextDoseForVaccine($v),
                 ))->filter(fn ($item) => $item['next_dose_due_date'] !== null && Carbon::parse($item['next_dose_due_date'])->lte(Carbon::now()->addDays(7)))->values();
@@ -306,7 +309,7 @@ class PatientController extends Controller
         ));
 
         return redirect()->route('patients.index')
-            ->with('success', 'Patient updated.');
+            ->with('success', 'patients.updated');
     }
 
     public function destroy(Patient $patient)
@@ -314,7 +317,7 @@ class PatientController extends Controller
         $patient->delete();
 
         return redirect()->route('patients.index')
-            ->with('success', 'Patient deleted.');
+            ->with('success', 'patients.deleted');
     }
 
     public function uploadAttachment(Request $request, Patient $patient)

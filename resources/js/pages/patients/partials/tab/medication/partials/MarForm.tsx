@@ -8,15 +8,16 @@ import {
   IMedicationOrderFormData,
 } from '@/interfaces/IMedicationOrder';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { router } from '@inertiajs/react';
 
 const INTERVAL_OPTIONS = [
-  { value: 'QD', label: 'QD (Once daily)' },
-  { value: 'BID', label: 'BID (Twice daily)' },
-  { value: 'TID', label: 'TID (Three times daily)' },
-  { value: 'QID', label: 'QID (Four times daily)' },
-  { value: 'QHS', label: 'QHS (At bedtime)' },
-  { value: 'PRN', label: 'PRN (As needed)' },
+  { value: 'QD', label: 'patients.medication.interval.qd' },
+  { value: 'BID', label: 'patients.medication.interval.bid' },
+  { value: 'TID', label: 'patients.medication.interval.tid' },
+  { value: 'QID', label: 'patients.medication.interval.qid' },
+  { value: 'QHS', label: 'patients.medication.interval.qhs' },
+  { value: 'PRN', label: 'patients.medication.interval.prn' },
 ];
 
 interface MedicationFormProps {
@@ -43,6 +44,7 @@ const MarForm = ({
   selectedVisitId,
   onClose,
 }: MedicationFormProps) => {
+  const { t } = useTranslation();
   const [isProcessing, setIsProcessing] = useState(false);
 
   const now = new Date();
@@ -123,85 +125,88 @@ const MarForm = ({
         <Grid container spacing={3}>
           <Grid size={{ md: 6 }}>
             <Select
-              label="Medicine"
+              label={t('patients.shared.form.medicine')}
               control={control}
               name="medicine_id"
               options={medicineOptions}
-              rules={{ required: 'This field is required' }}
+              rules={{ required: t('common.required') }}
             />
           </Grid>
           <Grid size={{ md: 6 }}>
             <Select
-              label="Route"
+              label={t('patients.shared.form.route')}
               control={control}
               name="route_id"
               options={routes.map((route) => ({
                 value: route.id,
                 label: route.name,
               }))}
-              rules={{ required: 'This field is required' }}
+              rules={{ required: t('common.required') }}
             />
           </Grid>
           <Grid size={{ md: 6 }}>
             <Select
-              label="Interval"
+              label={t('patients.shared.form.interval')}
               control={control}
               name="interval"
-              options={INTERVAL_OPTIONS}
-              rules={{ required: 'This field is required' }}
+              options={INTERVAL_OPTIONS.map((option) => ({
+                ...option,
+                label: t(option.label),
+              }))}
+              rules={{ required: t('common.required') }}
             />
           </Grid>
           <Grid size={{ md: 6 }}>
             <NumberInput
-              label="Dosage"
+              label={t('patients.medication.dosage')}
               control={control}
               slotProps={{ htmlInput: { min: 0, step: 0.01 } }}
-              placeholder="e.g. 500"
+              placeholder={t('patients.medication.dosagePlaceholder')}
               name="dosage"
               rules={{
-                required: 'Required',
-                min: { value: 0, message: 'Min 0' },
+                required: t('patients.shared.form.required'),
+                min: { value: 0, message: t('patients.shared.form.min', { min: 0 }) },
               }}
             />
           </Grid>
           <Grid size={{ md: 6 }}>
             <Input
-              label="Unit"
+              label={t('patients.shared.form.unit')}
               control={control}
               type="text"
-              placeholder="e.g. mg, g, ml"
+              placeholder={t('patients.medication.unitPlaceholder')}
               name="unit"
-              rules={{ required: 'Required' }}
+              rules={{ required: t('patients.shared.form.required') }}
             />
           </Grid>
           <Grid size={{ md: 6 }}>
             <NumberInput
-              label="Duration (total doses)"
+              label={t('patients.medication.duration')}
               control={control}
               slotProps={{ htmlInput: { min: 1, max: 365 } }}
-              placeholder="e.g. 3"
+              placeholder={t('patients.medication.durationPlaceholder')}
               name="duration"
               rules={{
-                required: 'Required',
-                min: { value: 1, message: 'Min 1' },
+                required: t('patients.shared.form.required'),
+                min: { value: 1, message: t('patients.shared.form.min', { min: 1 }) },
               }}
             />
           </Grid>
           <Grid size={{ md: 6 }}>
             <Input
-              label="Start Date & Time"
+              label={t('patients.medication.startsAt')}
               control={control}
               type="datetime-local"
               name="starts_at"
-              rules={{ required: 'Required' }}
+              rules={{ required: t('patients.shared.form.required') }}
             />
           </Grid>
           <Grid size={{ md: 12 }}>
             <Input
-              label="Notes"
+              label={t('patients.shared.form.notes')}
               control={control}
               name="notes"
-              placeholder="Optional notes..."
+              placeholder={t('patients.medication.notesPlaceholder')}
               multiline
               rows={3}
             />
@@ -209,10 +214,10 @@ const MarForm = ({
         </Grid>
         <DialogActions>
           <Button type="button" onClick={() => onClose()} variant="outlined">
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button type="submit" disabled={isProcessing} variant="contained">
-            {order ? 'Save' : 'Create'}
+            {order ? t('common.save') : t('common.create')}
           </Button>
         </DialogActions>
       </DialogContent>

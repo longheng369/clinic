@@ -7,6 +7,7 @@ import Select from '@/components/form/select';
 import { IOption } from '@/interfaces/IOption';
 import Autocomplete from '@/components/form/autocomplete';
 import { useModal } from '@/components/modal';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   onSave: (data: IPrescriptionItemFormData) => void;
@@ -41,6 +42,7 @@ const PrescriptionItemForm: FC<Props> = ({
   defaultValues,
 }) => {
   const { closeModal } = useModal();
+  const { t } = useTranslation();
   const { control, handleSubmit, watch, setValue } = useForm<PrescriptionItemFormValues>({
     defaultValues: defaultValues
       ? {
@@ -118,35 +120,35 @@ const PrescriptionItemForm: FC<Props> = ({
             <Autocomplete
               control={control}
               name="medicine"
-              label="Medicine"
+              label={t('patients.shared.form.medicine')}
               options={medicines.map((medicine) => ({
                 label: medicine.name,
                 value: medicine.id,
               }))}
-              rules={{ required: 'Medicine is required' }}
+              rules={{ required: t('patients.prescription.medicineRequired') }}
             />
           </Grid>
           <Grid size={{ md: 6 }}>
             <Select
               control={control}
               name="route_id"
-              label="Route"
+              label={t('patients.shared.form.route')}
               options={routes.map((route) => ({
                 value: route.id,
                 label: route.name,
               }))}
-              rules={{ required: 'Route is required' }}
+              rules={{ required: t('patients.prescription.routeRequired') }}
             />
           </Grid>
           <Grid size={{ md: 6 }}>
             <Input
               control={control}
               name="quantity"
-              label="Quantity"
+              label={t('patients.prescription.quantity')}
               type="number"
               rules={{
-                required: 'Quantity is required',
-                min: { value: 1, message: 'Min 1' },
+                required: t('patients.prescription.quantityRequired'),
+                min: { value: 1, message: t('patients.shared.form.min', { min: 1 }) },
                 valueAsNumber: true,
               }}
             />
@@ -160,7 +162,7 @@ const PrescriptionItemForm: FC<Props> = ({
                 marginBottom: '0.25rem',
               }}
             >
-              Unit
+              {t('patients.shared.form.unit')}
             </label>
             <Typography variant="body1" color="text.secondary">
               {watch('unit') || '—'}
@@ -176,7 +178,7 @@ const PrescriptionItemForm: FC<Props> = ({
             <Input
               control={control}
               name="morning"
-              label="Morning"
+              label={t('patients.prescription.morning')}
               type="number"
               rules={{ valueAsNumber: true }}
             />
@@ -185,7 +187,7 @@ const PrescriptionItemForm: FC<Props> = ({
             <Input
               control={control}
               name="afternoon"
-              label="Afternoon"
+              label={t('patients.prescription.afternoon')}
               type="number"
               rules={{ valueAsNumber: true }}
             />
@@ -194,7 +196,7 @@ const PrescriptionItemForm: FC<Props> = ({
             <Input
               control={control}
               name="evening"
-              label="Evening"
+              label={t('patients.prescription.evening')}
               type="number"
               rules={{ valueAsNumber: true }}
             />
@@ -203,7 +205,7 @@ const PrescriptionItemForm: FC<Props> = ({
             <Input
               control={control}
               name="night"
-              label="Night"
+              label={t('patients.prescription.night')}
               type="number"
               rules={{ valueAsNumber: true }}
             />
@@ -212,7 +214,7 @@ const PrescriptionItemForm: FC<Props> = ({
             <Input
               control={control}
               name="numberOfDay"
-              label="Number of Days"
+              label={t('patients.prescription.numberOfDays')}
               type="number"
               rules={{ valueAsNumber: true }}
             />
@@ -221,21 +223,21 @@ const PrescriptionItemForm: FC<Props> = ({
             <Autocomplete
               control={control}
               name="instruction"
-              label="Instruction"
+              label={t('patients.prescription.instruction')}
               options={instructions}
             />
           </Grid>
           <Grid size={{ md: 12 }}>
-            <Input control={control} name="notes" label="Notes" />
+            <Input control={control} name="notes" label={t('patients.shared.form.notes')} />
           </Grid>
         </Grid>
       </DialogContent>
       <DialogActions>
         <Button type="button" onClick={closeModal} variant="outlined">
-          Cancel
+          {t('common.cancel')}
         </Button>
         <Button type="submit" variant="contained">
-          {defaultValues ? 'Save' : 'Add'}
+          {defaultValues ? t('common.save') : t('patients.prescription.add')}
         </Button>
       </DialogActions>
     </Box>

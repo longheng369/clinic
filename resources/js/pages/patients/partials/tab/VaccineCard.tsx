@@ -1,5 +1,6 @@
 import { Box } from '@mui/material';
 import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Printer,
   Syringe,
@@ -18,11 +19,15 @@ interface VaccineCardProps {
 }
 
 const VaccineCard = ({ patient, cardData }: VaccineCardProps) => {
+  const { t } = useTranslation();
   const printRef = useRef<HTMLDivElement>(null);
 
   const handlePrint = () => {
     const originalTitle = document.title;
-    document.title = `Vaccination Card - ${patient.khmer_last_name} ${patient.khmer_first_name}`;
+    document.title = t('patients.vaccination.cardDocumentTitle', {
+      khmer_last_name: patient.khmer_last_name,
+      khmer_first_name: patient.khmer_first_name,
+    });
     window.print();
     document.title = originalTitle;
   };
@@ -38,32 +43,35 @@ const VaccineCard = ({ patient, cardData }: VaccineCardProps) => {
 
   const ageDisplay =
     ageInMonths >= 12
-      ? `${Math.floor(ageInMonths / 12)} year${Math.floor(ageInMonths / 12) > 1 ? 's' : ''} ${ageInMonths % 12} month${ageInMonths % 12 !== 1 ? 's' : ''}`
-      : `${ageInMonths} month${ageInMonths !== 1 ? 's' : ''}`;
+      ? t('patients.vaccination.ageYearsMonths', {
+        years: Math.floor(ageInMonths / 12),
+        months: ageInMonths % 12,
+      })
+      : t('patients.vaccination.ageMonths', { months: ageInMonths });
 
   return (
     <Box ref={printRef}>
       <Box sx={{}}>
         <Box sx={{}}>
           <Syringe size={16} />
-          Vaccination Card
+          {t('patients.vaccination.cardTitle')}
         </Box>
         <Button onClick={handlePrint} variant="outline">
-          <Printer size={16} /> Print Vaccine Card
+          <Printer size={16} /> {t('patients.vaccination.printCard')}
         </Button>
       </Box>
 
       <Box sx={{}}>
         {/* Card header */}
         <Box sx={{}}>
-          <Box sx={{}}>Vaccination Card</Box>
+          <Box sx={{}}>{t('patients.vaccination.cardTitle')}</Box>
         </Box>
 
         {/* Patient info */}
         <Box sx={{}}>
           <Box sx={{}}>
             <Box>
-              <Box sx={{}}>Patient:</Box>
+              <Box sx={{}}>{t('patients.vaccination.patientLabel')}</Box>
               <Box sx={{}}>
                 {patient.khmer_last_name} {patient.khmer_first_name}
               </Box>
@@ -74,15 +82,15 @@ const VaccineCard = ({ patient, cardData }: VaccineCardProps) => {
               )}
             </Box>
             <Box>
-              <Box sx={{}}>DOB:</Box>
+              <Box sx={{}}>{t('patients.vaccination.dobLabel')}</Box>
               <Box sx={{}}>{formatDob(patient.date_of_birth)}</Box>
             </Box>
             <Box>
-              <Box sx={{}}>Age:</Box>
+              <Box sx={{}}>{t('patients.vaccination.ageLabel')}</Box>
               <Box sx={{}}>{ageDisplay}</Box>
             </Box>
             <Box>
-              <Box sx={{}}>Phone:</Box>
+              <Box sx={{}}>{t('patients.vaccination.phoneLabel')}</Box>
               <Box sx={{}}>{patient.phone_number}</Box>
             </Box>
           </Box>
@@ -91,7 +99,7 @@ const VaccineCard = ({ patient, cardData }: VaccineCardProps) => {
         {/* Vaccine cards */}
         <Box sx={{}}>
           {cardData.length === 0 ? (
-            <Box sx={{}}>No vaccines defined.</Box>
+            <Box sx={{}}>{t('patients.vaccination.noVaccines')}</Box>
           ) : (
             <Box sx={{}}>
               {cardData.map((item) => (
@@ -101,7 +109,8 @@ const VaccineCard = ({ patient, cardData }: VaccineCardProps) => {
                     {item.total_doses > 0 &&
                     item.doses_completed >= item.total_doses ? (
                         <Box sx={{}}>
-                          <CheckCircle size={12} /> Completed
+                          <CheckCircle size={12} />{' '}
+                          {t('patients.shared.status.completed')}
                         </Box>
                       ) : item.next_dose_due_date ? (
                         <Box sx={{}}>
@@ -111,15 +120,18 @@ const VaccineCard = ({ patient, cardData }: VaccineCardProps) => {
                             <Clock size={12} />
                           )}
                           {new Date(item.next_dose_due_date) < new Date()
-                            ? 'Overdue'
-                            : 'Pending'}
+                            ? t('patients.shared.status.overdue')
+                            : t('patients.shared.status.pending')}
                         </Box>
                       ) : item.eligible ? (
                         <Box sx={{}}>
-                          <CheckCircle size={12} /> Complete
+                          <CheckCircle size={12} />{' '}
+                          {t('patients.vaccination.complete')}
                         </Box>
                       ) : (
-                        <Box sx={{}}>Not eligible</Box>
+                        <Box sx={{}}>
+                          {t('patients.vaccination.notEligible')}
+                        </Box>
                       )}
                   </Box>
 
@@ -128,7 +140,10 @@ const VaccineCard = ({ patient, cardData }: VaccineCardProps) => {
                     <Box sx={{}}>
                       <Box sx={{}}>
                         <Box>
-                          {item.doses_completed} of {item.total_doses} doses
+                          {t('patients.vaccination.doseProgress', {
+                            doses_completed: item.doses_completed,
+                            total_doses: item.total_doses,
+                          })}
                         </Box>
                         <Box>
                           {Math.round(
@@ -151,16 +166,25 @@ const VaccineCard = ({ patient, cardData }: VaccineCardProps) => {
                   {/* Next dose info */}
                   {item.next_dose_number && item.next_dose_due_date ? (
                     <Box sx={{}}>
-                      <Box sx={{}}>Next:</Box> Dose {item.next_dose_number} —{' '}
-                      {item.next_dose_due_date}
+                      <Box sx={{}}>{t('patients.vaccination.nextLabel')}</Box>{' '}
+                      {t('patients.vaccination.nextDose', {
+                        next_dose_number: item.next_dose_number,
+                        next_dose_due_date: item.next_dose_due_date,
+                      })}
                     </Box>
                   ) : item.doses_completed >= item.total_doses &&
                     item.total_doses > 0 ? (
-                      <Box sx={{}}>All doses completed</Box>
+                      <Box sx={{}}>
+                        {t('patients.vaccination.allDosesCompleted')}
+                      </Box>
                     ) : item.eligible ? (
-                      <Box sx={{}}>Ready for dose 1</Box>
+                      <Box sx={{}}>
+                        {t('patients.vaccination.readyForDose1')}
+                      </Box>
                     ) : (
-                      <Box sx={{}}>Outside age range for this vaccine</Box>
+                      <Box sx={{}}>
+                        {t('patients.vaccination.outsideAgeRange')}
+                      </Box>
                     )}
                 </Box>
               ))}

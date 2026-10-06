@@ -1,5 +1,6 @@
 import { Box } from '@mui/material';
 import { router } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import { useModal } from '@/components/modal';
 import { Pencil, StopCircle, Play, Pause, RotateCcw } from 'lucide-react';
 import type { IMedicationOrder } from '@/interfaces/IMedicationOrder';
@@ -9,10 +10,10 @@ import { Button } from '@/components/ui/button';
 import IconButton from '@/components/button/iconButton';
 
 const ORDER_STATUS: Record<string, { label: string; className: string }> = {
-  active: { label: 'Active', className: 'bg-green-100 text-green-700' },
-  on_hold: { label: 'On Hold', className: 'bg-amber-100 text-amber-700' },
-  stopped: { label: 'Stopped', className: 'bg-red-100 text-red-700' },
-  completed: { label: 'Completed', className: 'bg-blue-100 text-blue-700' },
+  active: { label: 'patients.shared.status.active', className: 'bg-green-100 text-green-700' },
+  on_hold: { label: 'patients.shared.status.onHold', className: 'bg-amber-100 text-amber-700' },
+  stopped: { label: 'patients.shared.status.stopped', className: 'bg-red-100 text-red-700' },
+  completed: { label: 'patients.shared.status.completed', className: 'bg-blue-100 text-blue-700' },
 };
 
 interface MedicationOrderGroupProps {
@@ -26,10 +27,11 @@ const MedicationOrderGroup = ({
   visitId,
   onEdit,
 }: MedicationOrderGroupProps) => {
+  const { t } = useTranslation();
   const { openAlert } = useModal();
 
   const statusBadge = ORDER_STATUS[order.status] ?? ORDER_STATUS.active;
-  const medicineName = order.medicine?.name ?? 'Unknown';
+  const medicineName = order.medicine?.name ?? t('patients.shared.unknown');
   const unitPrice = order.medicine?.unit_price;
 
   const hasAdministrationActivity = order.administrations.some(
@@ -46,10 +48,10 @@ const MedicationOrderGroup = ({
 
   const handleStop = () => {
     openAlert({
-      message: `Stop ${medicineName}?`,
-      description: 'All pending doses will be cancelled.',
+      message: t('patients.shared.order.stopTitle', { name: medicineName }),
+      description: t('patients.shared.order.stopDesc'),
       variant: 'danger',
-      confirmLabel: 'Stop',
+      confirmLabel: t('patients.shared.action.stop'),
       onConfirm: () =>
         router.post(`/visits/${visitId}/medications/${order.id}/stop`, {}),
     });
@@ -57,10 +59,12 @@ const MedicationOrderGroup = ({
 
   const handleContinue = () => {
     openAlert({
-      message: `Continue ${medicineName}?`,
-      description: `A new treatment cycle will begin (Cycle ${order.cycle_no + 1}).`,
+      message: t('patients.shared.order.continueTitle', { name: medicineName }),
+      description: t('patients.shared.order.continueDesc', {
+        cycleNo: order.cycle_no + 1,
+      }),
       variant: 'info',
-      confirmLabel: 'Continue',
+      confirmLabel: t('patients.shared.action.continue'),
       onConfirm: () =>
         router.post(`/visits/${visitId}/medications/${order.id}/continue`, {}),
     });
@@ -68,10 +72,10 @@ const MedicationOrderGroup = ({
 
   const handleHold = () => {
     openAlert({
-      message: `Place ${medicineName} on hold?`,
-      description: 'Doses cannot be administered while on hold.',
+      message: t('patients.shared.order.holdTitle', { name: medicineName }),
+      description: t('patients.shared.order.holdDesc'),
       variant: 'warning',
-      confirmLabel: 'Hold',
+      confirmLabel: t('patients.shared.action.hold'),
       onConfirm: () =>
         router.post(`/visits/${visitId}/medications/${order.id}/hold`, {}),
     });
@@ -131,7 +135,7 @@ const MedicationOrderGroup = ({
                 fontWeight: 500,
               }}
             >
-              {statusBadge.label}
+              {t(statusBadge.label)}
             </Box>
           </Box>
           {/* Dosage / Route / Interval */}
@@ -155,13 +159,17 @@ const MedicationOrderGroup = ({
             {unitPrice != null && (
               <>
                 <Box>&middot;</Box>
-                <Box>${Number(unitPrice).toFixed(2)}/dose</Box>
+                <Box>
+                  {t('patients.shared.order.pricePerDose', {
+                    price: Number(unitPrice).toFixed(2),
+                  })}
+                </Box>
               </>
             )}
           </Box>
           {order.created_by && (
             <Box sx={{ fontSize: 12, color: '#94a3b8', mt: 0.5 }}>
-              Dr. {order.created_by}
+              {t('patients.shared.order.doctor', { name: order.created_by })}
             </Box>
           )}
           {order.notes && (
@@ -178,8 +186,8 @@ const MedicationOrderGroup = ({
           {canEdit && (
             <IconButton
               onClick={() => onEdit(order)}
-              aria-label="Edit order"
-              title="Edit"
+              aria-label={t('patients.shared.order.editOrder')}
+              title={t('common.edit')}
             >
               <Pencil size={14} />
             </IconButton>
@@ -187,35 +195,37 @@ const MedicationOrderGroup = ({
           {order.status === 'active' && (
             <>
               <Button variant="outline" size="sm" onClick={handleHold}>
-                <Pause size={14} /> Hold
+                <Pause size={14} /> {t('patients.shared.action.hold')}
               </Button>
               <Button variant="destructive" size="sm" onClick={handleStop}>
-                <StopCircle size={14} /> Stop
+                <StopCircle size={14} /> {t('patients.shared.action.stop')}
               </Button>
             </>
           )}
           {order.status === 'on_hold' && (
             <>
               <Button variant="outline" size="sm" onClick={handleResume}>
-                <Play size={14} /> Resume
+                <Play size={14} /> {t('patients.shared.action.resume')}
               </Button>
               <Button variant="destructive" size="sm" onClick={handleStop}>
-                <StopCircle size={14} /> Stop
+                <StopCircle size={14} /> {t('patients.shared.action.stop')}
               </Button>
             </>
           )}
           {order.status === 'completed' && (
             <>
               <Button variant="outline" size="sm" onClick={handleContinue}>
-                <RotateCcw size={14} /> Continue
+                <RotateCcw size={14} /> {t('patients.shared.action.continue')}
               </Button>
               <Button variant="destructive" size="sm" onClick={handleStop}>
-                <StopCircle size={14} /> Stop
+                <StopCircle size={14} /> {t('patients.shared.action.stop')}
               </Button>
             </>
           )}
           {order.status === 'stopped' && (
-            <Box sx={{ fontSize: 12, color: '#94a3b8' }}>Stopped</Box>
+            <Box sx={{ fontSize: 12, color: '#94a3b8' }}>
+              {t('patients.shared.status.stopped')}
+            </Box>
           )}
         </Box>
       </Box>
@@ -239,9 +249,9 @@ const MedicationOrderGroup = ({
               letterSpacing: '0.05em',
             }}
           >
-            <Box sx={{ minWidth: 120 }}>Cycle</Box>
-            <Box sx={{ flex: 1 }}>Doses</Box>
-            <Box>Progress</Box>
+            <Box sx={{ minWidth: 120 }}>{t('patients.shared.order.cycleCol')}</Box>
+            <Box sx={{ flex: 1 }}>{t('patients.shared.order.dosesCol')}</Box>
+            <Box>{t('patients.shared.order.progressCol')}</Box>
           </Box>
 
           {cycles.map((cycleNo) => {
@@ -274,7 +284,7 @@ const MedicationOrderGroup = ({
             fontSize: 13,
           }}
         >
-          No doses recorded yet
+          {t('patients.shared.order.noDoses')}
         </Box>
       )}
     </Box>

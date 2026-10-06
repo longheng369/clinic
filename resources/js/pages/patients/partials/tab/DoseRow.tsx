@@ -1,5 +1,6 @@
 import { Box } from '@mui/material';
 import { router } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import { useModal } from '@/components/modal';
 import IconButton from '@/components/button/iconButton';
 import { Check, X, AlertTriangle } from 'lucide-react';
@@ -14,6 +15,7 @@ interface DoseRowProps {
 }
 
 const DoseRow = ({ administration, visitId, orderStatus }: DoseRowProps) => {
+  const { t } = useTranslation();
   const { openAlert } = useModal();
   const effective = getEffectiveStatus(administration);
   const actionEnabled =
@@ -26,8 +28,8 @@ const DoseRow = ({ administration, visitId, orderStatus }: DoseRowProps) => {
 
   const handleMissed = () => {
     openAlert({
-      message: 'Record as missed?',
-      description: 'Select a reason for the missed dose.',
+      message: t('patients.vaccination.recordMissedTitle'),
+      description: t('patients.vaccination.recordMissedDesc'),
       variant: 'warning',
       confirmLabel: 'Patient absent',
       onConfirm: () =>
@@ -39,8 +41,8 @@ const DoseRow = ({ administration, visitId, orderStatus }: DoseRowProps) => {
 
   const handleRefused = () => {
     openAlert({
-      message: 'Record as refused?',
-      description: 'Select a reason the patient refused.',
+      message: t('patients.vaccination.recordRefusedTitle'),
+      description: t('patients.vaccination.recordRefusedDesc'),
       variant: 'warning',
       confirmLabel: 'Patient declined',
       onConfirm: () =>
@@ -74,7 +76,7 @@ const DoseRow = ({ administration, visitId, orderStatus }: DoseRowProps) => {
         {administration.status === 'provided' &&
           administration.administered_by && (
           <Box sx={{ fontSize: 13, color: '#64748b' }}>
-              by {administration.administered_by}
+            {t('patients.shared.by', { name: administration.administered_by })}
             {administration.unit_price != null && (
               <Box component="span" sx={{ color: '#94a3b8' }}>
                   &nbsp;&mdash;&nbsp;$
@@ -101,23 +103,23 @@ const DoseRow = ({ administration, visitId, orderStatus }: DoseRowProps) => {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
           <IconButton
             onClick={handleProvide}
-            aria-label="Provide dose"
-            title="Provide"
+            aria-label={t('patients.vaccination.provideDose')}
+            title={t('patients.vaccination.provide')}
           >
             <Check size={16} color="#15803d" />
           </IconButton>
           <IconButton
             onClick={handleMissed}
-            aria-label="Missed dose"
-            title="Missed"
+            aria-label={t('patients.vaccination.missedDose')}
+            title={t('patients.shared.status.missed')}
           >
             <AlertTriangle size={16} color="#c2410c" />
           </IconButton>
           <IconButton
             color="error"
             onClick={handleRefused}
-            aria-label="Refused dose"
-            title="Refused"
+            aria-label={t('patients.vaccination.refusedDose')}
+            title={t('patients.shared.status.refused')}
           >
             <X size={16} color="#7e22ce" />
           </IconButton>
