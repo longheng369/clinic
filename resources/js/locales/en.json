@@ -145,6 +145,28 @@
       },
       "visitType": "Visit Type"
     },
+    "attachment": {
+      "subtitle": "Attachments for this patient belong to selected visit",
+      "new": "New Attachment",
+      "uploading": "Uploading…",
+      "download": "Download file",
+      "preview": "Preview",
+      "previewUnavailable": "Preview not available for this file type, please download file instead.",
+      "deleteConfirm": "Delete this attachment?",
+      "image": "Image",
+      "pdf": "PDF",
+      "file": "File",
+      "tooLarge": "The file is too large. Maximum allowed size is 20 MB.",
+      "unrecognized": "Unrecognized file. Please choose a file with a known extension.",
+      "unsupported": "This file type is not supported. Allowed types: images (JPG, PNG, GIF, WEBP, BMP), PDF, Office documents (Word, Excel, PowerPoint), CSV, TXT, and ZIP.",
+      "uploadFailed": "Failed to upload file",
+      "colFile": "File",
+      "colType": "Type",
+      "colSize": "Size",
+      "colUploadedBy": "Uploaded By",
+      "colDate": "Date",
+      "actions": "Actions"
+    },
     "consultation": {
       "editConsultation": "Edit Consultation",
       "newConsultation": "New Consultation",
