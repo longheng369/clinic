@@ -63,7 +63,7 @@ class ParaClinicRequestController extends Controller
             $paraClinicRequest->update(['fee' => $data['fee']]);
         });
 
-        return back()->with('success', 'Paraclinic request created.');
+        return back()->with('success', 'patients.paraClinic.created');
     }
 
     public function update(UpdateParaClinicRequest $request, ParaClinicRequest $paraClinicRequest)
@@ -82,14 +82,14 @@ class ParaClinicRequestController extends Controller
             $paraClinicRequest->update(['fee' => $fee]);
         });
 
-        return back()->with('success', 'Paraclinic request updated.');
+        return back()->with('success', 'patients.paraClinic.updated');
     }
 
     public function destroy(ParaclinicRequest $paraClinicRequest)
     {
         $paraClinicRequest->delete();
 
-        return back()->with('success', 'Paraclinic request deleted.');
+        return back()->with('success', 'patients.paraClinic.deleted');
     }
 
     public function updateStatus(ParaClinicRequest $paraClinicRequest)
@@ -103,7 +103,7 @@ class ParaClinicRequestController extends Controller
 
         $paraClinicRequest->update(['status' => $status]);
 
-        return back()->with('success', 'Status updated.');
+        return back()->with('success', 'patients.paraClinic.statusUpdated');
     }
 
     /**

@@ -75,7 +75,24 @@
         "unit": "ឯកតា",
         "notes": "កំណត់ចំណាំ",
         "diagnosis": "រោគវិនិច្ឆ័យ",
-        "min": "អប្បបរមា {{min}}"
+        "enterDiagnosis": "បញ្ចូលរោគវិនិច្ឆ័យ",
+        "min": "អប្បបរមា {{min}}",
+        "total": "សរុប៖ ${{amount}}"
+      },
+      "status": {
+        "active": "សកម្ម",
+        "cancelled": "បានបោះបង់",
+        "completed": "បានបញ្ចប់",
+        "missed": "ខកខាន",
+        "onHold": "រង់ចាំ",
+        "overdue": "ហួសកាលកំណត់",
+        "paid": "បានបង់",
+        "partial": "មួយផ្នែក",
+        "pending": "កំពុងរង់ចាំ",
+        "provided": "បានផ្តល់",
+        "refused": "បដិសេធ",
+        "stopped": "ឈប់",
+        "unpaid": "មិនទាន់បង់ប្រាក់"
       }
     },
     "list": {
@@ -177,6 +194,45 @@
       "night": "យប់",
       "instruction": "ការណែនាំ",
       "treatingPhysician": "គ្រូពេទ្យព្យាបាល"
+    },
+    "paraClinic": {
+      "subtitle": "សំណើធ្វើតេស្តគ្លីនិកប៉ារ៉ា សម្រាប់អ្នកជំងឺនេះ",
+      "newRequest": "សំណើថ្មី",
+      "newRequestTitle": "សំណើគ្លីនិកប៉ារ៉ាថ្មី",
+      "editTitle": "កែសម្រួល {{request_number}}",
+      "viewRequest": "មើលសំណើ",
+      "editRequest": "កែសម្រួលសំណើ",
+      "deleteRequest": "លុបសំណើ",
+      "deleteConfirm": "លុបសំណើគ្លីនិកប៉ារ៉ានេះ?",
+      "colRequestNumber": "លេខស្នើសុំ",
+      "colRequestDate": "កាលបរិច្ឆេទ",
+      "colClinicalReason": "ហេតុផលគ្លីនិក",
+      "colStatus": "ស្ថានភាព",
+      "colFee": "ចំនួនទឹកប្រាក់",
+      "clinicalReason": "ហេតុផលគ្លីនិក",
+      "enterClinicalReason": "បញ្ចូលហេតុផលគ្លីនិក",
+      "enterNotes": "បញ្ចូលកំណត់ចំណាំបន្ថែម",
+      "requestDateTime": "កាលបរិច្ឆេទ និងពេលវេលាស្នើសុំ",
+      "requestDateRequired": "សូមបញ្ចូលកាលបរិច្ឆេទស្នើសុំ",
+      "statusLabel": "ស្ថានភាព",
+      "diagnosticTests": "ការធ្វើតេស្តរោគវិនិច្ឆ័យ",
+      "selectTest": "សូមជ្រើសរើសការធ្វើតេស្តយ៉ាងហោចណាស់មួយ",
+      "update": "ធ្វើបច្ចុប្បន្នភាព",
+      "submit": "ដាក់ស្នើ",
+      "loadFailed": "មិនអាចផ្ទុកសំណើបានទេ។",
+      "loadDetailsFailed": "មិនអាចផ្ទុកព័ត៌មានលម្អិតសំណើបានទេ។",
+      "saveFailed": "មិនអាចរក្សាទុកសំណើបានទេ។",
+      "created": "បានបង្កើតសំណើគ្លីនិកប៉ារ៉ា។",
+      "updated": "បានធ្វើបច្ចុប្បន្នភាពសំណើគ្លីនិកប៉ារ៉ា។",
+      "deleted": "បានលុបសំណើគ្លីនិកប៉ារ៉ា។",
+      "statusUpdated": "បានធ្វើបច្ចុប្បន្នភាពស្ថានភាព។",
+      "status": {
+        "draft": "សេចក្តីព្រាង",
+        "requested": "បានស្នើសុំ",
+        "waitingResult": "រង់ចាំលទ្ធផល",
+        "resultReceived": "ទទួលបានលទ្ធផល",
+        "reviewed": "បានពិនិត្យ"
+      }
     }
   },
   "vaccines": {

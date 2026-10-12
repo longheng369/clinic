@@ -164,14 +164,14 @@ const ParaClinicByPatientTab = ({ patientId, selectedVisitId }: { patientId: num
         <GridActionsCellItem
           key={`edit-${params.id}`}
           icon={<Pencil size={16} color="#2563eb" />}
-          label="Edit request"
+          label={t('patients.paraClinic.editRequest')}
           onClick={() => handleEdit(params.row as IParaClinicRequest)}
           showInMenu={false}
         />,
         <GridActionsCellItem
           key={`delete-${params.id}`}
           icon={<Trash2 size={16} color="#dc2626" />}
-          label="Delete request"
+          label={t('patients.paraClinic.deleteRequest')}
           onClick={() => handleDelete(params.row as IParaClinicRequest)}
           showInMenu={false}
         />,
@@ -190,14 +190,14 @@ const ParaClinicByPatientTab = ({ patientId, selectedVisitId }: { patientId: num
         }}
       >
         <Typography variant="body2">
-          Para clinic test requests for this patient
+          {t('patients.paraClinic.subtitle')}
         </Typography>
         <Button
           onClick={openRequestForm}
           variant="contained"
           startIcon={<Plus size={16} />}
         >
-          New Request
+          {t('patients.paraClinic.newRequest')}
         </Button>
       </Box>
 

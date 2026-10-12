@@ -75,7 +75,24 @@
         "unit": "Unit",
         "notes": "Notes",
         "diagnosis": "Diagnosis",
-        "min": "Min {{min}}"
+        "enterDiagnosis": "Enter diagnosis",
+        "min": "Min {{min}}",
+        "total": "Total: ${{amount}}"
+      },
+      "status": {
+        "active": "Active",
+        "cancelled": "Cancelled",
+        "completed": "Completed",
+        "missed": "Missed",
+        "onHold": "On Hold",
+        "overdue": "Overdue",
+        "paid": "Paid",
+        "partial": "Partial",
+        "pending": "Pending",
+        "provided": "Provided",
+        "refused": "Refused",
+        "stopped": "Stopped",
+        "unpaid": "Unpaid"
       }
     },
     "list": {
@@ -177,6 +194,45 @@
       "night": "Night",
       "instruction": "Instruction",
       "treatingPhysician": "Treating Physician"
+    },
+    "paraClinic": {
+      "subtitle": "Para clinic test requests for this patient",
+      "newRequest": "New Request",
+      "newRequestTitle": "New Para Clinic Request",
+      "editTitle": "Edit {{request_number}}",
+      "viewRequest": "View request",
+      "editRequest": "Edit request",
+      "deleteRequest": "Delete request",
+      "deleteConfirm": "Delete this para clinic request?",
+      "colRequestNumber": "Request No.",
+      "colRequestDate": "Date",
+      "colClinicalReason": "Clinical Reason",
+      "colStatus": "Status",
+      "colFee": "Fee",
+      "clinicalReason": "Clinical Reason",
+      "enterClinicalReason": "Enter clinical reason",
+      "enterNotes": "Enter any additional notes",
+      "requestDateTime": "Request Date & Time",
+      "requestDateRequired": "Request date is required",
+      "statusLabel": "Status",
+      "diagnosticTests": "Diagnostic Tests",
+      "selectTest": "Please select at least one test",
+      "update": "Update",
+      "submit": "Submit",
+      "loadFailed": "Failed to load the request.",
+      "loadDetailsFailed": "Failed to load the request details.",
+      "saveFailed": "Failed to save request.",
+      "created": "Paraclinic request created.",
+      "updated": "Paraclinic request updated.",
+      "deleted": "Paraclinic request deleted.",
+      "statusUpdated": "Status updated.",
+      "status": {
+        "draft": "Draft",
+        "requested": "Requested",
+        "waitingResult": "Waiting Result",
+        "resultReceived": "Result Received",
+        "reviewed": "Reviewed"
+      }
     }
   },
   "vaccines": {
