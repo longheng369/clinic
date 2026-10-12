@@ -63,20 +63,20 @@ class PatientVaccinationController extends Controller
             }
         }
 
-        return back()->with('success', 'Vaccination recorded.');
+        return back()->with('success', 'patients.vaccination.recorded');
     }
 
     public function update(UpdatePatientVaccinationRequest $request, Patient $patient, PatientVaccination $vaccination)
     {
         $vaccination->update($request->validated());
 
-        return back()->with('success', 'Vaccination record updated.');
+        return back()->with('success', 'patients.vaccination.recordUpdated');
     }
 
     public function destroy(Patient $patient, PatientVaccination $vaccination)
     {
         $vaccination->delete();
 
-        return back()->with('success', 'Vaccination record deleted.');
+        return back()->with('success', 'patients.vaccination.recordDeleted');
     }
 }
