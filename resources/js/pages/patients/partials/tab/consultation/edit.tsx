@@ -147,7 +147,7 @@ const EditConsultation = ({
                   variant="contained"
                   disabled={isProcessing}
                 >
-                  {t('patients.consultation.updateConsultation')}
+                  {t('common.save')}
                 </Button>
               </Box>
             </Box>

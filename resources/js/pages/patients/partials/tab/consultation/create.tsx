@@ -135,7 +135,7 @@ const CreateConsultation = ({
                   variant="contained"
                   disabled={isProcessing}
                 >
-                  {t('patients.consultation.createConsultation')}
+                  {t('common.create')}
                 </Button>
               </Box>
             </Box>

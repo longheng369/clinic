@@ -122,6 +122,7 @@
       "visitType": "ប្រភេទនៃការមកជួប"
     },
     "consultation": {
+      "editConsultation": "កែប្រែការពិគ្រោះយោបល់",
       "newConsultation": "ការពិគ្រោះយោបល់ថ្មី",
       "colChiefComplaint": "ការត្អូញត្អែរ",
       "colDiagnosis": "រោគវិនិច្ឆ័យ",
