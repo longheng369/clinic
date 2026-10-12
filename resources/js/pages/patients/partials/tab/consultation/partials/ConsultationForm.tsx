@@ -1,5 +1,4 @@
 import { type Control } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
 import Input from '@/components/form/input';
 import ConsultationSection from './ConsultationSection';
 import {
@@ -25,32 +24,28 @@ type Props = {
 };
 
 const ConsultationForm = ({ control, viewOnly }: Props) => {
-  const { t } = useTranslation();
-
   return (
     <Grid container spacing={2}>
       <Grid size={{ xs: 12, md: 2 }}>
         <Input
           control={control}
           name="weight"
-          label={t('patients.consultation.form.weight')}
+          label="Weight (kg)"
           type="number"
-          placeholder={t('patients.consultation.form.weightPlaceholder')}
+          placeholder="e.g. 65"
           disabled={viewOnly}
           slotProps={{ htmlInput: { min: 0 } }}
-          rules={{ required: t('patients.shared.form.required') }}
+          rules={{ required: 'Required' }}
         />
       </Grid>
       <Grid size={{ xs: 12, md: 10 }}>
         <Input
           control={control}
           name="chief_complaint"
-          label={t('patients.consultation.form.chiefComplaint')}
-          placeholder={t(
-            'patients.consultation.form.chiefComplaintPlaceholder',
-          )}
+          label="Chief complaint"
+          placeholder="Describe the main complaint..."
           disabled={viewOnly}
-          rules={{ required: t('common.required') }}
+          rules={{ required: 'This field is required' }}
         />
       </Grid>
 
@@ -58,7 +53,7 @@ const ConsultationForm = ({ control, viewOnly }: Props) => {
         control={control}
         name="respiratory_system_symptoms"
         options={respiratorySymptoms}
-        title={t('patients.consultation.form.sectionRespiratory')}
+        title="1. Respiratory system"
         disabled={viewOnly}
       />
 
@@ -66,7 +61,7 @@ const ConsultationForm = ({ control, viewOnly }: Props) => {
         control={control}
         name="cardiovascular_symptoms"
         options={cardiovascularSymptoms}
-        title={t('patients.consultation.form.sectionCardiovascular')}
+        title="2. Cardiovascular"
         disabled={viewOnly}
       />
 
@@ -74,7 +69,7 @@ const ConsultationForm = ({ control, viewOnly }: Props) => {
         control={control}
         name="neurological_symptoms"
         options={neurologicalSymptoms}
-        title={t('patients.consultation.form.sectionNeurological')}
+        title="3. Neurological"
         disabled={viewOnly}
       />
 
@@ -82,7 +77,7 @@ const ConsultationForm = ({ control, viewOnly }: Props) => {
         control={control}
         name="musculoskeletal_symptoms"
         options={musculoskeletalSymptoms}
-        title={t('patients.consultation.form.sectionMusculoskeletal')}
+        title="4. Musculoskeletal"
         disabled={viewOnly}
       />
 
@@ -90,7 +85,7 @@ const ConsultationForm = ({ control, viewOnly }: Props) => {
         control={control}
         name="digestive_symptoms"
         options={digestiveSymptoms}
-        title={t('patients.consultation.form.sectionDigestive')}
+        title="5. Digestive"
         disabled={viewOnly}
       />
 
@@ -98,7 +93,7 @@ const ConsultationForm = ({ control, viewOnly }: Props) => {
         control={control}
         name="renal_reproductive_symptoms"
         options={renalReproductiveSymptoms}
-        title={t('patients.consultation.form.sectionRenalReproductive')}
+        title="6. Renal / Reproductive"
         disabled={viewOnly}
       />
 
@@ -106,7 +101,7 @@ const ConsultationForm = ({ control, viewOnly }: Props) => {
         control={control}
         name="skin_symptoms"
         options={skinSymptoms}
-        title={t('patients.consultation.form.sectionSkin')}
+        title="7. Skin"
         disabled={viewOnly}
       />
 
@@ -115,7 +110,7 @@ const ConsultationForm = ({ control, viewOnly }: Props) => {
           variant="subtitle1"
           sx={{ fontWeight: 600, color: 'text.primary' }}
         >
-          {t('patients.consultation.form.sectionEyesEarsThroatMouth')}
+          8. EYES / EARS / THROAT / MOUTH
         </Typography>
       </Grid>
 
@@ -123,7 +118,7 @@ const ConsultationForm = ({ control, viewOnly }: Props) => {
         control={control}
         name="eye_symptoms"
         options={eyeSymptoms}
-        title={t('patients.consultation.form.titleEye')}
+        title="EYE"
         disabled={viewOnly}
       />
 
@@ -131,7 +126,7 @@ const ConsultationForm = ({ control, viewOnly }: Props) => {
         control={control}
         name="ear_symptoms"
         options={earSymptoms}
-        title={t('patients.consultation.form.titleEar')}
+        title="EAR"
         disabled={viewOnly}
       />
 
@@ -139,7 +134,7 @@ const ConsultationForm = ({ control, viewOnly }: Props) => {
         control={control}
         name="nose_symptoms"
         options={noseSymptoms}
-        title={t('patients.consultation.form.titleNose')}
+        title="NOSE"
         disabled={viewOnly}
       />
 
@@ -147,7 +142,7 @@ const ConsultationForm = ({ control, viewOnly }: Props) => {
         control={control}
         name="throat_symptoms"
         options={throatSymptoms}
-        title={t('patients.consultation.form.titleThroat')}
+        title="THROAT"
         disabled={viewOnly}
       />
 
@@ -155,7 +150,7 @@ const ConsultationForm = ({ control, viewOnly }: Props) => {
         control={control}
         name="psychology_symptoms"
         options={psychologySymptoms}
-        title={t('patients.consultation.form.titlePsychology')}
+        title="PSYCHOLOGY"
         disabled={viewOnly}
       />
 
@@ -163,12 +158,10 @@ const ConsultationForm = ({ control, viewOnly }: Props) => {
         <Input
           control={control}
           name="diagnosis"
-          label={t('patients.shared.form.diagnosis')}
-          placeholder={t('patients.shared.form.enterDiagnosis')}
+          label="Diagnosis"
+          placeholder="Enter diagnosis"
           disabled={viewOnly}
-          rules={{
-            required: t('patients.consultation.form.diagnosisRequired'),
-          }}
+          rules={{ required: 'Diagnosis is required' }}
         />
       </Grid>
 
@@ -176,8 +169,8 @@ const ConsultationForm = ({ control, viewOnly }: Props) => {
         <Input
           control={control}
           name="note"
-          label={t('patients.shared.form.notes')}
-          placeholder={t('patients.consultation.form.notesPlaceholder')}
+          label="Notes"
+          placeholder="Additional notes..."
           multiline
           rows={4}
           disabled={viewOnly}
@@ -188,7 +181,7 @@ const ConsultationForm = ({ control, viewOnly }: Props) => {
         <Input
           control={control}
           name="fee"
-          label={t('patients.consultation.form.fee')}
+          label="Fee ($)"
           type="number"
           placeholder="0.00"
           disabled={viewOnly}

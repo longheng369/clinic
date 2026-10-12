@@ -123,10 +123,12 @@
     },
     "consultation": {
       "newConsultation": "ការពិគ្រោះយោបល់ថ្មី",
-      "colChiefComplaint": "ការត្អូញត្អែរចម្បង",
+      "colChiefComplaint": "ការត្អូញត្អែរ",
       "colDiagnosis": "រោគវិនិច្ឆ័យ",
       "colWeight": "ទម្ងន់",
-      "colFee": "ថ្លៃសេវា"
+      "colFee": "ថ្លៃសេវា",
+      "detailsTitle": "ព័ត៌មានលម្អិតអំពីការពិគ្រោះយោបល់",
+      "patient": "ឈ្មោះអ្នកជំងឺ"
     }
   },
   "vaccines": {
