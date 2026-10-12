@@ -25,10 +25,6 @@ type Props = {
   instructionOptions: { label: string; value: number }[];
 }
 
-const formatGenderValue = (gender: string) => {
-  return gender === 'male' ? 'ប្រុស' : 'ស្រី';
-}
-
 const Print = ({
   onClose,
   patient,
@@ -94,7 +90,7 @@ const Print = ({
 
         <div className="patient-info" style={{ marginTop: '1rem' }}>
           <PatientField
-            label="គោត្តនាម នាម"
+            label={t('patients.prescription.khmerName')}
             value={`${patient.khmer_first_name} ${patient.khmer_last_name}`}
           />
           <PatientField
@@ -102,14 +98,26 @@ const Print = ({
             value={`${patient.first_name} ${patient.last_name}`}
           />
           <PatientField
-            label="អាយុ"
-            value={`${calculateAge(patient.date_of_birth)} ឆ្នាំ`}
+            label={t('patients.prescription.age')}
+            value={t('patients.prescription.ageYears', {
+              age: calculateAge(patient.date_of_birth),
+            })}
           />
-          <PatientField label="ភេទ" value={formatGenderValue(patient.gender)} />
-          <PatientField label="ទូរស័ព្ទ" value={patient.phone_number} />
-          <PatientField label="ក្រុមឈាម" value={patient.blood_group ?? ''} />
           <PatientField
-            label="កាលបរិច្ឆេទ"
+            label={t('patients.prescription.gender')}
+            value={
+              patient.gender === 'male'
+                ? t('patients.form.male')
+                : t('patients.form.female')
+            }
+          />
+          <PatientField label={t('patients.prescription.phone')} value={patient.phone_number} />
+          <PatientField
+            label={t('patients.prescription.bloodGroup')}
+            value={patient.blood_group ?? ''}
+          />
+          <PatientField
+            label={t('patients.prescription.date')}
             value={formatDob(
               prescription?.created_at ?? new Date().toISOString(),
             )}
@@ -133,13 +141,19 @@ const Print = ({
             <TableHead>
               <TableRow>
                 <TableCell width="5%" align="center">
-                  ល.រ
+                  {t('patients.prescription.no')}
                 </TableCell>
-                <TableCell width="30%">ឈ្មោះថ្នាំ</TableCell>
-                <TableCell width="10%">ចំនួន</TableCell>
-                <TableCell width="40%">ការប្រើប្រាស់</TableCell>
+                <TableCell width="30%">
+                  {t('patients.prescription.medicineName')}
+                </TableCell>
+                <TableCell width="10%">
+                  {t('patients.prescription.quantity')}
+                </TableCell>
+                <TableCell width="40%">
+                  {t('patients.prescription.usage')}
+                </TableCell>
                 <TableCell width="10%" align="center">
-                  ចំនួនថ្ងៃ
+                  {t('patients.prescription.days')}
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -153,11 +167,14 @@ const Print = ({
                     {instructionOptions.find(
                       (opt) => opt.value === item.medicine_instruction_id,
                     )?.label ?? ''}{' '}
-                    {item.morning && `ព្រឹក ${item.morning} ${item.unit?.name}`}{' '}
+                    {item.morning &&
+                      `${t('patients.prescription.morning')} ${item.morning} ${item.unit?.name}`}{' '}
                     {item.afternoon &&
-                      `រសៀល ${item.afternoon} ${item.unit?.name}`}{' '}
-                    {item.evening && `ល្ងាច ${item.evening} ${item.unit?.name}`}{' '}
-                    {item.night && `យប់ ${item.night} ${item.unit?.name}`},{' '}
+                      `${t('patients.prescription.afternoon')} ${item.afternoon} ${item.unit?.name}`}{' '}
+                    {item.evening &&
+                      `${t('patients.prescription.evening')} ${item.evening} ${item.unit?.name}`}{' '}
+                    {item.night &&
+                      `${t('patients.prescription.night')} ${item.night} ${item.unit?.name}`},{' '}
                     {item.notes}
                   </TableCell>
                   <TableCell align="center">12</TableCell>
@@ -169,7 +186,9 @@ const Print = ({
       </Box>
 
       <Box sx={{ height: '150px' }}>
-        <p style={{ textAlign: 'end' }}>គ្រូពេទ្យព្យាបាល</p>
+        <p style={{ textAlign: 'end' }}>
+          {t('patients.prescription.treatingPhysician')}
+        </p>
       </Box>
     </Box>
   );

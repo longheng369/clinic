@@ -31,7 +31,7 @@ class PrescriptionController extends Controller
 
         $prescription->items()->createMany($items);
 
-        return back()->with('success', 'Prescription saved.');
+        return back()->with('success', 'patients.prescription.saved');
     }
 
     public function update(UpdatePrescriptionRequest $request, Patient $patient, Prescription $prescription)
@@ -55,7 +55,7 @@ class PrescriptionController extends Controller
         $prescription->items()->delete();
         $prescription->items()->createMany($items);
 
-        return back()->with('success', 'Prescription updated.');
+        return back()->with('success', 'patients.prescription.updated');
     }
 
     private function normalizeDoseSlots(array $item): array

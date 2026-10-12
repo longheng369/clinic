@@ -68,7 +68,14 @@
   "patients": {
     "shared": {
       "form": {
-        "generalInformation": "ព័ត៌មានទូទៅ"
+        "generalInformation": "ព័ត៌មានទូទៅ",
+        "addMedicine": "បន្ថែមថ្នាំ",
+        "medicine": "ថ្នាំ",
+        "route": "ផ្លូវ",
+        "unit": "ឯកតា",
+        "notes": "កំណត់ចំណាំ",
+        "diagnosis": "រោគវិនិច្ឆ័យ",
+        "min": "អប្បបរមា {{min}}"
       }
     },
     "list": {
@@ -130,6 +137,46 @@
       "colFee": "ថ្លៃសេវា",
       "detailsTitle": "ព័ត៌មានលម្អិតអំពីការពិគ្រោះយោបល់",
       "patient": "ឈ្មោះអ្នកជំងឺ"
+    },
+    "prescription": {
+      "title": "វេជ្ជបញ្ជា",
+      "selectVisit": "ជ្រើសរើសការមកជួបមួយដើម្បីគ្រប់គ្រងវេជ្ជបញ្ជា។",
+      "emptyTitle": "គ្មានវេជ្ជបញ្ជា",
+      "emptyDescription": "ការមកជួបនេះមិនទាន់មានវេជ្ជបញ្ជានៅឡើយទេ។",
+      "start": "ចាប់ផ្តើមវេជ្ជបញ្ជា",
+      "print": "បោះពុម្ព",
+      "printAgain": "បោះពុម្ពម្តងទៀត",
+      "add": "បន្ថែម",
+      "editMedicine": "កែប្រែថ្នាំ",
+      "invalidItem": "ថ្នាំនីមួយៗត្រូវតែមានថ្នាំ និងឯកតាដែលបានជ្រើសរើស។",
+      "saveFailed": "មិនអាចរក្សាទុកវេជ្ជបញ្ជាបានទេ។",
+      "saved": "បានរក្សាទុកវេជ្ជបញ្ជា។",
+      "updated": "បានធ្វើបច្ចុប្បន្នភាពវេជ្ជបញ្ជា។",
+      "name": "ឈ្មោះ",
+      "fullName": "ឈ្មោះពេញ",
+      "khmerName": "ឈ្មោះខ្មែរ",
+      "gender": "ភេទ",
+      "age": "អាយុ",
+      "ageYears": "អាយុ {{age}} ឆ្នាំ",
+      "phone": "ទូរស័ព្ទ",
+      "bloodGroup": "ក្រុមឈាម",
+      "nationalId": "អត្តសញ្ញាណប័ណ្ណ",
+      "date": "កាលបរិច្ឆេទ",
+      "no": "ល.រ",
+      "medicineName": "ឈ្មោះថ្នាំ",
+      "quantity": "ចំនួន",
+      "quantityRequired": "សូមបញ្ចូលចំនួន",
+      "medicineRequired": "សូមបញ្ចូលថ្នាំ",
+      "routeRequired": "សូមជ្រើសរើសផ្លូវ",
+      "usage": "ការប្រើប្រាស់",
+      "numberOfDays": "ចំនួនថ្ងៃ",
+      "days": "ចំនួនថ្ងៃ",
+      "morning": "ព្រឹក",
+      "afternoon": "រសៀល",
+      "evening": "ល្ងាច",
+      "night": "យប់",
+      "instruction": "ការណែនាំ",
+      "treatingPhysician": "គ្រូពេទ្យព្យាបាល"
     }
   },
   "vaccines": {

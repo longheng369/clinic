@@ -384,35 +384,37 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
           <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
             {[
               {
-                label: 'គោត្តនាម នាម',
+                label: t('patients.prescription.khmerName'),
                 value: `${patient.khmer_first_name} ${patient.khmer_last_name}`,
               },
               {
-                label: 'ភេទ',
+                label: t('patients.prescription.gender'),
                 value: patient.gender,
               },
               {
-                label: 'អាយុ',
-                value: `${calculateAge(patient.date_of_birth)} ឆ្នាំ`,
+                label: t('patients.prescription.age'),
+                value: t('patients.prescription.ageYears', {
+                  age: calculateAge(patient.date_of_birth),
+                }),
               },
               {
                 label: t('patients.prescription.name'),
                 value: `${patient.last_name} ${patient.first_name}`,
               },
               {
-                label: 'ទូរស័ព្ទ',
+                label: t('patients.prescription.phone'),
                 value: patient.phone_number,
               },
               {
-                label: 'ក្រុមឈាម',
+                label: t('patients.prescription.bloodGroup'),
                 value: patient.blood_group,
               },
               {
-                label: 'អត្តសញ្ញាណប័ណ្ណ',
+                label: t('patients.prescription.nationalId'),
                 value: patient.national_id,
               },
               {
-                label: 'កាលបរិច្ឆេទ',
+                label: t('patients.prescription.date'),
                 value: formatDob(
                   prescription?.created_at ?? new Date().toISOString(),
                 ),
@@ -458,12 +460,20 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
                   }}
                 >
                   <TableCell width="5%" align="center">
-                    ល.រ
+                    {t('patients.prescription.no')}
                   </TableCell>
-                  <TableCell width="30%">ឈ្មោះថ្នាំ</TableCell>
-                  <TableCell width="10%">ចំនួន</TableCell>
-                  <TableCell width="40%">ការប្រើប្រាស់</TableCell>
-                  <TableCell width="10%">ចំនួនថ្ងៃ</TableCell>
+                  <TableCell width="30%">
+                    {t('patients.prescription.medicineName')}
+                  </TableCell>
+                  <TableCell width="10%">
+                    {t('patients.prescription.quantity')}
+                  </TableCell>
+                  <TableCell width="40%">
+                    {t('patients.prescription.usage')}
+                  </TableCell>
+                  <TableCell width="10%">
+                    {t('patients.prescription.days')}
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -490,12 +500,13 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
                     <TableCell>
                       {field.instruction?.label}{' '}
                       {field.morning &&
-                        `ព្រឹក ${field.morning} ${field.unit.name}`}{' '}
+                        `${t('patients.prescription.morning')} ${field.morning} ${field.unit.name}`}{' '}
                       {field.afternoon &&
-                        `រសៀល ${field.afternoon} ${field.unit.name}`}{' '}
+                        `${t('patients.prescription.afternoon')} ${field.afternoon} ${field.unit.name}`}{' '}
                       {field.evening &&
-                        `ល្ងាច ${field.evening} ${field.unit.name}`}{' '}
-                      {field.night && `យប់ ${field.night} ${field.unit.name}`},{' '}
+                        `${t('patients.prescription.evening')} ${field.evening} ${field.unit.name}`}{' '}
+                      {field.night &&
+                        `${t('patients.prescription.night')} ${field.night} ${field.unit.name}`},{' '}
                       {field.notes}
                     </TableCell>
                     <TableCell>{field.numberOfDay}</TableCell>
@@ -506,7 +517,7 @@ const PrescriptionTab = ({ patient, selectedVisit, prescription }: Props) => {
           </TableContainer>
           <Box sx={{ height: '100px' }}>
             <Typography sx={{ fontSize: 14, textAlign: 'end' }}>
-              គ្រូពេទ្យព្យាបាល
+              {t('patients.prescription.treatingPhysician')}
             </Typography>
           </Box>
         </Box>

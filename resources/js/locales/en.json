@@ -68,7 +68,14 @@
   "patients": {
     "shared": {
       "form": {
-        "generalInformation": "General Information"
+        "generalInformation": "General Information",
+        "addMedicine": "Add Medicine",
+        "medicine": "Medicine",
+        "route": "Route",
+        "unit": "Unit",
+        "notes": "Notes",
+        "diagnosis": "Diagnosis",
+        "min": "Min {{min}}"
       }
     },
     "list": {
@@ -130,6 +137,46 @@
       "colFee": "Fee",
       "detailsTitle": "Consultation Details",
       "patient": "Patient"
+    },
+    "prescription": {
+      "title": "Prescriptions",
+      "selectVisit": "Select a visit to manage prescriptions.",
+      "emptyTitle": "No Prescription",
+      "emptyDescription": "This visit doesn't have a prescription yet.",
+      "start": "Start Prescription",
+      "print": "Print",
+      "printAgain": "Print Again",
+      "add": "Add",
+      "editMedicine": "Edit Medicine",
+      "invalidItem": "Each medicine must have a medicine and unit selected.",
+      "saveFailed": "Unable to save prescription.",
+      "saved": "Prescription saved.",
+      "updated": "Prescription updated.",
+      "name": "Name",
+      "fullName": "Full Name",
+      "khmerName": "Khmer Name",
+      "gender": "Gender",
+      "age": "Age",
+      "ageYears": "{{age}} years old",
+      "phone": "Phone",
+      "bloodGroup": "Blood Group",
+      "nationalId": "National ID",
+      "date": "Date",
+      "no": "No.",
+      "medicineName": "Medicine Name",
+      "quantity": "Quantity",
+      "quantityRequired": "Quantity is required",
+      "medicineRequired": "Medicine is required",
+      "routeRequired": "Route is required",
+      "usage": "Usage",
+      "numberOfDays": "Number of Days",
+      "days": "Days",
+      "morning": "Morning",
+      "afternoon": "Afternoon",
+      "evening": "Evening",
+      "night": "Night",
+      "instruction": "Instruction",
+      "treatingPhysician": "Treating Physician"
     }
   },
   "vaccines": {
