@@ -218,7 +218,10 @@
         "surveillance": "Surveillance"
       },
       "visitType": "Visit Type {{type}}",
-      "visitHistory": "Visit History"
+      "visitHistory": "Visit History",
+      "noVisits": "No visits yet",
+      "selectVisit": "Select a visit to view details.",
+      "startNewVisit": "Start New Visit"
     },
     "attachment": {
       "subtitle": "Attachments for this patient belong to selected visit",

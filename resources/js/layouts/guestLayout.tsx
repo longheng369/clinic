@@ -16,24 +16,7 @@ const GuestLayout = ({ children }: Props) => {
         overflow: 'hidden',
         px: { xs: 2, sm: 4 },
         py: 6,
-        background:
-          'linear-gradient(135deg, #e3f0e3 0%, #f4f9f4 50%, #f0e8e0 100%)',
-        '&::before': {
-          content: '""',
-          position: 'absolute',
-          inset: 0,
-          pointerEvents: 'none',
-          background:
-            'radial-gradient(ellipse at top left, #c8e0c8 0%, transparent 50%)',
-        },
-        '&::after': {
-          content: '""',
-          position: 'absolute',
-          inset: 0,
-          pointerEvents: 'none',
-          background:
-            'radial-gradient(ellipse at bottom right, #e0d0c1 0%, transparent 50%)',
-        },
+        background: '#ffffff',
       }}
     >
       <Paper
@@ -44,7 +27,9 @@ const GuestLayout = ({ children }: Props) => {
           width: '100%',
           maxWidth: 448,
           p: 4,
-          borderRadius: 4
+          borderRadius: 4,
+          boxShadow:
+            '0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06), 0 16px 48px rgba(0,0,0,0.04)'
         }}
       >
         {children}
