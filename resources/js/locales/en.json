@@ -204,6 +204,12 @@
       "village": "Village",
       "onlyKhmerCharacters": "Only Khmer characters allowed"
     },
+    "info": {
+      "khmerName": "Khmer Name",
+      "englishName": "English Name",
+      "weight": "Weight",
+      "yrs": "{{age}} yrs"
+    },
     "show": {
       "title": "Patient Detail",
       "tabs": {
@@ -221,7 +227,12 @@
       "visitHistory": "Visit History",
       "noVisits": "No visits yet",
       "selectVisit": "Select a visit to view details.",
-      "startNewVisit": "Start New Visit"
+      "startNewVisit": "Start New Visit",
+      "admit": "Admit",
+      "admitTitle": "Admit this visit?",
+      "admitDescription": "The patient will be admitted for inpatient care.",
+      "closeVisitTitle": "Close this visit?",
+      "closeVisitDescription": "The visit will be marked as closed."
     },
     "attachment": {
       "subtitle": "Attachments for this patient belong to selected visit",
