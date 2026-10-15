@@ -1,6 +1,7 @@
 import { IVisit, IVisitWithMetaData } from '@/interfaces/IVisit';
 import { formatCreatedDateTime } from '@/utils/date';
-import { Button, Chip, List, ListItemButton, Typography } from '@mui/material';
+import { Box, Button, Chip, List, ListItemButton, Typography } from '@mui/material';
+import { CheckCircle2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 type Props = {
@@ -11,9 +12,12 @@ type Props = {
   onClose: (visitId: number) => void;
 };
 
-const TYPE_COLORS: Record<IVisit['type'], { main: string; soft: string }> = {
-  IPD: { main: '#f59e0b', soft: 'rgba(245, 158, 11, 0.14)' },
-  OPD: { main: '#1e90ff', soft: 'rgba(30, 144, 255, 0.14)' },
+const TYPE_COLORS: Record<
+  IVisit['type'],
+  { main: string; tint: string }
+> = {
+  IPD: { main: '#f59e0b', tint: 'rgba(245, 158, 11, 0.12)' },
+  OPD: { main: '#1e90ff', tint: 'rgba(30, 144, 255, 0.12)' },
 };
 
 const VisitHistory = ({
@@ -44,7 +48,7 @@ const VisitHistory = ({
     <List disablePadding>
       {allVisits.map((v) => {
         const isSelected = selectedVisit?.id === v.id;
-        const { main, soft } = TYPE_COLORS[v.type];
+        const { main, tint } = TYPE_COLORS[v.type];
 
         return (
           <ListItemButton
@@ -53,33 +57,63 @@ const VisitHistory = ({
             selected={isSelected}
             sx={{
               mt: 1.5,
-              px: 1.5,
-              py: 1,
-              display: 'flex',
-              justifyContent: 'space-between',
+              px: 2,
+              py: 1.25,
+              flexDirection: 'column',
+              alignItems: 'flex-start',
               gap: 1,
-              borderLeft: `${isSelected ? 4 : 3}px solid ${main}`,
-              bgcolor: isSelected ? soft : 'transparent',
-              boxShadow: 1,
+              borderRadius: 2,
+              borderLeft: `${isSelected ? 5 : 3}px solid ${
+                isSelected ? main : 'rgba(100, 116, 139, 0.25)'
+              }`,
+              bgcolor: isSelected ? tint : 'transparent',
+              boxShadow: isSelected ? 2 : 1,
               transition:
                 'background-color 150ms ease-in-out, border-color 150ms ease-in-out, box-shadow 150ms ease-in-out',
               '&:hover': {
-                bgcolor: isSelected ? soft : 'rgba(100, 116, 139, 0.08)',
+                bgcolor: isSelected ? tint : 'rgba(100, 116, 139, 0.06)',
+                boxShadow: isSelected ? 3 : 1.5,
               },
             }}
           >
-            <Typography
-              sx={{ fontSize: 14, fontWeight: isSelected ? 600 : 400 }}
+            <Box
+              sx={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+              }}
             >
-              {formatCreatedDateTime(v.created_at)}
-            </Typography>
-            <Chip
-              label={v.type}
-              size="small"
-              color={v.type === 'IPD' ? 'warning' : 'info'}
-            />
+              {isSelected && (
+                <CheckCircle2 size={16} color={main} style={{ flexShrink: 0 }} />
+              )}
+              <Typography
+                sx={{
+                  fontSize: 14,
+                  fontWeight: isSelected ? 600 : 500,
+                  color: isSelected ? 'text.primary' : 'text.secondary',
+                  flex: 1,
+                  minWidth: 0,
+                }}
+              >
+                {formatCreatedDateTime(v.created_at)}
+              </Typography>
+              <Chip
+                label={v.type}
+                size="small"
+                color={v.type === 'IPD' ? 'warning' : 'info'}
+                sx={{ fontWeight: 500 }}
+              />
+            </Box>
+
             {v.status === 'active' && (
-              <>
+              <Box
+                sx={{
+                  width: '100%',
+                  display: 'flex',
+                  gap: 1,
+                }}
+              >
                 {v.type === 'OPD' && (
                   <Button
                     size="small"
@@ -88,6 +122,7 @@ const VisitHistory = ({
                       event.stopPropagation();
                       onAdmit(v.id);
                     }}
+                    sx={{ fontSize: 12, py: 0.375 }}
                   >
                     {t('patients.show.admit')}
                   </Button>
@@ -100,10 +135,11 @@ const VisitHistory = ({
                     event.stopPropagation();
                     onClose(v.id);
                   }}
+                  sx={{ fontSize: 12, py: 0.375 }}
                 >
                   {t('common.close')}
                 </Button>
-              </>
+              </Box>
             )}
           </ListItemButton>
         );

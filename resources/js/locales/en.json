@@ -232,7 +232,8 @@
       "admitTitle": "Admit this visit?",
       "admitDescription": "The patient will be admitted for inpatient care.",
       "closeVisitTitle": "Close this visit?",
-      "closeVisitDescription": "The visit will be marked as closed."
+      "closeVisitDescription": "The visit will be marked as closed.",
+      "ariaCloseHistory": "Close visit history drawer"
     },
     "attachment": {
       "subtitle": "Attachments for this patient belong to selected visit",
