@@ -122,7 +122,7 @@ const ParaClinicForm = ({ requestId, patientId, visitId, consultationDiagnoses =
       });
 
     return () => controller.abort();
-  }, [requestId, patientId, reset, toast]);
+  }, [requestId, patientId, reset, toast, t]);
 
   const diagnosticTestIds = watch('diagnostic_test_ids');
   const totalFee = diagnosticTestIds.reduce((sum, id) => {

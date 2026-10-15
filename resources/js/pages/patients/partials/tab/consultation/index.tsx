@@ -12,7 +12,7 @@ import { usePagination } from '@/hooks/usePagination';
 import { useTranslation } from 'react-i18next';
 import type React from 'react';
 import { formatCreatedDateTime } from '@/utils/date';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import { IPagination } from '@/interfaces/IPagination';
 
 const ConsultationTab = ({
