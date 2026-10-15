@@ -85,7 +85,7 @@ const SurveillanceForm = ({
               disabled={viewOnly}
               slotProps={{ htmlInput: { min: 0, max: 300 } }}
               rules={{
-                required: t('patients.shared.form.required'),
+                required: t('common.required'),
                 min: { value: 0, message: t('patients.shared.form.min', { min: 0 }) },
                 max: { value: 300, message: t('patients.shared.form.max', { max: 300 }) },
               }}
@@ -101,7 +101,7 @@ const SurveillanceForm = ({
               disabled={viewOnly}
               slotProps={{ htmlInput: { min: 0, max: 200 } }}
               rules={{
-                required: t('patients.shared.form.required'),
+                required: t('common.required'),
                 min: { value: 0, message: t('patients.shared.form.min', { min: 0 }) },
                 max: { value: 200, message: t('patients.shared.form.max', { max: 200 }) },
               }}
@@ -117,7 +117,7 @@ const SurveillanceForm = ({
               disabled={viewOnly}
               slotProps={{ htmlInput: { min: 0, max: 300 } }}
               rules={{
-                required: t('patients.shared.form.required'),
+                required: t('common.required'),
                 min: { value: 0, message: t('patients.shared.form.min', { min: 0 }) },
                 max: { value: 300, message: t('patients.shared.form.max', { max: 300 }) },
               }}
@@ -133,7 +133,7 @@ const SurveillanceForm = ({
               disabled={viewOnly}
               slotProps={{ htmlInput: { min: 30, max: 45, step: '0.1' } }}
               rules={{
-                required: t('patients.shared.form.required'),
+                required: t('common.required'),
                 min: { value: 30, message: t('patients.shared.form.min', { min: 30 }) },
                 max: { value: 45, message: t('patients.shared.form.max', { max: 45 }) },
               }}
@@ -149,7 +149,7 @@ const SurveillanceForm = ({
               disabled={viewOnly}
               slotProps={{ htmlInput: { min: 0, max: 100 } }}
               rules={{
-                required: t('patients.shared.form.required'),
+                required: t('common.required'),
                 min: { value: 0, message: t('patients.shared.form.min', { min: 0 }) },
                 max: { value: 100, message: t('patients.shared.form.max', { max: 100 }) },
               }}
@@ -175,7 +175,10 @@ const SurveillanceForm = ({
               control={control}
               name="o2_supply"
               label={t('patients.surveillance.o2SupplyLabel')}
-              options={O2_OPTIONS}
+              options={O2_OPTIONS.map((option) => ({
+                ...option,
+                label: t(option.label),
+              }))}
             />
           </Grid>
           <Grid size={{ md: 12 }}>

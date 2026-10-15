@@ -203,7 +203,7 @@ const BillingTab = ({ visitId }: Props) => {
                 }}
               />
               <Typography sx={{ fontSize: 14, color: '#475569' }}>
-                {t('patients.billing.paraclinicCosts')}
+                {t('patients.billing.paraClinicCosts')}
               </Typography>
             </Box>
             <Typography

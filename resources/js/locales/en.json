@@ -65,6 +65,50 @@
     "updated": "Category updated.",
     "deleted": "Category deleted."
   },
+  "medicines": {
+    "title": "Medicines",
+    "subtitle": "Manage your clinic medicines",
+    "new": "New Medicine",
+    "searchPlaceholder": "Search medicine",
+    "deleteMessage": "Delete this medicine?",
+    "editAction": "Edit {{name}}",
+    "deleteAction": "Delete {{name}}",
+    "columnName": "Name",
+    "columnType": "Type",
+    "columnCategory": "Category",
+    "columnUnit": "Unit",
+    "columnDosage": "Dosage",
+    "columnUnitPrice": "Unit Price",
+    "columnCreated": "Created",
+    "columnActions": "Actions",
+    "name": "Name",
+    "type": "Type",
+    "category": "Category",
+    "unit": "Unit",
+    "dosage": "Dosage",
+    "unitPrice": "Unit Price",
+    "description": "Description",
+    "selectUnit": "Please select unit",
+    "loadCategoriesFailed": "Failed to load categories",
+    "createError": "Unable to create medicine",
+    "created": "Medicine created.",
+    "updated": "Medicine updated.",
+    "deleted": "Medicine deleted.",
+    "types": {
+      "tablet": "Tablet",
+      "capsule": "Capsule",
+      "syrup": "Syrup",
+      "injection": "Injection",
+      "ointment": "Ointment",
+      "cream": "Cream",
+      "drops": "Drops",
+      "powder": "Powder",
+      "spray": "Spray",
+      "solution": "Solution",
+      "suspension": "Suspension",
+      "other": "Other"
+    }
+  },
   "patients": {
     "shared": {
       "form": {
@@ -76,7 +120,13 @@
         "notes": "Notes",
         "diagnosis": "Diagnosis",
         "enterDiagnosis": "Enter diagnosis",
+        "addToDrugChart": "Add to Drug Chart",
+        "editPrescription": "Edit Prescription",
+        "interval": "Interval",
+        "searchMedicine": "Search medicine",
+        "tryDifferentSearch": "Try a different search term",
         "min": "Min {{min}}",
+        "max": "Max {{max}}",
         "total": "Total: ${{amount}}"
       },
       "status": {
@@ -93,7 +143,30 @@
         "refused": "Refused",
         "stopped": "Stopped",
         "unpaid": "Unpaid"
-      }
+      },
+      "action": {
+        "stop": "Stop",
+        "hold": "Hold",
+        "continue": "Continue",
+        "resume": "Resume"
+      },
+      "order": {
+        "stopTitle": "Stop {{name}}?",
+        "stopDesc": "All pending doses will be cancelled.",
+        "continueTitle": "Continue {{name}}?",
+        "continueDesc": "Start a new cycle (cycle {{cycleNo}}) with the same order.",
+        "holdTitle": "Hold {{name}}?",
+        "holdDesc": "Pending doses will be paused until the order is resumed.",
+        "pricePerDose": "${{price}} / dose",
+        "doctor": "Prescribed by {{name}}",
+        "editOrder": "Edit order",
+        "cycleCol": "Cycle",
+        "dosesCol": "Doses",
+        "progressCol": "Progress",
+        "noDoses": "No doses scheduled yet"
+      },
+      "by": "by {{name}}",
+      "unknown": "Unknown"
     },
     "list": {
       "title": "Patient List",
@@ -132,6 +205,7 @@
       "onlyKhmerCharacters": "Only Khmer characters allowed"
     },
     "show": {
+      "title": "Patient Detail",
       "tabs": {
         "consultation": "Consultation",
         "prescription": "Prescription",
@@ -143,7 +217,8 @@
         "medicationAdministration": "Medication Administration",
         "surveillance": "Surveillance"
       },
-      "visitType": "Visit Type"
+      "visitType": "Visit Type {{type}}",
+      "visitHistory": "Visit History"
     },
     "attachment": {
       "subtitle": "Attachments for this patient belong to selected visit",
@@ -166,6 +241,25 @@
       "colUploadedBy": "Uploaded By",
       "colDate": "Date",
       "actions": "Actions"
+    },
+    "billing": {
+      "noData": "No billing data",
+      "selectVisit": "Select an active visit to view billing information.",
+      "summary": "Billing Summary",
+      "subtitle": "All charges for this visit",
+      "chargeBreakdown": "Charge Breakdown",
+      "consultationFees": "Consultation Fees",
+      "medicationCosts": "Medication Costs",
+      "paraClinicCosts": "Para Clinic Costs",
+      "prescriptionCosts": "Prescription Costs",
+      "totals": "Totals",
+      "fee": "Fee",
+      "payment": "Payment",
+      "balance": "Balance",
+      "lastPayment": "Last payment:",
+      "saveChanges": "Save Changes",
+      "markFullyPaid": "Mark as Fully Paid",
+      "updated": "Billing updated."
     },
     "consultation": {
       "editConsultation": "Edit Consultation",
@@ -216,6 +310,55 @@
       "night": "Night",
       "instruction": "Instruction",
       "treatingPhysician": "Treating Physician"
+    },
+    "medication": {
+      "title": "Medication",
+      "selectVisit": "Select a visit to view medication orders.",
+      "noPrescriptions": "No medication orders",
+      "emptyHint": "No medication orders have been added to this visit yet.",
+      "medicationFallback": "Medication",
+      "nameLatin": "{{last_name}}{{first_name}}",
+      "dob": "DOB {{date}}",
+      "allergy": "Allergy: {{allergy}}",
+      "initialsLegend": "Given by:",
+      "initialsEntry": "{{initials}} – {{name}}",
+      "dosage": "Dosage",
+      "dosagePlaceholder": "e.g. 1",
+      "unitPlaceholder": "e.g. tablet",
+      "duration": "Duration (days)",
+      "durationPlaceholder": "e.g. 5",
+      "startsAt": "Starts At",
+      "notesPlaceholder": "Enter any additional notes",
+      "interval": {
+        "qd": "QD (once daily)",
+        "bid": "BID (twice daily)",
+        "tid": "TID (three times daily)",
+        "qid": "QID (four times daily)",
+        "qhs": "QHS (at bedtime)",
+        "prn": "PRN (as needed)"
+      }
+    },
+    "medicationOrders": {
+      "emptyTitle": "No Medication Orders",
+      "cycleTitle": "Cycle {{cycleNo}}",
+      "doseTooltip": "Dose {{no}} — {{status}}",
+      "doseTooltipOverdue": "Dose {{no}} — Overdue",
+      "provide": "Provide",
+      "provideDose": "Provide dose",
+      "missedDose": "Record missed dose",
+      "refusedDose": "Record refused dose",
+      "recordMissedTitle": "Record Missed Dose",
+      "recordMissedDesc": "Mark this scheduled dose as missed?",
+      "recordRefusedTitle": "Record Refused Dose",
+      "recordRefusedDesc": "Mark this scheduled dose as refused by the patient?",
+      "reasonPatientAbsent": "Patient absent",
+      "reasonPatientDeclined": "Patient declined",
+      "created": "Medication order created.",
+      "updated": "Medication order updated.",
+      "continued": "Medication order continued.",
+      "stopped": "Medication order stopped.",
+      "held": "Medication order placed on hold.",
+      "resumed": "Medication order resumed."
     },
     "paraClinic": {
       "subtitle": "Para clinic test requests for this patient",
@@ -294,6 +437,53 @@
       "recorded": "Vaccination recorded.",
       "recordUpdated": "Vaccination record updated.",
       "recordDeleted": "Vaccination record deleted."
+    },
+    "surveillance": {
+      "subtitle": "Vital sign records for this patient",
+      "newRecord": "New Record",
+      "createTitle": "New Surveillance Record",
+      "editTitle": "Edit Surveillance Record",
+      "deleteMessage": "Delete this surveillance record?",
+      "editAction": "Edit surveillance",
+      "deleteAction": "Delete surveillance",
+      "saveError": "Unable to save surveillance record.",
+      "colDate": "Date",
+      "colBloodPressure": "Blood Pressure",
+      "colPulse": "Pulse",
+      "colTemperature": "Temperature",
+      "colRespiratoryRate": "Respiratory Rate",
+      "colSpo2": "SpO₂",
+      "colO2Supply": "O₂ Supply",
+      "colNote": "Note",
+      "colCreatedBy": "Created By",
+      "colActions": "Actions",
+      "systolicLabel": "Systolic",
+      "systolicPlaceholder": "e.g. 120",
+      "diastolicLabel": "Diastolic",
+      "diastolicPlaceholder": "e.g. 80",
+      "pulseLabel": "Pulse",
+      "pulsePlaceholder": "e.g. 72",
+      "temperatureLabel": "Temperature (°C)",
+      "temperaturePlaceholder": "e.g. 37.0",
+      "rrLabel": "Respiratory Rate",
+      "rrPlaceholder": "e.g. 18",
+      "spo2Label": "SpO₂ (%)",
+      "spo2Placeholder": "e.g. 98",
+      "o2SupplyLabel": "O₂ Supply",
+      "notePlaceholder": "Enter any additional notes",
+      "noteMaxLength": "Note must not exceed 1000 characters",
+      "o2": {
+        "roomAir": "Room Air",
+        "nasalCannula": "Nasal Cannula",
+        "faceMask": "Face Mask",
+        "nonRebreatherMask": "Non-Rebreather Mask",
+        "ventilator": "Ventilator",
+        "cpapBipap": "CPAP/BiPAP",
+        "highFlowNasalCannula": "High Flow Nasal Cannula"
+      },
+      "created": "Surveillance record created.",
+      "updated": "Surveillance record updated.",
+      "deleted": "Surveillance record deleted."
     }
   },
   "vaccines": {

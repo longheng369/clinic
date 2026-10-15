@@ -86,7 +86,8 @@ const SurveillanceTab = ({ patientId, visitId }: Props) => {
   });
 
   const renderO2Supply = (value: string | null) => {
-    return O2_OPTIONS.find((opt) => opt.value == value)?.label;
+    const option = O2_OPTIONS.find((opt) => opt.value == value);
+    return option ? t(option.label) : undefined;
   }
 
   const columns: GridColDef[] = [

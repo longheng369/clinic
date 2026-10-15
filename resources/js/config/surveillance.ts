@@ -1,11 +1,17 @@
 import { IOption } from '@/interfaces/IOption';
 
 export const O2_OPTIONS: IOption<string>[] = [
-  { value: 'ROOM_AIR', label: 'Room Air' },
-  { value: 'NASAL_CANNULA', label: 'Nasal Cannula' },
-  { value: 'FACE_MASK', label: 'Face Mask' },
-  { value: 'NON_REBREATHER_MASK', label: 'Non-Rebreather Mask' },
-  { value: 'VENTILATOR', label: 'Ventilator' },
-  { value: 'CPAP_BIPAP', label: 'CPAP/BiPAP' },
-  { value: 'HIGH_FLOW_NASAL_CANNULA', label: 'High Flow Nasal Cannula' },
+  { value: 'ROOM_AIR', label: 'patients.surveillance.o2.roomAir' },
+  { value: 'NASAL_CANNULA', label: 'patients.surveillance.o2.nasalCannula' },
+  { value: 'FACE_MASK', label: 'patients.surveillance.o2.faceMask' },
+  {
+    value: 'NON_REBREATHER_MASK',
+    label: 'patients.surveillance.o2.nonRebreatherMask',
+  },
+  { value: 'VENTILATOR', label: 'patients.surveillance.o2.ventilator' },
+  { value: 'CPAP_BIPAP', label: 'patients.surveillance.o2.cpapBipap' },
+  {
+    value: 'HIGH_FLOW_NASAL_CANNULA',
+    label: 'patients.surveillance.o2.highFlowNasalCannula',
+  },
 ];

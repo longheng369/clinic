@@ -32,7 +32,7 @@ class MedicineController extends Controller
         Medicine::create($request->validated());
 
         return redirect()->route('medicines.index')
-            ->with('success', 'Medicine created.');
+            ->with('success', 'medicines.created');
     }
 
     public function edit(Medicine $medicine)
@@ -49,7 +49,7 @@ class MedicineController extends Controller
         $medicine->update($request->validated());
 
         return redirect()->route('medicines.index')
-            ->with('success', 'Medicine updated.');
+            ->with('success', 'medicines.updated');
     }
 
     public function destroy(Medicine $medicine)
@@ -57,6 +57,6 @@ class MedicineController extends Controller
         $medicine->delete();
 
         return redirect()->route('medicines.index')
-            ->with('success', 'Medicine deleted.');
+            ->with('success', 'medicines.deleted');
     }
 }

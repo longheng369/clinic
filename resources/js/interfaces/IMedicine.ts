@@ -17,18 +17,18 @@ export type MedicineType =
   | 'other';
 
 export const MEDICINE_TYPES: IOption<MedicineType>[] = [
-  { value: 'tablet', label: 'Tablet' },
-  { value: 'capsule', label: 'Capsule' },
-  { value: 'syrup', label: 'Syrup' },
-  { value: 'injection', label: 'Injection' },
-  { value: 'ointment', label: 'Ointment' },
-  { value: 'cream', label: 'Cream' },
-  { value: 'drops', label: 'Drops' },
-  { value: 'powder', label: 'Powder' },
-  { value: 'spray', label: 'Spray' },
-  { value: 'solution', label: 'Solution' },
-  { value: 'suspension', label: 'Suspension' },
-  { value: 'other', label: 'Other' },
+  { value: 'tablet', label: 'medicines.types.tablet' },
+  { value: 'capsule', label: 'medicines.types.capsule' },
+  { value: 'syrup', label: 'medicines.types.syrup' },
+  { value: 'injection', label: 'medicines.types.injection' },
+  { value: 'ointment', label: 'medicines.types.ointment' },
+  { value: 'cream', label: 'medicines.types.cream' },
+  { value: 'drops', label: 'medicines.types.drops' },
+  { value: 'powder', label: 'medicines.types.powder' },
+  { value: 'spray', label: 'medicines.types.spray' },
+  { value: 'solution', label: 'medicines.types.solution' },
+  { value: 'suspension', label: 'medicines.types.suspension' },
+  { value: 'other', label: 'medicines.types.other' },
 ];
 
 export interface IMedicine {

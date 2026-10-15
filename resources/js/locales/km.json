@@ -12,7 +12,7 @@
     "user": "អ្នកប្រើប្រាស់",
     "toggleLanguage": "English",
     "search": "ស្វែងរក...",
-    "required": "វាលនេះទាមទារការបំពេញ",
+    "required": "ចន្លោះនេះទាមទារការបំពេញ",
     "save": "រក្សាទុក",
     "create": "បង្កើត",
     "edit": "កែប្រែ",
@@ -65,6 +65,50 @@
     "updated": "បានកែប្រែប្រភេទ",
     "deleted": "បានលុបប្រភេទ"
   },
+  "medicines": {
+    "title": "ថ្នាំ",
+    "subtitle": "គ្រប់គ្រងថ្នាំរបស់គ្លីនិកអ្នក",
+    "new": "ថ្នាំថ្មី",
+    "searchPlaceholder": "ស្វែងរកថ្នាំ",
+    "deleteMessage": "តើលុបថ្នាំនេះមែនឬទេ?",
+    "editAction": "កែប្រែ {{name}}",
+    "deleteAction": "លុប {{name}}",
+    "columnName": "ឈ្មោះ",
+    "columnType": "ប្រភេទ",
+    "columnCategory": "ប្រភេទចំណាត់ថ្នាក់",
+    "columnUnit": "ឯកតា",
+    "columnDosage": "កម្រិត",
+    "columnUnitPrice": "តម្លៃ",
+    "columnCreated": "បានបង្កើត",
+    "columnActions": "សកម្មភាព",
+    "name": "ឈ្មោះ",
+    "type": "ប្រភេទ",
+    "category": "ប្រភេទចំណាត់ថ្នាក់",
+    "unit": "ឯកតា",
+    "dosage": "កម្រិត",
+    "unitPrice": "តម្លៃ",
+    "description": "ការពិពណ៌នា",
+    "selectUnit": "សូមជ្រើសរើសឯកតា",
+    "loadCategoriesFailed": "បរាជ័យក្នុងការផ្ទុកប្រភេទចំណាត់ថ្នាក់",
+    "createError": "មិនអាចបង្កើតថ្នាំបានទេ",
+    "created": "បានបង្កើតថ្នាំ",
+    "updated": "បានកែប្រែថ្នាំ",
+    "deleted": "បានលុបថ្នាំ",
+    "types": {
+      "tablet": "គ្រាប់",
+      "capsule": "កាបស៊ុល",
+      "syrup": "ស៊ីរ៉ូ",
+      "injection": "ចាក់",
+      "ointment": "លាប",
+      "cream": "គ្រីម",
+      "drops": "តំណក់",
+      "powder": "ម្សៅ",
+      "spray": "បាញ់",
+      "solution": "សូលុយស្យុង",
+      "suspension": "សារធាតុព្យួរ",
+      "other": "ផ្សេងៗ"
+    }
+  },
   "patients": {
     "shared": {
       "form": {
@@ -76,7 +120,13 @@
         "notes": "កំណត់ចំណាំ",
         "diagnosis": "រោគវិនិច្ឆ័យ",
         "enterDiagnosis": "បញ្ចូលរោគវិនិច្ឆ័យ",
+        "addToDrugChart": "បន្ថែមទៅតារាងថ្នាំ",
+        "editPrescription": "កែប្រែវេជ្ជបញ្ជា",
+        "interval": "ចន្លោះពេល",
+        "searchMedicine": "ស្វែងរកថ្នាំ",
+        "tryDifferentSearch": "សាកល្បងពាក្យស្វែងរកផ្សេង",
         "min": "អប្បបរមា {{min}}",
+        "max": "អតិបរមា {{max}}",
         "total": "សរុប៖ ${{amount}}"
       },
       "status": {
@@ -93,7 +143,30 @@
         "refused": "បដិសេធ",
         "stopped": "ឈប់",
         "unpaid": "មិនទាន់បង់ប្រាក់"
-      }
+      },
+      "action": {
+        "stop": "ឈប់",
+        "hold": "ផ្អាក",
+        "continue": "បន្ត",
+        "resume": "បន្តឡើងវិញ"
+      },
+      "order": {
+        "stopTitle": "ឈប់ {{name}}?",
+        "stopDesc": "កម្រិតថ្នាំដែលកំពុងរង់ចាំទាំងអស់នឹងត្រូវបានបោះបង់។",
+        "continueTitle": "បន្ត {{name}}?",
+        "continueDesc": "ចាប់ផ្តើមវដ្តថ្មី (វដ្តទី {{cycleNo}}) ជាមួយការបញ្ជាដូចគ្នា។",
+        "holdTitle": "ផ្អាក {{name}}?",
+        "holdDesc": "កម្រិតថ្នាំដែលកំពុងរង់ចាំនឹងត្រូវផ្អាក រហូតដល់ការបញ្ជាត្រូវបានបន្តឡើងវិញ។",
+        "pricePerDose": "${{price}} / កម្រិត",
+        "doctor": "ចេញបញ្ជាដោយ {{name}}",
+        "editOrder": "កែប្រែការបញ្ជា",
+        "cycleCol": "វដ្ត",
+        "dosesCol": "កម្រិតថ្នាំ",
+        "progressCol": "វឌ្ឍនភាព",
+        "noDoses": "មិនទាន់មានកម្រិតថ្នាំដែលបានកំណត់ទេ"
+      },
+      "by": "ដោយ {{name}}",
+      "unknown": "មិនស្គាល់"
     },
     "list": {
       "title": "បញ្ជីអ្នកជំងឺ",
@@ -132,6 +205,7 @@
       "onlyKhmerCharacters": "សូមបញ្ចូលតែអក្សរខ្មែរ"
     },
     "show": {
+      "title": "ព័ត៌មានលម្អិតអំពីអ្នកជំងឺ",
       "tabs": {
         "consultation": "ការពិគ្រោះយោបល់",
         "prescription": "វេជ្ជបញ្ជា",
@@ -143,7 +217,8 @@
         "medicationAdministration": "ការផ្តល់ថ្នាំ",
         "surveillance": "ការឃ្លាំមើល"
       },
-      "visitType": "ប្រភេទនៃការមកជួប"
+      "visitType": "ប្រភេទនៃការមកជួប {{type}}",
+      "visitHistory": "ប្រវត្តិការមកជួប"
     },
     "attachment": {
       "subtitle": "ឯកសារភ្ជាប់របស់អ្នកជំងឺនេះ ជាកម្មសិទ្ធិរបស់ការមកជួបដែលបានជ្រើសរើស",
@@ -166,6 +241,25 @@
       "colUploadedBy": "បង្ហោះដោយ",
       "colDate": "កាលបរិច្ឆេទ",
       "actions": "សកម្មភាព"
+    },
+    "billing": {
+      "noData": "មិនមានទិន្នន័យវិក្កយបត្រ",
+      "selectVisit": "សូមជ្រើសរើសការមកជួបសកម្ម ដើម្បីមើលព័ត៌មានវិក្កយបត្រ",
+      "summary": "សង្ខេបវិក្កយបត្រ",
+      "subtitle": "ការគិតថ្លៃទាំងអស់សម្រាប់ការមកជួបនេះ",
+      "chargeBreakdown": "ការបំបែកការគិតថ្លៃ",
+      "consultationFees": "ថ្លៃពិគ្រោះយោបល់",
+      "medicationCosts": "ថ្លៃថ្នាំ",
+      "paraClinicCosts": "ថ្លៃគ្លីនិកប៉ារ៉ា",
+      "prescriptionCosts": "ថ្លៃវេជ្ជបញ្ជា",
+      "totals": "សរុប",
+      "fee": "ថ្លៃសេវា",
+      "payment": "ការទូទាត់",
+      "balance": "សមតុល្យ",
+      "lastPayment": "ការទូទាត់ចុងក្រោយ៖",
+      "saveChanges": "រក្សាទុកការផ្លាស់ប្តូរ",
+      "markFullyPaid": "សម្គាល់ថាបានបង់ពេញ",
+      "updated": "បានធ្វើបច្ចុប្បន្នភាពវិក្កយបត្រ។"
     },
     "consultation": {
       "editConsultation": "កែប្រែការពិគ្រោះយោបល់",
@@ -216,6 +310,55 @@
       "night": "យប់",
       "instruction": "ការណែនាំ",
       "treatingPhysician": "គ្រូពេទ្យព្យាបាល"
+    },
+    "medication": {
+      "title": "ថ្នាំ",
+      "selectVisit": "ជ្រើសរើសការមកជួបដើម្បីមើលការបញ្ជាឱ្យប្រើប្រាស់ថ្នាំ។",
+      "noPrescriptions": "គ្មានការបញ្ជាឱ្យប្រើប្រាស់ថ្នាំ",
+      "emptyHint": "ការមកជួបនេះមិនទាន់មានការបញ្ជាឱ្យប្រើប្រាស់ថ្នាំនៅឡើយទេ។",
+      "medicationFallback": "ថ្នាំ",
+      "nameLatin": "{{last_name}}{{first_name}}",
+      "dob": "ថ្ងៃកំណើត {{date}}",
+      "allergy": "អាឡែស៊ី៖ {{allergy}}",
+      "initialsLegend": "ផ្តល់ដោយ៖",
+      "initialsEntry": "{{initials}} – {{name}}",
+      "dosage": "កម្រិតថ្នាំ",
+      "dosagePlaceholder": "ឧ. 1",
+      "unitPlaceholder": "ឧ. គ្រាប់",
+      "duration": "រយៈពេល (ថ្ងៃ)",
+      "durationPlaceholder": "ឧ. 5",
+      "startsAt": "ចាប់ផ្តើមនៅ",
+      "notesPlaceholder": "បញ្ចូលកំណត់ចំណាំបន្ថែម",
+      "interval": {
+        "qd": "QD (ម្តងក្នុងមួយថ្ងៃ)",
+        "bid": "BID (ពីរដងក្នុងមួយថ្ងៃ)",
+        "tid": "TID (បីដងក្នុងមួយថ្ងៃ)",
+        "qid": "QID (បួនដងក្នុងមួយថ្ងៃ)",
+        "qhs": "QHS (ពេលចូលគេង)",
+        "prn": "PRN (តាមតម្រូវការ)"
+      }
+    },
+    "medicationOrders": {
+      "emptyTitle": "គ្មានការបញ្ជាឱ្យប្រើប្រាស់ថ្នាំ",
+      "cycleTitle": "វដ្តទី {{cycleNo}}",
+      "doseTooltip": "កម្រិតទី {{no}} — {{status}}",
+      "doseTooltipOverdue": "កម្រិតទី {{no}} — ហួសកាលកំណត់",
+      "provide": "ផ្តល់",
+      "provideDose": "ផ្តល់កម្រិតថ្នាំ",
+      "missedDose": "កត់ត្រាកម្រិតថ្នាំខកខាន",
+      "refusedDose": "កត់ត្រាកម្រិតថ្នាំបដិសេធ",
+      "recordMissedTitle": "កត់ត្រាកម្រិតថ្នាំខកខាន",
+      "recordMissedDesc": "សម្គាល់កម្រិតថ្នាំដែលបានកំណត់នេះថាខកខាន?",
+      "recordRefusedTitle": "កត់ត្រាកម្រិតថ្នាំបដិសេធ",
+      "recordRefusedDesc": "សម្គាល់កម្រិតថ្នាំដែលបានកំណត់នេះថាត្រូវបានអ្នកជំងឺបដិសេធ?",
+      "reasonPatientAbsent": "អ្នកជំងឺមិនមានវត្តមាន",
+      "reasonPatientDeclined": "អ្នកជំងឺបានបដិសេធ",
+      "created": "បានបង្កើតការបញ្ជាឱ្យប្រើប្រាស់ថ្នាំ។",
+      "updated": "បានធ្វើបច្ចុប្បន្នភាពការបញ្ជាឱ្យប្រើប្រាស់ថ្នាំ។",
+      "continued": "បានបន្តវដ្តថ្មីនៃការបញ្ជាឱ្យប្រើប្រាស់ថ្នាំ។",
+      "stopped": "បានឈប់ការបញ្ជាឱ្យប្រើប្រាស់ថ្នាំ។",
+      "held": "បានផ្អាកការបញ្ជាឱ្យប្រើប្រាស់ថ្នាំ។",
+      "resumed": "បានបន្តការបញ្ជាឱ្យប្រើប្រាស់ថ្នាំឡើងវិញ។"
     },
     "paraClinic": {
       "subtitle": "សំណើធ្វើតេស្តគ្លីនិកប៉ារ៉ា សម្រាប់អ្នកជំងឺនេះ",
@@ -292,8 +435,55 @@
       "readyForDose1": "រួចរាល់សម្រាប់ដូស 1",
       "outsideAgeRange": "ក្រៅចន្លោះអាយុសម្រាប់វ៉ាក់សាំងនេះ",
       "recorded": "បានកត់ត្រាការចាក់វ៉ាក់សាំង។",
-      "recordUpdated": "បានធ្វើបច្ចុប្បន្នភាពកំណត់ត្រាចាក់វ៉ាក់សាំង។",
-      "recordDeleted": "បានលុបកំណត់ត្រាចាក់វ៉ាក់សាំង។"
+      "recordUpdated": "បានធ្វើបច្ចុប្បន្នភាពកំណត់ត្រាការចាក់វ៉ាក់សាំង។",
+      "recordDeleted": "បានលុបកំណត់ត្រាការចាក់វ៉ាក់សាំង។"
+    },
+    "surveillance": {
+      "subtitle": "កំណត់ត្រាសញ្ញាជីវិតសម្រាប់អ្នកជំងឺនេះ",
+      "newRecord": "កំណត់ត្រាថ្មី",
+      "createTitle": "កំណត់ត្រាឃ្លាំមើលថ្មី",
+      "editTitle": "កែប្រែកំណត់ត្រាឃ្លាំមើល",
+      "deleteMessage": "លុបកំណត់ត្រាឃ្លាំមើលនេះ?",
+      "editAction": "កែប្រែការឃ្លាំមើល",
+      "deleteAction": "លុបការឃ្លាំមើល",
+      "saveError": "មិនអាចរក្សាទុកកំណត់ត្រាឃ្លាំមើលបានទេ។",
+      "colDate": "កាលបរិច្ឆេទ",
+      "colBloodPressure": "សម្ពាធឈាម",
+      "colPulse": "ជីពចរ",
+      "colTemperature": "សីតុណ្ហភាព",
+      "colRespiratoryRate": "អត្រាដកដង្ហើម",
+      "colSpo2": "SpO₂",
+      "colO2Supply": "ការផ្គត់ផ្គង់ O₂",
+      "colNote": "កំណត់ចំណាំ",
+      "colCreatedBy": "បង្កើតដោយ",
+      "colActions": "សកម្មភាព",
+      "systolicLabel": "សម្ពាធឈាមកំពូល",
+      "systolicPlaceholder": "ឧ. 120",
+      "diastolicLabel": "សម្ពាធឈាមក្រោម",
+      "diastolicPlaceholder": "ឧ. 80",
+      "pulseLabel": "ជីពចរ",
+      "pulsePlaceholder": "ឧ. 72",
+      "temperatureLabel": "សីតុណ្ហភាព (°C)",
+      "temperaturePlaceholder": "ឧ. 37.0",
+      "rrLabel": "អត្រាដកដង្ហើម",
+      "rrPlaceholder": "ឧ. 18",
+      "spo2Label": "SpO₂ (%)",
+      "spo2Placeholder": "ឧ. 98",
+      "o2SupplyLabel": "ការផ្គត់ផ្គង់ O₂",
+      "notePlaceholder": "បញ្ចូលកំណត់ចំណាំបន្ថែម",
+      "noteMaxLength": "កំណត់ចំណាំមិនត្រូវលើសពី 1000 តួអក្សរទេ",
+      "o2": {
+        "roomAir": "ខ្យល់បន្ទប់",
+        "nasalCannula": "សំពង់ច្រមុះ",
+        "faceMask": "របាំងមុខ",
+        "nonRebreatherMask": "របាំងមុខប្រភេទ Non-Rebreather",
+        "ventilator": "ម៉ាស៊ីនដកដង្ហើម",
+        "cpapBipap": "CPAP/BiPAP",
+        "highFlowNasalCannula": "សំពង់ច្រមុះលំហូរខ្ពស់"
+      },
+      "created": "បានបង្កើតកំណត់ត្រាឃ្លាំមើល។",
+      "updated": "បានធ្វើបច្ចុប្បន្នភាពកំណត់ត្រាឃ្លាំមើល។",
+      "deleted": "បានលុបកំណត់ត្រាឃ្លាំមើល។"
     }
   },
   "vaccines": {

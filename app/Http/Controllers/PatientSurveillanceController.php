@@ -37,20 +37,20 @@ class PatientSurveillanceController extends Controller
             ['created_by' => auth()->id()]
         ));
 
-        return back()->with('success', 'Surveillance record created.');
+        return back()->with('success', 'patients.surveillance.created');
     }
 
     public function update(UpdatePatientSurveillanceRequest $request, Patient $patient, PatientSurveillance $surveillance)
     {
         $surveillance->update($request->validated());
 
-        return back()->with('success', 'Surveillance record updated.');
+        return back()->with('success', 'patients.surveillance.updated');
     }
 
     public function destroy(Patient $patient, PatientSurveillance $surveillance)
     {
         $surveillance->delete();
 
-        return back()->with('success', 'Surveillance record deleted.');
+        return back()->with('success', 'patients.surveillance.deleted');
     }
 }

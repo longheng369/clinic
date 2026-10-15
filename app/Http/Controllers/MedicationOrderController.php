@@ -33,7 +33,7 @@ class MedicationOrderController extends Controller
             $order->generateNextDose();
         }
 
-        return back()->with('success', 'Medication order created.');
+        return back()->with('success', 'patients.medicationOrders.created');
     }
 
     public function update(StoreMedicationOrderRequest $request, Patient $patient, MedicationOrder $medicationOrder)
@@ -61,7 +61,7 @@ class MedicationOrderController extends Controller
             $medicationOrder->generateNextDose();
         }
 
-        return back()->with('success', 'Medication order updated.');
+        return back()->with('success', 'patients.medicationOrders.updated');
     }
 
     public function continue(Visit $visit, MedicationOrder $medicationOrder)
@@ -85,7 +85,7 @@ class MedicationOrderController extends Controller
             $medicationOrder->generateNextDose();
         }
 
-        return back()->with('success', 'Medication order continued.');
+        return back()->with('success', 'patients.medicationOrders.continued');
     }
 
     public function stop(Visit $visit, MedicationOrder $medicationOrder)
@@ -105,7 +105,7 @@ class MedicationOrderController extends Controller
                 'status' => 'cancelled',
             ]);
 
-        return back()->with('success', 'Medication order stopped.');
+        return back()->with('success', 'patients.medicationOrders.stopped');
     }
 
     public function hold(Visit $visit, MedicationOrder $medicationOrder)
@@ -116,7 +116,7 @@ class MedicationOrderController extends Controller
 
         MedicationAudit::log(auth()->user(), 'held', $medicationOrder);
 
-        return back()->with('success', 'Medication order placed on hold.');
+        return back()->with('success', 'patients.medicationOrders.held');
     }
 
     public function resume(Visit $visit, MedicationOrder $medicationOrder)
@@ -127,6 +127,6 @@ class MedicationOrderController extends Controller
 
         MedicationAudit::log(auth()->user(), 'resumed', $medicationOrder);
 
-        return back()->with('success', 'Medication order resumed.');
+        return back()->with('success', 'patients.medicationOrders.resumed');
     }
 }

@@ -12,6 +12,7 @@ import { router } from '@inertiajs/react';
 import { useToast } from '@/components/toast';
 import { DialogActions, DialogContent, Grid, Box, Button } from '@mui/material';
 import { useModal } from '@/components/modal';
+import { useTranslation } from 'react-i18next';
 
 interface CategoryOption {
   value: number;
@@ -24,6 +25,7 @@ interface MedicineFormProps {
 }
 
 const MedicineForm = ({ medicine, units }: MedicineFormProps) => {
+  const { t } = useTranslation();
   const { closeModal } = useModal();
   const [isProcessing, setIsProcessing] = useState(false);
   const [categories, setCategories] = useState<CategoryOption[]>([]);
@@ -56,7 +58,7 @@ const MedicineForm = ({ medicine, units }: MedicineFormProps) => {
       })
       .catch((err) => {
         if (err?.name !== 'AbortError') {
-          toast('Failed to load categories', { variant: 'error' });
+          toast(t('medicines.loadCategoriesFailed'), { variant: 'error' });
         }
       })
       .finally(() => setCategoriesLoading(false));
@@ -86,7 +88,7 @@ const MedicineForm = ({ medicine, units }: MedicineFormProps) => {
       {
         onError: (errors) => {
           if (errors.name) {
-            toast('Unable to create medicine', {
+            toast(t('medicines.createError'), {
               variant: 'error',
               description: errors.name,
             });
@@ -108,24 +110,27 @@ const MedicineForm = ({ medicine, units }: MedicineFormProps) => {
             <Input
               control={control}
               name="name"
-              label="Name"
-              rules={{ required: 'This field is required' }}
+              label={t('medicines.name')}
+              rules={{ required: t('common.required') }}
             />
           </Grid>
           <Grid size={{ md: 6 }}>
             <Select
               control={control}
               name="type"
-              label="Type"
-              options={MEDICINE_TYPES}
-              rules={{ required: 'This field is required' }}
+              label={t('medicines.type')}
+              options={MEDICINE_TYPES.map((option) => ({
+                ...option,
+                label: t(option.label),
+              }))}
+              rules={{ required: t('common.required') }}
             />
           </Grid>
           <Grid size={{ md: 6 }}>
             <Select
               control={control}
               name="category_id"
-              label="Category"
+              label={t('medicines.category')}
               options={categories}
               disabled={categoriesLoading}
             />
@@ -134,40 +139,44 @@ const MedicineForm = ({ medicine, units }: MedicineFormProps) => {
             <Select
               control={control}
               name="unit_id"
-              label="Unit"
+              label={t('medicines.unit')}
               options={units.map((unit) => ({
                 value: unit.id,
                 label: unit.name,
               }))}
-              rules={{ required: 'Please select unit' }}
+              rules={{ required: t('medicines.selectUnit') }}
             />
           </Grid>
           <Grid size={{ md: 6 }}>
             <Input
               control={control}
               name="dosage"
-              label="Dosage"
+              label={t('medicines.dosage')}
             />
           </Grid>
           <Grid size={{ md: 6 }}>
             <Input
               control={control}
               name="unit_price"
-              label="Unit Price"
-              rules={{ required: 'This field is required' }}
+              label={t('medicines.unitPrice')}
+              rules={{ required: t('common.required') }}
             />
           </Grid>
           <Grid size={{ md: 12 }}>
-            <Input control={control} name="description" label="Description" />
+            <Input
+              control={control}
+              name="description"
+              label={t('medicines.description')}
+            />
           </Grid>
         </Grid>
       </DialogContent>
       <DialogActions>
         <Button type="button" onClick={() => closeModal()} variant="outlined">
-          Cancel
+          {t('common.cancel')}
         </Button>
         <Button type="submit" disabled={isProcessing} variant="contained">
-          {medicine ? 'Save' : 'Create'}
+          {medicine ? t('common.save') : t('common.create')}
         </Button>
       </DialogActions>
     </Box>

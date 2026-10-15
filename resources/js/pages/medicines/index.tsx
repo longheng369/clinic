@@ -16,6 +16,7 @@ import { useDebouncedSearch } from '@/hooks/useDebouncedSearch';
 import SearchBar from '@/components/searchBar';
 import { formatDate } from '@/utils/date';
 import { Box, Typography, Button } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 interface PaginatedData<T> {
   data: T[];
@@ -28,6 +29,7 @@ interface PaginatedData<T> {
 }
 
 const Medicine = () => {
+  const { t } = useTranslation();
   const { openModal, openAlert } = useModal();
 
   const {
@@ -54,7 +56,7 @@ const Medicine = () => {
     openModal({
       title: (
         <Typography variant="h5" sx={{ fontWeight: 'medium' }}>
-          New Medicine
+          {t('medicines.new')}
         </Typography>
       ),
       content: <MedicineForm units={units} />,
@@ -64,7 +66,7 @@ const Medicine = () => {
 
   const handleEdit = (medicine: IMedicine) => {
     openModal({
-      title: `Edit ${medicine.name}`,
+      title: t('medicines.editAction', { name: medicine.name }),
       content: <MedicineForm medicine={medicine} units={units} />,
       config: { preventClickAway: true, maxWidth: '2xl' },
     });
@@ -72,20 +74,20 @@ const Medicine = () => {
 
   const handleDelete = (med: IMedicine) => {
     openAlert({
-      message: 'Delete this medicine?',
-      description: 'This action cannot be undone.',
+      message: t('medicines.deleteMessage'),
+      description: t('common.deleteDescription'),
       variant: 'danger',
-      confirmLabel: 'Delete',
+      confirmLabel: t('common.delete'),
       onConfirm: () => router.delete(`/medicines/${med.id}`),
     });
   };
 
   const columns: GridColDef[] = [
-    { field: 'name', headerName: 'ឈ្មោះ', flex: 1, minWidth: 150 },
-    { field: 'type', headerName: 'ប្រភេទ', flex: 1, minWidth: 120 },
+    { field: 'name', headerName: t('medicines.columnName'), flex: 1, minWidth: 150 },
+    { field: 'type', headerName: t('medicines.columnType'), flex: 1, minWidth: 120 },
     {
       field: 'category',
-      headerName: 'ប្រភេទចំណាត់ថ្នាក់',
+      headerName: t('medicines.columnCategory'),
       flex: 1,
       minWidth: 180,
       valueGetter: (_value, row: IMedicine) => row.category?.name ?? null,
@@ -98,7 +100,7 @@ const Medicine = () => {
     },
     {
       field: 'unit',
-      headerName: 'ឯកតា',
+      headerName: t('medicines.columnUnit'),
       flex: 1,
       minWidth: 100,
       valueGetter: (_value, row: IMedicine) => row.unit?.name ?? null,
@@ -111,13 +113,13 @@ const Medicine = () => {
     },
     {
       field: 'dosage',
-      headerName: 'កម្រិត',
+      headerName: t('medicines.columnDosage'),
       flex: 1,
       minWidth: 120
     },
     {
       field: 'unit_price',
-      headerName: 'តម្លៃឯកតា',
+      headerName: t('medicines.columnUnitPrice'),
       flex: 1,
       minWidth: 120,
       valueGetter: (_value, row: IMedicine) =>
@@ -131,7 +133,7 @@ const Medicine = () => {
     },
     {
       field: 'created_at',
-      headerName: 'បានបង្កើត',
+      headerName: t('medicines.columnCreated'),
       flex: 1,
       minWidth: 160,
       valueGetter: (_value, row: IMedicine) => formatDate(row.created_at),
@@ -139,20 +141,20 @@ const Medicine = () => {
     {
       field: 'actions',
       type: 'actions',
-      headerName: 'សកម្មភាព',
+      headerName: t('medicines.columnActions'),
       width: 120,
       getActions: (params) => [
         <GridActionsCellItem
           key={`edit-${params.id}`}
           icon={<Pencil size={16} color="#2563eb" />}
-          label={`Edit ${params.row.name}`}
+          label={t('medicines.editAction', { name: params.row.name })}
           onClick={() => handleEdit(params.row as IMedicine)}
           showInMenu={false}
         />,
         <GridActionsCellItem
           key={`delete-${params.id}`}
           icon={<Trash2 size={16} color="#dc2626" />}
-          label={`Delete ${params.row.name}`}
+          label={t('medicines.deleteAction', { name: params.row.name })}
           onClick={() => handleDelete(params.row as IMedicine)}
           showInMenu={false}
         />,
@@ -162,7 +164,7 @@ const Medicine = () => {
 
   return (
     <>
-      <Head title="Medicines" />
+      <Head title={t('medicines.title')} />
       <Box
         sx={{ p: 4, height: '100%', display: 'flex', flexDirection: 'column' }}
       >
@@ -174,9 +176,9 @@ const Medicine = () => {
           }}
         >
           <Box>
-            <Typography variant="h5">Medicines</Typography>
+            <Typography variant="h5">{t('medicines.title')}</Typography>
             <Typography variant="body1" color="textSecondary">
-              Manage your clinic medicines
+              {t('medicines.subtitle')}
             </Typography>
           </Box>
           <Box
@@ -190,14 +192,14 @@ const Medicine = () => {
             <SearchBar
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search medicine"
+              placeholder={t('medicines.searchPlaceholder')}
             />
             <Button
               onClick={handleCreate}
               variant="contained"
               startIcon={<Plus size={16} />}
             >
-              New Medicine
+              {t('medicines.new')}
             </Button>
           </Box>
         </Box>
@@ -217,10 +219,6 @@ const Medicine = () => {
             disableRowSelectionOnClick
             sx={{
               height: '100%',
-              '& .MuiDataGrid-columnHeaderTitle': {
-                fontFamily: 'var(--font-khmer)',
-                fontWeight: 'bold',
-              },
             }}
           />
         </Box>

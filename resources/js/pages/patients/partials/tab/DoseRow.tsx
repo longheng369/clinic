@@ -28,10 +28,10 @@ const DoseRow = ({ administration, visitId, orderStatus }: DoseRowProps) => {
 
   const handleMissed = () => {
     openAlert({
-      message: t('patients.vaccination.recordMissedTitle'),
-      description: t('patients.vaccination.recordMissedDesc'),
+      message: t('patients.medicationOrders.recordMissedTitle'),
+      description: t('patients.medicationOrders.recordMissedDesc'),
       variant: 'warning',
-      confirmLabel: 'Patient absent',
+      confirmLabel: t('patients.medicationOrders.reasonPatientAbsent'),
       onConfirm: () =>
         router.post(`/visits/${visitId}/doses/${administration.id}/missed`, {
           reason: 'Patient absent',
@@ -41,10 +41,10 @@ const DoseRow = ({ administration, visitId, orderStatus }: DoseRowProps) => {
 
   const handleRefused = () => {
     openAlert({
-      message: t('patients.vaccination.recordRefusedTitle'),
-      description: t('patients.vaccination.recordRefusedDesc'),
+      message: t('patients.medicationOrders.recordRefusedTitle'),
+      description: t('patients.medicationOrders.recordRefusedDesc'),
       variant: 'warning',
-      confirmLabel: 'Patient declined',
+      confirmLabel: t('patients.medicationOrders.reasonPatientDeclined'),
       onConfirm: () =>
         router.post(`/visits/${visitId}/doses/${administration.id}/refused`, {
           reason: 'Patient declined',
@@ -103,14 +103,14 @@ const DoseRow = ({ administration, visitId, orderStatus }: DoseRowProps) => {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
           <IconButton
             onClick={handleProvide}
-            aria-label={t('patients.vaccination.provideDose')}
-            title={t('patients.vaccination.provide')}
+            aria-label={t('patients.medicationOrders.provideDose')}
+            title={t('patients.medicationOrders.provide')}
           >
             <Check size={16} color="#15803d" />
           </IconButton>
           <IconButton
             onClick={handleMissed}
-            aria-label={t('patients.vaccination.missedDose')}
+            aria-label={t('patients.medicationOrders.missedDose')}
             title={t('patients.shared.status.missed')}
           >
             <AlertTriangle size={16} color="#c2410c" />
@@ -118,7 +118,7 @@ const DoseRow = ({ administration, visitId, orderStatus }: DoseRowProps) => {
           <IconButton
             color="error"
             onClick={handleRefused}
-            aria-label={t('patients.vaccination.refusedDose')}
+            aria-label={t('patients.medicationOrders.refusedDose')}
             title={t('patients.shared.status.refused')}
           >
             <X size={16} color="#7e22ce" />

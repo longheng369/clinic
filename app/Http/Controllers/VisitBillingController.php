@@ -42,6 +42,6 @@ class VisitBillingController extends Controller
             'payment_date' => $paidAmount > 0 ? now() : $visit->payment_date,
         ]);
 
-        return back()->with('success', 'Billing updated.');
+        return back()->with('success', 'patients.billing.updated');
     }
 }

@@ -73,7 +73,7 @@ const CycleRow = ({
           }}
         >
           <Box sx={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>
-            {t('patients.vaccination.cycleTitle', { cycleNo })}
+            {t('patients.medicationOrders.cycleTitle', { cycleNo })}
           </Box>
           {hasPending && (
             <Box
@@ -115,8 +115,8 @@ const CycleRow = ({
                 key={admin.id}
                 title={t(
                   isOverdue
-                    ? 'patients.vaccination.doseTooltipOverdue'
-                    : 'patients.vaccination.doseTooltip',
+                    ? 'patients.medicationOrders.doseTooltipOverdue'
+                    : 'patients.medicationOrders.doseTooltip',
                   {
                     no: admin.administration_no ?? '?',
                     status: t(`patients.shared.status.${admin.status}`),
